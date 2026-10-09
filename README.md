@@ -1,6 +1,6 @@
-# CRM CANI Café
+# CANI Café — Sistema interno
 
-CRM interno de CANI Café. React + Vite + TypeScript sobre Firebase (Firestore + Auth).
+Sistema interno de CANI Café. React + Vite + TypeScript sobre Firebase (Firestore + Auth).
 El desarrollo y las pruebas corren 100 % sobre **Firebase Emulator Suite**, con proyectos `demo-*`.
 No hace falta una cuenta de Firebase ni `firebase login` para trabajar en local.
 
@@ -56,7 +56,7 @@ El seed es idempotente: usa IDs fijos (`contact-001`, `sale-001`…), así que p
 | `npm run emulators` | Levanta los emuladores de Auth y Firestore (proyecto `demo-cani-crm`) |
 | `npm run seed` | Carga 1 admin, 5 contactos, 5 comunicaciones y 3 ventas mock en los emuladores |
 | `npm test` | Pruebas unitarias y de pantallas (Vitest + Testing Library, sin emuladores) |
-| `npm run test:emulators` | Levanta los emuladores, corre las pruebas de reglas y de seed, y los apaga (proyecto `demo-cani-crm-test`) |
+| `npm run test:emulators` | Levanta los emuladores, corre las pruebas de reglas, del seed y de Auth real, y los apaga (proyecto `demo-cani-crm-test`) |
 | `npm run typecheck` | Corre `tsc --noEmit` |
 | `npm run build` | Typecheck y build de producción |
 
@@ -96,7 +96,7 @@ tests/
 - **Fechas:** se guardan como `Timestamp` de Firestore y se muestran con `src/shared/utils/dates.ts` (hora de Costa Rica).
 - **Relaciones:** se guardan por ID (`contactId`, `saleId`, `userId`), nunca copiando texto.
 - **Datos de prueba:** siempre ficticios (`@example.com`, `.test`, teléfonos `0000xxxx`).
-- **Avisos:** son internos. El CRM no envía correos, SMS ni WhatsApp.
+- **Avisos:** son internos. El sistema no envía correos, SMS ni WhatsApp.
 - **Índices:** el emulador **no** exige índices compuestos. Si agregás una consulta con `where` + `orderBy` sobre campos distintos, agregá el índice en `firestore.indexes.json`, porque en producción falla sin él.
 
 ## Usar un proyecto real (más adelante)
@@ -104,6 +104,7 @@ tests/
 1. Copiá `.env.example` a `.env.production.local` y completalo con la config web del proyecto.
 2. Corré `npx firebase login` y `npx firebase use --add` para elegir el proyecto real.
 3. Desplegá con `npx firebase deploy --only firestore:rules,firestore:indexes`.
+4. En *Authentication → Configuración → Acciones del usuario*, **desactivá la "Protección contra la enumeración de correos"**. Sin ese cambio, Auth no distingue "usuario inexistente" de "contraseña incorrecta" y no se cumple la HU-102.
 
 El seed se niega a correr fuera de los emuladores o contra un proyecto que no sea `demo-*`.
 

@@ -1,25 +1,37 @@
-import { useState } from 'react';
+import { useState, type Ref } from 'react';
 
 interface PasswordInputProps {
   id: string;
   value: string;
   onChange: (value: string) => void;
   autoComplete?: string;
+  inputRef?: Ref<HTMLInputElement>;
+  /** id del mensaje de error asociado, si lo hay. */
+  errorId?: string;
 }
 
 /** Campo de contraseña con ícono de ojo para mostrarla u ocultarla. */
-export function PasswordInput({ id, value, onChange, autoComplete = 'current-password' }: PasswordInputProps) {
+export function PasswordInput({
+  id,
+  value,
+  onChange,
+  autoComplete = 'current-password',
+  inputRef,
+  errorId,
+}: PasswordInputProps) {
   const [visible, setVisible] = useState(false);
 
   return (
     <div className="password-field">
       <input
+        ref={inputRef}
         id={id}
         type={visible ? 'text' : 'password'}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
-        required
+        aria-invalid={errorId ? true : undefined}
+        aria-describedby={errorId}
       />
       <button
         type="button"

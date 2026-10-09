@@ -128,3 +128,60 @@ describe('HU-101 Iniciar sesión', () => {
     expect(screen.queryByRole('heading', { name: 'Contactos' })).toBeNull();
   });
 });
+
+const authError = (code: string) => Object.assign(new Error(code), { code });
+
+describe('HU-102 Mensajes de error al ingresar', () => {
+  it('usuario vacío → "Ingrese su usuario."', async () => {
+    const user = userEvent.setup();
+    renderApp('/ingreso', signedOut);
+    await user.type(screen.getByLabelText('Contraseña'), 'secreta');
+    await user.click(screen.getByRole('button', { name: 'Ingresar' }));
+
+    expect(screen.getByText('Ingrese su usuario.')).toBeTruthy();
+    expect(signInWithUsername).not.toHaveBeenCalled();
+  });
+
+  it('contraseña vacía → "Ingrese su contraseña."', async () => {
+    const user = userEvent.setup();
+    renderApp('/ingreso', signedOut);
+    await user.type(screen.getByLabelText('Usuario'), 'admin{Enter}');
+
+    expect(screen.getByText('Ingrese su contraseña.')).toBeTruthy();
+    expect(signInWithUsername).not.toHaveBeenCalled();
+  });
+
+  it('ambos vacíos → muestra los dos mensajes', async () => {
+    const user = userEvent.setup();
+    renderApp('/ingreso', signedOut);
+    await user.click(screen.getByRole('button', { name: 'Ingresar' }));
+
+    expect(screen.getByText('Ingrese su usuario.')).toBeTruthy();
+    expect(screen.getByText('Ingrese su contraseña.')).toBeTruthy();
+  });
+
+  it('usuario inexistente → "El usuario ingresado no existe."', async () => {
+    const user = userEvent.setup();
+    vi.mocked(signInWithUsername).mockRejectedValue(authError('auth/user-not-found'));
+    renderApp('/ingreso', signedOut);
+    await user.type(screen.getByLabelText('Usuario'), 'noexiste');
+    await user.type(screen.getByLabelText('Contraseña'), 'secreta{Enter}');
+
+    expect(await screen.findByText('El usuario ingresado no existe.')).toBeTruthy();
+  });
+
+  it('contraseña incorrecta → mensaje, se borra la contraseña y se mantiene el usuario', async () => {
+    const user = userEvent.setup();
+    vi.mocked(signInWithUsername).mockRejectedValue(authError('auth/wrong-password'));
+    renderApp('/ingreso', signedOut);
+    const username = screen.getByLabelText('Usuario') as HTMLInputElement;
+    const password = screen.getByLabelText('Contraseña') as HTMLInputElement;
+    await user.type(username, 'admin');
+    await user.type(password, 'mala{Enter}');
+
+    expect(await screen.findByText('La contraseña es incorrecta.')).toBeTruthy();
+    expect(password.value).toBe('');
+    expect(username.value).toBe('admin');
+    expect(document.activeElement).toBe(password);
+  });
+});

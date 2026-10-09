@@ -1,0 +1,40 @@
+[
+  {
+    "caso": "Usuario vacío",
+    "mensajes": [
+      "Ingrese su usuario."
+    ]
+  },
+  {
+    "caso": "Contraseña vacía",
+    "mensajes": [
+      "Ingrese su contraseña."
+    ]
+  },
+  {
+    "caso": "Ambos vacíos",
+    "mensajes": [
+      "Ingrese su usuario.",
+      "Ingrese su contraseña."
+    ]
+  },
+  {
+    "caso": "Usuario inexistente",
+    "mensajes": [
+      "El usuario ingresado no existe."
+    ]
+  },
+  {
+    "caso": "Contraseña incorrecta",
+    "mensajes": [
+      "La contraseña es incorrecta."
+    ],
+    "usuario": "admin",
+    "contrasena": "",
+    "focoEnContrasena": true
+  },
+  {
+    "caso": "Corrige la contraseña y reintenta",
+    "url": "http://localhost:5173/contactos"
+  }
+]
