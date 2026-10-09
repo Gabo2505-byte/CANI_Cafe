@@ -76,6 +76,8 @@ Antes de dar una tarea por terminada, corré `npm run typecheck`, `npm test` y `
 - `src/<dominio>/`: código por dominio (`auth`, `contacts`, `communications`, `sales`, `products`), cada uno con su `index.ts` como API pública.
 - `src/app/`: rutas (`routes.ts` tiene `ROUTES`, `safeRedirect` y `loginPathFor`), `AppRoutes.tsx` y `ProtectedRoute.tsx`. Las pantallas nuevas que requieren sesión van envueltas en `ProtectedRoute`.
 - `src/auth/`: `AuthContext` (`useAuth()`, sin Firebase, se puede mockear en pruebas), `AuthProvider`, `LoginPage` (HU-101).
+- Errores de ingreso (HU-102): `src/auth/loginErrors.ts` traduce los códigos de Auth a mensajes por campo. Distinguir "no existe" de "contraseña incorrecta" requiere que el proyecto real tenga **desactivada** la protección contra enumeración de correos (los emuladores ya los distinguen).
+- `signInWithUsernameOn(auth, …)` no depende de config. Las pruebas contra el emulador de Auth real están en `tests/auth/`.
 - Ingreso por **usuario**: Auth usa un correo interno `${username}@usuarios.cani-crm.local` (`src/auth/username.ts`). `users.email` es el correo de contacto, no el de Auth.
 - Pruebas de pantallas: `tests/components/*.test.tsx` con `// @vitest-environment jsdom`, Testing Library y `AuthContext.Provider` con un estado falso.
 - `scripts/seed/`: seed idempotente (`seedData.ts` tiene los datos y `runSeed.ts` la lógica).

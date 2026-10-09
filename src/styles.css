@@ -85,6 +85,16 @@ button:disabled {
   opacity: 0.6;
 }
 
+.field-error {
+  margin: -0.25rem 0 0.5rem;
+  font-size: 0.85rem;
+  color: #b00020;
+}
+
+input[aria-invalid='true'] {
+  border-color: #b00020;
+}
+
 .forgot-link {
   margin-top: 0.25rem;
   font-size: 0.9rem;

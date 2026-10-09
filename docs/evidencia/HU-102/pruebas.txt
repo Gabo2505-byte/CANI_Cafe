@@ -1,0 +1,65 @@
+Evidencia de pruebas HU-102 - 2026-10-08 19:41 (America/Costa_Rica)
+
+== npm test (unitarias y pantallas) ==
+ ✓ tests/unit/loginErrors.test.ts > validateLoginInput > sin errores cuando ambos campos tienen valor 3ms
+ ✓ tests/unit/loginErrors.test.ts > validateLoginInput > usuario con solo espacios cuenta como vacío 0ms
+ ✓ tests/unit/loginErrors.test.ts > validateLoginInput > ambos vacíos devuelve los dos mensajes 0ms
+ ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/user-not-found → usuario no existe 0ms
+ ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/invalid-email → usuario no existe 0ms
+ ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/wrong-password → contraseña incorrecta 0ms
+ ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/invalid-credential → contraseña incorrecta 0ms
+ ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/invalid-login-credentials → contraseña incorrecta 0ms
+ ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > otros errores no se traducen 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > acepta rutas internas 2ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante null 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante  0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante https://otro-sitio.com 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante //otro-sitio.com 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante /\otro-sitio.com 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante /ingreso 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante /ingreso?x=1 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante / 0ms
+ ✓ tests/unit/routes.test.ts > loginPathFor > recuerda la pantalla pedida 0ms
+ ✓ tests/unit/routes.test.ts > loginPathFor > no agrega redirect para la pantalla por defecto 0ms
+ ✓ tests/unit/routes.test.ts > usernameToAuthEmail > normaliza el usuario 0ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > convierte UTC a UTC-6 al formatear 2ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > usa el día de Costa Rica, no el de UTC, cerca de medianoche 1ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > acepta Date y objetos con toDate() (Timestamp del Admin SDK) 0ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > al abrir el sistema sin sesión aparece la pantalla de ingreso 126ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > tiene Usuario, Contraseña, botón Ingresar y enlace ¿Olvidó su contraseña? 22ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > la contraseña se ve como puntos y el ojo la muestra u oculta 134ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > ingresa al dar clic en Ingresar 308ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > ingresa al presionar Enter 278ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > con credenciales correctas aparece la pantalla Contactos 293ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > si había intentado abrir otra pantalla, aparece esa pantalla 307ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > con credenciales incorrectas se queda en la pantalla de ingreso 282ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > usuario vacío → "Ingrese su usuario." 229ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > contraseña vacía → "Ingrese su contraseña." 138ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > ambos vacíos → muestra los dos mensajes 62ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > usuario inexistente → "El usuario ingresado no existe." 355ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > contraseña incorrecta → mensaje, se borra la contraseña y se mantiene el usuario 261ms
+ Test Files  4 passed (4)
+      Tests  37 passed (37)
+   Duration  8.98s (environment 45%, tests 29%, import 23%, transform 2%)
+
+== Pruebas contra emuladores (reglas, seed y Auth real) ==
+ ✓ tests/seed/seed.idempotent.test.ts > seed > se niega a correr fuera de un proyecto demo-* 2ms
+ ✓ tests/seed/seed.idempotent.test.ts > seed > es idempotente: correrlo dos veces no duplica datos 3236ms
+ ✓ tests/seed/seed.idempotent.test.ts > seed > guarda relaciones por ID válidas y fechas como Timestamp 22ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega lectura y escritura sin autenticación 183ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega a un usuario autenticado sin documento en users 92ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega a un usuario inactivo, incluso su propio perfil 96ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en users 77ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en contacts 92ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en communications 77ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en products 78ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en sales 66ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en saleProducts 74ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en stageHistory 77ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega colecciones fuera del contrato, incluso a usuarios activos 69ms
+ ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > usuario inexistente → "El usuario ingresado no existe." 5ms
+ ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > contraseña incorrecta → "La contraseña es incorrecta." 3ms
+ ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > credenciales correctas ingresan 6ms
+ Test Files  3 passed (3)
+      Tests  17 passed (17)
+   Duration  9.60s (tests 49%, import 49%, transform 1%)

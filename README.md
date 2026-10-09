@@ -56,7 +56,7 @@ El seed es idempotente: usa IDs fijos (`contact-001`, `sale-001`…), así que p
 | `npm run emulators` | Levanta los emuladores de Auth y Firestore (proyecto `demo-cani-crm`) |
 | `npm run seed` | Carga 1 admin, 5 contactos, 5 comunicaciones y 3 ventas mock en los emuladores |
 | `npm test` | Pruebas unitarias y de pantallas (Vitest + Testing Library, sin emuladores) |
-| `npm run test:emulators` | Levanta los emuladores, corre las pruebas de reglas y de seed, y los apaga (proyecto `demo-cani-crm-test`) |
+| `npm run test:emulators` | Levanta los emuladores, corre las pruebas de reglas, del seed y de Auth real, y los apaga (proyecto `demo-cani-crm-test`) |
 | `npm run typecheck` | Corre `tsc --noEmit` |
 | `npm run build` | Typecheck y build de producción |
 
@@ -104,6 +104,7 @@ tests/
 1. Copiá `.env.example` a `.env.production.local` y completalo con la config web del proyecto.
 2. Corré `npx firebase login` y `npx firebase use --add` para elegir el proyecto real.
 3. Desplegá con `npx firebase deploy --only firestore:rules,firestore:indexes`.
+4. En *Authentication → Configuración → Acciones del usuario*, **desactivá la "Protección contra la enumeración de correos"**. Sin ese cambio, Auth no distingue "usuario inexistente" de "contraseña incorrecta" y no se cumple la HU-102.
 
 El seed se niega a correr fuera de los emuladores o contra un proyecto que no sea `demo-*`.
 
