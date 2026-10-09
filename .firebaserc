@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "demo-cani-crm",
+    "test": "demo-cani-crm-test"
+  }
+}

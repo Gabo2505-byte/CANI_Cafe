@@ -1,0 +1,22 @@
+# Dependencias y builds
+node_modules/
+dist/
+coverage/
+
+# Variables locales/de producción: pueden contener la configuración real.
+# .env.development, .env.test y .env.example SÍ se versionan (sin secretos).
+*.local
+.env.local
+.env.production.local
+.env.production
+
+# Logs de Firebase Emulator Suite
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log
+ui-debug.log
+*-debug.log
+
+# Firebase (caché del CLI y datos exportados de emuladores)
+.firebase/
+.emulator-data/

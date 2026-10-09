@@ -1,0 +1,44 @@
+rules_version = '2';
+
+// CRM CANI Café — reglas de Firestore (versionadas en el repo).
+// Política HT-001: solo usuarios autenticados cuyo documento users/{uid} tenga active == true
+// pueden leer y escribir. Todo lo que no esté listado aquí queda denegado.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isActiveUser() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.active == true;
+    }
+
+    // Gabriel: plataforma, acceso, contactos y comunicaciones
+    match /users/{userId} {
+      allow read, write: if isActiveUser();
+    }
+    match /contacts/{contactId} {
+      allow read, write: if isActiveUser();
+    }
+    match /communications/{communicationId} {
+      allow read, write: if isActiveUser();
+    }
+
+    // Dylan: productos, ventas, etapas y avisos
+    match /products/{productId} {
+      allow read, write: if isActiveUser();
+    }
+    match /sales/{saleId} {
+      allow read, write: if isActiveUser();
+    }
+    match /saleProducts/{saleProductId} {
+      allow read, write: if isActiveUser();
+    }
+    match /stageHistory/{stageHistoryId} {
+      allow read, write: if isActiveUser();
+    }
+  }
+}
