@@ -20,10 +20,23 @@ No hace falta una cuenta de Firebase ni `firebase login` para trabajar en local.
 ## Primeros pasos
 
 ```bash
-git clone <url-del-repo> cani-crm
-cd cani-crm
+git clone https://github.com/Gabo2505-byte/CANI_Cafe.git
+cd CANI_Cafe
+git switch gabriel   # para ver el trabajo más reciente de Gabriel
 npm install
 ```
+
+### Ramas
+
+| Rama | Para qué |
+|---|---|
+| `main` | Rama principal. Recibe el trabajo de cada uno por Pull Request. |
+| `gabriel` | Trabajo de Gabriel: plataforma, acceso, contactos y comunicaciones. |
+| La rama de Dylan | Trabajo de Dylan: productos, ventas, etapas y avisos. |
+
+Cada uno trabaja en su rama y abre un PR a `main`, que revisa el otro. Si ya tenías el repo clonado, actualizá con `git fetch --prune` y después `git switch gabriel`.
+
+### Correr el sistema
 
 Necesitás **dos terminales**:
 
@@ -43,7 +56,9 @@ Abrí http://localhost:5173 e ingresá con el admin de prueba:
 - Usuario: `admin`
 - Contraseña: el valor de `SEED_ADMIN_PASSWORD` en `.env.development`
 
-Si ya habías corrido el seed antes de la HU-101, volvé a correrlo (`npm run seed`): el ingreso ahora es por usuario.
+Usá una ventana de incógnito si querés volver a ver la pantalla de ingreso: cerrar sesión todavía no está implementado (HU-104).
+
+Para apagar los emuladores usá `Ctrl+C` dentro de su terminal, **no cierres la terminal con la X**: en Windows eso deja un proceso `java` vivo y la próxima vez sale "port taken" (ver *Problemas comunes*).
 
 Los emuladores **no guardan datos** entre reinicios. Cada vez que los levantes, volvé a correr `npm run seed`.
 El seed es idempotente: usa IDs fijos (`contact-001`, `sale-001`…), así que podés correrlo cuantas veces quieras sin duplicar datos.
