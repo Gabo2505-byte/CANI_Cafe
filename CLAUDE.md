@@ -32,9 +32,10 @@ Escribí en español (voseo costarricense) cuando te dirijas al equipo.
 - Un cambio de contrato se acuerda con el otro antes de integrarlo.
 
 **Flujo de trabajo**
-- Una rama por historia, con el nombre de la HU (ej. `HU-101`).
-- Pull Request a `main`, que revisa la otra persona.
-- PRs pequeños, de una historia o de una parte verificable.
+- Gabriel trabaja en **una sola rama: `gabriel`**. No crees ramas por HU.
+- Dylan usa su propia rama.
+- Un commit por HU, con mensaje `HU-xxx`.
+- Para integrar, Pull Request de `gabriel` a `main`, que revisa Dylan.
 - No hagas commit directo a `main`.
 
 **Definición de terminado**
