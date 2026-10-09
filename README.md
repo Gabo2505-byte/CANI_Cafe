@@ -40,8 +40,10 @@ npm run dev
 
 Abrí http://localhost:5173 e ingresá con el admin de prueba:
 
-- Correo: `admin@cani-crm.test`
+- Usuario: `admin`
 - Contraseña: el valor de `SEED_ADMIN_PASSWORD` en `.env.development`
+
+Si ya habías corrido el seed antes de la HU-101, volvé a correrlo (`npm run seed`): el ingreso ahora es por usuario.
 
 Los emuladores **no guardan datos** entre reinicios. Cada vez que los levantes, volvé a correr `npm run seed`.
 El seed es idempotente: usa IDs fijos (`contact-001`, `sale-001`…), así que podés correrlo cuantas veces quieras sin duplicar datos.
@@ -53,7 +55,7 @@ El seed es idempotente: usa IDs fijos (`contact-001`, `sale-001`…), así que p
 | `npm run dev` | Levanta Vite con `.env.development` |
 | `npm run emulators` | Levanta los emuladores de Auth y Firestore (proyecto `demo-cani-crm`) |
 | `npm run seed` | Carga 1 admin, 5 contactos, 5 comunicaciones y 3 ventas mock en los emuladores |
-| `npm test` | Pruebas unitarias (Vitest, sin emuladores) |
+| `npm test` | Pruebas unitarias y de pantallas (Vitest + Testing Library, sin emuladores) |
 | `npm run test:emulators` | Levanta los emuladores, corre las pruebas de reglas y de seed, y los apaga (proyecto `demo-cani-crm-test`) |
 | `npm run typecheck` | Corre `tsc --noEmit` |
 | `npm run build` | Typecheck y build de producción |
@@ -78,10 +80,12 @@ src/
   shared/constants/        Nombres de colecciones
   shared/firebase/         Inicialización de Firebase + conexión a emuladores
   shared/utils/dates.ts    Formato de fechas en America/Costa_Rica
+  app/                     Rutas (routes.ts, AppRoutes.tsx) y ProtectedRoute
   auth/ contacts/ communications/   (Gabriel)
   sales/ products/                  (Dylan)
 tests/
   unit/                    Vitest puro
+  components/              Pantallas con Testing Library (jsdom)
   rules/                   Reglas contra el emulador (@firebase/rules-unit-testing)
   seed/                    Idempotencia e integridad referencial del seed
 ```

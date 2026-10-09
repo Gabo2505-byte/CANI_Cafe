@@ -1,0 +1,35 @@
+[
+  {
+    "step": "Abrir la dirección del sistema",
+    "url": "http://localhost:5173/ingreso"
+  },
+  {
+    "step": "Contraseña oculta",
+    "type": "password"
+  },
+  {
+    "step": "Clic en el ojo",
+    "type": "text"
+  },
+  {
+    "step": "Enter con credenciales correctas",
+    "url": "http://localhost:5173/contactos"
+  },
+  {
+    "step": "Clic en Ingresar con credenciales correctas",
+    "url": "http://localhost:5173/contactos"
+  },
+  {
+    "step": "Abrir /contactos sin sesión",
+    "url": "http://localhost:5173/ingreso"
+  },
+  {
+    "step": "Abrir /ventas sin sesión",
+    "url": "http://localhost:5173/ingreso?redirect=%2Fventas"
+  },
+  {
+    "step": "Credenciales incorrectas",
+    "url": "http://localhost:5173/ingreso",
+    "sigueEnIngreso": true
+  }
+]

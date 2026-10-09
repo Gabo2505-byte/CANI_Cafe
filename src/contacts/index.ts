@@ -1,2 +1,2 @@
 // Dominio contacts (responsable: Gabriel). Contrato: src/shared/types/contact.ts
-export {};
+export { ContactsPage } from './ContactsPage';

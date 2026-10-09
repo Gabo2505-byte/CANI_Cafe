@@ -1,0 +1,59 @@
+Evidencia de pruebas HU-101 - 2026-10-08 19:01 (America/Costa_Rica)
+
+== npm test (unitarias y pantallas) ==
+
+ RUN  v5.0.3 Codigo/
+
+ ✓ tests/unit/routes.test.ts > safeRedirect > acepta rutas internas 2ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante null 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante  0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante https://otro-sitio.com 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante //otro-sitio.com 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante /\otro-sitio.com 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante /ingreso 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante /ingreso?x=1 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante / 0ms
+ ✓ tests/unit/routes.test.ts > loginPathFor > recuerda la pantalla pedida 0ms
+ ✓ tests/unit/routes.test.ts > loginPathFor > no agrega redirect para la pantalla por defecto 0ms
+ ✓ tests/unit/routes.test.ts > usernameToAuthEmail > normaliza el usuario 0ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > convierte UTC a UTC-6 al formatear 2ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > usa el día de Costa Rica, no el de UTC, cerca de medianoche 1ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > acepta Date y objetos con toDate() (Timestamp del Admin SDK) 0ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > al abrir el sistema sin sesión aparece la pantalla de ingreso 142ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > tiene Usuario, Contraseña, botón Ingresar y enlace ¿Olvidó su contraseña? 23ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > la contraseña se ve como puntos y el ojo la muestra u oculta 100ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > ingresa al dar clic en Ingresar 357ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > ingresa al presionar Enter 202ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > con credenciales correctas aparece la pantalla Contactos 309ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > si había intentado abrir otra pantalla, aparece esa pantalla 310ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > con credenciales incorrectas se queda en la pantalla de ingreso 255ms
+
+ Test Files  3 passed (3)
+      Tests  23 passed (23)
+   Duration  9.38s (environment 53%, import 27%, tests 17%, transform 2%)
+
+
+
+== npm run test:emulators (reglas y seed) ==
+
+> cani-crm@0.1.0 test:emulators
+> firebase emulators:exec --only auth,firestore --project demo-cani-crm-test "vitest run --config vitest.emulators.config.ts"
+
+i  emulators: Starting emulators: auth, firestore
+i  emulators: Detected demo project ID "demo-cani-crm-test", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail.
+i  firestore: Firestore Emulator logging to firestore-debug.log
+i  Running script: vitest run --config vitest.emulators.config.ts
+
+ RUN  v5.0.3 Codigo/
+
+
+ Test Files  2 passed (2)
+      Tests  14 passed (14)
+   Duration  11.02s (tests 62%, import 37%, transform 1%)
+
+i  emulators: Shutting down emulators.
+i  firestore: Stopping Firestore Emulator
+!  Firestore Emulator has exited upon receiving signal: SIGINT
+i  auth: Stopping Authentication Emulator
+i  hub: Stopping emulator hub
+i  logging: Stopping Logging Emulator
