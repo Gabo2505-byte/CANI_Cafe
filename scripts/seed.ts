@@ -16,7 +16,7 @@ const app = initializeApp({ projectId }, 'seed');
 try {
   const summary = await runSeed(app, { adminPassword });
   console.log(`Seed listo en ${projectId}:`, summary);
-  console.log(`Admin de prueba: ${SEED_ADMIN.email} (contraseña: SEED_ADMIN_PASSWORD en .env.development)`);
+  console.log(`Admin de prueba: usuario "${SEED_ADMIN.username}" (contraseña: SEED_ADMIN_PASSWORD en .env.development)`);
 } catch (error) {
   console.error('Error en el seed:', error instanceof Error ? error.message : error);
   if (error instanceof Error && /ECONNREFUSED/.test(String(error.stack))) {

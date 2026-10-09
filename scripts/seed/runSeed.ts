@@ -1,6 +1,7 @@
 import type { App } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
+import { usernameToAuthEmail } from '../../src/auth/username';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
 import {
   SEED_ADMIN,
@@ -30,7 +31,9 @@ export function assertEmulatorTarget(projectId: string): void {
 
 async function ensureAdminAuthUser(app: App, password: string): Promise<void> {
   const auth = getAuth(app);
-  const profile = { email: SEED_ADMIN.email, password, displayName: SEED_ADMIN.username, emailVerified: true };
+  // En Auth se ingresa con el usuario; ver src/auth/username.ts
+  const email = usernameToAuthEmail(SEED_ADMIN.username);
+  const profile = { email, password, displayName: SEED_ADMIN.username, emailVerified: true };
   try {
     await auth.getUser(SEED_ADMIN.uid);
     await auth.updateUser(SEED_ADMIN.uid, profile);
