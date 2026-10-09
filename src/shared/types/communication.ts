@@ -1,6 +1,6 @@
 import type { Timestamp } from 'firebase/firestore';
 
-// Medio por el que ocurrió la comunicación (solo registro; el CRM no envía nada).
+// Medio por el que ocurrió la comunicación (solo registro; el sistema no envía nada).
 // Valores iniciales propuestos en HT-001; pendientes de validar.
 export const COMMUNICATION_MEDIUMS = ['llamada', 'correo', 'whatsapp', 'reunion', 'visita', 'otro'] as const;
 export type CommunicationMedium = (typeof COMMUNICATION_MEDIUMS)[number];

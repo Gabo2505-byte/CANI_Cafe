@@ -46,7 +46,7 @@ export function LoginPage() {
   return (
     <main className="login">
       <form className="card" onSubmit={handleSubmit} noValidate>
-        <h1>CRM CANI Café</h1>
+        <h1>CANI Café</h1>
         <label htmlFor="username">Usuario</label>
         <input
           id="username"

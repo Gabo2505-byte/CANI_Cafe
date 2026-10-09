@@ -1,6 +1,8 @@
 export const ROUTES = {
   login: '/ingreso',
   contacts: '/contactos',
+  salesBoard: '/posibles-ventas',
+  alerts: '/avisos',
   forgotPassword: '/recuperar-contrasena',
 } as const;
 

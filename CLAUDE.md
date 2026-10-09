@@ -1,6 +1,6 @@
-# CLAUDE.md — CRM CANI Café
+# CLAUDE.md — CANI Café (sistema interno)
 
-CRM interno de CANI Café. Trabajan dos personas en paralelo:
+Sistema interno de CANI Café (no es un CRM; no usar ese término). Trabajan dos personas en paralelo:
 - **Gabriel:** plataforma, acceso (`auth`), `contacts` y `communications`.
 - **Dylan:** `products`, `sales`, etapas (`stageHistory`) y avisos.
 
@@ -74,7 +74,15 @@ Antes de dar una tarea por terminada, corré `npm run typecheck`, `npm test` y `
 - `src/shared/firebase/config.ts`: `auth`, `db` y la conexión a los emuladores.
 - `src/shared/utils/dates.ts`: `formatDateTimeCR`, `formatDateCR`, `toCostaRicaDateKey`.
 - `src/<dominio>/`: código por dominio (`auth`, `contacts`, `communications`, `sales`, `products`), cada uno con su `index.ts` como API pública.
-- `src/app/`: rutas (`routes.ts` tiene `ROUTES`, `safeRedirect` y `loginPathFor`), `AppRoutes.tsx` y `ProtectedRoute.tsx`. Las pantallas nuevas que requieren sesión van envueltas en `ProtectedRoute`.
+- `src/app/`: rutas (`routes.ts` tiene `ROUTES`, `safeRedirect` y `loginPathFor`), `AppRoutes.tsx`, `ProtectedRoute.tsx`, `AppLayout.tsx` y `TopBar.tsx` (HU-103).
+- Pantallas internas: van como rutas hijas del layout protegido en `AppRoutes.tsx`, así reciben la barra superior y piden sesión automáticamente.
+- Rutas acordadas:
+  - `/contactos` (Gabriel)
+  - `/posibles-ventas` → `src/sales/SalesBoardPage.tsx` (Dylan, HU-305)
+  - `/avisos` → `src/sales/AlertsPage.tsx` (Dylan, HU-316)
+
+  Las de Dylan por ahora son placeholders con solo el título.
+- La interfaz **nunca** dice "CRM": el sistema se llama "CANI Café". Los IDs internos `demo-cani-crm` no se muestran en pantalla.
 - `src/auth/`: `AuthContext` (`useAuth()`, sin Firebase, se puede mockear en pruebas), `AuthProvider`, `LoginPage` (HU-101).
 - Errores de ingreso (HU-102): `src/auth/loginErrors.ts` traduce los códigos de Auth a mensajes por campo. Distinguir "no existe" de "contraseña incorrecta" requiere que el proyecto real tenga **desactivada** la protección contra enumeración de correos (los emuladores ya los distinguen).
 - `signInWithUsernameOn(auth, …)` no depende de config. Las pruebas contra el emulador de Auth real están en `tests/auth/`.

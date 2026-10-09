@@ -1,6 +1,6 @@
-# CRM CANI Café
+# CANI Café — Sistema interno
 
-CRM interno de CANI Café. React + Vite + TypeScript sobre Firebase (Firestore + Auth).
+Sistema interno de CANI Café. React + Vite + TypeScript sobre Firebase (Firestore + Auth).
 El desarrollo y las pruebas corren 100 % sobre **Firebase Emulator Suite**, con proyectos `demo-*`.
 No hace falta una cuenta de Firebase ni `firebase login` para trabajar en local.
 
@@ -96,7 +96,7 @@ tests/
 - **Fechas:** se guardan como `Timestamp` de Firestore y se muestran con `src/shared/utils/dates.ts` (hora de Costa Rica).
 - **Relaciones:** se guardan por ID (`contactId`, `saleId`, `userId`), nunca copiando texto.
 - **Datos de prueba:** siempre ficticios (`@example.com`, `.test`, teléfonos `0000xxxx`).
-- **Avisos:** son internos. El CRM no envía correos, SMS ni WhatsApp.
+- **Avisos:** son internos. El sistema no envía correos, SMS ni WhatsApp.
 - **Índices:** el emulador **no** exige índices compuestos. Si agregás una consulta con `where` + `orderBy` sobre campos distintos, agregá el índice en `firestore.indexes.json`, porque en producción falla sin él.
 
 ## Usar un proyecto real (más adelante)

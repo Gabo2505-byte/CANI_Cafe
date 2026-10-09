@@ -1,0 +1,87 @@
+[
+  {
+    "caso": "Tras ingresar",
+    "url": "http://localhost:5173/contactos",
+    "titulo": "Contactos",
+    "opcionResaltada": [
+      "Contactos"
+    ],
+    "barra": [
+      "CANI Café",
+      "Contactos",
+      "Posibles ventas",
+      "Avisos",
+      "Cerrar sesión"
+    ],
+    "barraArriba": 0
+  },
+  {
+    "caso": "Clic en Posibles ventas",
+    "url": "http://localhost:5173/posibles-ventas",
+    "titulo": "Posibles ventas",
+    "opcionResaltada": [
+      "Posibles ventas"
+    ],
+    "barra": [
+      "CANI Café",
+      "Contactos",
+      "Posibles ventas",
+      "Avisos",
+      "Cerrar sesión"
+    ],
+    "barraArriba": 0
+  },
+  {
+    "caso": "Clic en Avisos",
+    "url": "http://localhost:5173/avisos",
+    "titulo": "Avisos",
+    "opcionResaltada": [
+      "Avisos"
+    ],
+    "barra": [
+      "CANI Café",
+      "Contactos",
+      "Posibles ventas",
+      "Avisos",
+      "Cerrar sesión"
+    ],
+    "barraArriba": 0
+  },
+  {
+    "caso": "Clic en CANI Café (desde Avisos)",
+    "url": "http://localhost:5173/contactos",
+    "titulo": "Contactos",
+    "opcionResaltada": [
+      "Contactos"
+    ],
+    "barra": [
+      "CANI Café",
+      "Contactos",
+      "Posibles ventas",
+      "Avisos",
+      "Cerrar sesión"
+    ],
+    "barraArriba": 0
+  },
+  {
+    "caso": "Clic en Contactos (desde Avisos)",
+    "url": "http://localhost:5173/contactos",
+    "titulo": "Contactos",
+    "opcionResaltada": [
+      "Contactos"
+    ],
+    "barra": [
+      "CANI Café",
+      "Contactos",
+      "Posibles ventas",
+      "Avisos",
+      "Cerrar sesión"
+    ],
+    "barraArriba": 0
+  },
+  {
+    "caso": "La página no menciona \"CRM\"",
+    "tituloPestana": "CANI Café",
+    "contieneCRM": false
+  }
+]
