@@ -17,6 +17,10 @@ firestore-debug.log
 ui-debug.log
 *-debug.log
 
+# Configuración local del asistente (no es parte del proyecto)
+.claude/
+CLAUDE.md
+
 # Firebase (caché del CLI y datos exportados de emuladores)
 .firebase/
 .emulator-data/
