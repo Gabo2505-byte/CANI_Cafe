@@ -1,0 +1,48 @@
+[
+  {
+    "caso": "Escribir 110 / 110 / 260 caracteres",
+    "nombre": 100,
+    "correo": 100,
+    "direccion": 250
+  },
+  {
+    "caso": "Correo \"ana @dominio\"",
+    "mensajes": [
+      "Ingrese un correo electrónico válido."
+    ]
+  },
+  {
+    "caso": "Correo repetido (con mayúsculas)",
+    "mensajes": [
+      "Ya existe un contacto con este correo electrónico. Ver contacto"
+    ]
+  },
+  {
+    "caso": "Clic en \"Ver contacto\"",
+    "url": "/contactos/contact-001",
+    "ficha": "Ana Prueba Mora"
+  },
+  {
+    "caso": "Teléfono repetido CR 0000-0002",
+    "mensajes": [
+      "Ya existe un contacto con este teléfono. Ver contacto"
+    ],
+    "enlace": "/contactos/contact-002"
+  },
+  {
+    "caso": "Mismo número en Nicaragua",
+    "resultado": "guardado",
+    "telefono": "+505 00000002"
+  },
+  {
+    "caso": "Correo (contact-003) y teléfono (contact-001) repetidos",
+    "mensajes": [
+      "Ya existe un contacto con este correo electrónico. Ver contacto",
+      "Ya existe un contacto con este teléfono. Ver contacto"
+    ],
+    "enlaces": [
+      "/contactos/contact-003",
+      "/contactos/contact-001"
+    ]
+  }
+]

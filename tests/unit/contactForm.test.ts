@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   CONTACT_MESSAGES,
+  duplicateErrors,
   EMPTY_CONTACT_FORM,
+  isValidEmail,
   isContactFormDirty,
   normalizePhone,
   toNewContactInput,
@@ -47,6 +49,47 @@ describe('HU-201 validación del formulario de contacto', () => {
       phoneCountry: 'US',
       phoneNumber: '3055551234',
     });
+  });
+});
+
+describe('HU-203 validaciones', () => {
+  it('textos exactos', () => {
+    expect(CONTACT_MESSAGES.invalidEmail).toBe('Ingrese un correo electrónico válido.');
+    expect(CONTACT_MESSAGES.duplicateEmail).toBe('Ya existe un contacto con este correo electrónico.');
+    expect(CONTACT_MESSAGES.duplicatePhone).toBe('Ya existe un contacto con este teléfono.');
+    expect(CONTACT_MESSAGES.viewContact).toBe('Ver contacto');
+  });
+
+  it('formato de correo nombre@dominio.com, sin espacios', () => {
+    expect(isValidEmail('nombre@dominio.com')).toBe(true);
+    expect(isValidEmail('n.a+x@sub.dominio.cr')).toBe(true);
+    for (const bad of ['nombre', 'nombre@dominio', 'nom bre@dominio.com', 'nombre@do minio.com', '@dominio.com', 'a@@b.com']) {
+      expect(isValidEmail(bad)).toBe(false);
+    }
+  });
+
+  it('largos máximos: nombre y correo 100, dirección 250', () => {
+    const errors = validateContactForm(
+      form({ fullName: 'n'.repeat(101), email: `${'e'.repeat(95)}@x.com`, address: 'd'.repeat(251) }),
+    );
+    expect(errors.fullName).toBe(CONTACT_MESSAGES.fullNameTooLong);
+    expect(errors.email).toBe(CONTACT_MESSAGES.emailTooLong);
+    expect(errors.address).toBe(CONTACT_MESSAGES.addressTooLong);
+    expect(
+      validateContactForm(form({ fullName: 'n'.repeat(100), email: 'a@b.co', address: 'd'.repeat(250) })),
+    ).toEqual({});
+  });
+
+  it('duplicateErrors arma los mensajes de repetido', () => {
+    expect(duplicateErrors({ email: 'x', phone: 'y' })).toEqual({
+      email: CONTACT_MESSAGES.duplicateEmail,
+      phone: CONTACT_MESSAGES.duplicatePhone,
+    });
+    expect(duplicateErrors({})).toEqual({});
+  });
+
+  it('el correo se guarda en minúsculas y sin espacios alrededor', () => {
+    expect(toNewContactInput(form({ fullName: 'A', email: '  Ana@Example.COM ' })).email).toBe('ana@example.com');
   });
 });
 

@@ -118,7 +118,13 @@ button:disabled {
   color: #b00020;
 }
 
-input[aria-invalid='true'] {
+.field-error-link {
+  font-weight: 600;
+  color: #6b3e26;
+}
+
+input[aria-invalid='true'],
+textarea[aria-invalid='true'] {
   border-color: #b00020;
 }
 

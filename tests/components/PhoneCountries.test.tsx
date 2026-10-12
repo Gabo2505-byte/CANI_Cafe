@@ -9,13 +9,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppRoutes } from '../../src/app/AppRoutes';
 import { AuthContext } from '../../src/auth/AuthContext';
 import { SessionProvider } from '../../src/auth/SessionContext';
-import { createContact, getContact } from '../../src/contacts/contactsApi';
+import { createContact, findDuplicateContacts, getContact } from '../../src/contacts/contactsApi';
 import type { AuthState } from '../../src/auth/useAuthUser';
 import type { Contact } from '../../src/shared/types';
 
 vi.mock('../../src/auth/signInWithUsername', () => ({ signInWithUsername: vi.fn() }));
 vi.mock('../../src/auth/signOutUser', () => ({ signOutUser: vi.fn() }));
-vi.mock('../../src/contacts/contactsApi', () => ({ createContact: vi.fn(), getContact: vi.fn() }));
+vi.mock('../../src/contacts/contactsApi', () => ({
+  createContact: vi.fn(),
+  getContact: vi.fn(),
+  findDuplicateContacts: vi.fn(),
+}));
 
 const active: AuthState = {
   status: 'active',
@@ -68,6 +72,7 @@ async function fillAndSave(country: { search: string; label: string } | null, nu
 const US = { search: 'estados', label: 'Estados Unidos (+1)' };
 
 beforeEach(() => {
+  vi.mocked(findDuplicateContacts).mockReset().mockResolvedValue({});
   vi.mocked(createContact).mockReset().mockResolvedValue('c1');
   vi.mocked(getContact).mockReset();
 });

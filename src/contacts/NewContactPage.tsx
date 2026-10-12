@@ -1,25 +1,47 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { contactPath, ROUTES } from '../app/routes';
 import type { NoticeState } from '../shared/hooks/useLocationNotice';
 import { PhoneField } from '../shared/phone/PhoneField';
 import { ConfirmDialog } from '../shared/ui/ConfirmDialog';
-import { createContact } from './contactsApi';
+import { createContact, findDuplicateContacts } from './contactsApi';
 import {
+  CONTACT_LIMITS,
   CONTACT_MESSAGES,
+  duplicateErrors,
   EMPTY_CONTACT_FORM,
   isContactFormDirty,
   toNewContactInput,
   validateContactForm,
+  type ContactDuplicates,
   type ContactFormErrors,
   type ContactFormValues,
 } from './contactForm';
 
-/** HU-201: registrar un nuevo contacto. HU-202: teléfono con país. */
+/** Mensaje de un campo; si es un dato repetido, con el enlace "Ver contacto" (HU-203). */
+function FieldError({ id, message, duplicateOf }: { id: string; message?: string; duplicateOf?: string }) {
+  if (!message) return null;
+  return (
+    <p id={id} className="field-error" role="alert">
+      {message}
+      {duplicateOf && (
+        <>
+          {' '}
+          <Link to={contactPath(duplicateOf)} className="field-error-link">
+            {CONTACT_MESSAGES.viewContact}
+          </Link>
+        </>
+      )}
+    </p>
+  );
+}
+
+/** HU-201: registrar un nuevo contacto. HU-202: teléfono con país. HU-203: validaciones y repetidos. */
 export function NewContactPage() {
   const navigate = useNavigate();
   const [values, setValues] = useState<ContactFormValues>(EMPTY_CONTACT_FORM);
   const [errors, setErrors] = useState<ContactFormErrors>({});
+  const [duplicates, setDuplicates] = useState<ContactDuplicates>({});
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [confirmLeave, setConfirmLeave] = useState(false);
@@ -31,12 +53,22 @@ export function NewContactPage() {
     event.preventDefault();
     const formErrors = validateContactForm(values);
     setErrors(formErrors);
+    setDuplicates({});
     setSaveError(null);
     if (Object.keys(formErrors).length > 0) return;
 
     setSaving(true);
     try {
-      const id = await createContact(toNewContactInput(values));
+      const input = toNewContactInput(values);
+      // HU-203: mientras haya un correo o teléfono repetido, el contacto no se guarda.
+      const found = await findDuplicateContacts(input);
+      if (found.email || found.phone) {
+        setDuplicates(found);
+        setErrors(duplicateErrors(found));
+        setSaving(false);
+        return;
+      }
+      const id = await createContact(input);
       const state: NoticeState = { notice: CONTACT_MESSAGES.created };
       // replace: "Atrás" desde la ficha no vuelve al formulario ya enviado.
       navigate(contactPath(id), { replace: true, state });
@@ -62,16 +94,13 @@ export function NewContactPage() {
           id="fullName"
           value={values.fullName}
           onChange={set('fullName')}
+          maxLength={CONTACT_LIMITS.fullName}
           autoComplete="off"
           aria-required="true"
           aria-invalid={errors.fullName ? true : undefined}
           aria-describedby={errors.fullName ? 'fullName-error' : undefined}
         />
-        {errors.fullName && (
-          <p id="fullName-error" className="field-error" role="alert">
-            {errors.fullName}
-          </p>
-        )}
+        <FieldError id="fullName-error" message={errors.fullName} />
 
         <p className="form-hint" id="contact-method-hint">
           Ingrese al menos uno: correo electrónico o teléfono.
@@ -82,10 +111,13 @@ export function NewContactPage() {
           type="email"
           value={values.email}
           onChange={set('email')}
+          maxLength={CONTACT_LIMITS.email}
+          placeholder="nombre@dominio.com"
           autoComplete="off"
-          aria-describedby="contact-method-hint"
-          aria-invalid={errors.emailOrPhone ? true : undefined}
+          aria-describedby={errors.email ? 'email-error' : 'contact-method-hint'}
+          aria-invalid={errors.email || errors.emailOrPhone ? true : undefined}
         />
+        <FieldError id="email-error" message={errors.email} duplicateOf={duplicates.email} />
 
         <label htmlFor="phone">Teléfono</label>
         <PhoneField
@@ -97,21 +129,22 @@ export function NewContactPage() {
           invalid={Boolean(errors.emailOrPhone || errors.phone)}
           describedBy={errors.phone ? 'phone-error' : 'contact-method-hint'}
         />
-        {errors.phone && (
-          <p id="phone-error" className="field-error" role="alert">
-            {errors.phone}
-          </p>
-        )}
-        {errors.emailOrPhone && (
-          <p className="field-error" role="alert">
-            {errors.emailOrPhone}
-          </p>
-        )}
+        <FieldError id="phone-error" message={errors.phone} duplicateOf={duplicates.phone} />
+        <FieldError id="emailOrPhone-error" message={errors.emailOrPhone} />
 
         <label htmlFor="address">
           Dirección <span className="optional">(opcional)</span>
         </label>
-        <textarea id="address" rows={2} value={values.address} onChange={set('address')} />
+        <textarea
+          id="address"
+          rows={2}
+          value={values.address}
+          onChange={set('address')}
+          maxLength={CONTACT_LIMITS.address}
+          aria-invalid={errors.address ? true : undefined}
+          aria-describedby={errors.address ? 'address-error' : undefined}
+        />
+        <FieldError id="address-error" message={errors.address} />
 
         {saveError && (
           <p className="field-error" role="alert">
