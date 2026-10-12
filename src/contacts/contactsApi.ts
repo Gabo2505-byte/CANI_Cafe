@@ -1,0 +1,12 @@
+// Funciones de contactos ligadas a la instancia de Firestore de la app (se mockean en las pruebas de pantallas).
+import { db } from '../shared/firebase/config';
+import type { Contact } from '../shared/types';
+import { createContactIn, getContactIn, type NewContactInput } from './contactsRepository';
+
+export function createContact(input: NewContactInput): Promise<string> {
+  return createContactIn(db, input);
+}
+
+export function getContact(id: string): Promise<Contact | null> {
+  return getContactIn(db, id);
+}

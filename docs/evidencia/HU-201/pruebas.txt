@@ -1,0 +1,119 @@
+Evidencia de pruebas HU-201 - 2026-10-12 12:16 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== npm test (unitarias y pantallas) ==
+ ✓ tests/unit/loginErrors.test.ts > validateLoginInput > sin errores cuando ambos campos tienen valor 5ms
+ ✓ tests/unit/loginErrors.test.ts > validateLoginInput > usuario con solo espacios cuenta como vacío 1ms
+ ✓ tests/unit/loginErrors.test.ts > validateLoginInput > ambos vacíos devuelve los dos mensajes 1ms
+ ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/user-not-found → usuario no existe 1ms
+ ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/invalid-email → usuario no existe 0ms
+ ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/wrong-password → contraseña incorrecta 0ms
+ ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/invalid-credential → contraseña incorrecta 0ms
+ ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/invalid-login-credentials → contraseña incorrecta 0ms
+ ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > otros errores no se traducen 1ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > acepta rutas internas 4ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante null 1ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante  0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante https://otro-sitio.com 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante //otro-sitio.com 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante /\otro-sitio.com 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante /ingreso 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante /ingreso?x=1 0ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante / 0ms
+ ✓ tests/unit/routes.test.ts > loginPathFor > recuerda la pantalla pedida 1ms
+ ✓ tests/unit/routes.test.ts > loginPathFor > no agrega redirect para la pantalla por defecto 0ms
+ ✓ tests/unit/routes.test.ts > usernameToAuthEmail > normaliza el usuario 0ms
+ ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > el nombre completo es obligatorio 5ms
+ ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > pide al menos correo o teléfono 1ms
+ ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > con solo correo, o solo teléfono, es válido; la dirección es opcional 0ms
+ ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > un teléfono sin dígitos no cuenta 0ms
+ ✓ tests/unit/contactForm.test.ts > isContactFormDirty > detecta si se escribió algo 1ms
+ ✓ tests/unit/contactForm.test.ts > toNewContactInput > guarda null en lo no llenado y el teléfono como dígitos de Costa Rica 0ms
+ ✓ tests/unit/contactForm.test.ts > toNewContactInput > normalizePhone deja solo dígitos 0ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > convierte UTC a UTC-6 al formatear 3ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > usa el día de Costa Rica, no el de UTC, cerca de medianoche 1ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > acepta Date y objetos con toDate() (Timestamp del Admin SDK) 0ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > no cierra a los 29:59 y sí al cumplir 30 minutos sin actividad 31ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > un clic reinicia el contador 7ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > escribir (teclado) reinicia el contador 5ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > mover el mouse o hacer scroll NO cuenta como actividad 5ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > la actividad en otra pestaña (localStorage compartido) también cuenta 4ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > al abrir con una sesión recordada y vencida, se cierra de inmediato 2ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > sin sesión no se cierra nada, pero los clics en el ingreso sí se registran 3ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la pantalla /contactos tiene la barra arriba 62ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la pantalla /posibles-ventas tiene la barra arriba 9ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la pantalla /avisos tiene la barra arriba 9ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la pantalla de ingreso no lleva barra (no es pantalla interna) 18ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > al abrir el sistema sin sesión aparece la pantalla de ingreso 206ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > tiene Usuario, Contraseña, botón Ingresar y enlace ¿Olvidó su contraseña? 34ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > abrir /contactos sin sesión → ingreso con "Debe iniciar sesión para acceder al sistema." 223ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > abrir /posibles-ventas sin sesión → ingreso con "Debe iniciar sesión para acceder al sistema." 34ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > abrir /avisos sin sesión → ingreso con "Debe iniciar sesión para acceder al sistema." 22ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > abrir la dirección raíz "/" muestra el ingreso sin ese mensaje (HU-101) 19ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > el mensaje no reaparece al recargar (se borra del historial) 11ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > muestra de izquierda a derecha: CANI Café, Contactos, Posibles ventas, Avisos y Cerrar sesión 133ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > a los 30 min sin actividad la sesión se cierra sola y aparece el ingreso con el mensaje de inactividad 33ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > una sesión recordada pero vencida no muestra la pantalla interna ni un instante 14ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > el aviso de inactividad no se repite después de mostrarse (ej. "Atrás" o recargar) 20ms
+ ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > clic en "Cerrar sesión" llama a signOut sin confirmación y lleva al ingreso con el mensaje 304ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > en Contactos está el botón "Nuevo contacto", arriba a la derecha junto al título, y abre el formulario 266ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > el formulario pide cuatro datos: nombre completo, correo, teléfono (+506) y dirección 30ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > clic en "Contactos" abre esa pantalla y la opción queda resaltada 133ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > clic en "Posibles ventas" abre esa pantalla y la opción queda resaltada 86ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > la contraseña se ve como puntos y el ojo la muestra u oculta 137ms
+ ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > el botón se desactiva mientras se cierra la sesión (evita doble clic) 105ms
+ ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > si signOut falla, muestra el error y no navega 69ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > clic en "Avisos" abre esa pantalla y la opción queda resaltada 60ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > clic en "CANI Café" abre la pantalla Contactos 74ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la barra tiene el botón "Cerrar sesión" 9ms
+ ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > el mensaje se borra del historial: no reaparece al recargar 69ms
+ ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > después de cerrar sesión, "Atrás" no vuelve a las pantallas internas 129ms
+ ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > una ruta interna sin sesión redirige al ingreso (sin mostrar la pantalla) 10ms
+ ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > mientras se resuelve la sesión solo muestra "Cargando…", sin datos internos 3ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > ingresa al dar clic en Ingresar 341ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > el nombre completo es obligatorio 366ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > ingresa al presionar Enter 262ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > pide al menos correo o teléfono 447ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > con credenciales correctas aparece la pantalla Contactos 291ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > si había intentado abrir otra pantalla, aparece esa pantalla 341ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > con nombre y solo teléfono se guarda (correo y dirección quedan en null) 485ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > con credenciales incorrectas se queda en la pantalla de ingreso 237ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > usuario vacío → "Ingrese su usuario." 231ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > contraseña vacía → "Ingrese su contraseña." 138ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > ambos vacíos → muestra los dos mensajes 63ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > al guardar aparece la ficha con "Contacto registrado correctamente." y clasificado como "Persona interesada" 719ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > usuario inexistente → "El usuario ingresado no existe." 341ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > contraseña incorrecta → mensaje, se borra la contraseña y se mantiene el usuario 264ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > si falla el guardado, muestra un error y se queda en el formulario 456ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > "Cancelar" después de escribir pregunta "¿Desea salir sin guardar? Los datos ingresados se perderán." 310ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > "Cancelar" sin haber escrito nada vuelve directamente a la lista de contactos 46ms
+ Test Files  10 passed (10)
+      Tests  85 passed (85)
+   Duration  13.32s (environment 60%, import 25%, tests 12%, transform 2%, setup 1%)
+
+== Pruebas contra emuladores ==
+ ✓ tests/seed/seed.idempotent.test.ts > seed > se niega a correr fuera de un proyecto demo-* 2ms
+ ✓ tests/seed/seed.idempotent.test.ts > seed > es idempotente: correrlo dos veces no duplica datos 3236ms
+ ✓ tests/seed/seed.idempotent.test.ts > seed > guarda relaciones por ID válidas y fechas como Timestamp 23ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega lectura y escritura sin autenticación 161ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega a un usuario autenticado sin documento en users 91ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega a un usuario inactivo, incluso su propio perfil 62ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en users 70ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en contacts 77ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en communications 63ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en products 62ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en sales 76ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en saleProducts 62ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en stageHistory 93ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega colecciones fuera del contrato, incluso a usuarios activos 50ms
+ ✓ tests/contacts/createContact.emulator.test.ts > HU-201 registrar contacto en Firestore > un usuario activo registra el contacto con clasificación "persona_interesada", nulls y Timestamp 82ms
+ ✓ tests/contacts/createContact.emulator.test.ts > HU-201 registrar contacto en Firestore > sin sesión no se puede registrar un contacto 28ms
+ ✓ tests/auth/signOut.emulator.test.ts > HU-104 contra emuladores > con sesión activa se puede leer contacts; después de cerrar sesión la lectura es rechazada 71ms
+ ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > usuario inexistente → "El usuario ingresado no existe." 5ms
+ ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > contraseña incorrecta → "La contraseña es incorrecta." 3ms
+ ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > credenciales correctas ingresan 6ms
+ Test Files  5 passed (5)
+      Tests  20 passed (20)
+   Duration  11.05s (import 50%, tests 48%, transform 1%)

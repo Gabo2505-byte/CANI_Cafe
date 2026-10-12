@@ -1,0 +1,84 @@
+[
+  {
+    "caso": "Botón \"Nuevo contacto\" en Contactos",
+    "x": 846,
+    "y": 93,
+    "anchoPantalla": 1000,
+    "alaDerecha": true,
+    "arriba": true
+  },
+  {
+    "caso": "Clic → formulario",
+    "url": "/contactos/nuevo",
+    "campos": 4,
+    "etiquetas": [
+      "Nombre completo *",
+      "Correo electrónico",
+      "Teléfono",
+      "Dirección (opcional)"
+    ]
+  },
+  {
+    "caso": "Guardar vacío",
+    "mensajes": [
+      "Ingrese el nombre completo.",
+      "Ingrese un correo electrónico o un teléfono."
+    ]
+  },
+  {
+    "caso": "Cancelar después de escribir",
+    "pregunta": "¿Desea salir sin guardar? Los datos ingresados se perderán.\n\nSeguir editando\nSalir sin guardar"
+  },
+  {
+    "caso": "Guardar (nombre + teléfono)",
+    "url": "/contactos/G91IdCB3QoYhvPrpw09p",
+    "mensaje": "Contacto registrado correctamente.",
+    "ficha": "Contacto registrado correctamente.\n\nPersona Prueba Evidencia\nCorreo electrónico\n—\nTeléfono\n+506 00000042\nDirección\n—\nClasificación\nPersona interesada\nRegistrado\n12 oct 2026, 12:15 p. m."
+  },
+  {
+    "caso": "Documento guardado en Firestore",
+    "id": "G91IdCB3QoYhvPrpw09p",
+    "fields": {
+      "fullName": {
+        "stringValue": "Persona Prueba Evidencia"
+      },
+      "email": {
+        "nullValue": null
+      },
+      "phoneCountry": {
+        "stringValue": "CR"
+      },
+      "phoneNumber": {
+        "stringValue": "00000042"
+      },
+      "address": {
+        "nullValue": null
+      },
+      "classification": {
+        "stringValue": "persona_interesada"
+      },
+      "status": {
+        "stringValue": "activo"
+      },
+      "origin": {
+        "nullValue": null
+      },
+      "createdAt": {
+        "timestampValue": "2026-10-12T18:15:33.748Z"
+      }
+    }
+  },
+  {
+    "caso": "Recargar la ficha",
+    "mensaje": null
+  },
+  {
+    "caso": "Cancelar sin escribir",
+    "url": "/contactos",
+    "huboPregunta": false
+  },
+  {
+    "caso": "Cancelar con datos → Salir sin guardar",
+    "url": "/contactos"
+  }
+]
