@@ -2,6 +2,7 @@
 // IDs y fechas fijos para que el seed sea idempotente y determinista.
 import type { Timestamp } from 'firebase/firestore';
 import type { Communication, Contact, Sale, User } from '../../src/shared/types';
+import { toSortKey } from '../../src/shared/utils/text';
 
 /** Documento listo para escribir: sin `id` (va como id del doc) y con Date en lugar de Timestamp. */
 type ToDate<V> = V extends Timestamp ? Date : V;
@@ -21,7 +22,8 @@ export const seedUsers: Seeded<User>[] = [
   { id: SEED_ADMIN.uid, data: { username: SEED_ADMIN.username, email: SEED_ADMIN.email, active: true } },
 ];
 
-export const seedContacts: Seeded<Contact>[] = [
+// nameSortKey (HU-204) se calcula a partir de fullName, igual que al guardar desde la app.
+const seedContactsBase: Seeded<Omit<Contact, 'nameSortKey'>>[] = [
   {
     id: 'contact-001',
     data: {
@@ -29,7 +31,8 @@ export const seedContacts: Seeded<Contact>[] = [
       email: 'ana.prueba@example.com',
       phoneCountry: 'CR',
       phoneNumber: '00000001',
-      classification: 'prospecto',
+      address: 'Dirección de prueba 1, San José',
+      classification: 'persona_interesada',
       status: 'activo',
       origin: 'redes_sociales',
       createdAt: cr('2026-09-01T09:00:00'),
@@ -42,6 +45,7 @@ export const seedContacts: Seeded<Contact>[] = [
       email: 'bruno.ficticio@example.com',
       phoneCountry: 'CR',
       phoneNumber: '00000002',
+      address: 'Dirección de prueba 2, Heredia',
       classification: 'cliente',
       status: 'activo',
       origin: 'referido',
@@ -53,8 +57,10 @@ export const seedContacts: Seeded<Contact>[] = [
     data: {
       fullName: 'Carla Demo Vargas',
       email: 'carla.demo@example.com',
-      phoneCountry: 'CR',
-      phoneNumber: '00000003',
+      // Solo correo: sin teléfono (permitido, HU-201)
+      phoneCountry: null,
+      phoneNumber: null,
+      address: null,
       classification: 'distribuidor',
       status: 'activo',
       origin: 'feria',
@@ -66,8 +72,10 @@ export const seedContacts: Seeded<Contact>[] = [
     data: {
       fullName: 'Diego Ejemplo Rojas',
       email: 'diego.ejemplo@example.com',
-      phoneCountry: 'CR',
-      phoneNumber: '00000004',
+      // Teléfono de otro país (HU-202): número ficticio de la serie 555.
+      phoneCountry: 'US',
+      phoneNumber: '3055550104',
+      address: 'Dirección de prueba 4, Cartago',
       classification: 'cliente',
       status: 'inactivo',
       origin: 'sitio_web',
@@ -78,16 +86,23 @@ export const seedContacts: Seeded<Contact>[] = [
     id: 'contact-005',
     data: {
       fullName: 'Elena Muestra Castro',
-      email: 'elena.muestra@example.com',
+      // Solo teléfono: sin correo (permitido, HU-201)
+      email: null,
       phoneCountry: 'CR',
       phoneNumber: '00000005',
-      classification: 'prospecto',
+      address: null,
+      classification: 'persona_interesada',
       status: 'activo',
-      origin: 'visita',
+      origin: null,
       createdAt: cr('2026-09-10T16:45:00'),
     },
   },
 ];
+
+export const seedContacts: Seeded<Contact>[] = seedContactsBase.map(({ id, data }) => ({
+  id,
+  data: { ...data, nameSortKey: toSortKey(data.fullName) },
+}));
 
 // MOCK: las ventas las define Dylan. Se ajustan cuando cierre su contrato de etapas.
 export const seedSales: Seeded<Sale>[] = [

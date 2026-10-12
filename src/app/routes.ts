@@ -1,10 +1,17 @@
 export const ROUTES = {
   login: '/ingreso',
   contacts: '/contactos',
+  newContact: '/contactos/nuevo',
+  contactDetail: '/contactos/:contactId',
   salesBoard: '/posibles-ventas',
   alerts: '/avisos',
   forgotPassword: '/recuperar-contrasena',
 } as const;
+
+/** Ruta de la ficha de un contacto. */
+export function contactPath(contactId: string): string {
+  return `${ROUTES.contacts}/${encodeURIComponent(contactId)}`;
+}
 
 /** Pantalla a la que se llega después de ingresar si no se pidió otra. */
 export const DEFAULT_ROUTE = ROUTES.contacts;

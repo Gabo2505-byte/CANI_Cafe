@@ -1,0 +1,76 @@
+[
+  {
+    "caso": "Página 1",
+    "columnas": [
+      "Nombre completo",
+      "Correo electrónico",
+      "Teléfono",
+      "Clasificación",
+      "Fecha de registro"
+    ],
+    "filas": 20,
+    "paginacion": "Página 1 de 2",
+    "anteriorDeshabilitado": true,
+    "nombres": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "Álvaro Temporal",
+      "Ana Prueba Mora",
+      "Bruno Ficticio Solís",
+      "Carla Demo Vargas",
+      "Diego Ejemplo Rojas",
+      "Elena Muestra Castro",
+      "Gabrie AGDHSAGDBF",
+      "ñandú Temporal",
+      "Óscar Temporal",
+      "Pagina Temporal 01",
+      "Pagina Temporal 02",
+      "Pagina Temporal 03",
+      "Pagina Temporal 04",
+      "Pagina Temporal 05",
+      "Pagina Temporal 06",
+      "Pagina Temporal 07"
+    ],
+    "primeraFila": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "—",
+      "+506 9845-7485",
+      "Persona interesada",
+      "12 oct 2026"
+    ]
+  },
+  {
+    "caso": "Página 2 (Siguiente)",
+    "filas": 10,
+    "paginacion": "Página 2 de 2",
+    "siguienteDeshabilitado": true,
+    "nombres": [
+      "Pagina Temporal 08",
+      "Pagina Temporal 09",
+      "Pagina Temporal 10",
+      "Pagina Temporal 11",
+      "Pagina Temporal 12",
+      "Pagina Temporal 13",
+      "Pagina Temporal 14",
+      "Pagina Temporal 15",
+      "Pagina Temporal 16",
+      "zacarías Temporal"
+    ]
+  },
+  {
+    "caso": "Anterior",
+    "paginacion": "Página 1 de 2",
+    "primerNombre": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+    "caso": "Clic en la fila",
+    "nombre": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "url": "/contactos/EmixS5CRcT6apqPVh5Pq"
+  },
+  {
+    "caso": "Limpieza",
+    "temporalesQueQuedan": 0
+  }
+]
