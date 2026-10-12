@@ -7,5 +7,6 @@ export default defineConfig({
     // Unitarias y de componentes (jsdom): no necesitan emuladores.
     include: ['tests/unit/**/*.test.ts', 'tests/components/**/*.test.tsx'],
     environment: 'node',
+    setupFiles: ['tests/setup.ts'],
   },
 });
