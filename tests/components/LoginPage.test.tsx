@@ -10,10 +10,12 @@ import { AppRoutes } from '../../src/app/AppRoutes';
 import { ProtectedRoute } from '../../src/app/ProtectedRoute';
 import { AuthContext } from '../../src/auth/AuthContext';
 import { LoginPage } from '../../src/auth/LoginPage';
+import { SessionProvider } from '../../src/auth/SessionContext';
 import type { AuthState } from '../../src/auth/useAuthUser';
 import { signInWithUsername } from '../../src/auth/signInWithUsername';
 
 vi.mock('../../src/auth/signInWithUsername', () => ({ signInWithUsername: vi.fn() }));
+vi.mock('../../src/auth/signOutUser', () => ({ signOutUser: vi.fn() }));
 
 const signedOut: AuthState = { status: 'signedOut' };
 const active: AuthState = {
@@ -25,7 +27,9 @@ const active: AuthState = {
 function renderApp(path: string, state: AuthState, routes: ReactNode = <AppRoutes />) {
   const tree = (s: AuthState) => (
     <AuthContext.Provider value={s}>
-      <MemoryRouter initialEntries={[path]}>{routes}</MemoryRouter>
+      <SessionProvider>
+        <MemoryRouter initialEntries={[path]}>{routes}</MemoryRouter>
+      </SessionProvider>
     </AuthContext.Provider>
   );
   const result = render(tree(state));

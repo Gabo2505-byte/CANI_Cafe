@@ -1,0 +1,78 @@
+[
+  {
+    "caso": "Abrir /contactos sin sesión",
+    "url": "/ingreso",
+    "mensaje": "Debe iniciar sesión para acceder al sistema.",
+    "barraInterna": false,
+    "vioPantallaInterna": false
+  },
+  {
+    "caso": "Abrir /posibles-ventas sin sesión",
+    "url": "/ingreso?redirect=%2Fposibles-ventas",
+    "mensaje": "Debe iniciar sesión para acceder al sistema.",
+    "barraInterna": false,
+    "vioPantallaInterna": false
+  },
+  {
+    "caso": "Abrir /avisos sin sesión",
+    "url": "/ingreso?redirect=%2Favisos",
+    "mensaje": "Debe iniciar sesión para acceder al sistema.",
+    "barraInterna": false,
+    "vioPantallaInterna": false
+  },
+  {
+    "caso": "Recargar después del mensaje (no reaparece)",
+    "url": "/ingreso?redirect=%2Favisos",
+    "mensaje": null,
+    "barraInterna": false
+  },
+  {
+    "caso": "Abrir la dirección raíz \"/\" (HU-101: ingreso sin mensaje)",
+    "url": "/ingreso",
+    "mensaje": null,
+    "barraInterna": false
+  },
+  {
+    "caso": "Sesión iniciada",
+    "url": "/contactos",
+    "mensaje": null,
+    "barraInterna": true
+  },
+  {
+    "caso": "31 min sin clic ni teclado (simulado) → la sesión se cierra sola",
+    "url": "/ingreso",
+    "mensaje": "Su sesión se cerró por inactividad. Ingrese de nuevo.",
+    "barraInterna": false,
+    "segundosHastaCerrar": 15
+  },
+  {
+    "caso": "Siguiente clic del usuario → sigue el ingreso con el mensaje",
+    "url": "/ingreso",
+    "mensaje": "Su sesión se cerró por inactividad. Ingrese de nuevo.",
+    "barraInterna": false
+  },
+  {
+    "caso": "Recargar (el mensaje no reaparece)",
+    "url": "/ingreso",
+    "mensaje": null,
+    "barraInterna": false
+  },
+  {
+    "caso": "29 min + un clic, esperando 16 s: la sesión sigue abierta",
+    "url": "/contactos",
+    "mensaje": null,
+    "barraInterna": true,
+    "pantalla": "Contactos"
+  },
+  {
+    "caso": "Reabrir /contactos con la sesión recordada pero 45 min inactiva",
+    "url": "/ingreso",
+    "mensaje": "Su sesión se cerró por inactividad. Ingrese de nuevo.",
+    "barraInterna": false,
+    "vioPantallaInterna": false
+  },
+  {
+    "caso": "Sitio público: no existe en el repositorio; el sistema interno pide no ser indexado",
+    "metaRobots": "noindex, nofollow"
+  }
+]

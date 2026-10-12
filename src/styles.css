@@ -85,6 +85,33 @@ button:disabled {
   opacity: 0.6;
 }
 
+/* HU-104: aviso en el ingreso y error al cerrar sesión */
+.notice-success {
+  margin: -0.25rem 0 0.75rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  color: #1e5631;
+  background: #e3f4e8;
+  border-radius: 4px;
+}
+
+.topbar-error {
+  margin: 0 0 0 auto;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  color: #fff;
+  background: #b00020;
+  border-radius: 4px;
+}
+
+.topbar-error + .topbar-logout {
+  margin-left: 0;
+}
+
+.topbar-logout:disabled {
+  cursor: wait;
+}
+
 .field-error {
   margin: -0.25rem 0 0.5rem;
   font-size: 0.85rem;
