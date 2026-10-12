@@ -1,5 +1,4 @@
-import { useMemo } from 'react';
-import { getPhoneCountries } from './phone';
+import { CountryPicker } from './CountryPicker';
 
 interface PhoneFieldProps {
   id: string;
@@ -12,26 +11,13 @@ interface PhoneFieldProps {
 }
 
 /**
- * HU-202: teléfono en dos partes. Primero el país (con su código) y después el número.
- * Se reutiliza en "Nuevo contacto" y "Editar contacto".
+ * HU-202: teléfono en dos partes. Primero el país (lista con buscador, agrupada por letras)
+ * y después el número. Se reutiliza en "Nuevo contacto" y "Editar contacto".
  */
 export function PhoneField({ id, country, number, onCountryChange, onNumberChange, invalid, describedBy }: PhoneFieldProps) {
-  const countries = useMemo(getPhoneCountries, []);
-
   return (
     <div className="phone-field">
-      <select
-        id={`${id}-country`}
-        aria-label="País del teléfono"
-        value={country}
-        onChange={(e) => onCountryChange(e.target.value)}
-      >
-        {countries.map((c) => (
-          <option key={c.code} value={c.code}>
-            {c.label}
-          </option>
-        ))}
-      </select>
+      <CountryPicker value={country} onChange={onCountryChange} />
       <input
         id={id}
         type="tel"

@@ -1,10 +1,10 @@
-Evidencia de pruebas HU-202 - 2026-10-12 12:31 (America/Costa_Rica)
+Evidencia de pruebas HU-202 - 2026-10-12 12:45 (America/Costa_Rica)
 
 == npm run typecheck ==
 Sin errores.
 
 == npm test (unitarias y pantallas) ==
- ✓ tests/unit/routes.test.ts > safeRedirect > acepta rutas internas 5ms
+ ✓ tests/unit/routes.test.ts > safeRedirect > acepta rutas internas 4ms
  ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante null 1ms
  ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante  0ms
  ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante https://otro-sitio.com 0ms
@@ -13,124 +13,135 @@ Sin errores.
  ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante /ingreso 0ms
  ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante /ingreso?x=1 0ms
  ✓ tests/unit/routes.test.ts > safeRedirect > manda a Contactos ante / 0ms
- ✓ tests/unit/routes.test.ts > loginPathFor > recuerda la pantalla pedida 1ms
+ ✓ tests/unit/routes.test.ts > loginPathFor > recuerda la pantalla pedida 0ms
  ✓ tests/unit/routes.test.ts > loginPathFor > no agrega redirect para la pantalla por defecto 0ms
  ✓ tests/unit/routes.test.ts > usernameToAuthEmail > normaliza el usuario 0ms
  ✓ tests/unit/loginErrors.test.ts > validateLoginInput > sin errores cuando ambos campos tienen valor 5ms
  ✓ tests/unit/loginErrors.test.ts > validateLoginInput > usuario con solo espacios cuenta como vacío 1ms
- ✓ tests/unit/loginErrors.test.ts > validateLoginInput > ambos vacíos devuelve los dos mensajes 1ms
+ ✓ tests/unit/loginErrors.test.ts > validateLoginInput > ambos vacíos devuelve los dos mensajes 0ms
  ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/user-not-found → usuario no existe 1ms
  ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/invalid-email → usuario no existe 0ms
  ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/wrong-password → contraseña incorrecta 0ms
  ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/invalid-credential → contraseña incorrecta 0ms
  ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > auth/invalid-login-credentials → contraseña incorrecta 0ms
- ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > otros errores no se traducen 1ms
- ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > el nombre completo es obligatorio 4ms
+ ✓ tests/unit/loginErrors.test.ts > loginErrorFromAuth > otros errores no se traducen 0ms
+ ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > el nombre completo es obligatorio 3ms
  ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > pide al menos correo o teléfono 0ms
- ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > con solo correo, o solo teléfono, es válido; la dirección es opcional 1ms
- ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > un teléfono sin dígitos no cuenta 1ms
- ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > HU-202: si se escribe un teléfono, se valida su largo aunque haya correo 1ms
- ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > HU-202: guarda el país elegido junto al número 2ms
+ ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > con solo correo, o solo teléfono, es válido; la dirección es opcional 0ms
+ ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > un teléfono sin dígitos no cuenta 0ms
+ ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > HU-202: si se escribe un teléfono, se valida su largo aunque haya correo 0ms
+ ✓ tests/unit/contactForm.test.ts > HU-201 validación del formulario de contacto > HU-202: guarda el país elegido junto al número 1ms
  ✓ tests/unit/contactForm.test.ts > isContactFormDirty > detecta si se escribió algo 1ms
  ✓ tests/unit/contactForm.test.ts > toNewContactInput > guarda null en lo no llenado y el teléfono como dígitos de Costa Rica 1ms
  ✓ tests/unit/contactForm.test.ts > toNewContactInput > normalizePhone deja solo dígitos 0ms
- ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > Costa Rica: exactamente 8 dígitos 4ms
- ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > otros países: entre 6 y 14 dígitos, sin contar el código 1ms
- ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > formato: "+506 8888-8888" para Costa Rica y "+1 3055551234" para otros países 2ms
- ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > textos exactos de los mensajes 1ms
- ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > phoneKey normaliza a código + número (para detectar duplicados en HU-203) 2ms
- ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > la lista de países trae nombre en español y código, ordenada por nombre 33ms
+ ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > Costa Rica: exactamente 8 dígitos 2ms
+ ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > otros países: entre 6 y 14 dígitos, sin contar el código 0ms
+ ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > formato: "+506 8888-8888" para Costa Rica y "+1 3055551234" para otros países 1ms
+ ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > textos exactos de los mensajes 0ms
+ ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > phoneKey normaliza a código + número (para detectar duplicados en HU-203) 0ms
+ ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > agrupa por letra y junta letras seguidas con pocos países (mínimo 6 por grupo) 27ms
+ ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > el buscador ignora tildes y busca por nombre, siglas o código 6ms
+ ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > el buscador muestra primero los países que empiezan con lo escrito 1ms
+ ✓ tests/unit/phone.test.ts > HU-202 reglas de teléfono > la lista de países trae nombre en español y código, ordenada por nombre 2ms
  ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > convierte UTC a UTC-6 al formatear 4ms
  ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > usa el día de Costa Rica, no el de UTC, cerca de medianoche 1ms
- ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > acepta Date y objetos con toDate() (Timestamp del Admin SDK) 0ms
- ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > no cierra a los 29:59 y sí al cumplir 30 minutos sin actividad 40ms
- ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > un clic reinicia el contador 9ms
- ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > escribir (teclado) reinicia el contador 7ms
- ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > mover el mouse o hacer scroll NO cuenta como actividad 8ms
- ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > la actividad en otra pestaña (localStorage compartido) también cuenta 6ms
- ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > al abrir con una sesión recordada y vencida, se cierra de inmediato 4ms
- ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > sin sesión no se cierra nada, pero los clics en el ingreso sí se registran 4ms
- ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la pantalla /contactos tiene la barra arriba 67ms
- ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la pantalla /posibles-ventas tiene la barra arriba 13ms
- ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la pantalla /avisos tiene la barra arriba 12ms
- ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > el teléfono tiene dos partes: primero el país en una lista y después el número 187ms
- ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la pantalla de ingreso no lleva barra (no es pantalla interna) 28ms
- ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > al abrir el sistema sin sesión aparece la pantalla de ingreso 280ms
- ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > tiene Usuario, Contraseña, botón Ingresar y enlace ¿Olvidó su contraseña? 53ms
- ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > abrir /contactos sin sesión → ingreso con "Debe iniciar sesión para acceder al sistema." 302ms
- ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > abrir /posibles-ventas sin sesión → ingreso con "Debe iniciar sesión para acceder al sistema." 42ms
- ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > abrir /avisos sin sesión → ingreso con "Debe iniciar sesión para acceder al sistema." 42ms
- ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > muestra de izquierda a derecha: CANI Café, Contactos, Posibles ventas, Avisos y Cerrar sesión 186ms
- ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > clic en "Cerrar sesión" llama a signOut sin confirmación y lleva al ingreso con el mensaje 408ms
- ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > en Contactos está el botón "Nuevo contacto", arriba a la derecha junto al título, y abre el formulario 427ms
- ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > la lista muestra cada país con su código y Costa Rica (+506) viene elegido 105ms
- ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > abrir la dirección raíz "/" muestra el ingreso sin ese mensaje (HU-101) 32ms
- ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > el mensaje no reaparece al recargar (se borra del historial) 20ms
- ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > a los 30 min sin actividad la sesión se cierra sola y aparece el ingreso con el mensaje de inactividad 52ms
- ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > una sesión recordada pero vencida no muestra la pantalla interna ni un instante 21ms
- ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > el aviso de inactividad no se repite después de mostrarse (ej. "Atrás" o recargar) 35ms
- ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > clic en "Contactos" abre esa pantalla y la opción queda resaltada 159ms
- ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > el botón se desactiva mientras se cierra la sesión (evita doble clic) 114ms
- ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > si signOut falla, muestra el error y no navega 86ms
- ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > la contraseña se ve como puntos y el ojo la muestra u oculta 184ms
- ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > el formulario pide cuatro datos: nombre completo, correo, teléfono y dirección 100ms
- ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > clic en "Posibles ventas" abre esa pantalla y la opción queda resaltada 112ms
- ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > clic en "Avisos" abre esa pantalla y la opción queda resaltada 90ms
- ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > clic en "CANI Café" abre la pantalla Contactos 94ms
- ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la barra tiene el botón "Cerrar sesión" 15ms
- ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > el mensaje se borra del historial: no reaparece al recargar 95ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > acepta Date y objetos con toDate() (Timestamp del Admin SDK) 1ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > no cierra a los 29:59 y sí al cumplir 30 minutos sin actividad 32ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > un clic reinicia el contador 7ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > escribir (teclado) reinicia el contador 6ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > mover el mouse o hacer scroll NO cuenta como actividad 7ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > la actividad en otra pestaña (localStorage compartido) también cuenta 5ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > al abrir con una sesión recordada y vencida, se cierra de inmediato 3ms
+ ✓ tests/components/Inactivity.test.tsx > HU-105 temporizador de inactividad > sin sesión no se cierra nada, pero los clics en el ingreso sí se registran 3ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la pantalla /contactos tiene la barra arriba 60ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la pantalla /posibles-ventas tiene la barra arriba 9ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la pantalla /avisos tiene la barra arriba 10ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la pantalla de ingreso no lleva barra (no es pantalla interna) 27ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > en Contactos está el botón "Nuevo contacto", arriba a la derecha junto al título, y abre el formulario 286ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > abrir /contactos sin sesión → ingreso con "Debe iniciar sesión para acceder al sistema." 245ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > abrir /posibles-ventas sin sesión → ingreso con "Debe iniciar sesión para acceder al sistema." 31ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > abrir /avisos sin sesión → ingreso con "Debe iniciar sesión para acceder al sistema." 38ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > al abrir el sistema sin sesión aparece la pantalla de ingreso 224ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > tiene Usuario, Contraseña, botón Ingresar y enlace ¿Olvidó su contraseña? 40ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > el teléfono tiene dos partes: primero el país y después el número 266ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > Costa Rica viene elegido; cerrado muestra las siglas y el código: "CR (+506)" 50ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > muestra de izquierda a derecha: CANI Café, Contactos, Posibles ventas, Avisos y Cerrar sesión 156ms
+ ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > clic en "Cerrar sesión" llama a signOut sin confirmación y lleva al ingreso con el mensaje 324ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > el formulario pide cuatro datos: nombre completo, correo, teléfono y dirección 41ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > abrir la dirección raíz "/" muestra el ingreso sin ese mensaje (HU-101) 33ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > el mensaje no reaparece al recargar (se borra del historial) 43ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > a los 30 min sin actividad la sesión se cierra sola y aparece el ingreso con el mensaje de inactividad 61ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > una sesión recordada pero vencida no muestra la pantalla interna ni un instante 25ms
+ ✓ tests/components/ProtectSystem.test.tsx > HU-105 Proteger el sistema interno > el aviso de inactividad no se repite después de mostrarse (ej. "Atrás" o recargar) 25ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > clic en "Contactos" abre esa pantalla y la opción queda resaltada 179ms
+ ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > el botón se desactiva mientras se cierra la sesión (evita doble clic) 135ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > la contraseña se ve como puntos y el ojo la muestra u oculta 178ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > clic en "Posibles ventas" abre esa pantalla y la opción queda resaltada 90ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > clic en "Avisos" abre esa pantalla y la opción queda resaltada 84ms
+ ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > si signOut falla, muestra el error y no navega 87ms
+ ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > el mensaje se borra del historial: no reaparece al recargar 65ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > clic en "CANI Café" abre la pantalla Contactos 81ms
+ ✓ tests/components/TopBar.test.tsx > HU-103 Navegar por el sistema interno > la barra tiene el botón "Cerrar sesión" 16ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > el nombre completo es obligatorio 350ms
  ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > después de cerrar sesión, "Atrás" no vuelve a las pantallas internas 167ms
- ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > una ruta interna sin sesión redirige al ingreso (sin mostrar la pantalla) 20ms
- ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > mientras se resuelve la sesión solo muestra "Cargando…", sin datos internos 5ms
- ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > ingresa al dar clic en Ingresar 370ms
- ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > el nombre completo es obligatorio 561ms
- ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > ingresa al presionar Enter 278ms
- ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > Costa Rica con 8 números se guarda y se muestra "+506 8888-8888" 978ms
- ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > con credenciales correctas aparece la pantalla Contactos 324ms
- ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > pide al menos correo o teléfono 521ms
- ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > si había intentado abrir otra pantalla, aparece esa pantalla 309ms
- ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > Costa Rica con 8888888 → "El teléfono debe tener 8 dígitos." 635ms
- ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > con credenciales incorrectas se queda en la pantalla de ingreso 261ms
- ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > con nombre y solo teléfono se guarda (correo y dirección quedan en null) 556ms
- ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > usuario vacío → "Ingrese su usuario." 214ms
- ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > contraseña vacía → "Ingrese su contraseña." 136ms
- ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > ambos vacíos → muestra los dos mensajes 46ms
- ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > Costa Rica con 888888888 → "El teléfono debe tener 8 dígitos." 587ms
- ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > usuario inexistente → "El usuario ingresado no existe." 354ms
- ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > al guardar aparece la ficha con "Contacto registrado correctamente." y clasificado como "Persona interesada" 769ms
- ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > contraseña incorrecta → mensaje, se borra la contraseña y se mantiene el usuario 263ms
- ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > otro país entre 6 y 14 números se guarda y se muestra con su código: "+1 3055551234" 668ms
- ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > si falla el guardado, muestra un error y se queda en el formulario 489ms
- ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > otro país con 12345 → "El teléfono debe tener entre 6 y 14 dígitos." 589ms
- ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > "Cancelar" después de escribir pregunta "¿Desea salir sin guardar? Los datos ingresados se perderán." 398ms
- ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > cambiar solo el país del teléfono no cuenta como "escribir": Cancelar vuelve directo 171ms
- ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > "Cancelar" sin haber escrito nada vuelve directamente a la lista de contactos 78ms
- ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > otro país con 123456789012345 → "El teléfono debe tener entre 6 y 14 dígitos." 717ms
+ ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > una ruta interna sin sesión redirige al ingreso (sin mostrar la pantalla) 16ms
+ ✓ tests/components/Logout.test.tsx > HU-104 Cerrar sesión > mientras se resuelve la sesión solo muestra "Cargando…", sin datos internos 4ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > la lista muestra el nombre de cada país con su código, agrupada por letras 383ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > ingresa al dar clic en Ingresar 339ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > el buscador encuentra "estados" 272ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > ingresa al presionar Enter 294ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > pide al menos correo o teléfono 430ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > el buscador encuentra "mexico" 215ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > con credenciales correctas aparece la pantalla Contactos 328ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > el buscador encuentra "+506" 220ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > el buscador encuentra "ni" 187ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > con nombre y solo teléfono se guarda (correo y dirección quedan en null) 479ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > si había intentado abrir otra pantalla, aparece esa pantalla 321ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > si no hay coincidencias, lo indica 183ms
+ ✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > con credenciales incorrectas se queda en la pantalla de ingreso 243ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > al elegir un país, la lista se cierra y muestra sus siglas y código: "US (+1)" 300ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > usuario vacío → "Ingrese su usuario." 229ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > contraseña vacía → "Ingrese su contraseña." 154ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > al guardar aparece la ficha con "Contacto registrado correctamente." y clasificado como "Persona interesada" 745ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > con teclado: buscar, ↓ y Enter elige; Escape cierra sin cambiar 323ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > ambos vacíos → muestra los dos mensajes 63ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > si falla el guardado, muestra un error y se queda en el formulario 439ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > usuario inexistente → "El usuario ingresado no existe." 356ms
+ ✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > contraseña incorrecta → mensaje, se borra la contraseña y se mantiene el usuario 233ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > Costa Rica con 8 números se guarda y se muestra "+506 8888-8888" 495ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > "Cancelar" después de escribir pregunta "¿Desea salir sin guardar? Los datos ingresados se perderán." 357ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > Costa Rica con 8888888 → "El teléfono debe tener 8 dígitos." 466ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > cambiar solo el país del teléfono no cuenta como "escribir": Cancelar vuelve directo 390ms
+ ✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > "Cancelar" sin haber escrito nada vuelve directamente a la lista de contactos 74ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > Costa Rica con 888888888 → "El teléfono debe tener 8 dígitos." 513ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > otro país entre 6 y 14 números se guarda y se muestra con su código: "+1 3055551234" 832ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > otro país con 12345 → "El teléfono debe tener entre 6 y 14 dígitos." 787ms
+ ✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > otro país con 123456789012345 → "El teléfono debe tener entre 6 y 14 dígitos." 917ms
  Test Files  12 passed (12)
-      Tests  102 passed (102)
-   Duration  17.44s (environment 56%, import 27%, tests 14%, transform 2%, worker 1%, setup 1%)
+      Tests  113 passed (113)
+   Duration  18.25s (environment 56%, import 25%, tests 16%, transform 2%, setup 1%)
 
 == Pruebas contra emuladores ==
  ✓ tests/seed/seed.idempotent.test.ts > seed > se niega a correr fuera de un proyecto demo-* 2ms
- ✓ tests/seed/seed.idempotent.test.ts > seed > es idempotente: correrlo dos veces no duplica datos 3296ms
- ✓ tests/seed/seed.idempotent.test.ts > seed > guarda relaciones por ID válidas y fechas como Timestamp 27ms
- ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega lectura y escritura sin autenticación 144ms
- ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega a un usuario autenticado sin documento en users 77ms
- ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega a un usuario inactivo, incluso su propio perfil 106ms
- ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en users 55ms
- ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en contacts 61ms
- ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en communications 63ms
- ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en products 62ms
- ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en sales 62ms
- ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en saleProducts 62ms
- ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en stageHistory 62ms
- ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega colecciones fuera del contrato, incluso a usuarios activos 50ms
- ✓ tests/contacts/createContact.emulator.test.ts > HU-201 registrar contacto en Firestore > un usuario activo registra el contacto con clasificación "persona_interesada", nulls y Timestamp 88ms
- ✓ tests/contacts/createContact.emulator.test.ts > HU-201 registrar contacto en Firestore > sin sesión no se puede registrar un contacto 24ms
- ✓ tests/auth/signOut.emulator.test.ts > HU-104 contra emuladores > con sesión activa se puede leer contacts; después de cerrar sesión la lectura es rechazada 55ms
- ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > usuario inexistente → "El usuario ingresado no existe." 11ms
- ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > contraseña incorrecta → "La contraseña es incorrecta." 3ms
- ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > credenciales correctas ingresan 5ms
+ ✓ tests/seed/seed.idempotent.test.ts > seed > es idempotente: correrlo dos veces no duplica datos 3260ms
+ ✓ tests/seed/seed.idempotent.test.ts > seed > guarda relaciones por ID válidas y fechas como Timestamp 17ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega lectura y escritura sin autenticación 196ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega a un usuario autenticado sin documento en users 93ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega a un usuario inactivo, incluso su propio perfil 108ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en users 83ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en contacts 76ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en communications 92ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en products 77ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en sales 93ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en saleProducts 77ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en stageHistory 78ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega colecciones fuera del contrato, incluso a usuarios activos 82ms
+ ✓ tests/contacts/createContact.emulator.test.ts > HU-201 registrar contacto en Firestore > un usuario activo registra el contacto con clasificación "persona_interesada", nulls y Timestamp 77ms
+ ✓ tests/contacts/createContact.emulator.test.ts > HU-201 registrar contacto en Firestore > sin sesión no se puede registrar un contacto 28ms
+ ✓ tests/auth/signOut.emulator.test.ts > HU-104 contra emuladores > con sesión activa se puede leer contacts; después de cerrar sesión la lectura es rechazada 62ms
+ ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > usuario inexistente → "El usuario ingresado no existe." 6ms
+ ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > contraseña incorrecta → "La contraseña es incorrecta." 5ms
+ ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > credenciales correctas ingresan 6ms
  Test Files  5 passed (5)
       Tests  20 passed (20)
-   Duration  11.38s (import 52%, tests 46%, transform 2%)
+   Duration  12.00s (import 52%, tests 46%, transform 2%)

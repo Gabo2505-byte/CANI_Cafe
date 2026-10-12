@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
+  filterCountries,
   formatPhone,
   getPhoneCountries,
+  groupCountriesByLetter,
   PHONE_MESSAGES,
   phoneKey,
   validatePhoneNumber,
@@ -35,6 +37,34 @@ describe('HU-202 reglas de teléfono', () => {
   it('phoneKey normaliza a código + número (para detectar duplicados en HU-203)', () => {
     expect(phoneKey('CR', '8888-8888')).toBe('+50688888888');
     expect(phoneKey('US', '(305) 555 1234')).toBe('+13055551234');
+  });
+
+  it('agrupa por letra y junta letras seguidas con pocos países (mínimo 6 por grupo)', () => {
+    const groups = groupCountriesByLetter(getPhoneCountries());
+    const labels = groups.map((g) => g.label);
+    expect(labels.slice(0, 3)).toEqual(['A', 'B', 'C']);
+    expect(labels).toContain('D – E');
+    expect(labels.at(-1)).toMatch(/– Z$/);
+    expect(groups.every((g) => g.countries.length >= 6)).toBe(true);
+    // No se pierde ningún país
+    expect(groups.reduce((n, g) => n + g.countries.length, 0)).toBe(getPhoneCountries().length);
+  });
+
+  it('el buscador ignora tildes y busca por nombre, siglas o código', () => {
+    const all = getPhoneCountries();
+    const codes = (q: string) => filterCountries(all, q).map((c) => c.code);
+    expect(codes('mexico')).toContain('MX');
+    expect(codes('CR')).toContain('CR');
+    expect(codes('+506')).toEqual(['CR']);
+    expect(codes('')).toHaveLength(all.length);
+    expect(codes('zzzz')).toEqual([]);
+  });
+
+  it('el buscador muestra primero los países que empiezan con lo escrito', () => {
+    const all = getPhoneCountries();
+    const codes = filterCountries(all, 'pan').map((c) => c.code);
+    expect(codes[0]).toBe('PA'); // Panamá antes que España
+    expect(codes).toContain('ES');
   });
 
   it('la lista de países trae nombre en español y código, ordenada por nombre', () => {

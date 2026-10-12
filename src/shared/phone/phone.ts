@@ -41,6 +41,76 @@ export function getPhoneCountries(): PhoneCountryOption[] {
   return countriesCache;
 }
 
+/** Sin tildes y en mayúsculas, para agrupar y buscar ("México" → "MEXICO"). */
+export function foldText(text: string): string {
+  return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase();
+}
+
+export interface CountryGroup {
+  /** "A", o un rango si se juntaron letras con pocos países: "D – E". */
+  label: string;
+  countries: PhoneCountryOption[];
+}
+
+/**
+ * Agrupa por la primera letra del nombre. Las letras seguidas con pocos países se juntan
+ * hasta tener al menos `minPerGroup` (ej. "D – E", "U – Z").
+ */
+export function groupCountriesByLetter(countries: PhoneCountryOption[], minPerGroup = 6): CountryGroup[] {
+  const byLetter = new Map<string, PhoneCountryOption[]>();
+  for (const country of countries) {
+    const letter = foldText(country.name).charAt(0);
+    byLetter.set(letter, [...(byLetter.get(letter) ?? []), country]);
+  }
+
+  const groups: { from: string; to: string; countries: PhoneCountryOption[] }[] = [];
+  let current: (typeof groups)[number] | null = null;
+  for (const [letter, list] of byLetter) {
+    if (!current) current = { from: letter, to: letter, countries: [] };
+    current.to = letter;
+    current.countries.push(...list);
+    if (current.countries.length >= minPerGroup) {
+      groups.push(current);
+      current = null;
+    }
+  }
+  if (current) {
+    // Las últimas letras con pocos países se suman al grupo anterior.
+    const last = groups.at(-1);
+    if (last) {
+      last.to = current.to;
+      last.countries.push(...current.countries);
+    } else groups.push(current);
+  }
+  return groups.map((g) => ({ label: g.from === g.to ? g.from : `${g.from} – ${g.to}`, countries: g.countries }));
+}
+
+/**
+ * Busca por nombre (sin importar tildes), siglas ("CR") o código ("+506" / "506").
+ * Primero los países cuyo nombre empieza con lo escrito ("pan" → Panamá antes que España).
+ */
+export function filterCountries(countries: PhoneCountryOption[], query: string): PhoneCountryOption[] {
+  const q = foldText(query.trim());
+  if (!q) return countries;
+  const isDialSearch = /^\+?\d+$/.test(q);
+  const digits = q.replace(/\D/g, '');
+
+  const rank = (c: PhoneCountryOption): number => {
+    const name = foldText(c.name);
+    if (c.code === q || name.startsWith(q)) return 0;
+    if (name.split(/[\s-]+/).some((word) => word.startsWith(q))) return 1;
+    if (name.includes(q)) return 2;
+    if (isDialSearch && c.dialCode.slice(1).startsWith(digits)) return 0;
+    return -1;
+  };
+
+  return countries
+    .map((country) => ({ country, rank: rank(country) }))
+    .filter((r) => r.rank >= 0)
+    .sort((a, b) => a.rank - b.rank) // estable: dentro del mismo rango sigue el orden alfabético
+    .map((r) => r.country);
+}
+
 export function dialCodeOf(country: string): string {
   try {
     return `+${getCountryCallingCode(country as CountryCode)}`;

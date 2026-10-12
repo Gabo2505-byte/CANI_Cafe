@@ -177,7 +177,9 @@ describe('HU-201 Registrar un nuevo contacto', () => {
   it('cambiar solo el país del teléfono no cuenta como "escribir": Cancelar vuelve directo', async () => {
     const user = userEvent.setup();
     renderAt('/contactos/nuevo');
-    await user.selectOptions(screen.getByLabelText('País del teléfono'), 'US');
+    await user.click(screen.getByRole('button', { name: /^País del teléfono/ }));
+    await user.type(screen.getByRole('combobox', { name: 'Buscar país' }), 'estados');
+    await user.click(screen.getByRole('option', { name: 'Estados Unidos (+1)' }));
     await user.click(screen.getByRole('button', { name: 'Cancelar' }));
     expect(screen.queryByRole('alertdialog')).toBeNull();
     expect(currentLocation.pathname).toBe('/contactos');
