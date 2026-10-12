@@ -43,7 +43,9 @@ function renderAt(path: string) {
   );
 }
 
-const field = (label: string) => screen.getByLabelText(label, { exact: false }) as HTMLInputElement;
+// "Teléfono" exacto para no confundirlo con "País del teléfono" (HU-202).
+const field = (label: string) =>
+  screen.getByLabelText(label, { exact: label === 'Teléfono' }) as HTMLInputElement;
 const saved = (overrides: Partial<Contact> = {}): Contact => ({
   id: 'nuevo-123',
   fullName: 'Ana Prueba Mora',
@@ -77,7 +79,7 @@ describe('HU-201 Registrar un nuevo contacto', () => {
     expect(currentLocation.pathname).toBe('/contactos/nuevo');
   });
 
-  it('el formulario pide cuatro datos: nombre completo, correo, teléfono (+506) y dirección', () => {
+  it('el formulario pide cuatro datos: nombre completo, correo, teléfono y dirección', () => {
     renderAt('/contactos/nuevo');
     const form = document.querySelector('form')!;
     const inputs = form.querySelectorAll('input, textarea');
@@ -86,7 +88,6 @@ describe('HU-201 Registrar un nuevo contacto', () => {
     expect(field('Correo electrónico')).toBeTruthy();
     expect(field('Teléfono')).toBeTruthy();
     expect(field('Dirección')).toBeTruthy();
-    expect(screen.getByText('+506')).toBeTruthy();
   });
 
   it('el nombre completo es obligatorio', async () => {
@@ -171,6 +172,15 @@ describe('HU-201 Registrar un nuevo contacto', () => {
     await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Salir sin guardar' }));
     expect(currentLocation.pathname).toBe('/contactos');
     expect(createContact).not.toHaveBeenCalled();
+  });
+
+  it('cambiar solo el país del teléfono no cuenta como "escribir": Cancelar vuelve directo', async () => {
+    const user = userEvent.setup();
+    renderAt('/contactos/nuevo');
+    await user.selectOptions(screen.getByLabelText('País del teléfono'), 'US');
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(screen.queryByRole('alertdialog')).toBeNull();
+    expect(currentLocation.pathname).toBe('/contactos');
   });
 
   it('"Cancelar" sin haber escrito nada vuelve directamente a la lista de contactos', async () => {

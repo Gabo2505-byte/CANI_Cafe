@@ -19,9 +19,8 @@ export type ContactStatus = (typeof CONTACT_STATUSES)[number];
 export const CONTACT_ORIGINS = ['referido', 'redes_sociales', 'sitio_web', 'feria', 'visita', 'otro'] as const;
 export type ContactOrigin = (typeof CONTACT_ORIGINS)[number];
 
-/** Los contactos son nacionales: país del teléfono Costa Rica (+506). */
+/** País del teléfono elegido por defecto: Costa Rica (+506). Lista y reglas en src/shared/phone. */
 export const DEFAULT_PHONE_COUNTRY = 'CR';
-export const PHONE_DIAL_CODES: Record<string, string> = { CR: '+506' };
 
 /**
  * Colección `contacts`.
@@ -32,9 +31,9 @@ export interface Contact {
   id: string;
   fullName: string;
   email: string | null;
-  /** Código de país ISO 3166-1 alfa-2 ("CR"). null si no hay teléfono. */
+  /** País del teléfono, ISO 3166-1 alfa-2 ("CR", "US"…). null si no hay teléfono. */
   phoneCountry: string | null;
-  /** Solo dígitos, sin código de país. */
+  /** Solo dígitos, sin código de país. CR: 8 dígitos; otros países: 6 a 14 (HU-202). */
   phoneNumber: string | null;
   address: string | null;
   classification: ContactClassification;

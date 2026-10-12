@@ -70,8 +70,9 @@ export const seedContacts: Seeded<Contact>[] = [
     data: {
       fullName: 'Diego Ejemplo Rojas',
       email: 'diego.ejemplo@example.com',
-      phoneCountry: 'CR',
-      phoneNumber: '00000004',
+      // Teléfono de otro país (HU-202): número ficticio de la serie 555.
+      phoneCountry: 'US',
+      phoneNumber: '3055550104',
       address: 'Dirección de prueba 4, Cartago',
       classification: 'cliente',
       status: 'inactivo',

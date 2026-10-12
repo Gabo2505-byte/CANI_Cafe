@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useLocationNotice } from '../shared/hooks/useLocationNotice';
-import { CONTACT_CLASSIFICATION_LABELS, PHONE_DIAL_CODES, type Contact } from '../shared/types';
+import { formatPhone } from '../shared/phone/phone';
+import { CONTACT_CLASSIFICATION_LABELS, type Contact } from '../shared/types';
 import { formatDateTimeCR } from '../shared/utils/dates';
 import { getContact } from './contactsApi';
 
@@ -43,9 +44,8 @@ export function ContactDetailPage() {
 }
 
 function ContactCard({ contact }: { contact: Contact }) {
-  const phone = contact.phoneNumber
-    ? `${PHONE_DIAL_CODES[contact.phoneCountry ?? ''] ?? ''} ${contact.phoneNumber}`.trim()
-    : null;
+  // HU-202: "+506 8888-8888" para Costa Rica, "+1 3055551234" para otros países.
+  const phone = contact.phoneNumber ? formatPhone(contact.phoneCountry ?? 'CR', contact.phoneNumber) : null;
   const rows: [string, string | null][] = [
     ['Correo electrónico', contact.email],
     ['Teléfono', phone],

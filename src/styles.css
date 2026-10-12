@@ -186,20 +186,19 @@ input[aria-invalid='true'] {
 
 .phone-field input {
   margin-bottom: 0;
+  border-radius: 0 4px 4px 0;
 }
 
-.phone-field .phone-prefix {
-  display: flex;
-  align-items: center;
-  padding: 0 0.6rem;
+/* HU-202: lista de países con su código */
+.phone-field select {
+  flex: 0 0 13rem;
+  max-width: 50%;
+  padding: 0 0.4rem;
+  font: inherit;
   background: #efe7e0;
   border: 1px solid #ccc;
   border-right: none;
   border-radius: 4px 0 0 4px;
-}
-
-.phone-field input {
-  border-radius: 0 4px 4px 0;
 }
 
 .form-actions,

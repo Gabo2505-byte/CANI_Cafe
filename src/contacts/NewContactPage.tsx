@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 import { contactPath, ROUTES } from '../app/routes';
 import type { NoticeState } from '../shared/hooks/useLocationNotice';
-import { PHONE_DIAL_CODES, DEFAULT_PHONE_COUNTRY } from '../shared/types';
+import { PhoneField } from '../shared/phone/PhoneField';
 import { ConfirmDialog } from '../shared/ui/ConfirmDialog';
 import { createContact } from './contactsApi';
 import {
@@ -15,7 +15,7 @@ import {
   type ContactFormValues,
 } from './contactForm';
 
-/** HU-201: registrar un nuevo contacto. */
+/** HU-201: registrar un nuevo contacto. HU-202: teléfono con país. */
 export function NewContactPage() {
   const navigate = useNavigate();
   const [values, setValues] = useState<ContactFormValues>(EMPTY_CONTACT_FORM);
@@ -50,8 +50,6 @@ export function NewContactPage() {
     if (isContactFormDirty(values)) setConfirmLeave(true);
     else navigate(ROUTES.contacts);
   }
-
-  const dialCode = PHONE_DIAL_CODES[DEFAULT_PHONE_COUNTRY];
 
   return (
     <main className="page">
@@ -90,21 +88,20 @@ export function NewContactPage() {
         />
 
         <label htmlFor="phone">Teléfono</label>
-        <div className="phone-field">
-          <span className="phone-prefix" aria-label="Código de país Costa Rica">
-            {dialCode}
-          </span>
-          <input
-            id="phone"
-            type="tel"
-            inputMode="numeric"
-            value={values.phone}
-            onChange={set('phone')}
-            autoComplete="off"
-            aria-describedby="contact-method-hint"
-            aria-invalid={errors.emailOrPhone ? true : undefined}
-          />
-        </div>
+        <PhoneField
+          id="phone"
+          country={values.phoneCountry}
+          number={values.phone}
+          onCountryChange={(phoneCountry) => setValues((prev) => ({ ...prev, phoneCountry }))}
+          onNumberChange={(phone) => setValues((prev) => ({ ...prev, phone }))}
+          invalid={Boolean(errors.emailOrPhone || errors.phone)}
+          describedBy={errors.phone ? 'phone-error' : 'contact-method-hint'}
+        />
+        {errors.phone && (
+          <p id="phone-error" className="field-error" role="alert">
+            {errors.phone}
+          </p>
+        )}
         {errors.emailOrPhone && (
           <p className="field-error" role="alert">
             {errors.emailOrPhone}

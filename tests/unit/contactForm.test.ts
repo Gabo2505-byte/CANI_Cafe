@@ -32,6 +32,22 @@ describe('HU-201 validación del formulario de contacto', () => {
   it('un teléfono sin dígitos no cuenta', () => {
     expect(validateContactForm(form({ fullName: 'Ana', phone: '- -' })).emailOrPhone).toBeDefined();
   });
+
+  it('HU-202: si se escribe un teléfono, se valida su largo aunque haya correo', () => {
+    expect(validateContactForm(form({ fullName: 'Ana', email: 'a@example.com', phone: '123' }))).toEqual({
+      phone: 'El teléfono debe tener 8 dígitos.',
+    });
+    expect(
+      validateContactForm(form({ fullName: 'Ana', phoneCountry: 'US', phone: '123' })),
+    ).toEqual({ phone: 'El teléfono debe tener entre 6 y 14 dígitos.' });
+  });
+
+  it('HU-202: guarda el país elegido junto al número', () => {
+    expect(toNewContactInput(form({ fullName: 'Ana', phoneCountry: 'US', phone: '(305) 555-1234' }))).toMatchObject({
+      phoneCountry: 'US',
+      phoneNumber: '3055551234',
+    });
+  });
 });
 
 describe('isContactFormDirty', () => {

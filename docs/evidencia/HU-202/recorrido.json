@@ -1,0 +1,50 @@
+[
+  {
+    "caso": "Lista de países",
+    "elegido": "Costa Rica (+506)",
+    "cantidadPaises": 245,
+    "ejemplos": [
+      "Costa Rica (+506)",
+      "España (+34)",
+      "Estados Unidos (+1)",
+      "México (+52)",
+      "Nicaragua (+505)",
+      "Panamá (+507)"
+    ]
+  },
+  {
+    "caso": "Costa Rica con 7 dígitos",
+    "mensajes": [
+      "El teléfono debe tener 8 dígitos."
+    ]
+  },
+  {
+    "caso": "Costa Rica con 8 dígitos",
+    "telefonoEnFicha": "+506 8888-0202"
+  },
+  {
+    "caso": "Estados Unidos con 5 dígitos",
+    "mensajes": [
+      "El teléfono debe tener entre 6 y 14 dígitos."
+    ]
+  },
+  {
+    "caso": "Estados Unidos con 10 dígitos",
+    "telefonoEnFicha": "+1 3055550202"
+  },
+  {
+    "caso": "Guardado en Firestore",
+    "phoneCountry": {
+      "stringValue": "US"
+    },
+    "phoneNumber": {
+      "stringValue": "3055550202"
+    }
+  },
+  {
+    "caso": "Nicaragua con 15 dígitos",
+    "mensajes": [
+      "El teléfono debe tener entre 6 y 14 dígitos."
+    ]
+  }
+]
