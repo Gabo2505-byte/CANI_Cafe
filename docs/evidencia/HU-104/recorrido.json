@@ -1,0 +1,78 @@
+[
+  {
+    "caso": "Sesión iniciada, en Avisos",
+    "url": "/avisos",
+    "pantalla": "Avisos",
+    "barraInterna": true,
+    "mensaje": null
+  },
+  {
+    "caso": "Clic en \"Cerrar sesión\"",
+    "url": "/ingreso",
+    "pantalla": "CANI Café",
+    "barraInterna": false,
+    "mensaje": "Sesión cerrada correctamente.",
+    "dialogosDeConfirmacion": 0,
+    "estadoEnHistorial": null
+  },
+  {
+    "caso": "Atrás #1",
+    "url": "/ingreso?redirect=%2Fposibles-ventas",
+    "pantalla": "CANI Café",
+    "barraInterna": false,
+    "mensaje": null
+  },
+  {
+    "caso": "Atrás #2",
+    "url": "/ingreso",
+    "pantalla": "CANI Café",
+    "barraInterna": false,
+    "mensaje": null
+  },
+  {
+    "caso": "Atrás #3",
+    "url": "about:blank",
+    "pantalla": null,
+    "barraInterna": false,
+    "mensaje": null
+  },
+  {
+    "caso": "Recargar la pantalla de ingreso",
+    "url": "/ingreso",
+    "pantalla": "CANI Café",
+    "barraInterna": false,
+    "mensaje": null
+  },
+  {
+    "caso": "Abrir /contactos directamente sin sesión",
+    "url": "/ingreso",
+    "pantalla": "CANI Café",
+    "barraInterna": false,
+    "mensaje": null
+  },
+  {
+    "caso": "Abrir /avisos directamente sin sesión",
+    "url": "/ingreso?redirect=%2Favisos",
+    "pantalla": "CANI Café",
+    "barraInterna": false,
+    "mensaje": null
+  },
+  {
+    "caso": "Pantallas internas vistas después de cerrar sesión",
+    "vistas": []
+  },
+  {
+    "caso": "Iniciar sesión de nuevo",
+    "url": "/contactos",
+    "pantalla": "Contactos",
+    "barraInterna": true,
+    "mensaje": null
+  },
+  {
+    "caso": "Cerrar sesión otra vez (el mensaje vuelve a salir solo tras cerrar)",
+    "url": "/ingreso",
+    "pantalla": "CANI Café",
+    "barraInterna": false,
+    "mensaje": "Sesión cerrada correctamente."
+  }
+]

@@ -1,20 +1,36 @@
-import { useRef, useState, type FormEvent } from 'react';
-import { Link, Navigate, useSearchParams } from 'react-router';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router';
 import { ROUTES, safeRedirect } from '../app/routes';
 import { useAuth } from './AuthContext';
 import { loginErrorFromAuth, validateLoginInput, type LoginErrors } from './loginErrors';
 import { PasswordInput } from './PasswordInput';
+import { useSession } from './SessionContext';
+import type { LoginLocationState } from './sessionMessages';
 import { signInWithUsername } from './signInWithUsername';
 
-/** HU-101: pantalla de ingreso. HU-102: mensajes de qué dato está mal. */
+/** HU-101: pantalla de ingreso. HU-102: mensajes de qué dato está mal. HU-104: aviso al cerrar sesión. */
 export function LoginPage() {
   const auth = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<LoginErrors>({});
   const [submitting, setSubmitting] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const { acknowledgeSignOut } = useSession();
+
+  // Aviso que llega al navegar (ej. "Sesión cerrada correctamente."). Se toma una vez y se borra
+  // del historial para que no reaparezca al recargar la página ni al usar "Atrás".
+  useEffect(() => {
+    const incoming = (location.state as LoginLocationState | null)?.notice;
+    if (!incoming) return;
+    setNotice(incoming);
+    acknowledgeSignOut();
+    navigate(location.pathname + location.search, { replace: true, state: null });
+  }, [location.state, location.pathname, location.search, navigate, acknowledgeSignOut]);
 
   // Con sesión activa se pasa a la pantalla pedida o a Contactos.
   if (auth.status === 'active') {
@@ -47,6 +63,11 @@ export function LoginPage() {
     <main className="login">
       <form className="card" onSubmit={handleSubmit} noValidate>
         <h1>CANI Café</h1>
+        {notice && (
+          <p className="notice-success" role="status">
+            {notice}
+          </p>
+        )}
         <label htmlFor="username">Usuario</label>
         <input
           id="username"

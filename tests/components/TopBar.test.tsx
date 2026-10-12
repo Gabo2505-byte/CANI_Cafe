@@ -7,9 +7,11 @@ import { MemoryRouter } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AppRoutes } from '../../src/app/AppRoutes';
 import { AuthContext } from '../../src/auth/AuthContext';
+import { SessionProvider } from '../../src/auth/SessionContext';
 import type { AuthState } from '../../src/auth/useAuthUser';
 
 vi.mock('../../src/auth/signInWithUsername', () => ({ signInWithUsername: vi.fn() }));
+vi.mock('../../src/auth/signOutUser', () => ({ signOutUser: vi.fn() }));
 
 const active: AuthState = {
   status: 'active',
@@ -20,9 +22,11 @@ const active: AuthState = {
 function renderAt(path: string, state: AuthState = active) {
   return render(
     <AuthContext.Provider value={state}>
-      <MemoryRouter initialEntries={[path]}>
-        <AppRoutes />
-      </MemoryRouter>
+      <SessionProvider>
+        <MemoryRouter initialEntries={[path]}>
+          <AppRoutes />
+        </MemoryRouter>
+      </SessionProvider>
     </AuthContext.Provider>,
   );
 }

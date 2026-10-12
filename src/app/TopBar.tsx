@@ -1,4 +1,7 @@
+import { useState } from 'react';
 import { Link, NavLink } from 'react-router';
+import { useSession } from '../auth/SessionContext';
+import { LOGOUT_ERROR_MESSAGE } from '../auth/sessionMessages';
 import { ROUTES } from './routes';
 
 const NAV_ITEMS = [
@@ -7,8 +10,25 @@ const NAV_ITEMS = [
   { to: ROUTES.alerts, label: 'Avisos' },
 ] as const;
 
-/** HU-103: barra superior de todas las pantallas internas. */
+/** HU-103: barra superior de todas las pantallas internas. HU-104: cerrar sesión. */
 export function TopBar() {
+  const session = useSession();
+  const [signingOut, setSigningOut] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSignOut() {
+    setSigningOut(true);
+    setError(null);
+    try {
+      // Sin confirmación. Al cerrarse la sesión, ProtectedRoute lleva al ingreso (replace) con el aviso.
+      await session.signOut();
+    } catch {
+      // La sesión sigue abierta: se informa y no se navega.
+      setError(LOGOUT_ERROR_MESSAGE);
+      setSigningOut(false);
+    }
+  }
+
   return (
     <header className="topbar">
       <Link to={ROUTES.contacts} className="topbar-brand">
@@ -26,8 +46,12 @@ export function TopBar() {
           ))}
         </ul>
       </nav>
-      {/* La acción de cerrar sesión se implementa en HU-104. */}
-      <button type="button" className="topbar-logout">
+      {error && (
+        <p className="topbar-error" role="alert">
+          {error}
+        </p>
+      )}
+      <button type="button" className="topbar-logout" onClick={handleSignOut} disabled={signingOut}>
         Cerrar sesión
       </button>
     </header>
