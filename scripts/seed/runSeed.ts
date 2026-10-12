@@ -3,6 +3,7 @@ import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { usernameToAuthEmail } from '../../src/auth/username';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
+import { toSortKey } from '../../src/shared/utils/text';
 import {
   SEED_ADMIN,
   seedCommunications,
@@ -64,6 +65,12 @@ export async function runSeed(app: App, options: { adminPassword: string }): Pro
   put(COLLECTIONS.sales, seedSales);
   put(COLLECTIONS.communications, seedCommunications);
   await batch.commit();
+
+  // HU-204: contactos creados antes de que existiera nameSortKey (ej. probando a mano) lo reciben,
+  // para que aparezcan en la lista ordenada.
+  const contacts = await db.collection(COLLECTIONS.contacts).get();
+  const missing = contacts.docs.filter((d) => typeof d.get('nameSortKey') !== 'string' && d.get('fullName'));
+  for (const d of missing) await d.ref.update({ nameSortKey: toSortKey(String(d.get('fullName'))) });
 
   return {
     users: seedUsers.length,

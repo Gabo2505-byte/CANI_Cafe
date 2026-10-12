@@ -30,6 +30,12 @@ export const DEFAULT_PHONE_COUNTRY = 'CR';
 export interface Contact {
   id: string;
   fullName: string;
+  /**
+   * Interno (HU-204): fullName en minúsculas y sin tildes, para ordenar alfabéticamente.
+   * Lo calcula el sistema al guardar (src/shared/utils/text.ts → toSortKey). No se muestra.
+   */
+  nameSortKey: string;
+  /** Se guarda en minúsculas (HU-203). */
   email: string | null;
   /** País del teléfono, ISO 3166-1 alfa-2 ("CR", "US"…). null si no hay teléfono. */
   phoneCountry: string | null;

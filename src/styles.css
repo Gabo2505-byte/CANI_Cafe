@@ -118,6 +118,86 @@ button:disabled {
   color: #b00020;
 }
 
+/* HU-204: tabla de contactos y paginación */
+.table-wrapper {
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.6rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid #eee4dc;
+}
+
+/* Textos largos sin espacios (ej. un nombre de 100 letras) se parten y no empujan las demás columnas. */
+.data-table td {
+  overflow-wrap: anywhere;
+}
+
+.data-table td:first-child {
+  min-width: 10rem;
+  max-width: 22rem;
+}
+
+.data-table td:nth-child(2) {
+  max-width: 18rem;
+}
+
+.data-table th {
+  font-size: 0.85rem;
+  color: #6b5a4e;
+  background: #f7f3ef;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background: #faf6f2;
+}
+
+.clickable-row a {
+  font-weight: 600;
+  color: #4a2a1a;
+  text-decoration: none;
+}
+
+.clickable-row a:hover,
+.clickable-row a:focus-visible {
+  text-decoration: underline;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: #6b5a4e;
+  background: #fff;
+  border-radius: 8px;
+}
+
 /* HU-203: contador de caracteres */
 .char-counter {
   margin: -0.35rem 0 0.4rem;

@@ -2,6 +2,7 @@
 // IDs y fechas fijos para que el seed sea idempotente y determinista.
 import type { Timestamp } from 'firebase/firestore';
 import type { Communication, Contact, Sale, User } from '../../src/shared/types';
+import { toSortKey } from '../../src/shared/utils/text';
 
 /** Documento listo para escribir: sin `id` (va como id del doc) y con Date en lugar de Timestamp. */
 type ToDate<V> = V extends Timestamp ? Date : V;
@@ -21,7 +22,8 @@ export const seedUsers: Seeded<User>[] = [
   { id: SEED_ADMIN.uid, data: { username: SEED_ADMIN.username, email: SEED_ADMIN.email, active: true } },
 ];
 
-export const seedContacts: Seeded<Contact>[] = [
+// nameSortKey (HU-204) se calcula a partir de fullName, igual que al guardar desde la app.
+const seedContactsBase: Seeded<Omit<Contact, 'nameSortKey'>>[] = [
   {
     id: 'contact-001',
     data: {
@@ -96,6 +98,11 @@ export const seedContacts: Seeded<Contact>[] = [
     },
   },
 ];
+
+export const seedContacts: Seeded<Contact>[] = seedContactsBase.map(({ id, data }) => ({
+  id,
+  data: { ...data, nameSortKey: toSortKey(data.fullName) },
+}));
 
 // MOCK: las ventas las define Dylan. Se ajustan cuando cierre su contrato de etapas.
 export const seedSales: Seeded<Sale>[] = [

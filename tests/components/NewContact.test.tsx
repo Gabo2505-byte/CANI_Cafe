@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 // HU-201: Registrar un nuevo contacto
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { User as FirebaseUser } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
@@ -20,6 +20,9 @@ vi.mock('../../src/contacts/contactsApi', () => ({
   createContact: vi.fn(),
   getContact: vi.fn(),
   findDuplicateContacts: vi.fn(),
+  // HU-204: la lista de Contactos (vacía en estas pruebas)
+  countContacts: vi.fn().mockResolvedValue(0),
+  listContactsPage: vi.fn().mockResolvedValue({ contacts: [], nextCursor: null }),
 }));
 
 const active: AuthState = {
@@ -53,6 +56,7 @@ const field = (label: string) =>
 const saved = (overrides: Partial<Contact> = {}): Contact => ({
   id: 'nuevo-123',
   fullName: 'Ana Prueba Mora',
+  nameSortKey: 'ana prueba mora',
   email: 'ana.prueba@example.com',
   phoneCountry: null,
   phoneNumber: null,
@@ -143,7 +147,8 @@ describe('HU-201 Registrar un nuevo contacto', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Ana Prueba Mora' })).toBeTruthy();
     expect(screen.getByText('Persona interesada')).toBeTruthy();
     expect(currentLocation.pathname).toBe('/contactos/nuevo-123');
-    expect(currentLocation.state).toBeNull(); // el mensaje no reaparece al recargar
+    // El aviso se borra del historial (no reaparece al recargar); puede ocurrir un instante después.
+    await waitFor(() => expect(currentLocation.state).toBeNull());
     expect(getContact).toHaveBeenCalledWith('nuevo-123');
   });
 
