@@ -118,6 +118,20 @@ button:disabled {
   color: #b00020;
 }
 
+/* HU-203: contador de caracteres */
+.char-counter {
+  margin: -0.35rem 0 0.4rem;
+  font-size: 0.8rem;
+  text-align: right;
+  color: #8a7a6e;
+}
+
+/* Llegar al máximo es válido: aviso informativo, no rojo de error. */
+.char-counter.at-limit {
+  color: #8a5a00;
+  font-weight: 600;
+}
+
 .field-error-link {
   font-weight: 600;
   color: #6b3e26;

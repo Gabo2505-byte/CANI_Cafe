@@ -73,6 +73,43 @@ describe('HU-203 Revisar los datos antes de guardar', () => {
     expect(addressInput().value).toHaveLength(250);
   });
 
+  it('el contador avisa al llegar al máximo (nombre 100, dirección 250)', async () => {
+    const user = userEvent.setup();
+    renderForm();
+    expect(document.getElementById('fullName-count')!.textContent).toBe('0/100');
+    expect(document.getElementById('email-count')!.textContent).toBe('0/100');
+    expect(document.getElementById('address-count')!.textContent).toBe('0/250');
+
+    await user.type(nameInput(), 'Ana');
+    expect(document.getElementById('fullName-count')!.textContent).toBe('3/100');
+    expect(screen.queryByText(/acepta como máximo/)).toBeNull();
+
+    await user.click(nameInput());
+    await user.paste('n'.repeat(120));
+    expect(document.getElementById('fullName-count')!.textContent).toBe('Llegó al máximo de 100 caracteres. 100/100');
+
+    await user.click(addressInput());
+    await user.paste('d'.repeat(300));
+    expect(document.getElementById('address-count')!.textContent).toBe('Llegó al máximo de 250 caracteres. 250/250');
+    // Es un aviso, no un error
+    expect(document.getElementById('fullName-count')!.getAttribute('role')).toBeNull();
+  });
+
+  it('justo en el máximo (100 / 250) es válido y SÍ se guarda', async () => {
+    const user = userEvent.setup();
+    renderForm();
+    await user.click(nameInput());
+    await user.paste('n'.repeat(100));
+    await user.type(emailInput(), 'max@example.com');
+    await user.click(addressInput());
+    await user.paste('d'.repeat(250));
+    await save(user);
+
+    expect(createContact).toHaveBeenCalledWith(
+      expect.objectContaining({ fullName: 'n'.repeat(100), address: 'd'.repeat(250) }),
+    );
+  });
+
   it.each(['ana', 'ana@dominio', 'ana @dominio.com', 'ana@dominio .com', '@dominio.com'])(
     'correo "%s" → "Ingrese un correo electrónico válido." y no se guarda',
     async (email) => {

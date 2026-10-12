@@ -21,7 +21,7 @@
 
 | # | Criterio | Resultado | Evidencia |
 |---|---|---|---|
-| 1 | Nombre completo y correo aceptan como máximo 100 caracteres. La dirección, como máximo 250. | ✅ Cumple | Al escribir 110, 110 y 260 caracteres, quedan **100, 100 y 250**. Pegar texto más largo también se corta. |
+| 1 | Nombre completo y correo aceptan como máximo 100 caracteres. La dirección, como máximo 250. | ✅ Cumple | Al escribir 110, 110 y 260 caracteres, quedan **100, 100 y 250**. Pegar texto más largo también se corta. Un **contador** (`37/100`) debajo de cada campo avisa "Llegó al máximo de 100 caracteres." al llegar al límite: [06](06-contador-caracteres.png). Justo en el máximo, el dato es **válido y se guarda**. |
 | 2 | El correo debe ser nombre@dominio.com, sin espacios. Si no, "Ingrese un correo electrónico válido.". | ✅ Cumple | [01](01-correo-invalido.png) con "ana @dominio". También se probaron `ana`, `ana@dominio`, `ana@dominio .com` y `@dominio.com`. |
 | 3 | No puede haber dos contactos con el mismo correo: "Ya existe un contacto con este correo electrónico.". | ✅ Cumple | [02](02-correo-repetido.png). Se detecta aunque se escriba con mayúsculas (`Ana.Prueba@Example.com`). |
 | 4 | No puede haber dos contactos con el mismo teléfono (mismo país y número): "Ya existe un contacto con este teléfono.". | ✅ Cumple | [04](04-telefono-repetido.png) con CR 0000-0002. El **mismo número en otro país** (Nicaragua) **no** es repetido y se guarda como `+505 00000002`. |
@@ -45,7 +45,7 @@
 Salida completa en [pruebas.txt](pruebas.txt).
 
 - `npm run typecheck`: sin errores.
-- `npm test`: 129/129, de las cuales 16 son de HU-203 (5 unitarias y 11 de pantalla).
+- `npm test`: 131/131, de las cuales 18 son de HU-203 (5 unitarias y 13 de pantalla, incluido el contador y "justo en el máximo sí se guarda").
 - Pruebas contra emuladores: 25/25, de las cuales 5 son de HU-203: correo repetido, teléfono repetido, mismo número en otro país, datos nuevos y `excludeId`.
 - HT-001, HU-101 a HU-105, HU-201 y HU-202 siguen pasando.
 
@@ -57,5 +57,5 @@ Salida completa en [pruebas.txt](pruebas.txt).
 | 01. Correo inválido | 02. Correo repetido + "Ver contacto" |
 | ![Ver contacto](03-ver-contacto-existente.png) | ![Teléfono repetido](04-telefono-repetido.png) |
 | 03. "Ver contacto" abre la ficha existente | 04. Teléfono repetido |
-| ![Ambos repetidos](05-ambos-repetidos.png) | |
-| 05. Correo y teléfono repetidos | |
+| ![Ambos repetidos](05-ambos-repetidos.png) | ![Contador](06-contador-caracteres.png) |
+| 05. Correo y teléfono repetidos | 06. Contador: nombre en el máximo (100/100) |

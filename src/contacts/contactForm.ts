@@ -21,6 +21,8 @@ export const CONTACT_MESSAGES = {
   fullNameTooLong: `El nombre completo acepta como máximo ${CONTACT_LIMITS.fullName} caracteres.`,
   emailTooLong: `El correo electrónico acepta como máximo ${CONTACT_LIMITS.email} caracteres.`,
   addressTooLong: `La dirección acepta como máximo ${CONTACT_LIMITS.address} caracteres.`,
+  /** Aviso informativo del contador (no es un error: el dato es válido). */
+  atLimit: (max: number) => `Llegó al máximo de ${max} caracteres.`,
 } as const;
 
 export interface ContactFormValues {

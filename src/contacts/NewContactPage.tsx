@@ -36,6 +36,22 @@ function FieldError({ id, message, duplicateOf }: { id: string; message?: string
   );
 }
 
+/**
+ * HU-203: contador "37/100" debajo del campo. Llegar al máximo es válido (se puede guardar);
+ * solo se informa que no se pueden escribir más caracteres. No es un error.
+ */
+function CharCounter({ id, length, max }: { id: string; length: number; max: number }) {
+  const atLimit = length >= max;
+  return (
+    <p id={id} className={atLimit ? 'char-counter at-limit' : 'char-counter'} aria-live="polite">
+      {atLimit && <span className="char-counter-message">{CONTACT_MESSAGES.atLimit(max)} </span>}
+      <span>
+        {length}/{max}
+      </span>
+    </p>
+  );
+}
+
 /** HU-201: registrar un nuevo contacto. HU-202: teléfono con país. HU-203: validaciones y repetidos. */
 export function NewContactPage() {
   const navigate = useNavigate();
@@ -98,7 +114,12 @@ export function NewContactPage() {
           autoComplete="off"
           aria-required="true"
           aria-invalid={errors.fullName ? true : undefined}
-          aria-describedby={errors.fullName ? 'fullName-error' : undefined}
+          aria-describedby={errors.fullName ? 'fullName-error fullName-count' : 'fullName-count'}
+        />
+        <CharCounter
+          id="fullName-count"
+          length={values.fullName.length}
+          max={CONTACT_LIMITS.fullName}
         />
         <FieldError id="fullName-error" message={errors.fullName} />
 
@@ -114,8 +135,13 @@ export function NewContactPage() {
           maxLength={CONTACT_LIMITS.email}
           placeholder="nombre@dominio.com"
           autoComplete="off"
-          aria-describedby={errors.email ? 'email-error' : 'contact-method-hint'}
+          aria-describedby={errors.email ? 'email-error email-count' : 'contact-method-hint email-count'}
           aria-invalid={errors.email || errors.emailOrPhone ? true : undefined}
+        />
+        <CharCounter
+          id="email-count"
+          length={values.email.length}
+          max={CONTACT_LIMITS.email}
         />
         <FieldError id="email-error" message={errors.email} duplicateOf={duplicates.email} />
 
@@ -142,7 +168,12 @@ export function NewContactPage() {
           onChange={set('address')}
           maxLength={CONTACT_LIMITS.address}
           aria-invalid={errors.address ? true : undefined}
-          aria-describedby={errors.address ? 'address-error' : undefined}
+          aria-describedby={errors.address ? 'address-error address-count' : 'address-count'}
+        />
+        <CharCounter
+          id="address-count"
+          length={values.address.length}
+          max={CONTACT_LIMITS.address}
         />
         <FieldError id="address-error" message={errors.address} />
 
