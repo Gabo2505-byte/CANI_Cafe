@@ -1,7 +1,7 @@
 // Datos de prueba 100% ficticios: nombres inventados, correos @example.com / .test, teléfonos 0000xxxx.
 // IDs y fechas fijos para que el seed sea idempotente y determinista.
 import type { Timestamp } from 'firebase/firestore';
-import type { Communication, Contact, Sale, User } from '../../src/shared/types';
+import type { Communication, Contact, Product, Sale, SaleProduct, StageHistory, User } from '../../src/shared/types';
 import { toSortKey } from '../../src/shared/utils/text';
 
 /** Documento listo para escribir: sin `id` (va como id del doc) y con Date en lugar de Timestamp. */
@@ -104,14 +104,14 @@ export const seedContacts: Seeded<Contact>[] = seedContactsBase.map(({ id, data 
   data: { ...data, nameSortKey: toSortKey(data.fullName) },
 }));
 
-// MOCK: las ventas las define Dylan. Se ajustan cuando cierre su contrato de etapas.
 export const seedSales: Seeded<Sale>[] = [
   {
     id: 'sale-001',
     data: {
       contactId: 'contact-002',
       title: 'Café en grano para cafetería (mock)',
-      stage: 'negociacion',
+      stage: 'en_negociacion',
+      stageChangedAt: cr('2026-10-01T10:00:00'),
       estimatedAmount: 450_000,
       nextFollowUpAt: cr('2026-10-12T10:00:00'),
       notes: 'Venta simulada para pruebas.',
@@ -124,7 +124,8 @@ export const seedSales: Seeded<Sale>[] = [
     data: {
       contactId: 'contact-003',
       title: 'Distribución mensual de café molido (mock)',
-      stage: 'propuesta',
+      stage: 'cotizacion_enviada',
+      stageChangedAt: cr('2026-09-28T09:00:00'),
       estimatedAmount: 1_200_000,
       nextFollowUpAt: cr('2026-10-09T15:00:00'),
       notes: 'Venta simulada para pruebas.',
@@ -138,12 +139,127 @@ export const seedSales: Seeded<Sale>[] = [
       contactId: 'contact-002',
       title: 'Pedido de temporada navideña (mock)',
       stage: 'ganada',
+      stageChangedAt: cr('2026-10-02T12:00:00'),
       estimatedAmount: 300_000,
       nextFollowUpAt: null,
       notes: 'Venta simulada para pruebas.',
       createdAt: cr('2026-09-25T10:00:00'),
       lastCommunicationAt: cr('2026-10-02T11:00:00'), // comm-003 (aplica a todas)
     },
+  },
+];
+
+// PROVISIONAL: productos de ejemplo mientras el cliente entrega el catálogo real
+// (nombre, presentación y descripción). Para reemplazarlos basta con editar esta lista.
+export const seedProducts: Seeded<Product>[] = [
+  {
+    id: 'product-001',
+    data: {
+      name: 'Café en grano',
+      presentation: 'Bolsa de 340 g',
+      description: 'Café en grano tostado, producto de ejemplo.',
+      active: true,
+    },
+  },
+  {
+    id: 'product-002',
+    data: {
+      name: 'Café en grano',
+      presentation: 'Bolsa de 1 kg',
+      description: 'Café en grano tostado en presentación familiar, producto de ejemplo.',
+      active: true,
+    },
+  },
+  {
+    id: 'product-003',
+    data: {
+      name: 'Café molido',
+      presentation: 'Bolsa de 340 g',
+      description: 'Café molido listo para preparar, producto de ejemplo.',
+      active: true,
+    },
+  },
+  {
+    id: 'product-004',
+    data: {
+      name: 'Café molido',
+      presentation: 'Bolsa de 1 kg',
+      description: 'Café molido para cafeterías, producto de ejemplo.',
+      active: true,
+    },
+  },
+  {
+    id: 'product-005',
+    data: {
+      name: 'Café para espresso',
+      presentation: 'Bolsa de 2,5 kg',
+      description: 'Mezcla para máquina de espresso, producto de ejemplo.',
+      active: true,
+    },
+  },
+  {
+    // Inactivo: no aparece al elegir productos, pero sigue existiendo para ventas antiguas.
+    id: 'product-006',
+    data: {
+      name: 'Café de temporada',
+      presentation: 'Bolsa de 250 g',
+      description: 'Producto descontinuado, de ejemplo.',
+      active: false,
+    },
+  },
+];
+
+/** `saleProducts` no tiene `id` en el contrato: el id del documento es `${saleId}_${productId}`. */
+type SeedSaleProduct = SaleProduct & { id: string };
+export const seedSaleProducts: Seeded<SeedSaleProduct>[] = [
+  { id: 'sale-001_product-001', data: { saleId: 'sale-001', productId: 'product-001', quantity: 20 } },
+  { id: 'sale-001_product-002', data: { saleId: 'sale-001', productId: 'product-002', quantity: 10 } },
+  { id: 'sale-002_product-003', data: { saleId: 'sale-002', productId: 'product-003', quantity: 50 } },
+  { id: 'sale-003_product-002', data: { saleId: 'sale-003', productId: 'product-002', quantity: 5 } },
+  { id: 'sale-003_product-004', data: { saleId: 'sale-003', productId: 'product-004', quantity: 5 } },
+];
+
+/**
+ * `stageHistory` no tiene `id` en el contrato: el id es `${saleId}_${número de cambio}`.
+ * El último cambio de cada venta coincide con su `stage` y su `stageChangedAt`.
+ */
+type SeedStageHistory = StageHistory & { id: string };
+export const seedStageHistory: Seeded<SeedStageHistory>[] = [
+  {
+    id: 'sale-001_01',
+    data: { saleId: 'sale-001', previousStage: null, newStage: 'nuevo_interesado', changedAt: cr('2026-09-15T09:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-001_02',
+    data: { saleId: 'sale-001', previousStage: 'nuevo_interesado', newStage: 'contactado', changedAt: cr('2026-09-18T11:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-001_03',
+    data: { saleId: 'sale-001', previousStage: 'contactado', newStage: 'cotizacion_enviada', changedAt: cr('2026-09-24T14:30:00'), lossReason: null },
+  },
+  {
+    id: 'sale-001_04',
+    data: { saleId: 'sale-001', previousStage: 'cotizacion_enviada', newStage: 'en_negociacion', changedAt: cr('2026-10-01T10:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-002_01',
+    data: { saleId: 'sale-002', previousStage: null, newStage: 'nuevo_interesado', changedAt: cr('2026-09-20T13:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-002_02',
+    data: { saleId: 'sale-002', previousStage: 'nuevo_interesado', newStage: 'cotizacion_enviada', changedAt: cr('2026-09-28T09:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-003_01',
+    data: { saleId: 'sale-003', previousStage: null, newStage: 'nuevo_interesado', changedAt: cr('2026-09-25T10:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-003_02',
+    data: { saleId: 'sale-003', previousStage: 'nuevo_interesado', newStage: 'en_negociacion', changedAt: cr('2026-09-29T16:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-003_03',
+    data: { saleId: 'sale-003', previousStage: 'en_negociacion', newStage: 'ganada', changedAt: cr('2026-10-02T12:00:00'), lossReason: null },
   },
 ];
 

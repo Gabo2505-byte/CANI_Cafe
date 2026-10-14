@@ -8,7 +8,10 @@ import {
   SEED_ADMIN,
   seedCommunications,
   seedContacts,
+  seedProducts,
+  seedSaleProducts,
   seedSales,
+  seedStageHistory,
   seedUsers,
   type Seeded,
 } from './seedData';
@@ -18,6 +21,9 @@ export interface SeedSummary {
   contacts: number;
   communications: number;
   sales: number;
+  products: number;
+  saleProducts: number;
+  stageHistory: number;
 }
 
 /** Aborta si no estamos contra los emuladores con un proyecto demo-*. */
@@ -62,7 +68,10 @@ export async function runSeed(app: App, options: { adminPassword: string }): Pro
 
   put(COLLECTIONS.users, seedUsers);
   put(COLLECTIONS.contacts, seedContacts);
+  put(COLLECTIONS.products, seedProducts);
   put(COLLECTIONS.sales, seedSales);
+  put(COLLECTIONS.saleProducts, seedSaleProducts);
+  put(COLLECTIONS.stageHistory, seedStageHistory);
   put(COLLECTIONS.communications, seedCommunications);
   await batch.commit();
 
@@ -77,5 +86,8 @@ export async function runSeed(app: App, options: { adminPassword: string }): Pro
     contacts: seedContacts.length,
     communications: seedCommunications.length,
     sales: seedSales.length,
+    products: seedProducts.length,
+    saleProducts: seedSaleProducts.length,
+    stageHistory: seedStageHistory.length,
   };
 }

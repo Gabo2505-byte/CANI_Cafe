@@ -5,6 +5,7 @@ import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { assertEmulatorTarget, runSeed } from '../../scripts/seed/runSeed';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
+import { SALE_STAGES } from '../../src/shared/types';
 
 const projectId = process.env.VITE_FIREBASE_PROJECT_ID!;
 const adminPassword = process.env.SEED_ADMIN_PASSWORD!;
@@ -44,6 +45,9 @@ describe('seed', () => {
     expect(await count(COLLECTIONS.contacts)).toBe(5);
     expect(await count(COLLECTIONS.communications)).toBe(5);
     expect(await count(COLLECTIONS.sales)).toBe(3);
+    expect(await count(COLLECTIONS.products)).toBe(6);
+    expect(await count(COLLECTIONS.saleProducts)).toBe(5);
+    expect(await count(COLLECTIONS.stageHistory)).toBe(9);
 
     const { users } = await getAuth(app).listUsers();
     expect(users).toHaveLength(1);
@@ -77,5 +81,43 @@ describe('seed', () => {
         expect(saleById.get(comm.saleId)?.contactId).toBe(comm.contactId);
       }
     }
+  });
+
+  it('productos, productos de la venta y etapas: relaciones válidas y ventas coherentes con su historial', async () => {
+    const db = getFirestore(app);
+    const [sales, products, saleProducts, history] = await Promise.all(
+      [COLLECTIONS.sales, COLLECTIONS.products, COLLECTIONS.saleProducts, COLLECTIONS.stageHistory].map((c) =>
+        db.collection(c).get(),
+      ),
+    );
+    const productIds = new Set(products.docs.map((d) => d.id));
+    const saleIds = new Set(sales.docs.map((d) => d.id));
+
+    expect(products.docs.some((d) => d.get('active') === false)).toBe(true);
+    for (const snap of saleProducts.docs) {
+      const row = snap.data();
+      expect(snap.id).toBe(`${row.saleId}_${row.productId}`);
+      expect(saleIds.has(row.saleId)).toBe(true);
+      expect(productIds.has(row.productId)).toBe(true);
+      expect(Number.isInteger(row.quantity) && row.quantity >= 1 && row.quantity <= 9999).toBe(true);
+    }
+
+    for (const sale of sales.docs) {
+      expect(SALE_STAGES).toContain(sale.get('stage'));
+      expect(sale.get('stageChangedAt')).toBeInstanceOf(Timestamp);
+      const changes = history.docs
+        .map((d) => d.data())
+        .filter((h) => h.saleId === sale.id)
+        .sort((a, b) => a.changedAt.toMillis() - b.changedAt.toMillis());
+      expect(changes.length).toBeGreaterThan(0);
+      expect(changes[0].previousStage).toBeNull();
+      changes.forEach((change, i) => {
+        if (i > 0) expect(change.previousStage).toBe(changes[i - 1].newStage);
+      });
+      const last = changes[changes.length - 1];
+      expect(last.newStage).toBe(sale.get('stage'));
+      expect(last.changedAt.toMillis()).toBe(sale.get('stageChangedAt').toMillis());
+    }
+    for (const snap of history.docs) expect(saleIds.has(snap.get('saleId'))).toBe(true);
   });
 });
