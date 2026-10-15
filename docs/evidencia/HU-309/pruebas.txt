@@ -1,0 +1,50 @@
+Evidencia de pruebas HU-309 - 2026-10-15 10:32 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-309 ==
+ ✓ tests/unit/saleEdit.test.ts > HU-309 valores iniciales > parte de lo guardado, con el seguimiento como día de Costa Rica 4ms
+ ✓ tests/unit/saleEdit.test.ts > HU-309 valores iniciales > una venta ganada solo permite editar las notas; las demás, no 1ms
+ ✓ tests/unit/saleEdit.test.ts > HU-309 reglas al editar > sin cambios no hay errores 1ms
+ ✓ tests/unit/saleEdit.test.ts > HU-309 reglas al editar > el título es obligatorio y de hasta 100 caracteres 1ms
+ ✓ tests/unit/saleEdit.test.ts > HU-309 reglas al editar > el título nuevo no puede repetir el de otra posible venta abierta del contacto 0ms
+ ✓ tests/unit/saleEdit.test.ts > HU-309 reglas al editar > un título que no se tocó no se revisa contra otras ventas 0ms
+ ✓ tests/unit/saleEdit.test.ts > HU-309 reglas al editar > el monto va de ₡ 0 a ₡ 999 999 999 1ms
+ ✓ tests/unit/saleEdit.test.ts > HU-309 reglas al editar > un seguimiento nuevo no puede ser anterior a hoy; hoy y el futuro, sí; quitarlo, sí 0ms
+ ✓ tests/unit/saleEdit.test.ts > HU-309 reglas al editar > un seguimiento ya vencido que no se tocó no impide guardar otros cambios 1ms
+ ✓ tests/unit/saleEdit.test.ts > HU-309 reglas al editar > las notas, hasta 1000 caracteres 0ms
+ ✓ tests/unit/saleEdit.test.ts > HU-309 reglas al editar > nunca pide el contacto (no se puede cambiar al editar) 0ms
+ ✓ tests/unit/saleEdit.test.ts > HU-309 venta ganada: solo notas > solo se revisan las notas, aunque lo demás venga vacío o inválido 0ms
+ ✓ tests/unit/saleEdit.test.ts > HU-309 venta ganada: solo notas > las notas siguen limitadas a 1000 caracteres 0ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 Editar una posible venta > en el detalle hay un botón "Editar" arriba, junto al título 195ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 Editar una posible venta > el formulario parte de los datos guardados y permite cambiar título, monto, productos, seguimiento y notas 135ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 Editar una posible venta > un producto inactivo que la venta ya tenía sigue en la lista; los demás inactivos, no 106ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 Editar una posible venta > al guardar muestra "Cambios guardados correctamente." y vuelve al detalle ya actualizado 577ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 Editar una posible venta > se pueden agregar, cambiar y quitar productos 528ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 Editar una posible venta > un seguimiento nuevo se guarda a las 00:00 de Costa Rica; quitarlo lo deja vacío 357ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 Editar una posible venta > título vacío, monto inválido y seguimiento anterior a hoy: mensaje bajo cada dato y no guarda 647ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 Editar una posible venta > un título igual al de otra posible venta abierta del contacto no se guarda 497ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 Editar una posible venta > cantidad inválida, producto sin elegir y producto repetido: mensajes bajo la fila y no guarda 349ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 Editar una posible venta > el mensaje de un dato desaparece al corregirlo 278ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 Editar una posible venta > un seguimiento vencido que no se toca no impide guardar un cambio en las notas 468ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 Editar una posible venta > "Cancelar" descarta los cambios y vuelve al detalle sin guardar 596ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 Editar una posible venta > si falla el guardado lo avisa y se queda en el formulario con los datos 282ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 venta ganada: solo se pueden cambiar las notas > el formulario solo tiene las notas 80ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 venta ganada: solo se pueden cambiar las notas > guarda las notas con "Cambios guardados correctamente." 493ms
+ ✓ tests/components/SaleEdit.test.tsx > HU-309 venta ganada: solo se pueden cambiar las notas > las notas siguen limitadas a 1000 caracteres 188ms
+ Test Files  2 passed (2)
+      Tests  29 passed (29)
+
+== Contra emulador (tests/sales/updateSale) ==
+guarda título, monto, seguimiento y notas sin tocar etapa, historial ni última comunicación: ok
+quitar el seguimiento lo deja en null: ok
+reemplaza los productos y no toca otras ventas: ok
+sin productos quita todos los de esa venta: ok
+una venta ganada solo guarda las notas: ok
+una venta que no existe da error y no crea nada: ok
+sin sesión no se puede editar y no cambia nada: ok
+
+== Suite completa ==
+npm test: 316/316
+npm run test:emulators: 59/59

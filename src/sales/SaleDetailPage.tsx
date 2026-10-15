@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { contactPath, ROUTES } from '../app/routes';
 import { SALE_STAGE_LABELS } from '../shared/types';
@@ -12,6 +12,9 @@ import {
   type SaleDetailData,
 } from './saleDetail';
 import { loadSaleDetail } from './saleDetailApi';
+import { EDIT_MESSAGES } from './saleEdit';
+import { SaleEditForm } from './SaleEditForm';
+import { TimedNotice } from './TimedNotice';
 
 type LoadState =
   | { status: 'loading' }
@@ -19,27 +22,45 @@ type LoadState =
   | { status: 'error' }
   | { status: 'ready'; detail: SaleDetailData };
 
-/** HU-308: detalle de una posible venta con su historial de etapas. */
+/** HU-308: detalle de una posible venta con su historial de etapas. HU-309: botón "Editar". */
 export function SaleDetailPage() {
   const { saleId } = useParams();
   const [state, setState] = useState<LoadState>({ status: 'loading' });
+  const [editing, setEditing] = useState(false);
+  // Cada guardado cambia la clave para que la confirmación de 5 segundos vuelva a mostrarse.
+  const [saved, setSaved] = useState(0);
+
+  const load = useCallback(
+    async (isCancelled: () => boolean = () => false) => {
+      try {
+        const detail = await loadSaleDetail(saleId ?? '');
+        if (!isCancelled()) setState(detail ? { status: 'ready', detail } : { status: 'notFound' });
+      } catch {
+        if (!isCancelled()) setState({ status: 'error' });
+      }
+    },
+    [saleId],
+  );
 
   useEffect(() => {
     let cancelled = false;
     setState({ status: 'loading' });
-    loadSaleDetail(saleId ?? '').then(
-      (detail) => {
-        if (!cancelled) setState(detail ? { status: 'ready', detail } : { status: 'notFound' });
-      },
-      () => !cancelled && setState({ status: 'error' }),
-    );
+    setEditing(false);
+    void load(() => cancelled);
     return () => {
       cancelled = true;
     };
-  }, [saleId]);
+  }, [load]);
+
+  async function handleSaved() {
+    await load();
+    setEditing(false);
+    setSaved((n) => n + 1);
+  }
 
   return (
     <main className="page">
+      {saved > 0 && <TimedNotice key={saved} message={EDIT_MESSAGES.saved} />}
       <p className="detail-back">
         <Link to={ROUTES.salesBoard}>{DETAIL_MESSAGES.back}</Link>
       </p>
@@ -50,12 +71,28 @@ export function SaleDetailPage() {
           {DETAIL_MESSAGES.loadError}
         </p>
       )}
-      {state.status === 'ready' && <SaleDetail detail={state.detail} />}
+      {state.status === 'ready' && (
+        <SaleDetail
+          detail={state.detail}
+          editing={editing}
+          onEdit={() => setEditing(true)}
+          onCancel={() => setEditing(false)}
+          onSaved={handleSaved}
+        />
+      )}
     </main>
   );
 }
 
-function SaleDetail({ detail }: { detail: SaleDetailData }) {
+interface SaleDetailProps {
+  detail: SaleDetailData;
+  editing: boolean;
+  onEdit: () => void;
+  onCancel: () => void;
+  onSaved: () => void;
+}
+
+function SaleDetail({ detail, editing, onEdit, onCancel, onSaved }: SaleDetailProps) {
   const { sale, contactName, products, history } = detail;
   const rows: [string, React.ReactNode][] = [
     ['Etapa', SALE_STAGE_LABELS[sale.stage]],
@@ -83,45 +120,58 @@ function SaleDetail({ detail }: { detail: SaleDetailData }) {
 
   return (
     <>
-      <h1>{sale.title}</h1>
+      <div className="page-header">
+        <h1>{sale.title}</h1>
+        {!editing && (
+          <button type="button" onClick={onEdit}>
+            Editar
+          </button>
+        )}
+      </div>
       <p className="detail-contact">
         {contactName ? <Link to={contactPath(sale.contactId)}>{contactName}</Link> : '—'}
       </p>
 
-      <dl className="detail-list detail-list-wide">
-        {rows.map(([label, value]) => (
-          <div key={label}>
-            <dt>{label}</dt>
-            <dd>{value}</dd>
-          </div>
-        ))}
-      </dl>
+      {editing ? (
+        <SaleEditForm detail={detail} onSaved={onSaved} onCancel={onCancel} />
+      ) : (
+        <>
+          <dl className="detail-list detail-list-wide">
+            {rows.map(([label, value]) => (
+              <div key={label}>
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
 
-      <section aria-labelledby="stage-history-title">
-        <h2 id="stage-history-title">{DETAIL_MESSAGES.historyTitle}</h2>
-        <div className="table-wrapper">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Etapa anterior</th>
-                <th>Etapa nueva</th>
-                <th>Motivo</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortHistory(history).map((entry, index) => (
-                <tr key={`${entry.changedAt.toMillis()}-${index}`}>
-                  <td>{formatDateNumericCR(entry.changedAt)}</td>
-                  <td>{entry.previousStage ? SALE_STAGE_LABELS[entry.previousStage] : '—'}</td>
-                  <td>{SALE_STAGE_LABELS[entry.newStage]}</td>
-                  <td>{lossReasonText(entry) ?? ''}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+          <section aria-labelledby="stage-history-title">
+            <h2 id="stage-history-title">{DETAIL_MESSAGES.historyTitle}</h2>
+            <div className="table-wrapper">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Etapa anterior</th>
+                    <th>Etapa nueva</th>
+                    <th>Motivo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortHistory(history).map((entry, index) => (
+                    <tr key={`${entry.changedAt.toMillis()}-${index}`}>
+                      <td>{formatDateNumericCR(entry.changedAt)}</td>
+                      <td>{entry.previousStage ? SALE_STAGE_LABELS[entry.previousStage] : '—'}</td>
+                      <td>{SALE_STAGE_LABELS[entry.newStage]}</td>
+                      <td>{lossReasonText(entry) ?? ''}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </>
+      )}
     </>
   );
 }

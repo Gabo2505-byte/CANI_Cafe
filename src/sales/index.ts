@@ -23,7 +23,7 @@ export {
   type SaleFormErrors,
   type SaleFormValues,
 } from './saleForm';
-export { createSale, listOpenSaleTitles } from './salesApi';
+export { createSale, listOpenSaleTitles, updateSale } from './salesApi';
 export { NewSalePage } from './NewSalePage';
 export { TimedNotice } from './TimedNotice';
 export { BOARD_MESSAGES, buildBoard, formatColumnHeader } from './board';
@@ -31,3 +31,5 @@ export { SaleCard } from './SaleCard';
 export { SaleDetailPage } from './SaleDetailPage';
 export { DETAIL_MESSAGES, sortHistory } from './saleDetail';
 export { loadSaleDetail } from './saleDetailApi';
+export { EDIT_MESSAGES, isNotesOnly, validateSaleEdit } from './saleEdit';
+export { SaleEditForm } from './SaleEditForm';
