@@ -1,7 +1,8 @@
 // Lectura y escritura de `sales` para los formularios de posibles ventas.
 import { collection, doc, getDocs, query, Timestamp, where, writeBatch, type Firestore } from 'firebase/firestore';
+import { closedSalesCutoff } from './board';
 import { COLLECTIONS } from '../shared/constants/collections';
-import { isOpenSaleStage, type OpenSaleStage, type Sale, type SaleProduct, type StageHistory } from '../shared/types';
+import { isOpenSaleStage, OPEN_SALE_STAGES, type OpenSaleStage, type Sale, type SaleProduct, type StageHistory } from '../shared/types';
 
 /**
  * HU-303: títulos de las posibles ventas abiertas de un contacto (todas menos ganadas y perdidas).
@@ -64,4 +65,24 @@ export async function createSaleIn(db: Firestore, input: NewSaleInput): Promise<
 
   await batch.commit();
   return saleRef.id;
+}
+
+/**
+ * HU-305: las posibles ventas del tablero. Todas las abiertas, más las ganadas y perdidas que
+ * llegaron a esa etapa en los últimos 30 días (por `stageChangedAt`). Son dos consultas; la
+ * segunda necesita el índice (stage, stageChangedAt) de firestore.indexes.json.
+ */
+export async function listBoardSalesIn(db: Firestore, now: Date = new Date()): Promise<Sale[]> {
+  const sales = collection(db, COLLECTIONS.sales);
+  const [open, closed] = await Promise.all([
+    getDocs(query(sales, where('stage', 'in', [...OPEN_SALE_STAGES]))),
+    getDocs(
+      query(
+        sales,
+        where('stage', 'in', ['ganada', 'perdida']),
+        where('stageChangedAt', '>=', Timestamp.fromDate(closedSalesCutoff(now))),
+      ),
+    ),
+  ]);
+  return [...open.docs, ...closed.docs].map((d) => ({ ...(d.data() as Omit<Sale, 'id'>), id: d.id }));
 }

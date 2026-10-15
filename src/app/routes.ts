@@ -5,6 +5,7 @@ export const ROUTES = {
   contactDetail: '/contactos/:contactId',
   salesBoard: '/posibles-ventas',
   newSale: '/posibles-ventas/nueva',
+  saleDetail: '/posibles-ventas/:saleId',
   alerts: '/avisos',
   forgotPassword: '/recuperar-contrasena',
 } as const;
@@ -17,6 +18,11 @@ export function contactPath(contactId: string): string {
 /** Formulario de nueva posible venta; con contactId (desde la ficha) el contacto viene elegido. */
 export function newSalePath(contactId?: string): string {
   return contactId ? `${ROUTES.newSale}?contactId=${encodeURIComponent(contactId)}` : ROUTES.newSale;
+}
+
+/** Detalle de una posible venta. */
+export function saleDetailPath(saleId: string): string {
+  return `${ROUTES.salesBoard}/${encodeURIComponent(saleId)}`;
 }
 
 /** Pantalla a la que se llega después de ingresar si no se pidió otra. */

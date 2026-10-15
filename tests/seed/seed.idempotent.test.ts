@@ -44,10 +44,10 @@ describe('seed', () => {
     expect(await count(COLLECTIONS.users)).toBe(1);
     expect(await count(COLLECTIONS.contacts)).toBe(5);
     expect(await count(COLLECTIONS.communications)).toBe(5);
-    expect(await count(COLLECTIONS.sales)).toBe(3);
+    expect(await count(COLLECTIONS.sales)).toBe(6);
     expect(await count(COLLECTIONS.products)).toBe(6);
-    expect(await count(COLLECTIONS.saleProducts)).toBe(5);
-    expect(await count(COLLECTIONS.stageHistory)).toBe(9);
+    expect(await count(COLLECTIONS.saleProducts)).toBe(6);
+    expect(await count(COLLECTIONS.stageHistory)).toBe(15);
 
     const { users } = await getAuth(app).listUsers();
     expect(users).toHaveLength(1);

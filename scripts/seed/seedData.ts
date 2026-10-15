@@ -147,6 +147,51 @@ export const seedSales: Seeded<Sale>[] = [
       lastCommunicationAt: cr('2026-10-02T11:00:00'), // comm-003 (aplica a todas)
     },
   },
+  {
+    // Perdida hace pocos días: se ve en la columna "Venta perdida".
+    id: 'sale-004',
+    data: {
+      contactId: 'contact-001',
+      title: 'Muestras para eventos (mock)',
+      stage: 'perdida',
+      stageChangedAt: cr('2026-10-08T15:00:00'),
+      estimatedAmount: 80_000,
+      nextFollowUpAt: null,
+      notes: 'Venta simulada para pruebas.',
+      createdAt: cr('2026-09-10T09:30:00'),
+      lastCommunicationAt: null,
+    },
+  },
+  {
+    // Ganada hace más de 30 días: no debe verse en el tablero (HU-305).
+    id: 'sale-005',
+    data: {
+      contactId: 'contact-002',
+      title: 'Pedido antiguo de temporada (mock)',
+      stage: 'ganada',
+      stageChangedAt: cr('2026-08-20T12:00:00'),
+      estimatedAmount: 250_000,
+      nextFollowUpAt: null,
+      notes: 'Venta simulada para pruebas.',
+      createdAt: cr('2026-08-01T10:00:00'),
+      lastCommunicationAt: null,
+    },
+  },
+  {
+    // Sin seguimiento programado y sin productos.
+    id: 'sale-006',
+    data: {
+      contactId: 'contact-005',
+      title: 'Primer contacto con Elena (mock)',
+      stage: 'nuevo_interesado',
+      stageChangedAt: cr('2026-10-10T16:45:00'),
+      estimatedAmount: 0,
+      nextFollowUpAt: null,
+      notes: 'Venta simulada para pruebas.',
+      createdAt: cr('2026-10-10T16:45:00'),
+      lastCommunicationAt: null,
+    },
+  },
 ];
 
 // PROVISIONAL: productos de ejemplo mientras el cliente entrega el catálogo real
@@ -217,6 +262,7 @@ export const seedSaleProducts: Seeded<SeedSaleProduct>[] = [
   { id: 'sale-002_product-003', data: { saleId: 'sale-002', productId: 'product-003', quantity: 50 } },
   { id: 'sale-003_product-002', data: { saleId: 'sale-003', productId: 'product-002', quantity: 5 } },
   { id: 'sale-003_product-004', data: { saleId: 'sale-003', productId: 'product-004', quantity: 5 } },
+  { id: 'sale-004_product-005', data: { saleId: 'sale-004', productId: 'product-005', quantity: 3 } },
 ];
 
 /**
@@ -260,6 +306,30 @@ export const seedStageHistory: Seeded<SeedStageHistory>[] = [
   {
     id: 'sale-003_03',
     data: { saleId: 'sale-003', previousStage: 'en_negociacion', newStage: 'ganada', changedAt: cr('2026-10-02T12:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-004_01',
+    data: { saleId: 'sale-004', previousStage: null, newStage: 'nuevo_interesado', changedAt: cr('2026-09-10T09:30:00'), lossReason: null },
+  },
+  {
+    id: 'sale-004_02',
+    data: { saleId: 'sale-004', previousStage: 'nuevo_interesado', newStage: 'contactado', changedAt: cr('2026-09-16T10:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-004_03',
+    data: { saleId: 'sale-004', previousStage: 'contactado', newStage: 'perdida', changedAt: cr('2026-10-08T15:00:00'), lossReason: 'El cliente eligió otro proveedor.' },
+  },
+  {
+    id: 'sale-005_01',
+    data: { saleId: 'sale-005', previousStage: null, newStage: 'nuevo_interesado', changedAt: cr('2026-08-01T10:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-005_02',
+    data: { saleId: 'sale-005', previousStage: 'nuevo_interesado', newStage: 'ganada', changedAt: cr('2026-08-20T12:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-006_01',
+    data: { saleId: 'sale-006', previousStage: null, newStage: 'nuevo_interesado', changedAt: cr('2026-10-10T16:45:00'), lossReason: null },
   },
 ];
 

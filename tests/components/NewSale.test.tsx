@@ -12,15 +12,19 @@ import { AuthContext } from '../../src/auth/AuthContext';
 import type { AuthState } from '../../src/auth/useAuthUser';
 import { SessionProvider } from '../../src/auth/SessionContext';
 import { listActiveProducts } from '../../src/products/productsApi';
-import { getContactForSale, listActiveContacts } from '../../src/sales/contactSearchApi';
-import { createSale, listOpenSaleTitles } from '../../src/sales/salesApi';
+import { getContactForSale, getContactNames, listActiveContacts } from '../../src/sales/contactSearchApi';
+import { createSale, listBoardSales, listOpenSaleTitles } from '../../src/sales/salesApi';
 import { TimedNotice } from '../../src/sales/TimedNotice';
 import type { Contact, Product } from '../../src/shared/types';
 
 vi.mock('../../src/auth/signInWithUsername', () => ({ signInWithUsername: vi.fn() }));
 vi.mock('../../src/auth/signOutUser', () => ({ signOutUser: vi.fn() }));
-vi.mock('../../src/sales/salesApi', () => ({ createSale: vi.fn(), listOpenSaleTitles: vi.fn() }));
-vi.mock('../../src/sales/contactSearchApi', () => ({ listActiveContacts: vi.fn(), getContactForSale: vi.fn() }));
+vi.mock('../../src/sales/salesApi', () => ({ createSale: vi.fn(), listOpenSaleTitles: vi.fn(), listBoardSales: vi.fn() }));
+vi.mock('../../src/sales/contactSearchApi', () => ({
+  listActiveContacts: vi.fn(),
+  getContactForSale: vi.fn(),
+  getContactNames: vi.fn(),
+}));
 vi.mock('../../src/products/productsApi', () => ({ listActiveProducts: vi.fn(), listProducts: vi.fn() }));
 
 const active: AuthState = {
@@ -74,6 +78,9 @@ beforeEach(() => {
   vi.mocked(listActiveProducts).mockResolvedValue(PRODUCTS);
   vi.mocked(listOpenSaleTitles).mockResolvedValue([]);
   vi.mocked(createSale).mockResolvedValue('sale-nueva');
+  // El tablero al que se vuelve (HU-305).
+  vi.mocked(listBoardSales).mockResolvedValue([]);
+  vi.mocked(getContactNames).mockResolvedValue(new Map());
 });
 afterEach(() => {
   cleanup();
