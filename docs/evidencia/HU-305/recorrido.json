@@ -1,0 +1,145 @@
+[
+  {
+    "criterio": "1-2",
+    "caso": "Seis columnas con conteo y suma",
+    "encabezados": [
+      "Nuevo interesado · 1 · ₡ 0",
+      "Contactado · 0 · ₡ 0",
+      "Precio o cotización enviada · 1 · ₡ 1 200 000",
+      "En negociación · 1 · ₡ 450 000",
+      "Venta ganada · 1 · ₡ 300 000",
+      "Venta perdida · 1 · ₡ 80 000"
+    ]
+  },
+  {
+    "criterio": "3",
+    "caso": "Tarjetas",
+    "columnas": [
+      {
+        "encabezado": "Nuevo interesado · 1 · ₡ 0",
+        "tarjetas": [
+          [
+            "Elena Muestra Castro",
+            "Primer contacto con Elena (mock)",
+            "₡ 0",
+            "Sin seguimiento programado"
+          ]
+        ]
+      },
+      {
+        "encabezado": "Contactado · 0 · ₡ 0",
+        "tarjetas": []
+      },
+      {
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "tarjetas": [
+          [
+            "Carla Demo Vargas",
+            "Distribución mensual de café molido (mock)",
+            "₡ 1 200 000",
+            "Seguimiento: 09/10/2026"
+          ]
+        ]
+      },
+      {
+        "encabezado": "En negociación · 1 · ₡ 450 000",
+        "tarjetas": [
+          [
+            "Bruno Ficticio Solís",
+            "Café en grano para cafetería (mock)",
+            "₡ 450 000",
+            "Seguimiento: 12/10/2026"
+          ]
+        ]
+      },
+      {
+        "encabezado": "Venta ganada · 1 · ₡ 300 000",
+        "tarjetas": [
+          [
+            "Bruno Ficticio Solís",
+            "Pedido de temporada navideña (mock)",
+            "₡ 300 000",
+            "Sin seguimiento programado"
+          ]
+        ]
+      },
+      {
+        "encabezado": "Venta perdida · 1 · ₡ 80 000",
+        "tarjetas": [
+          [
+            "Ana Prueba Mora",
+            "Muestras para eventos (mock)",
+            "₡ 80 000",
+            "Sin seguimiento programado"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "criterio": "4",
+    "caso": "Ganada antigua (sale-005, 20/08/2026) no se muestra; perdida reciente sí",
+    "ganada": [
+      [
+        "Bruno Ficticio Solís",
+        "Pedido de temporada navideña (mock)",
+        "₡ 300 000",
+        "Sin seguimiento programado"
+      ]
+    ],
+    "perdida": [
+      [
+        "Ana Prueba Mora",
+        "Muestras para eventos (mock)",
+        "₡ 80 000",
+        "Sin seguimiento programado"
+      ]
+    ]
+  },
+  {
+    "criterio": "5",
+    "caso": "Columna vacía",
+    "columnaContactado": {
+      "encabezado": "Contactado · 0 · ₡ 0",
+      "mensaje": "Sin posibles ventas."
+    }
+  },
+  {
+    "criterio": "diseño 1366 px",
+    "anchoPagina": 1366,
+    "anchoVentana": 1366,
+    "anchoColumnas": [
+      210,
+      210,
+      210,
+      210,
+      210,
+      210
+    ],
+    "sinScrollHorizontal": true
+  },
+  {
+    "criterio": "5",
+    "caso": "Clic en tarjeta abre el detalle",
+    "hrefTarjeta": "/posibles-ventas/sale-006",
+    "ruta": "/posibles-ventas/sale-006",
+    "titulo": "Detalle de la posible venta"
+  },
+  {
+    "criterio": "HU-301 (4)",
+    "caso": "La venta nueva aparece en la columna de su etapa",
+    "aviso": "Posible venta registrada correctamente.",
+    "contactado": {
+      "encabezado": "Contactado · 1 · ₡ 350 000",
+      "tarjetas": [
+        [
+          "Carla Demo Vargas",
+          "Pedido de prueba HU-305",
+          "₡ 350 000",
+          "Sin seguimiento programado"
+        ]
+      ],
+      "vacio": null
+    }
+  }
+]

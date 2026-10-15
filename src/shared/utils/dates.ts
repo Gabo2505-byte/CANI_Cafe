@@ -37,6 +37,12 @@ export function formatDateCR(value: DateInput): string {
   return dateFormat.format(toJsDate(value));
 }
 
+/** Ej.: "08/10/2026" (dd/mm/aaaa) */
+export function formatDateNumericCR(value: DateInput): string {
+  const [year, month, day] = toCostaRicaDateKey(value).split('-');
+  return `${day}/${month}/${year}`;
+}
+
 /** Día calendario en Costa Rica como "YYYY-MM-DD" (útil para comparar "hoy", vencidos, etc.). */
 export function toCostaRicaDateKey(value: DateInput): string {
   const parts = dateKeyFormat.formatToParts(toJsDate(value));

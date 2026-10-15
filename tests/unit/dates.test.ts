@@ -1,6 +1,6 @@
 import { Timestamp } from 'firebase/firestore';
 import { describe, expect, it } from 'vitest';
-import { formatDateCR, formatDateTimeCR, toCostaRicaDateKey } from '../../src/shared/utils/dates';
+import { formatDateCR, formatDateNumericCR, formatDateTimeCR, toCostaRicaDateKey } from '../../src/shared/utils/dates';
 
 describe('fechas en hora de Costa Rica', () => {
   it('convierte UTC a UTC-6 al formatear', () => {
@@ -20,5 +20,11 @@ describe('fechas en hora de Costa Rica', () => {
     const date = new Date('2026-01-15T12:00:00Z');
     expect(toCostaRicaDateKey(date)).toBe('2026-01-15');
     expect(toCostaRicaDateKey({ toDate: () => date })).toBe('2026-01-15');
+  });
+
+  it('formatDateNumericCR muestra dd/mm/aaaa con el día de Costa Rica', () => {
+    expect(formatDateNumericCR(new Date('2026-10-08T18:00:00Z'))).toBe('08/10/2026');
+    // 03:00 UTC del 9 oct = 21:00 del 8 oct en Costa Rica
+    expect(formatDateNumericCR(new Date('2026-10-09T03:00:00Z'))).toBe('08/10/2026');
   });
 });

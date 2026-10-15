@@ -1,0 +1,54 @@
+Evidencia de pruebas HT-002 - 2026-10-14 17:36 (America/Costa_Rica)
+
+== npm run typecheck ==
+
+Sin errores.
+
+== npm test (unitarias y pantallas) ==
+ ✓ tests/unit/saleStages.test.ts > etapas de una posible venta > son seis, en el orden del tablero 5ms
+ ✓ tests/unit/saleStages.test.ts > etapas de una posible venta > solo las cuatro primeras son abiertas 2ms
+ ✓ tests/unit/products.test.ts > sortProducts (HT-002) > ordena por nombre sin distinguir mayúsculas ni tildes 25ms
+ ✓ tests/unit/products.test.ts > sortProducts (HT-002) > con el mismo nombre ordena por presentación y no modifica la lista original 1ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > convierte UTC a UTC-6 al formatear 5ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > usa el día de Costa Rica, no el de UTC, cerca de medianoche 1ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > acepta Date y objetos con toDate() (Timestamp del Admin SDK) 3ms
+ ✓ tests/unit/dates.test.ts > fechas en hora de Costa Rica > formatDateNumericCR muestra dd/mm/aaaa con el día de Costa Rica 3ms
+ Test Files  17 passed (17)
+      Tests  146 passed (146)
+
+== npm run test:emulators (reglas, seed y flujo contra emulador) ==
+ ✓ tests/seed/seed.idempotent.test.ts > seed > se niega a correr fuera de un proyecto demo-* 3ms
+ ✓ tests/seed/seed.idempotent.test.ts > seed > es idempotente: correrlo dos veces no duplica datos 809ms
+ ✓ tests/seed/seed.idempotent.test.ts > seed > guarda relaciones por ID válidas y fechas como Timestamp 17ms
+ ✓ tests/seed/seed.idempotent.test.ts > seed > productos, productos de la venta y etapas: relaciones válidas y ventas coherentes con su historial 20ms
+ ✓ tests/contacts/listContacts.emulator.test.ts > HU-204 lista paginada y ordenada desde Firestore > cuenta el total en el servidor 34ms
+ ✓ tests/contacts/listContacts.emulator.test.ts > HU-204 lista paginada y ordenada desde Firestore > página 1: 20 contactos en orden alfabético (sin importar tildes ni mayúsculas) 72ms
+ ✓ tests/contacts/listContacts.emulator.test.ts > HU-204 lista paginada y ordenada desde Firestore > página 2: los 5 restantes, siguiendo el orden; no hay más páginas 43ms
+ ✓ tests/contacts/listContacts.emulator.test.ts > HU-204 lista paginada y ordenada desde Firestore > sin sesión no se puede listar 48ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega lectura y escritura sin autenticación 216ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega a un usuario autenticado sin documento en users 107ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega a un usuario inactivo, incluso su propio perfil 93ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en users 82ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en contacts 79ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en communications 77ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en products 89ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en sales 67ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en saleProducts 63ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en stageHistory 93ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega colecciones fuera del contrato, incluso a usuarios activos 57ms
+ ✓ tests/contacts/duplicates.emulator.test.ts > HU-203 repetidos en Firestore (usuario activo, reglas reales) > detecta el correo repetido y devuelve el id del contacto existente 48ms
+ ✓ tests/contacts/duplicates.emulator.test.ts > HU-203 repetidos en Firestore (usuario activo, reglas reales) > detecta el teléfono repetido con el mismo país y número 30ms
+ ✓ tests/contacts/duplicates.emulator.test.ts > HU-203 repetidos en Firestore (usuario activo, reglas reales) > el mismo número en otro país NO es repetido 15ms
+ ✓ tests/contacts/duplicates.emulator.test.ts > HU-203 repetidos en Firestore (usuario activo, reglas reales) > datos nuevos no son repetidos 14ms
+ ✓ tests/contacts/duplicates.emulator.test.ts > HU-203 repetidos en Firestore (usuario activo, reglas reales) > al editar, el propio contacto no cuenta como repetido (excludeId) 16ms
+ ✓ tests/products/listProducts.emulator.test.ts > catálogo de productos (HT-002) > lista los productos con su id, ordenados sin importar tildes ni mayúsculas 71ms
+ ✓ tests/products/listProducts.emulator.test.ts > catálogo de productos (HT-002) > para elegir productos en una venta solo ofrece los activos 38ms
+ ✓ tests/products/listProducts.emulator.test.ts > catálogo de productos (HT-002) > sin sesión no se puede leer el catálogo 29ms
+ ✓ tests/contacts/createContact.emulator.test.ts > HU-201 registrar contacto en Firestore > un usuario activo registra el contacto con clasificación "persona_interesada", nulls y Timestam
+ ✓ tests/contacts/createContact.emulator.test.ts > HU-201 registrar contacto en Firestore > sin sesión no se puede registrar un contacto 42ms
+ ✓ tests/auth/signOut.emulator.test.ts > HU-104 contra emuladores > con sesión activa se puede leer contacts; después de cerrar sesión la lectura es rechazada 84ms
+ ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > usuario inexistente → "El usuario ingresado no existe." 8ms
+ ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > contraseña incorrecta → "La contraseña es incorrecta." 5ms
+ ✓ tests/auth/signIn.emulator.test.ts > ingreso contra el emulador de Auth > credenciales correctas ingresan 9ms
+ Test Files  8 passed (8)
+      Tests  33 passed (33)

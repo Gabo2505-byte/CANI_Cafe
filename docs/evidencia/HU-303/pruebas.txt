@@ -1,0 +1,59 @@
+Evidencia de pruebas HU-303 - 2026-10-14 19:16 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-303 ==
+ ✓ tests/unit/money.test.ts > formatColones > 0 → ₡ 0 2ms
+ ✓ tests/unit/money.test.ts > formatColones > 999 → ₡ 999 0ms
+ ✓ tests/unit/money.test.ts > formatColones > 1000 → ₡ 1 000 0ms
+ ✓ tests/unit/money.test.ts > formatColones > 150000 → ₡ 150 000 0ms
+ ✓ tests/unit/money.test.ts > formatColones > 820000 → ₡ 820 000 0ms
+ ✓ tests/unit/money.test.ts > formatColones > 999999999 → ₡ 999 999 999 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > acepta "0" 2ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > acepta "150000" 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > acepta "150 000" 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > acepta "999999999" 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > acepta " 25 " 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > rechaza "" 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > rechaza "   " 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > rechaza "1000000000" 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > rechaza "-1" 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > rechaza "1.5" 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > rechaza "1,5" 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > rechaza "abc" 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > rechaza "₡ 100" 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 monto > rechaza "1e3" 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 título repetido > compara sin mayúsculas, tildes ni espacios de más 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 validación del formulario > etapa por defecto: Nuevo interesado 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 validación del formulario > datos correctos no tienen errores 1ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 validación del formulario > el monto ₡ 0 es válido (sin estimar) 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 validación del formulario > formulario vacío: pide contacto, título y monto 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 validación del formulario > título de 100 caracteres sí; de 101, no 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 validación del formulario > título repetido entre las abiertas del contacto 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 validación del formulario > monto vacío o fuera de rango: Ingrese un monto válido. 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 validación del formulario > seguimiento: hoy y futuro sí; ayer, no; sin fecha, sí 0ms
+ ✓ tests/unit/saleForm.test.ts > HU-303 validación del formulario > notas: 1000 caracteres sí; 1001, no 0ms
+ ✓ tests/unit/saleForm.test.ts > fecha de seguimiento guardada > es la medianoche de Costa Rica de ese día 1ms
+ ✓ tests/components/SaleDataFields.test.tsx > HU-303 Datos de la posible venta > la etapa viene en "Nuevo interesado" y ofrece solo las cuatro abiertas 48ms
+ ✓ tests/components/SaleDataFields.test.tsx > HU-303 Datos de la posible venta > el título acepta como máximo 100 caracteres y muestra el contador 157ms
+ ✓ tests/components/SaleDataFields.test.tsx > HU-303 Datos de la posible venta > las notas aceptan como máximo 1000 caracteres 89ms
+ ✓ tests/components/SaleDataFields.test.tsx > HU-303 Datos de la posible venta > con datos correctos guarda (monto ₡ 0 incluido) sin mensajes 677ms
+ ✓ tests/components/SaleDataFields.test.tsx > HU-303 Datos de la posible venta > título y monto vacíos: mensajes en rojo bajo cada campo y no guarda 69ms
+ ✓ tests/components/SaleDataFields.test.tsx > HU-303 Datos de la posible venta > monto "1000000000": Ingrese un monto válido. 370ms
+ ✓ tests/components/SaleDataFields.test.tsx > HU-303 Datos de la posible venta > monto "-5": Ingrese un monto válido. 266ms
+ ✓ tests/components/SaleDataFields.test.tsx > HU-303 Datos de la posible venta > monto "12.5": Ingrese un monto válido. 311ms
+ ✓ tests/components/SaleDataFields.test.tsx > HU-303 Datos de la posible venta > monto "mucho": Ingrese un monto válido. 311ms
+ ✓ tests/components/SaleDataFields.test.tsx > HU-303 Datos de la posible venta > título repetido entre las abiertas del contacto 673ms
+ ✓ tests/components/SaleDataFields.test.tsx > HU-303 Datos de la posible venta > seguimiento anterior a hoy no se guarda; hoy sí 793ms
+ Test Files  3 passed (3)
+      Tests  42 passed (42)
+
+== Contra emulador (tests/sales/openSaleTitles) ==
+trae solo los títulos de las abiertas de ese contacto: ok
+al editar se excluye la propia venta: ok
+sin sesión no se puede leer: ok
+
+== Suite completa ==
+npm test: 235/235
+npm run test:emulators: 38/38

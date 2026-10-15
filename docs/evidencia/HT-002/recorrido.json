@@ -1,0 +1,67 @@
+[
+  {
+    "caso": "Catálogo completo (listProductsIn)",
+    "productos": [
+      "Café de temporada · Bolsa de 250 g (inactivo)",
+      "Café en grano · Bolsa de 1 kg",
+      "Café en grano · Bolsa de 340 g",
+      "Café molido · Bolsa de 1 kg",
+      "Café molido · Bolsa de 340 g",
+      "Café para espresso · Bolsa de 2,5 kg"
+    ]
+  },
+  {
+    "caso": "Catálogo para elegir en una venta (listActiveProductsIn)",
+    "productos": [
+      "Café en grano · Bolsa de 1 kg",
+      "Café en grano · Bolsa de 340 g",
+      "Café molido · Bolsa de 1 kg",
+      "Café molido · Bolsa de 340 g",
+      "Café para espresso · Bolsa de 2,5 kg"
+    ]
+  },
+  {
+    "caso": "Ventas del seed con etapa actual y stageChangedAt",
+    "ventas": [
+      {
+        "id": "sale-001",
+        "stage": "en_negociacion",
+        "stageChangedAt": "2026-10-01T16:00:00.000Z"
+      },
+      {
+        "id": "sale-002",
+        "stage": "cotizacion_enviada",
+        "stageChangedAt": "2026-09-28T15:00:00.000Z"
+      },
+      {
+        "id": "sale-003",
+        "stage": "ganada",
+        "stageChangedAt": "2026-10-02T18:00:00.000Z"
+      }
+    ]
+  },
+  {
+    "caso": "Productos por venta",
+    "filas": [
+      "sale-001_product-001 x20",
+      "sale-001_product-002 x10",
+      "sale-002_product-003 x50",
+      "sale-003_product-002 x5",
+      "sale-003_product-004 x5"
+    ]
+  },
+  {
+    "caso": "Historial de etapas",
+    "filas": [
+      "sale-001_01: (inicio) → nuevo_interesado",
+      "sale-001_02: nuevo_interesado → contactado",
+      "sale-001_03: contactado → cotizacion_enviada",
+      "sale-001_04: cotizacion_enviada → en_negociacion",
+      "sale-002_01: (inicio) → nuevo_interesado",
+      "sale-002_02: nuevo_interesado → cotizacion_enviada",
+      "sale-003_01: (inicio) → nuevo_interesado",
+      "sale-003_02: nuevo_interesado → en_negociacion",
+      "sale-003_03: en_negociacion → ganada"
+    ]
+  }
+]

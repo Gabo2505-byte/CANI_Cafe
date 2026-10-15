@@ -1,0 +1,38 @@
+Evidencia de pruebas HU-305 - 2026-10-14 19:42 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-305 ==
+ ✓ tests/unit/board.test.ts > HU-305 columnas del tablero > siempre son seis, en el orden de las etapas, aunque no haya ventas 3ms
+ ✓ tests/unit/board.test.ts > HU-305 columnas del tablero > cada venta cae en la columna de su etapa, con conteo y suma de montos 1ms
+ ✓ tests/unit/board.test.ts > HU-305 columnas del tablero > el encabezado se escribe como "En negociación · 4 · ₡ 820 000" 0ms
+ ✓ tests/unit/board.test.ts > HU-305 columnas del tablero > dentro de cada columna, la más nueva primero 1ms
+ ✓ tests/unit/board.test.ts > HU-305 ganadas y perdidas: solo los últimos 30 días > el corte es 30 días antes de ahora 2ms
+ ✓ tests/unit/board.test.ts > HU-305 ganadas y perdidas: solo los últimos 30 días > ganada: a los 29 días sí se ve; a los 31, no 0ms
+ ✓ tests/unit/board.test.ts > HU-305 ganadas y perdidas: solo los últimos 30 días > perdida: a los 29 días sí se ve; a los 31, no 0ms
+ ✓ tests/unit/board.test.ts > HU-305 ganadas y perdidas: solo los últimos 30 días > las abiertas se ven siempre, aunque sean muy antiguas 0ms
+ ✓ tests/unit/board.test.ts > HU-305 ganadas y perdidas: solo los últimos 30 días > el tablero deja fuera las cerradas antiguas y no las cuenta en el encabezado 1ms
+ ✓ tests/components/SalesBoard.test.tsx > HU-305 Tablero de posibles ventas > muestra seis columnas con su conteo y suma, aunque no haya ventas 173ms
+ ✓ tests/components/SalesBoard.test.tsx > HU-305 Tablero de posibles ventas > una columna sin ventas dice "Sin posibles ventas." 35ms
+ ✓ tests/components/SalesBoard.test.tsx > HU-305 Tablero de posibles ventas > cada venta aparece en la columna de su etapa y el encabezado suma los montos 44ms
+ ✓ tests/components/SalesBoard.test.tsx > HU-305 Tablero de posibles ventas > la tarjeta muestra contacto, título, monto y seguimiento 39ms
+ ✓ tests/components/SalesBoard.test.tsx > HU-305 Tablero de posibles ventas > sin fecha de seguimiento: "Sin seguimiento programado" 31ms
+ ✓ tests/components/SalesBoard.test.tsx > HU-305 Tablero de posibles ventas > al dar clic en una tarjeta se abre el detalle de esa posible venta 63ms
+ ✓ tests/components/SalesBoard.test.tsx > HU-305 Tablero de posibles ventas > el botón "Nueva posible venta" sigue ahí 32ms
+ ✓ tests/components/SalesBoard.test.tsx > HU-305 Tablero de posibles ventas > si falla la carga lo avisa y no muestra columnas 10ms
+ ✓ tests/components/SalesBoard.test.tsx > HU-305 Tablero de posibles ventas > mientras carga lo indica 12ms
+ ✓ tests/components/SalesBoard.test.tsx > HU-305 Tablero de posibles ventas > pide una sola vez los nombres de los contactos de las ventas 55ms
+ ✓ tests/components/SalesBoard.test.tsx > HU-305 campana de aviso en la tarjeta > con aviso pendiente muestra la campana 6ms
+ ✓ tests/components/SalesBoard.test.tsx > HU-305 campana de aviso en la tarjeta > sin aviso no la muestra 2ms
+ Test Files  2 passed (2)
+      Tests  21 passed (21)
+
+== Contra emulador (tests/sales/boardSales) ==
+trae todas las abiertas y solo las ganadas/perdidas de los últimos 30 días: ok
+sin sesión no se puede leer: ok
+nombres de contactos por id (incluye inactivos, más de 30 ids, sin ids): ok
+
+== Suite completa ==
+npm test: 269/269
+npm run test:emulators: 47/47

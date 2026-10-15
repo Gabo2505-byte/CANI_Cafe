@@ -1,0 +1,44 @@
+Evidencia de pruebas HU-304 - 2026-10-14 18:29 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-304 ==
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 cantidad > acepta "1" 3ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 cantidad > acepta "9999" 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 cantidad > acepta " 25 " 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 cantidad > acepta "007" 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 cantidad > rechaza "" 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 cantidad > rechaza "0" 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 cantidad > rechaza "10000" 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 cantidad > rechaza "-3" 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 cantidad > rechaza "1.5" 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 cantidad > rechaza "1,5" 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 cantidad > rechaza "abc" 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 cantidad > rechaza "12a" 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 cantidad > rechaza "1e3" 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 validación de filas > sin filas no hay errores: se puede guardar sin productos 1ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 validación de filas > filas válidas no tienen errores 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 validación de filas > cantidad fuera de rango o no entera: "Ingrese una cantidad entre 1 y 9999." 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 validación de filas > fila sin producto: "Seleccione un producto o elimine la fila." 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 validación de filas > fila totalmente vacía muestra los dos mensajes 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 validación de filas > producto repetido: el aviso queda en la fila repetida, no en la primera 0ms
+ ✓ tests/unit/saleProductRows.test.ts > HU-304 validación de filas > convierte las filas válidas en datos para guardar 0ms
+ ✓ tests/components/SaleProductsField.test.tsx > HU-304 Productos de la posible venta > empieza sin filas y "Agregar producto" suma una con producto, cantidad y "X" 214ms
+ ✓ tests/components/SaleProductsField.test.tsx > HU-304 Productos de la posible venta > el producto se elige del catálogo 60ms
+ ✓ tests/components/SaleProductsField.test.tsx > HU-304 Productos de la posible venta > la "X" quita solo su fila 311ms
+ ✓ tests/components/SaleProductsField.test.tsx > HU-304 Productos de la posible venta > cantidad "0": Ingrese una cantidad entre 1 y 9999. 254ms
+ ✓ tests/components/SaleProductsField.test.tsx > HU-304 Productos de la posible venta > cantidad "10000": Ingrese una cantidad entre 1 y 9999. 340ms
+ ✓ tests/components/SaleProductsField.test.tsx > HU-304 Productos de la posible venta > cantidad "2.5": Ingrese una cantidad entre 1 y 9999. 280ms
+ ✓ tests/components/SaleProductsField.test.tsx > HU-304 Productos de la posible venta > cantidad "abc": Ingrese una cantidad entre 1 y 9999. 263ms
+ ✓ tests/components/SaleProductsField.test.tsx > HU-304 Productos de la posible venta > cantidad "": Ingrese una cantidad entre 1 y 9999. 187ms
+ ✓ tests/components/SaleProductsField.test.tsx > HU-304 Productos de la posible venta > fila sin producto: Seleccione un producto o elimine la fila. 184ms
+ ✓ tests/components/SaleProductsField.test.tsx > HU-304 Productos de la posible venta > producto repetido: Este producto ya fue agregado. (en la segunda fila) 470ms
+ ✓ tests/components/SaleProductsField.test.tsx > HU-304 Productos de la posible venta > se puede guardar sin productos 57ms
+ ✓ tests/components/SaleProductsField.test.tsx > HU-304 Productos de la posible venta > con filas válidas entrega producto y cantidad como número 498ms
+ Test Files  2 passed (2)
+      Tests  32 passed (32)
+
+== Suite completa ==
+npm test: 178/178
+npm run test:emulators: 33/33

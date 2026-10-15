@@ -1,0 +1,130 @@
+[
+  {
+    "criterio": 1,
+    "caso": "Botón en \"Posibles ventas\"",
+    "texto": "Nueva posible venta",
+    "derecha": 24,
+    "arriba": 93
+  },
+  {
+    "criterio": 2,
+    "caso": "Datos del formulario",
+    "etiquetas": [
+      "Contacto *",
+      "Título *",
+      "Etapa *",
+      "Monto estimado (₡) *",
+      "Fecha del próximo seguimiento (opcional)",
+      "Notas (opcional)",
+      "Productos (opcional)"
+    ],
+    "etapaInicial": "Nuevo interesado",
+    "opcionesEtapa": [
+      "Nuevo interesado",
+      "Contactado",
+      "Precio o cotización enviada",
+      "En negociación"
+    ]
+  },
+  {
+    "criterio": 3,
+    "caso": "Guardar vacío",
+    "mensajes": [
+      "Seleccione un contacto.",
+      "Ingrese el título.",
+      "Ingrese un monto válido."
+    ]
+  },
+  {
+    "criterio": "HU-302",
+    "caso": "1 letra",
+    "lista": false
+  },
+  {
+    "criterio": "HU-302",
+    "caso": "\"an\"",
+    "opciones": [
+      "Ana Prueba Moraana.prueba@example.com"
+    ]
+  },
+  {
+    "criterio": "HU-302",
+    "caso": "\"zzz\"",
+    "mensaje": [
+      "No se encontraron contactos."
+    ]
+  },
+  {
+    "criterio": "HU-303/304",
+    "caso": "Errores de datos y productos",
+    "mensajes": [
+      "Ingrese un monto válido.",
+      "La fecha de seguimiento no puede ser anterior a hoy.",
+      "Ingrese una cantidad entre 1 y 9999.",
+      "Este producto ya fue agregado."
+    ],
+    "fechaEnElCampo": "2020-01-01"
+  },
+  {
+    "criterio": "HU-304 (1)",
+    "caso": "La X quita la fila",
+    "filasTras": 1
+  },
+  {
+    "criterio": 4,
+    "caso": "Guardado",
+    "aviso": [
+      "Posible venta registrada correctamente."
+    ],
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "criterio": "franja verde 5 s",
+    "sigueVisibleTras5s": false
+  },
+  {
+    "criterio": 4,
+    "caso": "Datos guardados",
+    "venta": {
+      "contactId": "contact-002",
+      "stage": "en_negociacion",
+      "amount": "450000",
+      "followUp": "2026-10-16T06:00:00Z",
+      "notes": "Notas de prueba del recorrido.",
+      "createdAt": "2026-10-15T01:40:43.720Z",
+      "stageChangedAt": "2026-10-15T01:40:43.720Z"
+    },
+    "productos": [
+      "ZKL0rYAVSuvs8TvNQuSo_product-001 x20",
+      "ZKL0rYAVSuvs8TvNQuSo_product-003 x5"
+    ],
+    "historial": [
+      "(inicio) → en_negociacion"
+    ]
+  },
+  {
+    "criterio": "HU-302 (3)",
+    "caso": "Contacto desde la ficha",
+    "valor": "Bruno Ficticio Solís",
+    "soloLectura": true
+  },
+  {
+    "criterio": "HU-303 (2)",
+    "caso": "Título repetido (otras mayúsculas)",
+    "mensajes": [
+      "Este contacto ya tiene una posible venta abierta con este título."
+    ]
+  },
+  {
+    "criterio": 5,
+    "caso": "Varias ventas del mismo contacto",
+    "ventasDeContact002": [
+      "Segunda venta del mismo contacto",
+      "Pedido de prueba HU-301",
+      "Café en grano para cafetería (mock)",
+      "Pedido de temporada navideña (mock)",
+      "Pedido antiguo de temporada (mock)"
+    ],
+    "primeraSinCambios": true
+  }
+]
