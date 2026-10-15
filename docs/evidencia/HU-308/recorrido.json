@@ -1,0 +1,181 @@
+[
+  {
+    "criterio": "HU-305 (5)",
+    "caso": "Clic en la tarjeta abre el detalle",
+    "tarjeta": {
+      "href": "/posibles-ventas/sale-001",
+      "texto": "Café en grano para cafetería (mock)"
+    },
+    "ruta": "/posibles-ventas/sale-001"
+  },
+  {
+    "criterio": "1-4",
+    "caso": "Venta con productos, comunicación e historial (sale-001)",
+    "enlaceVolver": "← Volver a posibles ventas",
+    "titulo": "Café en grano para cafetería (mock)",
+    "contacto": {
+      "texto": "Bruno Ficticio Solís",
+      "href": "/contactos/contact-002"
+    },
+    "datos": {
+      "Etapa": "En negociación",
+      "Monto estimado": "₡ 450 000",
+      "Productos": "Café en grano · Bolsa de 1 kg — 10 unidades | Café en grano · Bolsa de 340 g — 20 unidades",
+      "Próximo seguimiento": "12/10/2026",
+      "Notas": "Venta simulada para pruebas.",
+      "Fecha de creación": "15/09/2026",
+      "Última comunicación": "02/10/2026"
+    },
+    "tituloHistorial": "Historial de etapas",
+    "historial": [
+      [
+        "01/10/2026",
+        "Precio o cotización enviada",
+        "En negociación",
+        ""
+      ],
+      [
+        "24/09/2026",
+        "Contactado",
+        "Precio o cotización enviada",
+        ""
+      ],
+      [
+        "18/09/2026",
+        "Nuevo interesado",
+        "Contactado",
+        ""
+      ],
+      [
+        "15/09/2026",
+        "—",
+        "Nuevo interesado",
+        ""
+      ]
+    ]
+  },
+  {
+    "criterio": 1,
+    "caso": "Clic en el nombre del contacto",
+    "ruta": "/contactos/contact-002",
+    "ficha": "Bruno Ficticio Solís"
+  },
+  {
+    "criterio": 1,
+    "caso": "Enlace \"← Volver a posibles ventas\"",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "criterio": 4,
+    "caso": "Venta perdida con motivo (sale-004)",
+    "enlaceVolver": "← Volver a posibles ventas",
+    "titulo": "Muestras para eventos (mock)",
+    "contacto": {
+      "texto": "Ana Prueba Mora",
+      "href": "/contactos/contact-001"
+    },
+    "datos": {
+      "Etapa": "Venta perdida",
+      "Monto estimado": "₡ 80 000",
+      "Productos": "Café para espresso · Bolsa de 2,5 kg — 3 unidades",
+      "Próximo seguimiento": "Sin seguimiento programado",
+      "Notas": "Venta simulada para pruebas.",
+      "Fecha de creación": "10/09/2026",
+      "Última comunicación": "Sin comunicaciones"
+    },
+    "tituloHistorial": "Historial de etapas",
+    "historial": [
+      [
+        "08/10/2026",
+        "Contactado",
+        "Venta perdida",
+        "El cliente eligió otro proveedor."
+      ],
+      [
+        "16/09/2026",
+        "Nuevo interesado",
+        "Contactado",
+        ""
+      ],
+      [
+        "10/09/2026",
+        "—",
+        "Nuevo interesado",
+        ""
+      ]
+    ]
+  },
+  {
+    "criterio": "2-3",
+    "caso": "Sin comunicaciones, sin seguimiento y sin productos (sale-006)",
+    "enlaceVolver": "← Volver a posibles ventas",
+    "titulo": "Primer contacto con Elena (mock)",
+    "contacto": {
+      "texto": "Elena Muestra Castro",
+      "href": "/contactos/contact-005"
+    },
+    "datos": {
+      "Etapa": "Nuevo interesado",
+      "Monto estimado": "₡ 0",
+      "Productos": "Sin productos",
+      "Próximo seguimiento": "Sin seguimiento programado",
+      "Notas": "Venta simulada para pruebas.",
+      "Fecha de creación": "10/10/2026",
+      "Última comunicación": "Sin comunicaciones"
+    },
+    "tituloHistorial": "Historial de etapas",
+    "historial": [
+      [
+        "10/10/2026",
+        "—",
+        "Nuevo interesado",
+        ""
+      ]
+    ]
+  },
+  {
+    "criterio": "2-4",
+    "caso": "Venta ganada con dos productos (sale-003)",
+    "enlaceVolver": "← Volver a posibles ventas",
+    "titulo": "Pedido de temporada navideña (mock)",
+    "contacto": {
+      "texto": "Bruno Ficticio Solís",
+      "href": "/contactos/contact-002"
+    },
+    "datos": {
+      "Etapa": "Venta ganada",
+      "Monto estimado": "₡ 300 000",
+      "Productos": "Café en grano · Bolsa de 1 kg — 5 unidades | Café molido · Bolsa de 1 kg — 5 unidades",
+      "Próximo seguimiento": "Sin seguimiento programado",
+      "Notas": "Venta simulada para pruebas.",
+      "Fecha de creación": "25/09/2026",
+      "Última comunicación": "02/10/2026"
+    },
+    "tituloHistorial": "Historial de etapas",
+    "historial": [
+      [
+        "02/10/2026",
+        "En negociación",
+        "Venta ganada",
+        ""
+      ],
+      [
+        "29/09/2026",
+        "Nuevo interesado",
+        "En negociación",
+        ""
+      ],
+      [
+        "25/09/2026",
+        "—",
+        "Nuevo interesado",
+        ""
+      ]
+    ]
+  },
+  {
+    "caso": "Venta que no existe",
+    "mensaje": "No se encontró la posible venta.",
+    "enlaceVolver": "← Volver a posibles ventas"
+  }
+]

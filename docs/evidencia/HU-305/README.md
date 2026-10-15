@@ -7,10 +7,11 @@
 
 ## Estado: parcial
 
-Dos partes dependen de historias posteriores:
+Solo falta una parte, que depende de historias posteriores:
 
 - **Campana roja de aviso (criterio 3):** la tarjeta ya sabe mostrarla (`hasAlert`), pero los avisos se calculan en HU-314 y HU-315. Se conecta al cerrarlas.
-- **Detalle de la posible venta (criterio 5):** la tarjeta lleva a `/posibles-ventas/:saleId`, que hoy es una página provisional. El detalle real es HU-308.
+
+El detalle de la posible venta (criterio 5) quedó resuelto con HU-308 (2026-10-15).
 
 ## Datos de prueba
 
@@ -26,7 +27,7 @@ Dos partes dependen de historias posteriores:
 | 2 | Cada columna indica cuántas posibles ventas tiene y la suma de sus montos: "En negociación · 4 · ₡ 820 000". | ✅ Cumple | Con el seed: "Precio o cotización enviada · 1 · ₡ 1 200 000", "En negociación · 1 · ₡ 450 000", etc. Prueba de pantalla con dos ventas: "En negociación · 2 · ₡ 820 000". Un monto de ₡ 0 cuenta como venta y suma cero. |
 | 3 | Tarjeta con nombre del contacto, título, monto y fecha del próximo seguimiento (o "Sin seguimiento programado"); campana roja si hay aviso. | ⚠️ Parcial | Contacto, título, monto y seguimiento (dd/mm/aaaa, ej. "Seguimiento: 12/10/2026") ✅. El nombre sale del contacto por su id, no copiado. "Sin seguimiento programado" ✅. Campana: se muestra cuando `hasAlert` es verdadero (prueba de componente); se conecta en HU-314/315. |
 | 4 | Ganada y perdida solo muestran las que llegaron a esa etapa en los últimos 30 días. | ✅ Cumple | En el navegador: la ganada del 20/08 no aparece y la de octubre sí. Pruebas: a 29 días se ve, a 31 no; las ventas ocultas tampoco cuentan en el encabezado. Se filtra con `stageChangedAt` en la consulta (índice nuevo `stage` + `stageChangedAt`). |
-| 5 | Columna sin ventas: "Sin posibles ventas."; al dar clic en una tarjeta se abre su detalle. | ⚠️ Parcial | "Sin posibles ventas." ✅ ([01](01-tablero.png), columna Contactado). El clic abre `/posibles-ventas/sale-006` ✅ ([02](02-detalle-provisional.png)), pero la pantalla es provisional hasta HU-308. |
+| 5 | Columna sin ventas: "Sin posibles ventas."; al dar clic en una tarjeta se abre su detalle. | ✅ Cumple | "Sin posibles ventas." ([01](01-tablero.png), columna Contactado). El clic abre el detalle de esa venta (`/posibles-ventas/sale-001`), ya con la pantalla real de HU-308; ver [HU-308](../HU-308/README.md). |
 
 ## Cierra HU-301 criterio 4
 

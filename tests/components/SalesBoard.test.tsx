@@ -28,6 +28,8 @@ vi.mock('../../src/sales/contactSearchApi', () => ({
 
 vi.mock('../../src/products/productsApi', () => ({ listActiveProducts: vi.fn(), listProducts: vi.fn() }));
 
+vi.mock('../../src/sales/saleDetailApi', () => ({ loadSaleDetail: vi.fn().mockResolvedValue(null) }));
+
 const active: AuthState = {
   status: 'active',
   firebaseUser: { uid: 'u1' } as FirebaseUser,

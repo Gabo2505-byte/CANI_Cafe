@@ -1,5 +1,5 @@
 // Lectura y escritura de `sales` para los formularios de posibles ventas.
-import { collection, doc, getDocs, query, Timestamp, where, writeBatch, type Firestore } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, Timestamp, where, writeBatch, type Firestore } from 'firebase/firestore';
 import { closedSalesCutoff } from './board';
 import { COLLECTIONS } from '../shared/constants/collections';
 import { isOpenSaleStage, OPEN_SALE_STAGES, type OpenSaleStage, type Sale, type SaleProduct, type StageHistory } from '../shared/types';
@@ -85,4 +85,48 @@ export async function listBoardSalesIn(db: Firestore, now: Date = new Date()): P
     ),
   ]);
   return [...open.docs, ...closed.docs].map((d) => ({ ...(d.data() as Omit<Sale, 'id'>), id: d.id }));
+}
+
+export interface SaleUpdateInput {
+  title: string;
+  estimatedAmount: number;
+  nextFollowUpAt: Date | null;
+  notes: string;
+  products: { productId: string; quantity: number }[];
+}
+
+/**
+ * HU-309: guarda los cambios de una posible venta (título, monto, seguimiento, notas y productos) en una
+ * sola escritura atómica. La etapa, el historial y la última comunicación no se tocan.
+ * Una venta ganada es definitiva: aunque se pidan otros cambios, solo se guardan las notas.
+ * Los productos se reemplazan: se borran los que ya no están y se guardan los demás con su cantidad.
+ */
+export async function updateSaleIn(db: Firestore, saleId: string, input: SaleUpdateInput): Promise<void> {
+  const saleRef = doc(db, COLLECTIONS.sales, saleId);
+  const [saleSnap, existing] = await Promise.all([
+    getDoc(saleRef),
+    getDocs(query(collection(db, COLLECTIONS.saleProducts), where('saleId', '==', saleId))),
+  ]);
+  if (!saleSnap.exists()) throw new Error(`La posible venta ${saleId} no existe.`);
+
+  const batch = writeBatch(db);
+  if (saleSnap.get('stage') === 'ganada') {
+    batch.update(saleRef, { notes: input.notes });
+    await batch.commit();
+    return;
+  }
+
+  batch.update(saleRef, {
+    title: input.title.trim(),
+    estimatedAmount: input.estimatedAmount,
+    nextFollowUpAt: input.nextFollowUpAt ? Timestamp.fromDate(input.nextFollowUpAt) : null,
+    notes: input.notes,
+  });
+  const wanted = new Map(input.products.map((p) => [`${saleId}_${p.productId}`, p]));
+  for (const d of existing.docs) if (!wanted.has(d.id)) batch.delete(d.ref);
+  for (const [id, { productId, quantity }] of wanted) {
+    const row: SaleProduct = { saleId, productId, quantity };
+    batch.set(doc(db, COLLECTIONS.saleProducts, id), row);
+  }
+  await batch.commit();
 }

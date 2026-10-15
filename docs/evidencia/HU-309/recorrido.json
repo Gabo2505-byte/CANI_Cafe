@@ -1,0 +1,121 @@
+[
+  {
+    "criterio": 1,
+    "caso": "Botón Editar en el detalle",
+    "texto": "Editar",
+    "derecha": 24,
+    "arriba": 146
+  },
+  {
+    "criterio": 1,
+    "caso": "Formulario de edición (sale-001)",
+    "campos": [
+      "Título *",
+      "Monto estimado (₡) *",
+      "Fecha del próximo seguimiento (opcional)",
+      "Notas (opcional)",
+      "Productos (opcional)"
+    ],
+    "valores": {
+      "titulo": "Café en grano para cafetería (mock)",
+      "monto": "450000",
+      "seguimiento": "2026-10-12",
+      "notas": "Venta simulada para pruebas.",
+      "filas": 2
+    },
+    "conEtapa": false
+  },
+  {
+    "criterio": "2/4",
+    "caso": "Seguimiento vencido sin tocar: solo se cambian las notas",
+    "titulo": "Café en grano para cafetería (mock)",
+    "aviso": "Cambios guardados correctamente.",
+    "datos": {
+      "Etapa": "En negociación",
+      "Monto estimado": "₡ 450 000",
+      "Productos": "Café en grano · Bolsa de 1 kg — 10 unidades | Café en grano · Bolsa de 340 g — 20 unidades",
+      "Próximo seguimiento": "12/10/2026",
+      "Notas": " Se llamó y no contestó.Venta simulada para pruebas.",
+      "Fecha de creación": "15/09/2026",
+      "Última comunicación": "02/10/2026"
+    }
+  },
+  {
+    "criterio": "2/3",
+    "caso": "Datos inválidos",
+    "mensajes": [
+      "Ingrese el título.",
+      "Ingrese un monto válido.",
+      "La fecha de seguimiento no puede ser anterior a hoy.",
+      "Ingrese una cantidad entre 1 y 9999.",
+      "Este producto ya fue agregado."
+    ],
+    "tituloGuardado": "Café en grano para cafetería (mock)",
+    "notasGuardadas": " Se llamó y no contestó.Venta simulada para pruebas."
+  },
+  {
+    "criterio": 2,
+    "caso": "Título repetido entre las abiertas del contacto",
+    "mensajes": [
+      "Este contacto ya tiene una posible venta abierta con este título."
+    ]
+  },
+  {
+    "criterio": 4,
+    "caso": "Cancelar descarta los cambios",
+    "titulo": "Café en grano para cafetería (mock)",
+    "tituloEnFirestore": "Café en grano para cafetería (mock)"
+  },
+  {
+    "criterio": 4,
+    "caso": "Guardado con cambios",
+    "titulo": "Café en grano para cafetería (editada)",
+    "aviso": "Cambios guardados correctamente.",
+    "datos": {
+      "Etapa": "En negociación",
+      "Monto estimado": "₡ 520 000",
+      "Productos": "Café en grano · Bolsa de 1 kg — 30 unidades | Café molido · Bolsa de 340 g — 12 unidades",
+      "Próximo seguimiento": "20/10/2026",
+      "Notas": "Notas actualizadas en el recorrido.",
+      "Fecha de creación": "15/09/2026",
+      "Última comunicación": "02/10/2026"
+    },
+    "firestore": {
+      "titulo": "Café en grano para cafetería (editada)",
+      "monto": "520000",
+      "etapa": "en_negociacion",
+      "seguimiento": "2026-10-20T06:00:00Z",
+      "ultimaComunicacion": "2026-10-02T17:00:00Z",
+      "productos": [
+        "sale-001_product-002 x30",
+        "sale-001_product-003 x12"
+      ],
+      "registrosDeHistorial": 4
+    }
+  },
+  {
+    "criterio": 4,
+    "caso": "La confirmación desaparece a los 5 s",
+    "sigueVisible": false
+  },
+  {
+    "criterio": 5,
+    "caso": "Venta ganada: campos del formulario",
+    "campos": [
+      "Notas (opcional)"
+    ],
+    "conTitulo": false,
+    "conProductos": false
+  },
+  {
+    "criterio": 5,
+    "caso": "Ganada: se guardan solo las notas",
+    "aviso": "Cambios guardados correctamente.",
+    "firestore": {
+      "titulo": "Pedido de temporada navideña (mock)",
+      "monto": "300000",
+      "etapa": "ganada",
+      "notas": "Cliente satisfecho con el pedido."
+    }
+  }
+]
