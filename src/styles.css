@@ -498,3 +498,47 @@ textarea[aria-invalid='true'] {
   background: #ffe9a8;
   border-radius: 999px;
 }
+
+/* HU-304: filas de productos de una posible venta */
+.sale-products {
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.75rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.sale-product-row {
+  margin-bottom: 0.5rem;
+}
+
+.sale-product-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sale-product-controls select {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem;
+  font: inherit;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.sale-product-controls input {
+  width: 6rem;
+  padding: 0.5rem;
+  font: inherit;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.sale-product-unit {
+  font-size: 0.85rem;
+  color: #6b5a4e;
+}
+
+.sale-product-remove {
+  padding: 0.4rem 0.7rem;
+}
