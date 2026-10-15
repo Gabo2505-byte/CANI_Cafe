@@ -29,3 +29,5 @@ export { TimedNotice } from './TimedNotice';
 export { BOARD_MESSAGES, buildBoard, formatColumnHeader } from './board';
 export { SaleCard } from './SaleCard';
 export { SaleDetailPage } from './SaleDetailPage';
+export { DETAIL_MESSAGES, sortHistory } from './saleDetail';
+export { loadSaleDetail } from './saleDetailApi';

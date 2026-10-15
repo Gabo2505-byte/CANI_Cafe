@@ -1,0 +1,37 @@
+Evidencia de pruebas HU-308 - 2026-10-15 10:07 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-308 ==
+ ✓ tests/unit/saleDetail.test.ts > HU-308 historial de etapas > va del cambio más reciente al más antiguo y no modifica la lista original 3ms
+ ✓ tests/unit/saleDetail.test.ts > HU-308 historial de etapas > el cambio a "Venta perdida" muestra el motivo escrito 0ms
+ ✓ tests/unit/saleDetail.test.ts > HU-308 historial de etapas > perdida con motivo null: "Sin motivo registrado" 0ms
+ ✓ tests/unit/saleDetail.test.ts > HU-308 historial de etapas > perdida con motivo "": "Sin motivo registrado" 0ms
+ ✓ tests/unit/saleDetail.test.ts > HU-308 historial de etapas > perdida con motivo "   ": "Sin motivo registrado" 0ms
+ ✓ tests/unit/saleDetail.test.ts > HU-308 historial de etapas > los demás cambios no muestran motivo 0ms
+ ✓ tests/unit/saleDetail.test.ts > HU-308 productos > muestra nombre, presentación y cantidad 0ms
+ ✓ tests/unit/saleDetail.test.ts > HU-308 productos > una sola unidad en singular 0ms
+ ✓ tests/components/SaleDetail.test.tsx > HU-308 Detalle de la posible venta > arriba tiene el enlace "← Volver a posibles ventas", el título y el contacto 222ms
+ ✓ tests/components/SaleDetail.test.tsx > HU-308 Detalle de la posible venta > al dar clic en el nombre se abre la ficha del contacto 109ms
+ ✓ tests/components/SaleDetail.test.tsx > HU-308 Detalle de la posible venta > el enlace de volver lleva al tablero 78ms
+ ✓ tests/components/SaleDetail.test.tsx > HU-308 Detalle de la posible venta > muestra etapa, monto, productos, seguimiento, notas, creación y última comunicación 48ms
+ ✓ tests/components/SaleDetail.test.tsx > HU-308 Detalle de la posible venta > sin comunicaciones: "Sin comunicaciones" 32ms
+ ✓ tests/components/SaleDetail.test.tsx > HU-308 Detalle de la posible venta > sin seguimiento, sin productos y sin notas lo dice 33ms
+ ✓ tests/components/SaleDetail.test.tsx > HU-308 Detalle de la posible venta > el historial va del más reciente al más antiguo, con fecha, etapa anterior y nueva 95ms
+ ✓ tests/components/SaleDetail.test.tsx > HU-308 Detalle de la posible venta > una venta que no existe lo avisa 33ms
+ ✓ tests/components/SaleDetail.test.tsx > HU-308 Detalle de la posible venta > si falla la carga lo avisa 29ms
+ ✓ tests/components/SaleDetail.test.tsx > HU-308 Detalle de la posible venta > si el contacto ya no existe no muestra enlace 36ms
+ Test Files  2 passed (2)
+      Tests  18 passed (18)
+
+== Contra emulador (tests/sales/saleDetail) ==
+trae la venta, el contacto, los productos con nombre y el historial del más reciente al más antiguo: ok
+los productos incluyen inactivos y los que ya no están en el catálogo, solo los de esa venta: ok
+un contacto que no existe da nombre nulo: ok
+una venta que no existe da null: ok
+sin sesión no se puede leer: ok
+
+== Suite completa ==
+npm test: 287/287
+npm run test:emulators: 52/52
