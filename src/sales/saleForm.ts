@@ -5,6 +5,10 @@ import { toSortKey } from '../shared/utils/text';
 export const SALE_LIMITS = { title: 100, notes: 1000, maxAmount: 999_999_999 } as const;
 
 export const SALE_MESSAGES = {
+  created: 'Posible venta registrada correctamente.',
+  saveError: 'No se pudo registrar la posible venta. Intente de nuevo.',
+  productsLoadError: 'No se pudieron cargar los productos. Intente de nuevo.',
+  contactNotFound: 'No se encontró el contacto.',
   contactRequired: 'Seleccione un contacto.',
   titleRequired: 'Ingrese el título.',
   titleTooLong: `El título acepta como máximo ${SALE_LIMITS.title} caracteres.`,

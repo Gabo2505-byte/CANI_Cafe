@@ -4,6 +4,7 @@ import { ContactDetailPage } from '../contacts/ContactDetailPage';
 import { ContactsPage } from '../contacts/ContactsPage';
 import { NewContactPage } from '../contacts/NewContactPage';
 import { AlertsPage } from '../sales/AlertsPage';
+import { NewSalePage } from '../sales/NewSalePage';
 import { SalesBoardPage } from '../sales/SalesBoardPage';
 import { AppLayout } from './AppLayout';
 import { ProtectedRoute } from './ProtectedRoute';
@@ -32,6 +33,7 @@ export function AppRoutes() {
         <Route path={ROUTES.newContact} element={<NewContactPage />} />
         <Route path={ROUTES.contactDetail} element={<ContactDetailRoute />} />
         <Route path={ROUTES.salesBoard} element={<SalesBoardPage />} />
+        <Route path={ROUTES.newSale} element={<NewSalePage />} />
         <Route path={ROUTES.alerts} element={<AlertsPage />} />
         <Route path="*" element={<Navigate to={DEFAULT_ROUTE} replace />} />
       </Route>

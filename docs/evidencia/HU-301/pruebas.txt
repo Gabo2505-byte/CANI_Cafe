@@ -1,0 +1,31 @@
+Evidencia de pruebas HU-301 - 2026-10-14 19:29 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-301 (pantalla) ==
+ ✓ tests/components/NewSale.test.tsx > HU-301 Crear una posible venta > la pantalla "Posibles ventas" tiene el botón "Nueva posible venta", que abre el formulario 226ms
+ ✓ tests/components/NewSale.test.tsx > HU-301 Crear una posible venta > el formulario tiene los siete datos 67ms
+ ✓ tests/components/NewSale.test.tsx > HU-301 Crear una posible venta > flujo completo: guarda contacto, datos y productos y vuelve al tablero con la confirmación 1232ms
+ ✓ tests/components/NewSale.test.tsx > HU-301 Crear una posible venta > se puede guardar sin productos, sin seguimiento y sin notas 899ms
+ ✓ tests/components/NewSale.test.tsx > HU-301 Crear una posible venta > sin llenar los obligatorios muestra los mensajes y no guarda 70ms
+ ✓ tests/components/NewSale.test.tsx > HU-301 Crear una posible venta > título repetido entre las abiertas del contacto: no guarda 884ms
+ ✓ tests/components/NewSale.test.tsx > HU-301 Crear una posible venta > una fila de producto sin completar impide guardar 924ms
+ ✓ tests/components/NewSale.test.tsx > HU-301 Crear una posible venta > si falla el guardado lo avisa y se queda en el formulario con los datos 889ms
+ ✓ tests/components/NewSale.test.tsx > HU-301 Crear una posible venta > desde la ficha (contactId) el contacto viene elegido y no se puede cambiar 739ms
+ ✓ tests/components/NewSale.test.tsx > HU-301 Crear una posible venta > un contacto que no existe muestra un aviso en lugar del formulario 25ms
+ ✓ tests/components/NewSale.test.tsx > HU-301 Crear una posible venta > Cancelar vuelve al tablero sin guardar 75ms
+ ✓ tests/components/NewSale.test.tsx > HU-301 mensajes de error > el mensaje de un dato desaparece al corregirlo y los demás se quedan 253ms
+ ✓ tests/components/NewSale.test.tsx > confirmación en franja verde > desaparece sola a los 5 segundos 5ms
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+
+== Contra emulador (tests/sales/createSale) ==
+guarda la venta, sus productos y el primer registro del historial: ok
+sin productos ni seguimiento también se guarda: ok
+un contacto puede tener varias ventas y crear una no cambia las anteriores: ok
+sin sesión no se puede crear y no queda nada guardado: ok
+
+== Suite completa ==
+npm test: 248/248
+npm run test:emulators: 42/42
