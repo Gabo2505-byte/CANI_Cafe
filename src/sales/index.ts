@@ -10,3 +10,5 @@ export {
   validateSaleProductRows,
   type SaleProductRow,
 } from './saleProductRows';
+export { ContactPicker } from './ContactPicker';
+export { CONTACT_SEARCH_MESSAGES, searchContacts } from './contactSearch';

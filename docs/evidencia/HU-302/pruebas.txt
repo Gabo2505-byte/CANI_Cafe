@@ -1,0 +1,31 @@
+Evidencia de pruebas HU-302 - 2026-10-14 18:46 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-302 ==
+ ✓ tests/unit/contactSearch.test.ts > HU-302 búsqueda de contactos > necesita al menos 2 letras; con menos no devuelve nada 3ms
+ ✓ tests/unit/contactSearch.test.ts > HU-302 búsqueda de contactos > busca por nombre, también por apellido, sin distinguir mayúsculas ni tildes 1ms
+ ✓ tests/unit/contactSearch.test.ts > HU-302 búsqueda de contactos > busca por correo 0ms
+ ✓ tests/unit/contactSearch.test.ts > HU-302 búsqueda de contactos > nunca ofrece contactos inactivos 0ms
+ ✓ tests/unit/contactSearch.test.ts > HU-302 búsqueda de contactos > sin coincidencias devuelve lista vacía 0ms
+ ✓ tests/unit/contactSearch.test.ts > HU-302 búsqueda de contactos > devuelve como máximo 10, ordenados por nombre 10ms
+ ✓ tests/components/ContactPicker.test.tsx > HU-302 Elegir el contacto > con una sola letra no aparece ninguna lista 191ms
+ ✓ tests/components/ContactPicker.test.tsx > HU-302 Elegir el contacto > con 2 letras del nombre aparece la lista y se elige un contacto 170ms
+ ✓ tests/components/ContactPicker.test.tsx > HU-302 Elegir el contacto > también busca por correo, sin importar tildes ni mayúsculas 373ms
+ ✓ tests/components/ContactPicker.test.tsx > HU-302 Elegir el contacto > muestra como máximo 10 contactos 156ms
+ ✓ tests/components/ContactPicker.test.tsx > HU-302 Elegir el contacto > sin coincidencias: No se encontraron contactos. 112ms
+ ✓ tests/components/ContactPicker.test.tsx > HU-302 Elegir el contacto > se puede elegir con el teclado 183ms
+ ✓ tests/components/ContactPicker.test.tsx > HU-302 Elegir el contacto > escribir de nuevo deshace la elección 251ms
+ ✓ tests/components/ContactPicker.test.tsx > HU-302 Elegir el contacto > desde la ficha el contacto viene elegido y no se puede cambiar 109ms
+ ✓ tests/components/ContactPicker.test.tsx > HU-302 Elegir el contacto > si no se pueden cargar los contactos lo avisa 15ms
+ Test Files  2 passed (2)
+      Tests  15 passed (15)
+
+== Contra emulador (tests/sales) ==
+trae solo los activos, con su id, y la búsqueda los encuentra sin tildes: ok
+sin sesión no se puede leer: ok
+
+== Suite completa ==
+npm test: 193/193
+npm run test:emulators: 35/35
