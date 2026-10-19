@@ -43,7 +43,7 @@ describe('seed', () => {
 
     expect(await count(COLLECTIONS.users)).toBe(1);
     expect(await count(COLLECTIONS.contacts)).toBe(5);
-    expect(await count(COLLECTIONS.communications)).toBe(5);
+    expect(await count(COLLECTIONS.communications)).toBe(6);
     expect(await count(COLLECTIONS.sales)).toBe(6);
     expect(await count(COLLECTIONS.products)).toBe(6);
     expect(await count(COLLECTIONS.saleProducts)).toBe(6);
@@ -74,7 +74,9 @@ describe('seed', () => {
     for (const snap of communications.docs) {
       const comm = snap.data();
       expect(contactIds.has(comm.contactId)).toBe(true);
-      expect(userIds.has(comm.userId)).toBe(true);
+      // HU-213: las del formulario web no tienen usuario.
+      if (comm.source === 'formulario_web') expect(comm.userId).toBeNull();
+      else expect(userIds.has(comm.userId)).toBe(true);
       expect(comm.date).toBeInstanceOf(Timestamp);
       if (comm.appliesToAllSales) expect(comm.saleId).toBeNull();
       if (comm.saleId !== null) {

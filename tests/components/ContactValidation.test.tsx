@@ -13,6 +13,10 @@ import type { AuthState } from '../../src/auth/useAuthUser';
 
 vi.mock('../../src/auth/signInWithUsername', () => ({ signInWithUsername: vi.fn() }));
 vi.mock('../../src/auth/signOutUser', () => ({ signOutUser: vi.fn() }));
+// HU-207: pestañas de la ficha del contacto.
+vi.mock('../../src/contacts/contactDetailApi', () => ({
+  loadContactRecords: vi.fn().mockResolvedValue({ communications: [], sales: [], products: [] }),
+}));
 vi.mock('../../src/contacts/contactsApi', () => ({
   createContact: vi.fn(),
   getContact: vi.fn(),

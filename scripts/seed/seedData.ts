@@ -339,11 +339,14 @@ export const seedCommunications: Seeded<Communication>[] = [
     data: {
       contactId: 'contact-001',
       saleId: null,
-      appliesToAllSales: false,
+      appliesToAllSales: true, // HU-212: sin venta en particular → "Todas sus posibles ventas"
       date: cr('2026-09-28T09:30:00'),
       medium: 'llamada',
       note: 'Primer contacto, interesada en conocer los productos.',
+      source: 'usuario',
       userId: SEED_ADMIN.uid,
+      otherMedium: null,
+      createdAt: cr('2026-09-28T09:30:00'),
     },
   },
   {
@@ -353,9 +356,12 @@ export const seedCommunications: Seeded<Communication>[] = [
       saleId: 'sale-001',
       appliesToAllSales: false,
       date: cr('2026-09-30T14:00:00'),
-      medium: 'reunion',
+      medium: 'visita',
       note: 'Revisión de volúmenes para la cafetería.',
+      source: 'usuario',
       userId: SEED_ADMIN.uid,
+      otherMedium: null,
+      createdAt: cr('2026-09-30T14:00:00'),
     },
   },
   {
@@ -367,7 +373,10 @@ export const seedCommunications: Seeded<Communication>[] = [
       date: cr('2026-10-02T11:00:00'),
       medium: 'correo',
       note: 'Actualización de condiciones de pago para todos sus pedidos.',
+      source: 'usuario',
       userId: SEED_ADMIN.uid,
+      otherMedium: null,
+      createdAt: cr('2026-10-02T11:00:00'),
     },
   },
   {
@@ -379,7 +388,10 @@ export const seedCommunications: Seeded<Communication>[] = [
       date: cr('2026-10-03T15:30:00'),
       medium: 'whatsapp',
       note: 'Envió dudas sobre la propuesta de distribución.',
+      source: 'usuario',
       userId: SEED_ADMIN.uid,
+      otherMedium: null,
+      createdAt: cr('2026-10-03T15:30:00'),
     },
   },
   {
@@ -387,11 +399,30 @@ export const seedCommunications: Seeded<Communication>[] = [
     data: {
       contactId: 'contact-005',
       saleId: null,
-      appliesToAllSales: false,
+      appliesToAllSales: true, // HU-212: sin venta en particular → "Todas sus posibles ventas"
       date: cr('2026-10-05T10:00:00'),
       medium: 'visita',
       note: 'Visita al local; pidió muestras.',
+      source: 'usuario',
       userId: SEED_ADMIN.uid,
+      otherMedium: null,
+      createdAt: cr('2026-10-05T10:00:00'),
+    },
+  },
+  {
+    // HU-213: llegó del formulario del sitio web: sin usuario y para "Todas sus posibles ventas" (HU-212).
+    id: 'comm-006',
+    data: {
+      contactId: 'contact-001',
+      saleId: null,
+      appliesToAllSales: true,
+      date: cr('2026-10-12T00:00:00'),
+      medium: 'otro',
+      otherMedium: 'Formulario del sitio web',
+      note: 'Mensaje desde el sitio: quiere saber si hacen entregas en Alajuela.',
+      source: 'formulario_web',
+      userId: null,
+      createdAt: cr('2026-10-12T20:15:00'),
     },
   },
 ];

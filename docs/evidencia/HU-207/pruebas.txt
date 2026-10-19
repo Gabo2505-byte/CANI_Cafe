@@ -1,0 +1,44 @@
+Evidencia de pruebas HU-207 - 2026-10-19 13:30 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-207 ==
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 1: la ficha se abre al dar clic sobre el contacto en la lista 308ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 2: arriba a la izquierda está "← Volver a contactos", antes del título 44ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 2: "Volver a contactos" regresa a la lista en la misma página 304ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 2: conserva la búsqueda y los filtros que estén en la URL de la lista 54ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 2: si se abre la ficha desde otro lado, vuelve a la lista desde el inicio 23ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > la lista abierta con "?pagina=3" (recarga o "Atrás") muestra esa página 33ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > si la página de la URL ya no existe, se queda en la última 17ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 3: el nombre es el título y a su lado la clasificación "Cliente" en verde 15ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 3: "Persona interesada" en azul 14ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 4: "Datos del contacto" con correo, teléfono, dirección, fecha de registro y origen, debajo del título 27ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 4: si falta un dato, dice "No registrado" 22ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 5: tres pestañas con su conteo entre paréntesis; al abrir se ve "Comunicaciones" 28ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 5: al elegir otra pestaña se ven sus registros 60ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > las pestañas se recorren con las flechas del teclado 53ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > pestañas sin registros: (0) y un mensaje 44ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > si fallan los registros, la ficha se ve igual y las pestañas avisan del error 18ms
+ ✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > contacto inexistente: "El contacto no existe." con el enlace para volver 23ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 contactDataRows > correo, teléfono, dirección, fecha de registro y origen, en ese orden 5ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 contactDataRows > un dato que falta dice "No registrado" (también si viene vacío o con espacios) 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 contactDataRows > teléfono de otro país con su código 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 tabLabel > indica el conteo entre paréntesis 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 tabLabel > sin conteo mientras no se conoce 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 backToListPath > vuelve a la lista con la misma página, búsqueda y filtros (la URL de la lista) 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 backToListPath > si no se llegó desde la lista, va a la lista desde el inicio 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 backToListPath > no acepta rutas que no sean la lista de contactos 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 pageIndexFromParam > "?pagina=N" → índice N-1; otros valores → primera página 1ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 interestProducts > productos distintos de todas las ventas, ordenados por nombre y presentación 2ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 interestProducts > un producto que ya no está en el catálogo se muestra como "Producto no disponible" 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 interestProducts > sin ventas o ventas sin productos → lista vacía 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 orden de comunicaciones y ventas > comunicaciones de la más reciente a la más antigua 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-207 orden de comunicaciones y ventas > ventas de la más nueva a la más antigua 0ms
+
+== npm test (todas) ==
+ Test Files  33 passed (33)
+      Tests  347 passed (347)
+
+== npm run test:emulators ==
+PENDIENTE: correr en una máquina con los emuladores (incluye tests/contacts/contactRecords.emulator.test.ts, 3 pruebas nuevas).

@@ -1,0 +1,27 @@
+Evidencia de pruebas HU-213 - 2026-10-19 14:35 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-213 ==
+ ✓ tests/components/CommunicationHistory.test.tsx > HU-213 Consultar el historial de comunicaciones > criterio 1: cada comunicación en un recuadro, de la más reciente a la más antigua 178ms
+ ✓ tests/components/CommunicationHistory.test.tsx > HU-213 Consultar el historial de comunicaciones > criterio 2: fecha, medio, posible venta, nota completa y quién la registró 27ms
+ ✓ tests/components/CommunicationHistory.test.tsx > HU-213 Consultar el historial de comunicaciones > criterio 3: "Otro: Instagram" y "Registrado por: Sistema (formulario web)" 26ms
+ ✓ tests/components/CommunicationHistory.test.tsx > HU-213 Consultar el historial de comunicaciones > criterio 4: se ven las 10 más recientes y "Ver más" agrega 10 debajo; con todas a la vista, el botón desaparece 166ms
+ ✓ tests/components/CommunicationHistory.test.tsx > HU-213 Consultar el historial de comunicaciones > criterio 4: con 10 o menos no hay botón "Ver más" 25ms
+ ✓ tests/components/CommunicationHistory.test.tsx > HU-213 Consultar el historial de comunicaciones > criterio 4: al volver a abrir la pestaña se ven otra vez las 10 más recientes 103ms
+ ✓ tests/components/CommunicationHistory.test.tsx > HU-213 Consultar el historial de comunicaciones > si falla "Ver más", avisa y se puede intentar de nuevo 84ms
+ ✓ tests/components/CommunicationHistory.test.tsx > HU-213 Consultar el historial de comunicaciones > criterio 5: sin comunicaciones → "Este contacto no tiene comunicaciones registradas." 22ms
+ ✓ tests/unit/contactDetail.test.ts > HU-213 "Registrado por" > el nombre de usuario de quien la registró 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-213 "Registrado por" > del formulario web: "Sistema (formulario web)" 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-213 "Registrado por" > usuario que ya no existe: "—" 0ms
+
+== npm test (todas) ==
+ Test Files  38 passed (38)
+      Tests  405 passed (405)
+
+== npm run build ==
+OK
+
+== npm run test:emulators ==
+PENDIENTE: correr en una máquina con los emuladores. Nuevo: tests/communications/history.emulator.test.ts (3 pruebas). Ajustados: seed (6 comunicaciones), contactRecords, createCommunication y communicationSale (campo source).

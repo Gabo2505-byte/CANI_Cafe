@@ -31,6 +31,10 @@ vi.mock('../../src/sales/contactSearchApi', () => ({
   listActiveContacts: vi.fn().mockResolvedValue([]),
   getContactForSale: vi.fn(),
 }));
+// HU-207: pestañas de la ficha del contacto.
+vi.mock('../../src/contacts/contactDetailApi', () => ({
+  loadContactRecords: vi.fn().mockResolvedValue({ communications: [], sales: [], products: [] }),
+}));
 vi.mock('../../src/contacts/contactsApi', () => ({
   getContact: vi.fn().mockResolvedValue(null),
   createContact: vi.fn(),

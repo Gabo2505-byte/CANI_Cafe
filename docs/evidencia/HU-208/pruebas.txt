@@ -1,0 +1,23 @@
+Evidencia de pruebas HU-208 - 2026-10-19 13:45 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-208 ==
+ ✓ tests/components/ContactSales.test.tsx > HU-208 Ver las posibles ventas de un contacto > criterio 1: tabla con título, etapa, monto estimado, próximo seguimiento y última comunicación 235ms
+ ✓ tests/components/ContactSales.test.tsx > HU-208 Ver las posibles ventas de un contacto > criterio 1: sin fechas → "Sin seguimiento programado" y "Sin comunicaciones" 65ms
+ ✓ tests/components/ContactSales.test.tsx > HU-208 Ver las posibles ventas de un contacto > criterio 2: incluye ganadas y perdidas (aunque tengan más de 30 días), de la más reciente a la más antigua 67ms
+ ✓ tests/components/ContactSales.test.tsx > HU-208 Ver las posibles ventas de un contacto > criterio 3: al dar clic en cualquier parte de la fila se abre el detalle de esa venta 60ms
+ ✓ tests/components/ContactSales.test.tsx > HU-208 Ver las posibles ventas de un contacto > criterio 3: el título es un enlace al detalle (accesible con teclado) 38ms
+ ✓ tests/components/ContactSales.test.tsx > HU-208 Ver las posibles ventas de un contacto > criterio 4: sin posibles ventas → "Este contacto no tiene posibles ventas." (sin tabla) 29ms
+ ✓ tests/unit/contactDetail.test.ts > HU-208 tabla de posibles ventas del contacto > celdas: título, etapa, monto, seguimiento y última comunicación (dd/mm/aaaa, hora de Costa Rica) 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-208 tabla de posibles ventas del contacto > sin fechas: "Sin seguimiento programado" y "Sin comunicaciones"; monto ₡ 0 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-208 tabla de posibles ventas del contacto > las columnas son cinco y en ese orden 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-208 tabla de posibles ventas del contacto > misma fecha de creación: orden estable por id 0ms
+
+== npm test (todas) ==
+ Test Files  34 passed (34)
+      Tests  357 passed (357)
+
+== npm run test:emulators ==
+PENDIENTE: correr en una máquina con los emuladores. tests/contacts/contactRecords.emulator.test.ts ahora incluye una venta ganada antigua y una perdida del contacto.

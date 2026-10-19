@@ -23,8 +23,43 @@ service cloud.firestore {
     match /contacts/{contactId} {
       allow read, write: if isActiveUser();
     }
+    // HU-211: una comunicación se registra y queda como historial: no se puede editar ni eliminar.
+    // Se valida lo mismo que en el formulario: contacto existente, posible venta (HU-212), fecha no futura,
+    // medio de la lista ("otro" con su texto), nota de 1 a 1000 caracteres, y que la registre el usuario con sesión.
+    function isValidCommunication(data) {
+      return data.keys().hasOnly(['contactId', 'saleId', 'appliesToAllSales', 'date', 'medium', 'otherMedium', 'note', 'source', 'userId', 'createdAt'])
+        && data.keys().hasAll(['contactId', 'saleId', 'appliesToAllSales', 'date', 'medium', 'otherMedium', 'note', 'source', 'userId', 'createdAt'])
+        && data.contactId is string
+        && exists(/databases/$(database)/documents/contacts/$(data.contactId))
+        // HU-212: corresponde a "Todas sus posibles ventas" o a una posible venta abierta del mismo contacto.
+        && data.appliesToAllSales is bool
+        && (data.appliesToAllSales
+              ? data.saleId == null
+              : (data.saleId is string
+                  && exists(/databases/$(database)/documents/sales/$(data.saleId))
+                  && get(/databases/$(database)/documents/sales/$(data.saleId)).data.contactId == data.contactId
+                  && get(/databases/$(database)/documents/sales/$(data.saleId)).data.stage
+                       in ['nuevo_interesado', 'contactado', 'cotizacion_enviada', 'en_negociacion']))
+        && data.date is timestamp
+        && data.date <= request.time
+        && data.medium in ['llamada', 'whatsapp', 'correo', 'visita', 'otro']
+        && (data.medium == 'otro'
+              ? (data.otherMedium is string && data.otherMedium.trim().size() > 0 && data.otherMedium.size() <= 50)
+              : data.otherMedium == null)
+        && data.note is string
+        && data.note.trim().size() > 0
+        && data.note.size() <= 1000
+        // HU-213: desde la app siempre la registra el usuario con sesión. Las del formulario web
+        // ("formulario_web", sin usuario) las escribe el servidor con el Admin SDK, que no pasa por estas reglas.
+        && data.source == 'usuario'
+        && data.userId == request.auth.uid
+        && data.createdAt == request.time;
+    }
+
     match /communications/{communicationId} {
-      allow read, write: if isActiveUser();
+      allow read: if isActiveUser();
+      allow create: if isActiveUser() && isValidCommunication(request.resource.data);
+      allow update, delete: if false;
     }
 
     // Dylan: productos, ventas, etapas y avisos
