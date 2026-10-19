@@ -1,0 +1,43 @@
+Evidencia de pruebas HU-211 - 2026-10-19 13:50 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-211 ==
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > criterio 1: el botón está en la pestaña "Comunicaciones", arriba, antes del historial 214ms
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > criterio 1: el botón solo está en la pestaña "Comunicaciones" 69ms
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > criterio 1: al dar clic se abre una ventana con fecha, medio y nota 65ms
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > criterio 1: los tres son obligatorios 84ms
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > criterio 2: la fecha viene con el día de hoy y no deja elegir días futuros 50ms
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > criterio 2: fecha futura → "La fecha no puede ser posterior a hoy." 127ms
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > criterio 3: el medio se elige de la lista de la HU 40ms
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > criterio 3: con "Otro" hay que escribir cuál fue 277ms
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > criterio 4: la nota acepta como máximo 1000 caracteres, con contador 47ms
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > criterio 5: al guardar se cierra, aparece en el historial y el mensaje de confirmación 265ms
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > criterio 5: una comunicación guardada no tiene opciones para editar ni eliminar 18ms
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > "Cancelar" y Escape cierran la ventana sin guardar 74ms
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > si falla el guardado, la ventana sigue abierta con un error y los datos escritos 172ms
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > el historial muestra el día (dd/mm/aaaa) y el medio; "Otro" con su texto 16ms
+ ✓ tests/unit/communicationForm.test.ts > HU-211 formulario de comunicación > la fecha viene con el día de hoy; medio y nota vacíos 2ms
+ ✓ tests/unit/communicationForm.test.ts > HU-211 formulario de comunicación > fecha, medio y nota son obligatorios 1ms
+ ✓ tests/unit/communicationForm.test.ts > HU-211 formulario de comunicación > una fecha futura → "La fecha no puede ser posterior a hoy."; hoy y días anteriores son válidos 0ms
+ ✓ tests/unit/communicationForm.test.ts > HU-211 formulario de comunicación > medios en el orden de la HU 1ms
+ ✓ tests/unit/communicationForm.test.ts > HU-211 formulario de comunicación > "Otro" obliga a escribir cuál fue 0ms
+ ✓ tests/unit/communicationForm.test.ts > HU-211 formulario de comunicación > la nota acepta hasta 1000 caracteres 0ms
+ ✓ tests/unit/communicationForm.test.ts > HU-211 formulario de comunicación > al guardar: el día es 00:00 de Costa Rica, se recortan espacios y "cuál" solo va con "Otro" 0ms
+ ✓ tests/unit/communicationForm.test.ts > HU-211 formulario de comunicación > el día guardado se sigue viendo como ese mismo día en Costa Rica 0ms
+ ✓ tests/unit/communicationForm.test.ts > HU-211 formulario de comunicación > en el historial: "WhatsApp" u "Otro: Instagram" 0ms
+
+== npm test (todas) ==
+ Test Files  36 passed (36)
+      Tests  380 passed (380)
+
+== npm run build ==
+OK
+
+== npm run test:emulators ==
+PENDIENTE: correr en una máquina con los emuladores. Nuevo: tests/communications/createCommunication.emulator.test.ts (15 pruebas de reglas y guardado).
+
+== Corrección 2026-10-19 15:05: confirmación visible ==
+ ✓ tests/components/RegisterCommunication.test.tsx > HU-211 Registrar una comunicación > criterio 5: el mensaje sale dentro de la pestaña, encima del historial (a la vista), y no reaparece al cambiar de pestaña
+ npm test: 406/406

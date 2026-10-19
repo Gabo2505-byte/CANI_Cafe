@@ -69,7 +69,7 @@ El seed es idempotente: usa IDs fijos (`contact-001`, `sale-001`…), así que p
 |---|---|
 | `npm run dev` | Levanta Vite con `.env.development` |
 | `npm run emulators` | Levanta los emuladores de Auth y Firestore (proyecto `demo-cani-crm`) |
-| `npm run seed` | Carga 1 admin, 5 contactos, 5 comunicaciones, 6 productos (provisionales) y 6 ventas con sus productos y su historial de etapas en los emuladores |
+| `npm run seed` | Carga 1 admin, 5 contactos, 6 comunicaciones (una del formulario web), 6 productos (provisionales) y 6 ventas con sus productos y su historial de etapas en los emuladores |
 | `npm test` | Pruebas unitarias y de pantallas (Vitest + Testing Library, sin emuladores) |
 | `npm run test:emulators` | Levanta los emuladores, corre las pruebas de reglas, del seed y de Auth real, y los apaga (proyecto `demo-cani-crm-test`) |
 | `npm run typecheck` | Corre `tsc --noEmit` |

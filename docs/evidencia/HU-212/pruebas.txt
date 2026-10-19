@@ -1,0 +1,30 @@
+Evidencia de pruebas HU-212 - 2026-10-19 14:20 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-212 ==
+ ✓ tests/components/CommunicationSale.test.tsx > HU-212 Relacionar una comunicación con una posible venta > criterio 1: la ventana pide a qué posible venta corresponde (campo obligatorio) 234ms
+ ✓ tests/components/CommunicationSale.test.tsx > HU-212 Relacionar una comunicación con una posible venta > criterio 2: opciones = "Todas sus posibles ventas" + títulos de las abiertas (sin ganadas ni perdidas) 60ms
+ ✓ tests/components/CommunicationSale.test.tsx > HU-212 Relacionar una comunicación con una posible venta > criterio 2: "Todas sus posibles ventas" viene elegida 48ms
+ ✓ tests/components/CommunicationSale.test.tsx > HU-212 Relacionar una comunicación con una posible venta > criterio 2: un contacto sin ventas abiertas solo tiene "Todas sus posibles ventas" 51ms
+ ✓ tests/components/CommunicationSale.test.tsx > HU-212 Relacionar una comunicación con una posible venta > criterio 3: al elegir una posible venta se guarda con esa venta (el repositorio actualiza su última comunicación) 255ms
+ ✓ tests/components/CommunicationSale.test.tsx > HU-212 Relacionar una comunicación con una posible venta > criterio 4: con "Todas sus posibles ventas" se guarda sin venta en particular (saleId null) 208ms
+ ✓ tests/components/CommunicationSale.test.tsx > HU-212 Relacionar una comunicación con una posible venta > si la venta elegida se cerró mientras tanto, avisa en el campo y la ventana sigue abierta 200ms
+ ✓ tests/components/CommunicationSale.test.tsx > HU-212 Relacionar una comunicación con una posible venta > el historial indica a qué posible venta corresponde cada comunicación 18ms
+ ✓ tests/unit/contactDetail.test.ts > HU-212 ventas elegibles y venta de cada comunicación > solo las que no están ganadas ni perdidas, en el mismo orden 0ms
+ ✓ tests/unit/contactDetail.test.ts > HU-212 ventas elegibles y venta de cada comunicación > en el historial: título de la venta, "Todas sus posibles ventas" o nada (comunicaciones antiguas) 0ms
+ ✓ tests/unit/communicationForm.test.ts > HU-212 posible venta de la comunicación > opciones: "Todas sus posibles ventas" primero y luego las abiertas 1ms
+ ✓ tests/unit/communicationForm.test.ts > HU-212 posible venta de la comunicación > "Todas sus posibles ventas" viene elegida 0ms
+ ✓ tests/unit/communicationForm.test.ts > HU-212 posible venta de la comunicación > es obligatoria: vacía o una venta que no está entre las abiertas → "Seleccione la posible venta." 0ms
+ ✓ tests/unit/communicationForm.test.ts > HU-212 posible venta de la comunicación > al guardar: una venta → su saleId; "Todas" → null 0ms
+
+== npm test (todas) ==
+ Test Files  37 passed (37)
+      Tests  394 passed (394)
+
+== npm run build ==
+OK
+
+== npm run test:emulators ==
+PENDIENTE: correr en una máquina con los emuladores. Nuevo: tests/communications/communicationSale.emulator.test.ts (6 pruebas). Ajustado: createCommunication.emulator.test.ts (HU-211) ahora usa "Todas sus posibles ventas".

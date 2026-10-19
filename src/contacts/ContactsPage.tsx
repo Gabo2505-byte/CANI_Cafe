@@ -1,9 +1,10 @@
-import { useEffect, useState, type KeyboardEvent } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router';
 import { contactPath, ROUTES } from '../app/routes';
 import { formatPhone } from '../shared/phone/phone';
 import { CONTACT_CLASSIFICATION_LABELS, type Contact } from '../shared/types';
 import { formatDateCR } from '../shared/utils/dates';
+import { pageIndexFromParam, type FromListState } from './contactDetail';
 import { countContacts, listContactsPage } from './contactsApi';
 import { CONTACTS_PAGE_SIZE, type ContactsCursor } from './contactsRepository';
 
@@ -18,14 +19,36 @@ type ListState =
   | { status: 'error' }
   | { status: 'ready'; contacts: Contact[]; nextCursor: ContactsCursor | null };
 
-/** Pantalla "Contactos". HU-201: botón "Nuevo contacto". HU-204: lista paginada en orden alfabético. */
+/**
+ * Pantalla "Contactos". HU-201: botón "Nuevo contacto". HU-204: lista paginada en orden alfabético.
+ * HU-207: la página vive en la URL ("?pagina=2"); al abrir una ficha se le pasa esa URL para que
+ * "Volver a contactos" regrese a la lista tal como estaba. La búsqueda y los filtros, cuando existan,
+ * deben guardarse también en la URL para conservarse de la misma forma.
+ */
 export function ContactsPage() {
   const navigate = useNavigate();
-  const [pageIndex, setPageIndex] = useState(0);
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageIndex = pageIndexFromParam(searchParams.get('pagina'));
   // cursors[i] = desde dónde empieza la página i (null para la primera).
-  const [cursors, setCursors] = useState<(ContactsCursor | null)[]>([null]);
+  const cursors = useRef<(ContactsCursor | null)[]>([null]);
   const [total, setTotal] = useState<number | null>(null);
   const [state, setState] = useState<ListState>({ status: 'loading' });
+
+  const goToPage = useCallback(
+    (index: number) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (index <= 0) next.delete('pagina');
+          else next.set('pagina', String(index + 1));
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -40,26 +63,33 @@ export function ContactsPage() {
   useEffect(() => {
     let cancelled = false;
     setState({ status: 'loading' });
-    listContactsPage(cursors[pageIndex] ?? null)
-      .then((page) => {
-        if (cancelled) return;
-        setState({ status: 'ready', contacts: page.contacts, nextCursor: page.nextCursor });
-        if (page.nextCursor) {
-          setCursors((prev) => {
-            const next = [...prev];
-            next[pageIndex + 1] = page.nextCursor;
-            return next;
-          });
-        }
-      })
-      .catch(() => !cancelled && setState({ status: 'error' }));
+    (async () => {
+      const known = cursors.current;
+      // Página más cercana (sin pasarse) cuyo inicio ya se conoce. Al volver a "?pagina=3" sin
+      // cursores (recarga, enlace directo) se recorren las páginas anteriores desde la primera.
+      let index = pageIndex;
+      while (index > 0 && known[index] === undefined) index -= 1;
+      let page = await listContactsPage(known[index] ?? null);
+      while (index < pageIndex && page.nextCursor) {
+        index += 1;
+        known[index] = page.nextCursor;
+        page = await listContactsPage(page.nextCursor);
+      }
+      if (cancelled) return;
+      if (page.nextCursor) known[index + 1] = page.nextCursor;
+      if (index !== pageIndex) {
+        // Se pidió una página que ya no existe: se queda en la última.
+        goToPage(index);
+        return;
+      }
+      setState({ status: 'ready', contacts: page.contacts, nextCursor: page.nextCursor });
+    })().catch(() => !cancelled && setState({ status: 'error' }));
     return () => {
       cancelled = true;
     };
-    // Solo al cambiar de página: el cursor de esa página ya se guardó al cargar la anterior.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageIndex]);
+  }, [pageIndex, goToPage]);
 
+  const fromList = { from: location.pathname + location.search };
   const totalPages = Math.max(1, Math.ceil((total ?? 0) / CONTACTS_PAGE_SIZE));
   const isEmpty = state.status === 'ready' && state.contacts.length === 0 && pageIndex === 0;
 
@@ -95,7 +125,12 @@ export function ContactsPage() {
               </thead>
               <tbody>
                 {state.contacts.map((contact) => (
-                  <ContactRow key={contact.id} contact={contact} onOpen={() => navigate(contactPath(contact.id))} />
+                  <ContactRow
+                    key={contact.id}
+                    contact={contact}
+                    fromList={fromList}
+                    onOpen={() => navigate(contactPath(contact.id), { state: fromList })}
+                  />
                 ))}
               </tbody>
             </table>
@@ -105,7 +140,7 @@ export function ContactsPage() {
             <button
               type="button"
               className="button-secondary"
-              onClick={() => setPageIndex((i) => i - 1)}
+              onClick={() => goToPage(pageIndex - 1)}
               disabled={pageIndex === 0}
             >
               Anterior
@@ -116,7 +151,7 @@ export function ContactsPage() {
             <button
               type="button"
               className="button-secondary"
-              onClick={() => setPageIndex((i) => i + 1)}
+              onClick={() => goToPage(pageIndex + 1)}
               disabled={!state.nextCursor}
             >
               Siguiente
@@ -129,7 +164,7 @@ export function ContactsPage() {
 }
 
 /** Fila clickeable: clic (o Enter) en cualquier parte abre la ficha. El nombre también es un enlace. */
-function ContactRow({ contact, onOpen }: { contact: Contact; onOpen: () => void }) {
+function ContactRow({ contact, fromList, onOpen }: { contact: Contact; fromList: FromListState; onOpen: () => void }) {
   const phone = contact.phoneNumber ? formatPhone(contact.phoneCountry ?? 'CR', contact.phoneNumber) : null;
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Enter') onOpen();
@@ -137,7 +172,7 @@ function ContactRow({ contact, onOpen }: { contact: Contact; onOpen: () => void 
   return (
     <tr className="clickable-row" onClick={onOpen} onKeyDown={onKeyDown}>
       <td>
-        <Link to={contactPath(contact.id)} onClick={(e) => e.stopPropagation()}>
+        <Link to={contactPath(contact.id)} state={fromList} onClick={(e) => e.stopPropagation()}>
           {contact.fullName}
         </Link>
       </td>

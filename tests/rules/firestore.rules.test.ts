@@ -36,7 +36,8 @@ beforeEach(async () => {
   });
 });
 
-const ALL_COLLECTIONS = Object.values(COLLECTIONS);
+// `communications` tiene reglas propias (HU-211): ver tests/communications/communicationRules.emulator.test.ts.
+const ALL_COLLECTIONS = Object.values(COLLECTIONS).filter((c) => c !== COLLECTIONS.communications);
 
 describe('firestore.rules', () => {
   it('niega lectura y escritura sin autenticación', async () => {

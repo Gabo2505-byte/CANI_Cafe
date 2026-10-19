@@ -19,6 +19,16 @@ export type ContactStatus = (typeof CONTACT_STATUSES)[number];
 export const CONTACT_ORIGINS = ['referido', 'redes_sociales', 'sitio_web', 'feria', 'visita', 'otro'] as const;
 export type ContactOrigin = (typeof CONTACT_ORIGINS)[number];
 
+/** Texto que se muestra en pantalla para cada origen (ficha del contacto, HU-207). */
+export const CONTACT_ORIGIN_LABELS: Record<ContactOrigin, string> = {
+  referido: 'Referido',
+  redes_sociales: 'Redes sociales',
+  sitio_web: 'Sitio web',
+  feria: 'Feria',
+  visita: 'Visita',
+  otro: 'Otro',
+};
+
 /** País del teléfono elegido por defecto: Costa Rica (+506). Lista y reglas en src/shared/phone. */
 export const DEFAULT_PHONE_COUNTRY = 'CR';
 
