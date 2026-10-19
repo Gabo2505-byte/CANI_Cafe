@@ -954,3 +954,59 @@ textarea[aria-invalid='true'] {
 .saved-notice .notice-success {
   margin: 0 0 0.75rem;
 }
+
+/* HU-310: botón y ventana "Cambiar etapa" */
+.page-header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.stage-options {
+  margin: 0 0 0.5rem;
+  padding: 0;
+  border: none;
+}
+
+.stage-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.25rem;
+  cursor: pointer;
+}
+
+.stage-option.is-disabled {
+  color: #9a8b80;
+  cursor: not-allowed;
+}
+
+.stage-option-current {
+  padding: 0.1rem 0.5rem;
+  font-size: 0.8rem;
+  color: #4a2a1a;
+  background: #f1ebe6;
+  border-radius: 999px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+}
+
+/* Los botones de selección no heredan el ancho completo de los campos del formulario. */
+.form .stage-option {
+  justify-content: flex-start;
+  margin: 0;
+}
+
+.form .stage-option input[type='radio'] {
+  flex: none;
+  width: auto;
+  margin: 0;
+}

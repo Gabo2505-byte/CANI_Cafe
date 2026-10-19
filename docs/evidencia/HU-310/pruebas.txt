@@ -1,0 +1,44 @@
+Evidencia de pruebas HU-310 - 2026-10-19 16:35 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-310 ==
+ ✓ tests/unit/stageChange.test.ts > HU-310 quién puede cambiar de etapa > una posible venta en "nuevo_interesado" sí 3ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 quién puede cambiar de etapa > una posible venta en "contactado" sí 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 quién puede cambiar de etapa > una posible venta en "cotizacion_enviada" sí 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 quién puede cambiar de etapa > una posible venta en "en_negociacion" sí 1ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 quién puede cambiar de etapa > una "ganada" no 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 quién puede cambiar de etapa > una "perdida" no 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 opciones de la ventana > son las seis etapas, en el orden del tablero 1ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 opciones de la ventana > marca solo la etapa actual 1ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 opciones de la ventana > desde una etapa abierta se pueden elegir las otras tres abiertas, hacia adelante y hacia atrás 1ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 opciones de la ventana > ganada y perdida aparecen pero todavía no se pueden elegir; la actual tampoco cuenta como cambio 2ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 cambios válidos > toda pareja de etapas abiertas distintas es válida 1ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 cambios válidos > no se puede salir de ganada ni de perdida, ni quedarse en la misma etapa, ni ir (todavía) a ganada o perdida 0ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 botón "Cambiar etapa" > aparece en el detalle de una posible venta abierta, junto a "Editar" 207ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 botón "Cambiar etapa" > no aparece en una venta ganada 28ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 botón "Cambiar etapa" > no aparece en una venta perdida 23ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > muestra las seis etapas y deja marcada la actual 156ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > "Guardar" está apagado mientras no se elija una etapa distinta 247ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > "Venta ganada" y "Venta perdida" se ven pero todavía no se pueden elegir 108ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > hacia adelante: guarda el cambio, cierra la ventana y el detalle muestra la nueva etapa 210ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > hacia atrás también se puede 217ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > "Cancelar" y Escape cierran la ventana sin guardar 391ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > si falla el guardado lo avisa y la ventana sigue abierta 227ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > si la etapa cambió mientras tanto (otra pestaña) lo avisa 194ms
+ Test Files  2 passed (2)
+      Tests  23 passed (23)
+
+== Contra emulador (tests/sales/changeStage) ==
+actualiza la etapa y su fecha y agrega un registro al historial sin borrar los anteriores: ok
+se puede ir hacia atrás y varias veces: cada cambio suma un registro: ok
+no afecta a las demás posibles ventas del mismo contacto: ok
+si la etapa guardada ya no es la esperada no escribe nada y avisa: ok
+no mueve una venta ganada o perdida, ni a la misma etapa, ni (todavía) a ganada o perdida: ok
+una venta que no existe da error y no crea nada: ok
+sin sesión no se puede y no cambia nada: ok
+
+== Suite completa ==
+npm test: 432/432
+npm run test:emulators: 92/92

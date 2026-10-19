@@ -1,7 +1,8 @@
 // Funciones de ventas ligadas a la instancia de Firestore de la app (se mockean en las pruebas de pantallas).
 import { db } from '../shared/firebase/config';
-import type { Sale } from '../shared/types';
+import type { Sale, SaleStage } from '../shared/types';
 import {
+  changeSaleStageIn,
   createSaleIn,
   listBoardSalesIn,
   listOpenSaleTitlesIn,
@@ -26,4 +27,8 @@ export function listBoardSales(now?: Date): Promise<Sale[]> {
 
 export function updateSale(saleId: string, input: SaleUpdateInput): Promise<void> {
   return updateSaleIn(db, saleId, input);
+}
+
+export function changeSaleStage(saleId: string, expectedStage: SaleStage, newStage: SaleStage): Promise<void> {
+  return changeSaleStageIn(db, saleId, expectedStage, newStage);
 }
