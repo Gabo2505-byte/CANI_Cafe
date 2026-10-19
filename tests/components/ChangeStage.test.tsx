@@ -161,6 +161,8 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
     const stageRow = screen.getByText('Etapa', { selector: 'dt' }).parentElement as HTMLElement;
     expect(within(stageRow).getByText('En negociación')).toBeTruthy();
     expect(loadSaleDetail).toHaveBeenCalledTimes(2);
+    // Franja verde con la confirmación.
+    expect((await screen.findByRole('status')).textContent).toBe('Etapa actualizada correctamente.');
   });
 
   it('hacia atrás también se puede', async () => {
@@ -183,6 +185,31 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(changeSaleStage).not.toHaveBeenCalled();
+  });
+
+  it('la confirmación vuelve a mostrarse en un segundo cambio', async () => {
+    const { user } = await openDialog();
+    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('en_negociacion'));
+    await user.click(radio('En negociación'));
+    await user.click(save());
+    await screen.findByRole('status');
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+
+    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('contactado'));
+    await user.click(screen.getByRole('button', { name: 'Cambiar etapa' }));
+    await user.click(radio('Contactado'));
+    await user.click(save());
+    await waitFor(() => expect(changeSaleStage).toHaveBeenCalledTimes(2));
+    expect((await screen.findByRole('status')).textContent).toBe('Etapa actualizada correctamente.');
+  });
+
+  it('si no se guarda (falla) no aparece la confirmación', async () => {
+    vi.mocked(changeSaleStage).mockRejectedValue(new Error('sin red'));
+    const { user } = await openDialog();
+    await user.click(radio('En negociación'));
+    await user.click(save());
+    await screen.findByRole('alert');
+    expect(screen.queryByRole('status')).toBeNull();
   });
 
   it('si falla el guardado lo avisa y la ventana sigue abierta', async () => {

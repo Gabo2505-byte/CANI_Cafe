@@ -30,7 +30,7 @@
 ## Decisiones y puntos por confirmar
 
 - **"Venta ganada" y "Venta perdida" aparecen pero no se pueden elegir todavía.** Cada una tiene su propia regla en el PDF: confirmación y motivo (HU-311) y conversión del contacto a cliente (HU-313). Dejarlas elegibles ahora produciría datos incompletos (una ganada sin conversión). Se habilitan al hacer esas historias; entonces se quita el texto provisional "Marcar una posible venta como ganada o perdida estará disponible pronto.".
-- **Sin mensaje de confirmación.** HU-310 no da un texto; el detalle muestra la nueva etapa y el historial al instante. Por confirmar si se quiere una franja verde.
+- **Confirmación en franja verde (agregada el 2026-10-19, a pedido de Dylan).** HU-310 no da un texto; tras cambiar de etapa aparece "Etapa actualizada correctamente." durante 5 segundos y el detalle muestra la nueva etapa y el historial. Se comprueba en pruebas de pantalla.
 - **Textos sin literal en el PDF:** "Etapa actual", "No se pudo cambiar la etapa. Intente de nuevo." y "La etapa de esta posible venta cambió. Cierre esta ventana y vuelva a intentarlo.".
 - **Accesibilidad:** la ventana se cierra con Escape y la etapa actual se lee como "En negociación Etapa actual".
 

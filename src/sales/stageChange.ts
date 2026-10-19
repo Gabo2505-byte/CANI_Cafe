@@ -5,6 +5,8 @@ export const STAGE_CHANGE_MESSAGES = {
   button: 'Cambiar etapa',
   title: 'Cambiar etapa',
   current: 'Etapa actual',
+  /** Franja verde tras cambiar de etapa (el PDF no da un texto para HU-310). */
+  changed: 'Etapa actualizada correctamente.',
   saveError: 'No se pudo cambiar la etapa. Intente de nuevo.',
   conflict: 'La etapa de esta posible venta cambió. Cierre esta ventana y vuelva a intentarlo.',
   /** Provisional: se quita cuando existan "Marcar perdida" (HU-311) y "Marcar ganada" (HU-313). */

@@ -30,8 +30,9 @@ export function SaleDetailPage() {
   const [state, setState] = useState<LoadState>({ status: 'loading' });
   const [editing, setEditing] = useState(false);
   const [changingStage, setChangingStage] = useState(false);
-  // Cada guardado cambia la clave para que la confirmación de 5 segundos vuelva a mostrarse.
-  const [saved, setSaved] = useState(0);
+  // Confirmación de 5 segundos (franja verde). Cada una lleva su propio `id` para que vuelva a mostrarse aunque el texto se repita.
+  const [notice, setNotice] = useState<{ id: number; message: string } | null>(null);
+  const showNotice = (message: string) => setNotice((prev) => ({ id: (prev?.id ?? 0) + 1, message }));
 
   const load = useCallback(
     async (isCancelled: () => boolean = () => false) => {
@@ -59,18 +60,19 @@ export function SaleDetailPage() {
   async function handleSaved() {
     await load();
     setEditing(false);
-    setSaved((n) => n + 1);
+    showNotice(EDIT_MESSAGES.saved);
   }
 
   // HU-310: la etapa ya se cambió y quedó en el historial; se vuelve a leer para mostrarla.
   async function handleStageChanged() {
     await load();
     setChangingStage(false);
+    showNotice(STAGE_CHANGE_MESSAGES.changed);
   }
 
   return (
     <main className="page">
-      {saved > 0 && <TimedNotice key={saved} message={EDIT_MESSAGES.saved} />}
+      {notice && <TimedNotice key={notice.id} message={notice.message} />}
       <p className="detail-back">
         <Link to={ROUTES.salesBoard}>{DETAIL_MESSAGES.back}</Link>
       </p>
