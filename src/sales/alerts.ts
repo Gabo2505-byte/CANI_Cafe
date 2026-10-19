@@ -1,6 +1,6 @@
-// HU-314 y HU-315: avisos internos de las posibles ventas (funciones puras, sin Firebase).
+// HU-314, HU-315 y HU-316: avisos internos de las posibles ventas (funciones puras, sin Firebase).
 // Los avisos no se guardan: se calculan al consultar a partir de las ventas y los contactos.
-import { isOpenSaleStage, type Sale } from '../shared/types';
+import { isOpenSaleStage, type Sale, type SaleStage } from '../shared/types';
 import { formatDateNumericCR, toCostaRicaDateKey } from '../shared/utils/dates';
 
 export const ALERT_MESSAGES = {
@@ -8,12 +8,21 @@ export const ALERT_MESSAGES = {
   empty: 'No hay avisos pendientes.',
   loading: 'Cargando avisos…',
   loadError: 'No se pudieron cargar los avisos. Intente de nuevo.',
+  /** HU-316: encabezados de la tabla. */
+  columns: ['Tipo', 'Contacto', 'Posible venta', 'Etapa', 'Detalle', 'Fecha del aviso'],
 } as const;
 
 /** HU-315: más de 10 días sin comunicaciones (desde el día 11). */
 export const NO_COMMUNICATION_AFTER_DAYS = 10;
 
 export type AlertKind = 'seguimiento_hoy' | 'seguimiento_vencido' | 'sin_comunicacion';
+
+/** HU-316: nombre del tipo de aviso en la tabla. */
+export const ALERT_KIND_LABELS: Record<AlertKind, string> = {
+  seguimiento_vencido: 'Seguimiento vencido',
+  seguimiento_hoy: 'Seguimiento para hoy',
+  sin_comunicacion: 'Sin comunicación',
+};
 
 export interface SaleAlert {
   /** Una venta genera como máximo un aviso de cada tipo. */
@@ -23,6 +32,8 @@ export interface SaleAlert {
   contactId: string;
   contactName: string;
   saleTitle: string;
+  /** Etapa de la posible venta (siempre una de las abiertas). */
+  stage: SaleStage;
   /** Texto del aviso. */
   message: string;
   /** Fecha del aviso: el día del seguimiento, o (sin comunicación) el día en que empezó a avisar. */
@@ -68,6 +79,7 @@ export function followUpAlert(sale: Sale, contact: AlertContact | undefined, now
     contactId: sale.contactId,
     contactName: contact.fullName,
     saleTitle: sale.title,
+    stage: sale.stage,
     message: isToday
       ? followUpTodayMessage(contact.fullName, sale.title)
       : followUpOverdueMessage(followUpAt, contact.fullName, sale.title),
@@ -118,6 +130,7 @@ export function noCommunicationAlert(sale: Sale, contact: AlertContact | undefin
     contactId: sale.contactId,
     contactName: contact.fullName,
     saleTitle: sale.title,
+    stage: sale.stage,
     message: noCommunicationMessage(contact.fullName, sale.title, days),
     date: new Date(reference.getTime() + (NO_COMMUNICATION_AFTER_DAYS + 1) * DAY_MS),
   };

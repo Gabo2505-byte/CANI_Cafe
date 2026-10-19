@@ -1,0 +1,98 @@
+[
+  {
+    "criterio": 1,
+    "caso": "Círculo en la barra (pantalla Contactos)",
+    "circulo": {
+      "texto": "5",
+      "etiqueta": "5 avisos pendientes",
+      "fondo": "rgb(198, 40, 40)"
+    }
+  },
+  {
+    "criterio": "2/3",
+    "caso": "Tabla de avisos",
+    "encabezados": [
+      "Tipo",
+      "Contacto",
+      "Posible venta",
+      "Etapa",
+      "Detalle",
+      "Fecha del aviso"
+    ],
+    "filas": [
+      {
+        "celdas": [
+          "Seguimiento vencido",
+          "Carla Demo Vargas",
+          "Distribución mensual de café molido (mock)",
+          "Precio o cotización enviada",
+          "Seguimiento vencido desde el 09/10/2026 con Carla Demo Vargas – Distribución mensual de café molido (mock).",
+          "09/10/2026"
+        ],
+        "colorDelTipo": "rgb(198, 40, 40)"
+      },
+      {
+        "celdas": [
+          "Seguimiento vencido",
+          "Bruno Ficticio Solís",
+          "Café en grano para cafetería (mock)",
+          "En negociación",
+          "Seguimiento vencido desde el 12/10/2026 con Bruno Ficticio Solís – Café en grano para cafetería (mock).",
+          "12/10/2026"
+        ],
+        "colorDelTipo": "rgb(198, 40, 40)"
+      },
+      {
+        "celdas": [
+          "Sin comunicación",
+          "Bruno Ficticio Solís",
+          "Café en grano para cafetería (mock)",
+          "En negociación",
+          "Bruno Ficticio Solís – Café en grano para cafetería (mock) no tiene comunicaciones desde hace 17 días.",
+          "13/10/2026"
+        ],
+        "colorDelTipo": "rgb(253, 216, 53)"
+      },
+      {
+        "celdas": [
+          "Sin comunicación",
+          "Carla Demo Vargas",
+          "Distribución mensual de café molido (mock)",
+          "Precio o cotización enviada",
+          "Carla Demo Vargas – Distribución mensual de café molido (mock) no tiene comunicaciones desde hace 16 días.",
+          "14/10/2026"
+        ],
+        "colorDelTipo": "rgb(253, 216, 53)"
+      },
+      {
+        "celdas": [
+          "Seguimiento para hoy",
+          "Elena Muestra Castro",
+          "Primer contacto con Elena (mock)",
+          "Nuevo interesado",
+          "Seguimiento programado para hoy con Elena Muestra Castro – Primer contacto con Elena (mock).",
+          "19/10/2026"
+        ],
+        "colorDelTipo": "rgb(255, 152, 0)"
+      }
+    ],
+    "circulo": {
+      "texto": "5",
+      "etiqueta": "5 avisos pendientes",
+      "fondo": "rgb(198, 40, 40)"
+    }
+  },
+  {
+    "criterio": 4,
+    "caso": "Clic en el primer aviso",
+    "ruta": "/posibles-ventas/sale-002",
+    "titulo": "Distribución mensual de café molido (mock)"
+  },
+  {
+    "criterio": "4/1",
+    "caso": "Sin avisos",
+    "mensaje": "Avisos\n\nNo hay avisos pendientes.",
+    "hayTabla": false,
+    "circulo": null
+  }
+]

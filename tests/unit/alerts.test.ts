@@ -1,6 +1,7 @@
 import { Timestamp } from 'firebase/firestore';
 import { describe, expect, it } from 'vitest';
 import {
+  ALERT_KIND_LABELS,
   buildAlerts,
   buildFollowUpAlerts,
   calendarDaysBetween,
@@ -244,5 +245,21 @@ describe('HU-314 y HU-315 juntos', () => {
       quiet({ id: 'b', lastCommunicationAt: lastComm('2026-10-01T10:00:00') }),
     ];
     expect(buildAlerts(sales, contacts, NOW).map((a) => a.id)).toEqual(['b:sin_comunicacion', 'a:seguimiento_vencido']);
+  });
+});
+
+describe('HU-316 datos de la tabla', () => {
+  it('los tipos se llaman como en el documento', () => {
+    expect(ALERT_KIND_LABELS).toEqual({
+      seguimiento_vencido: 'Seguimiento vencido',
+      seguimiento_hoy: 'Seguimiento para hoy',
+      sin_comunicacion: 'Sin comunicación',
+    });
+  });
+
+  it('cada aviso lleva la etapa de su venta, para la columna "Etapa"', () => {
+    const contacts = new Map<string, AlertContact>([['c-1', ana]]);
+    const alerts = buildAlerts([sale({ stage: 'en_negociacion', nextFollowUpAt: followUp('2026-10-19T09:00:00') })], contacts, NOW);
+    expect(alerts.map((a) => a.stage)).toEqual(['en_negociacion', 'en_negociacion']);
   });
 });

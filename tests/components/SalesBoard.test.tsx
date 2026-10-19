@@ -188,6 +188,7 @@ describe('HU-314/HU-315 campana en el tablero', () => {
     contactId: 'contact-001',
     contactName: 'Ana Prueba Mora',
     saleTitle: 'Venta',
+    stage: 'contactado' as const,
     message: 'Aviso',
     date: new Date('2026-10-19T15:00:00Z'),
   });

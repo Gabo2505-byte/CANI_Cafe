@@ -477,6 +477,21 @@ textarea[aria-invalid='true'] {
   background: #f3e6dc;
 }
 
+/* HU-316: círculo rojo con la cantidad de avisos */
+.topbar-count {
+  display: inline-block;
+  min-width: 1.3rem;
+  margin-left: 0.4rem;
+  padding: 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.3rem;
+  text-align: center;
+  color: #fff;
+  background: #c62828;
+  border-radius: 999px;
+}
+
 .topbar-logout {
   margin-left: auto;
   color: #fff;
@@ -1042,4 +1057,38 @@ textarea[aria-invalid='true'] {
   margin: 0;
   font-weight: 600;
   color: #1e5631;
+}
+
+/* HU-316: tipo de aviso con color (rojo, naranja y amarillo) y su texto */
+.alert-type {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: 999px;
+}
+
+.alert-type-overdue {
+  color: #fff;
+  background: #c62828;
+}
+
+.alert-type-today {
+  color: #3b1d00;
+  background: #ff9800;
+}
+
+.alert-type-silent {
+  color: #3b3000;
+  background: #fdd835;
+}
+
+.alerts-table td:first-child {
+  max-width: none;
+}
+
+/* La fecha dd/mm/aaaa no se parte en dos líneas. */
+.alerts-table td:last-child {
+  white-space: nowrap;
 }
