@@ -32,7 +32,7 @@
 - **Botón "Aceptar":** el criterio dice "Al aceptar", así que el botón se llama así al elegir "Venta perdida"; con las demás etapas sigue siendo "Guardar".
 - **Texto sin literal en el PDF:** la franja verde "Posible venta marcada como perdida." y el aviso "El motivo acepta como máximo 250 caracteres." (solo alcanzable pegando texto sin el tope del campo; el campo ya limita a 250).
 - **Una venta perdida ya no muestra "Cambiar etapa"** hasta HU-312, que la reabre con ese mismo botón (a una de las cuatro etapas abiertas).
-- **"Venta ganada" sigue deshabilitada** en la ventana, con el texto provisional "Marcar una posible venta como ganada estará disponible pronto.", hasta HU-313.
+- **"Venta ganada" seguía deshabilitada** en la ventana cuando se hizo este recorrido (con un texto provisional); se habilitó después con HU-313.
 - Si se reabre y se vuelve a perder (HU-312), cada pérdida se guarda como un registro nuevo del historial, sin borrar las anteriores (ya funciona así).
 
 ## Pruebas automatizadas

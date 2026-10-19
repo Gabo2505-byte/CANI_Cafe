@@ -29,7 +29,7 @@
 
 ## Decisiones y puntos por confirmar
 
-- **"Venta perdida" se habilitó con HU-311 (2026-10-19); "Venta ganada" sigue deshabilitada hasta HU-313.** Cada una tiene su propia regla en el PDF: confirmación y motivo (HU-311) y conversión del contacto a cliente (HU-313). Al hacer HU-313 se quita el texto provisional "Marcar una posible venta como ganada estará disponible pronto.". Cuando se hizo este recorrido (2026-10-19, antes de HU-311) las dos estaban deshabilitadas.
+- **"Venta perdida" se habilitó con HU-311 (2026-10-19); "Venta ganada" se habilitó después con HU-313 (2026-10-19).** Cada una tiene su propia regla en el PDF: confirmación y motivo (HU-311) y conversión del contacto a cliente (HU-313). Al hacer HU-313 se quita el texto provisional "Marcar una posible venta como ganada estará disponible pronto.". Cuando se hizo este recorrido (2026-10-19, antes de HU-311) las dos estaban deshabilitadas.
 - **Confirmación en franja verde (agregada el 2026-10-19, a pedido de Dylan).** HU-310 no da un texto; tras cambiar de etapa aparece "Etapa actualizada correctamente." durante 5 segundos y el detalle muestra la nueva etapa y el historial. Se comprueba en pruebas de pantalla.
 - **Textos sin literal en el PDF:** "Etapa actual", "No se pudo cambiar la etapa. Intente de nuevo." y "La etapa de esta posible venta cambió. Cierre esta ventana y vuelva a intentarlo.".
 - **Accesibilidad:** la ventana se cierra con Escape y la etapa actual se lee como "En negociación Etapa actual".
