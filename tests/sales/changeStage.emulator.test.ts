@@ -98,12 +98,11 @@ describe('cambiar la etapa de una posible venta (HU-310)', () => {
     expect(await historyOf('s-1')).toHaveLength(1);
   });
 
-  it('no mueve una venta ganada o perdida, ni a la misma etapa, ni (todavía) a ganada o perdida', async () => {
+  it('no mueve una venta ganada o perdida, ni a la misma etapa, ni (todavía) a ganada', async () => {
     await expect(changeSaleStageIn(db, 's-ganada', 'ganada', 'contactado')).rejects.toThrow(/no permitido/);
     await expect(changeSaleStageIn(db, 's-perdida', 'perdida', 'contactado')).rejects.toThrow(/no permitido/);
     await expect(changeSaleStageIn(db, 's-1', 'contactado', 'contactado')).rejects.toThrow(/no permitido/);
     await expect(changeSaleStageIn(db, 's-1', 'contactado', 'ganada')).rejects.toThrow(/no permitido/);
-    await expect(changeSaleStageIn(db, 's-1', 'contactado', 'perdida')).rejects.toThrow(/no permitido/);
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
     expect(await historyOf('s-1')).toHaveLength(1);
   });
@@ -116,6 +115,55 @@ describe('cambiar la etapa de una posible venta (HU-310)', () => {
   it('sin sesión no se puede y no cambia nada', async () => {
     const anon = testEnv.unauthenticatedContext().firestore() as unknown as Firestore;
     await assertFails(changeSaleStageIn(anon, 's-1', 'contactado', 'en_negociacion'));
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
+    expect(await historyOf('s-1')).toHaveLength(1);
+  });
+});
+
+describe('marcar una posible venta como perdida (HU-311)', () => {
+  it('pasa a "Venta perdida" y guarda la fecha y el motivo en el historial', async () => {
+    await changeSaleStageIn(db, 's-1', 'contactado', 'perdida', '  El cliente eligió otro proveedor.  ');
+
+    const sale = (await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).data()!;
+    expect(sale.stage).toBe('perdida');
+    expect(sale.stageChangedAt.toMillis()).toBeGreaterThan(baseSale.stageChangedAt.toMillis());
+    const history = await historyOf('s-1');
+    expect(history).toHaveLength(2);
+    expect(history[1]).toMatchObject({ previousStage: 'contactado', newStage: 'perdida', lossReason: 'El cliente eligió otro proveedor.' });
+    // La fecha de la pérdida es la de la venta (con ella el tablero la muestra 30 días).
+    expect(history[1].changedAt.toMillis()).toBe(sale.stageChangedAt.toMillis());
+  });
+
+  it('el motivo es opcional: sin escribirlo queda null', async () => {
+    await changeSaleStageIn(db, 's-1', 'contactado', 'perdida');
+    await changeSaleStageIn(db, 's-hermana', 'en_negociacion', 'perdida', '   ');
+    expect((await historyOf('s-1'))[1].lossReason).toBeNull();
+    expect((await historyOf('s-hermana'))[0].lossReason).toBeNull();
+  });
+
+  it('acepta un motivo de 250 caracteres y rechaza uno de 251 sin escribir nada', async () => {
+    await changeSaleStageIn(db, 's-1', 'contactado', 'perdida', 'm'.repeat(250));
+    expect((await historyOf('s-1'))[1].lossReason).toHaveLength(250);
+
+    await expect(changeSaleStageIn(db, 's-hermana', 'en_negociacion', 'perdida', 'm'.repeat(251))).rejects.toThrow(/demasiado largo/);
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).get('stage')).toBe('en_negociacion');
+    expect(await historyOf('s-hermana')).toEqual([]);
+  });
+
+  it('un motivo que llega con una etapa abierta no se guarda', async () => {
+    await changeSaleStageIn(db, 's-1', 'contactado', 'en_negociacion', 'Esto no es una pérdida');
+    expect((await historyOf('s-1'))[1].lossReason).toBeNull();
+  });
+
+  it('no afecta a las demás ventas del contacto y la perdida no se puede volver a mover desde aquí', async () => {
+    const before = (await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).data();
+    await changeSaleStageIn(db, 's-1', 'contactado', 'perdida', 'Motivo');
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).data()).toEqual(before);
+    await expect(changeSaleStageIn(db, 's-1', 'perdida', 'contactado')).rejects.toThrow(/no permitido/);
+  });
+
+  it('si la etapa guardada ya no es la esperada no escribe nada', async () => {
+    await expect(changeSaleStageIn(db, 's-1', 'nuevo_interesado', 'perdida', 'Motivo')).rejects.toBeInstanceOf(SaleStageConflictError);
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
     expect(await historyOf('s-1')).toHaveLength(1);
   });

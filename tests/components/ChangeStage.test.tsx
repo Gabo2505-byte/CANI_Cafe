@@ -141,12 +141,12 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
     expect(save().disabled).toBe(true);
   });
 
-  it('"Venta ganada" y "Venta perdida" se ven pero todavía no se pueden elegir', async () => {
+  it('"Venta perdida" se puede elegir; "Venta ganada" se ve pero todavía no', async () => {
     await openDialog();
+    expect(radio('Venta perdida').disabled).toBe(false);
     expect(radio('Venta ganada').disabled).toBe(true);
-    expect(radio('Venta perdida').disabled).toBe(true);
     expect(radio('Nuevo interesado').disabled).toBe(false);
-    expect(screen.getByText('Marcar una posible venta como ganada o perdida estará disponible pronto.')).toBeTruthy();
+    expect(screen.getByText('Marcar una posible venta como ganada estará disponible pronto.')).toBeTruthy();
   });
 
   it('hacia adelante: guarda el cambio, cierra la ventana y el detalle muestra la nueva etapa', async () => {
@@ -156,7 +156,7 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
     await user.click(save());
 
     await waitFor(() => expect(changeSaleStage).toHaveBeenCalledOnce());
-    expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'contactado', 'en_negociacion');
+    expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'contactado', 'en_negociacion', undefined);
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     const stageRow = screen.getByText('Etapa', { selector: 'dt' }).parentElement as HTMLElement;
     expect(within(stageRow).getByText('En negociación')).toBeTruthy();
@@ -169,7 +169,7 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
     const { user } = await openDialog();
     await user.click(radio('Nuevo interesado'));
     await user.click(save());
-    await waitFor(() => expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'contactado', 'nuevo_interesado'));
+    await waitFor(() => expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'contactado', 'nuevo_interesado', undefined));
   });
 
   it('"Cancelar" y Escape cierran la ventana sin guardar', async () => {
@@ -231,5 +231,93 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
     expect((await screen.findByRole('alert')).textContent).toBe(
       'La etapa de esta posible venta cambió. Cierre esta ventana y vuelva a intentarlo.',
     );
+  });
+});
+
+describe('HU-311 marcar como perdida desde la ventana "Cambiar etapa"', () => {
+  const QUESTION = '¿Está seguro de que desea marcar esta venta como perdida?';
+  const reason = () => screen.getByLabelText(/^Motivo de la pérdida/) as HTMLTextAreaElement;
+
+  it('al elegir "Venta perdida" pregunta si está seguro y ofrece el motivo; con otras etapas no', async () => {
+    const { user } = await openDialog();
+    expect(screen.queryByText(QUESTION)).toBeNull();
+    expect(screen.queryByLabelText(/^Motivo de la pérdida/)).toBeNull();
+
+    await user.click(radio('Venta perdida'));
+    expect(screen.getByText(QUESTION)).toBeTruthy();
+    expect(reason().value).toBe('');
+    // El cursor pasa al motivo y el botón pasa a ser "Aceptar".
+    expect(document.activeElement).toBe(reason());
+    expect(screen.queryByRole('button', { name: 'Guardar' })).toBeNull();
+    expect((screen.getByRole('button', { name: 'Aceptar' }) as HTMLButtonElement).disabled).toBe(false);
+
+    await user.click(radio('En negociación'));
+    expect(screen.queryByText(QUESTION)).toBeNull();
+    expect(screen.getByRole('button', { name: 'Guardar' })).toBeTruthy();
+  });
+
+  it('el motivo es opcional: aceptar sin escribirlo guarda la pérdida', async () => {
+    const { user } = await openDialog();
+    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('perdida'));
+    await user.click(radio('Venta perdida'));
+    await user.click(screen.getByRole('button', { name: 'Aceptar' }));
+
+    await waitFor(() => expect(changeSaleStage).toHaveBeenCalledOnce());
+    expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'contactado', 'perdida', '');
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect((await screen.findByRole('status')).textContent).toBe('Posible venta marcada como perdida.');
+    // Ya perdida: no se puede volver a mover desde aquí (se reabre con HU-312).
+    expect(screen.queryByRole('button', { name: 'Cambiar etapa' })).toBeNull();
+  });
+
+  it('con motivo: se entrega para guardarlo', async () => {
+    const { user } = await openDialog();
+    await user.click(radio('Venta perdida'));
+    await user.type(reason(), 'Eligió otro proveedor.');
+    await user.click(screen.getByRole('button', { name: 'Aceptar' }));
+    await waitFor(() =>
+      expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'contactado', 'perdida', 'Eligió otro proveedor.'),
+    );
+  });
+
+  it('el motivo acepta como máximo 250 caracteres y muestra el contador', async () => {
+    const { user } = await openDialog();
+    await user.click(radio('Venta perdida'));
+    await user.click(reason());
+    await user.paste('m'.repeat(300));
+    expect(reason().value).toHaveLength(250);
+    expect(screen.getByText('250/250')).toBeTruthy();
+  });
+
+  it('"Cancelar" deja la posible venta en su etapa y no guarda nada', async () => {
+    const { user } = await openDialog();
+    await user.click(radio('Venta perdida'));
+    await user.type(reason(), 'No debe guardarse');
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(changeSaleStage).not.toHaveBeenCalled();
+    expect(loadSaleDetail).toHaveBeenCalledTimes(1);
+    const stageRow = screen.getByText('Etapa', { selector: 'dt' }).parentElement as HTMLElement;
+    expect(within(stageRow).getByText('Contactado')).toBeTruthy();
+    expect(screen.queryByRole('status')).toBeNull();
+
+    // Al abrirla otra vez no queda ni la pregunta ni el motivo escrito.
+    await user.click(screen.getByRole('button', { name: 'Cambiar etapa' }));
+    await screen.findByRole('dialog');
+    expect(screen.queryByText(QUESTION)).toBeNull();
+    await user.click(radio('Venta perdida'));
+    expect(reason().value).toBe('');
+  });
+
+  it('si falla el guardado lo avisa, la ventana sigue abierta y el motivo escrito se conserva', async () => {
+    vi.mocked(changeSaleStage).mockRejectedValue(new Error('sin red'));
+    const { user } = await openDialog();
+    await user.click(radio('Venta perdida'));
+    await user.type(reason(), 'Motivo');
+    await user.click(screen.getByRole('button', { name: 'Aceptar' }));
+    expect((await screen.findByRole('alert')).textContent).toBe('No se pudo cambiar la etapa. Intente de nuevo.');
+    expect(reason().value).toBe('Motivo');
+    expect(screen.getByRole('dialog')).toBeTruthy();
   });
 });

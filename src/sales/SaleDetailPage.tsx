@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { contactPath, ROUTES } from '../app/routes';
-import { SALE_STAGE_LABELS } from '../shared/types';
+import { SALE_STAGE_LABELS, type SaleStage } from '../shared/types';
 import { formatDateNumericCR } from '../shared/utils/dates';
 import { formatColones } from '../shared/utils/money';
 import {
@@ -64,10 +64,10 @@ export function SaleDetailPage() {
   }
 
   // HU-310: la etapa ya se cambió y quedó en el historial; se vuelve a leer para mostrarla.
-  async function handleStageChanged() {
+  async function handleStageChanged(newStage: SaleStage) {
     await load();
     setChangingStage(false);
-    showNotice(STAGE_CHANGE_MESSAGES.changed);
+    showNotice(newStage === 'perdida' ? STAGE_CHANGE_MESSAGES.lost : STAGE_CHANGE_MESSAGES.changed);
   }
 
   return (
@@ -107,7 +107,7 @@ interface SaleDetailProps {
   changingStage: boolean;
   onChangeStage: () => void;
   onCancelChangeStage: () => void;
-  onStageChanged: () => void;
+  onStageChanged: (newStage: SaleStage) => void;
   onCancel: () => void;
   onSaved: () => void;
 }

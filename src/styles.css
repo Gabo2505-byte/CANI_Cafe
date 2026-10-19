@@ -1010,3 +1010,21 @@ textarea[aria-invalid='true'] {
   width: auto;
   margin: 0;
 }
+
+/* HU-311: pregunta y motivo al marcar una posible venta como perdida */
+.loss-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  background: #fbf0ee;
+  border: 1px solid #e3b9b3;
+  border-radius: 6px;
+}
+
+.loss-question {
+  margin: 0;
+  font-weight: 600;
+  color: #7a1c14;
+}

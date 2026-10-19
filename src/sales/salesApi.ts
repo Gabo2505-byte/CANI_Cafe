@@ -29,6 +29,6 @@ export function updateSale(saleId: string, input: SaleUpdateInput): Promise<void
   return updateSaleIn(db, saleId, input);
 }
 
-export function changeSaleStage(saleId: string, expectedStage: SaleStage, newStage: SaleStage): Promise<void> {
-  return changeSaleStageIn(db, saleId, expectedStage, newStage);
+export function changeSaleStage(saleId: string, expectedStage: SaleStage, newStage: SaleStage, lossReason?: string): Promise<void> {
+  return changeSaleStageIn(db, saleId, expectedStage, newStage, lossReason);
 }

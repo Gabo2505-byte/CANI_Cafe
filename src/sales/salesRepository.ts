@@ -12,7 +12,7 @@ import {
   type Firestore,
 } from 'firebase/firestore';
 import { closedSalesCutoff } from './board';
-import { isValidStageChange } from './stageChange';
+import { isValidStageChange, lossReasonError, normalizeLossReason } from './stageChange';
 import { COLLECTIONS } from '../shared/constants/collections';
 import {
   isOpenSaleStage,
@@ -160,13 +160,21 @@ export class SaleStageConflictError extends Error {
 }
 
 /**
- * HU-310: mueve una posible venta abierta a otra etapa abierta. En una sola transacción actualiza
- * `sales.stage` y `sales.stageChangedAt` y agrega un registro a `stageHistory` (los anteriores no se tocan).
+ * HU-310: mueve una posible venta abierta a otra etapa abierta. HU-311: o la marca como perdida, con un motivo
+ * opcional (hasta 250 caracteres). En una sola transacción actualiza `sales.stage` y `sales.stageChangedAt` y
+ * agrega un registro a `stageHistory` con su fecha (y el motivo si fue a "Venta perdida"); los anteriores no se tocan.
  * Solo se toca esa venta: las demás del contacto no cambian. Si la etapa guardada ya no es `expectedStage`
  * (otra pestaña la cambió), no escribe nada y lanza SaleStageConflictError.
  */
-export async function changeSaleStageIn(db: Firestore, saleId: string, expectedStage: SaleStage, newStage: SaleStage): Promise<void> {
+export async function changeSaleStageIn(
+  db: Firestore,
+  saleId: string,
+  expectedStage: SaleStage,
+  newStage: SaleStage,
+  lossReason: string = '',
+): Promise<void> {
   if (!isValidStageChange(expectedStage, newStage)) throw new Error(`Cambio de etapa no permitido: ${expectedStage} → ${newStage}.`);
+  if (newStage === 'perdida' && lossReasonError(lossReason)) throw new Error('El motivo de la pérdida es demasiado largo.');
   const saleRef = doc(db, COLLECTIONS.sales, saleId);
   await runTransaction(db, async (tx) => {
     const snap = await tx.get(saleRef);
@@ -174,7 +182,9 @@ export async function changeSaleStageIn(db: Firestore, saleId: string, expectedS
     if (snap.get('stage') !== expectedStage) throw new SaleStageConflictError();
 
     const now = Timestamp.now();
-    const entry: StageHistory = { saleId, previousStage: expectedStage, newStage, changedAt: now, lossReason: null };
+    // El motivo solo se guarda cuando la nueva etapa es "Venta perdida".
+    const reason = newStage === 'perdida' ? normalizeLossReason(lossReason) : null;
+    const entry: StageHistory = { saleId, previousStage: expectedStage, newStage, changedAt: now, lossReason: reason };
     tx.update(saleRef, { stage: newStage, stageChangedAt: now });
     tx.set(doc(collection(db, COLLECTIONS.stageHistory)), entry);
   });
