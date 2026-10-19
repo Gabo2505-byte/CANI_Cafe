@@ -1,0 +1,18 @@
+Evidencia de pruebas HU-316 - 2026-10-19 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== npm test ==
+ Test Files  43 passed (43)
+      Tests  524 passed (524)
+
+== npm run test:emulators ==
+ Test Files  20 passed (20)
+      Tests  126 passed (126)
+
+Pruebas nuevas o ajustadas de HU-316:
+- tests/components/Alerts.test.tsx: columnas de la tabla; contenido de cada fila (tipo, contacto, venta, etapa, detalle, fecha dd/mm/aaaa); orden recibido; clases de color de los tres tipos; clic en la fila abre el detalle; título como enlace; "No hay avisos pendientes."; error de carga; círculo con la cantidad en cualquier pantalla, cuenta cada aviso, no aparece sin avisos, sigue la barra si falla el cálculo y se recalcula al cambiar de pantalla.
+- tests/unit/alerts.test.ts: nombres de los tipos y etapa de la venta en cada aviso.
+- tests/components/SalesBoard.test.tsx: avisos de prueba con el campo de etapa.
+- tests/setup.ts: listAlerts simulado sin avisos por defecto para que las demás pruebas de pantalla no consulten Firestore a través de la barra.

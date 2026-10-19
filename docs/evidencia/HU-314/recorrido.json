@@ -1,0 +1,83 @@
+[
+  {
+    "hoyEnElNavegador": "2026-10-19T23:26:20.356Z"
+  },
+  {
+    "criterio": "2/4",
+    "caso": "Seed: seguimientos de 09/10 y 12/10, de ventas abiertas",
+    "avisos": [
+      "Seguimiento vencido desde el 09/10/2026 con Carla Demo Vargas – Distribución mensual de café molido (mock).",
+      "Seguimiento vencido desde el 12/10/2026 con Bruno Ficticio Solís – Café en grano para cafetería (mock)."
+    ],
+    "seguimientos": {
+      "sale-001": "2026-10-12T16:00:00Z",
+      "sale-002": "2026-10-09T21:00:00Z"
+    }
+  },
+  {
+    "criterio": 1,
+    "caso": "Seguimiento programado para hoy (sale-006)",
+    "avisos": [
+      "Seguimiento vencido desde el 09/10/2026 con Carla Demo Vargas – Distribución mensual de café molido (mock).",
+      "Seguimiento vencido desde el 12/10/2026 con Bruno Ficticio Solís – Café en grano para cafetería (mock).",
+      "Seguimiento programado para hoy con Elena Muestra Castro – Primer contacto con Elena (mock)."
+    ]
+  },
+  {
+    "caso": "Clic en el aviso",
+    "ruta": "/posibles-ventas/sale-002",
+    "titulo": "Distribución mensual de café molido (mock)"
+  },
+  {
+    "criterio": 3,
+    "caso": "Se registra una comunicación: el aviso sigue",
+    "avisos": [
+      "Seguimiento vencido desde el 09/10/2026 con Carla Demo Vargas – Distribución mensual de café molido (mock).",
+      "Seguimiento vencido desde el 12/10/2026 con Bruno Ficticio Solís – Café en grano para cafetería (mock).",
+      "Seguimiento programado para hoy con Elena Muestra Castro – Primer contacto con Elena (mock)."
+    ]
+  },
+  {
+    "criterio": 3,
+    "caso": "Se programa una fecha nueva (en 7 días): el aviso de hoy desaparece",
+    "avisos": [
+      "Seguimiento vencido desde el 09/10/2026 con Carla Demo Vargas – Distribución mensual de café molido (mock).",
+      "Seguimiento vencido desde el 12/10/2026 con Bruno Ficticio Solís – Café en grano para cafetería (mock)."
+    ]
+  },
+  {
+    "criterio": 3,
+    "caso": "Se borra la fecha de sale-001",
+    "avisos": [
+      "Seguimiento vencido desde el 09/10/2026 con Carla Demo Vargas – Distribución mensual de café molido (mock)."
+    ]
+  },
+  {
+    "criterio": "3/4",
+    "caso": "sale-002 pasa a perdida",
+    "avisos": []
+  },
+  {
+    "criterio": "3/4",
+    "caso": "sale-002 pasa a ganada",
+    "avisos": []
+  },
+  {
+    "criterio": 3,
+    "caso": "sale-002 vuelve a abierta: el aviso vuelve",
+    "avisos": [
+      "Seguimiento vencido desde el 09/10/2026 con Carla Demo Vargas – Distribución mensual de café molido (mock)."
+    ]
+  },
+  {
+    "criterio": "3/4",
+    "caso": "El contacto de sale-002 se desactiva",
+    "avisos": []
+  },
+  {
+    "caso": "Contacto reactivado: el aviso vuelve (vencido desde 09/10)",
+    "avisos": [
+      "Seguimiento vencido desde el 09/10/2026 con Carla Demo Vargas – Distribución mensual de café molido (mock)."
+    ]
+  }
+]

@@ -477,6 +477,21 @@ textarea[aria-invalid='true'] {
   background: #f3e6dc;
 }
 
+/* HU-316: círculo rojo con la cantidad de avisos */
+.topbar-count {
+  display: inline-block;
+  min-width: 1.3rem;
+  margin-left: 0.4rem;
+  padding: 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.3rem;
+  text-align: center;
+  color: #fff;
+  background: #c62828;
+  border-radius: 999px;
+}
+
 .topbar-logout {
   margin-left: auto;
   color: #fff;
@@ -953,4 +968,127 @@ textarea[aria-invalid='true'] {
 /* HU-211: la confirmación de una comunicación guardada, sobre el historial */
 .saved-notice .notice-success {
   margin: 0 0 0.75rem;
+}
+
+/* HU-310: botón y ventana "Cambiar etapa" */
+.page-header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.stage-options {
+  margin: 0 0 0.5rem;
+  padding: 0;
+  border: none;
+}
+
+.stage-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.25rem;
+  cursor: pointer;
+}
+
+.stage-option.is-disabled {
+  color: #9a8b80;
+  cursor: not-allowed;
+}
+
+.stage-option-current {
+  padding: 0.1rem 0.5rem;
+  font-size: 0.8rem;
+  color: #4a2a1a;
+  background: #f1ebe6;
+  border-radius: 999px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+}
+
+/* Los botones de selección no heredan el ancho completo de los campos del formulario. */
+.form .stage-option {
+  justify-content: flex-start;
+  margin: 0;
+}
+
+.form .stage-option input[type='radio'] {
+  flex: none;
+  width: auto;
+  margin: 0;
+}
+
+/* HU-311: pregunta y motivo al marcar una posible venta como perdida */
+.loss-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  background: #fbf0ee;
+  border: 1px solid #e3b9b3;
+  border-radius: 6px;
+}
+
+.loss-question {
+  margin: 0;
+  font-weight: 600;
+  color: #7a1c14;
+}
+
+/* HU-313: pregunta al marcar una posible venta como ganada */
+.win-confirm {
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  background: #eef6ef;
+  border: 1px solid #b7d7bc;
+  border-radius: 6px;
+}
+
+.win-question {
+  margin: 0;
+  font-weight: 600;
+  color: #1e5631;
+}
+
+/* HU-316: tipo de aviso con color (rojo, naranja y amarillo) y su texto */
+.alert-type {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: 999px;
+}
+
+.alert-type-overdue {
+  color: #fff;
+  background: #c62828;
+}
+
+.alert-type-today {
+  color: #3b1d00;
+  background: #ff9800;
+}
+
+.alert-type-silent {
+  color: #3b3000;
+  background: #fdd835;
+}
+
+.alerts-table td:first-child {
+  max-width: none;
+}
+
+/* La fecha dd/mm/aaaa no se parte en dos líneas. */
+.alerts-table td:last-child {
+  white-space: nowrap;
 }

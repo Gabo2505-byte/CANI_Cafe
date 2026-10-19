@@ -1,0 +1,78 @@
+[
+  {
+    "hoyEnElNavegador": "2026-10-19T23:34:48.937Z"
+  },
+  {
+    "criterio": "1/2",
+    "caso": "Seed: avisos de falta de comunicación y de seguimiento vencido",
+    "avisos": [
+      "Seguimiento vencido desde el 09/10/2026 con Carla Demo Vargas – Distribución mensual de café molido (mock).",
+      "Seguimiento vencido desde el 12/10/2026 con Bruno Ficticio Solís – Café en grano para cafetería (mock).",
+      "Bruno Ficticio Solís – Café en grano para cafetería (mock) no tiene comunicaciones desde hace 17 días.",
+      "Carla Demo Vargas – Distribución mensual de café molido (mock) no tiene comunicaciones desde hace 16 días."
+    ]
+  },
+  {
+    "caso": "Tablero: tarjetas con campana (sale-001 y sale-002; sale-006 no)",
+    "conCampana": [
+      "Distribución mensual de café molido (mock)",
+      "Café en grano para cafetería (mock)"
+    ]
+  },
+  {
+    "criterio": 3,
+    "caso": "sale-006 creada hace exactamente 10 días y sin comunicaciones: no avisa",
+    "avisos": []
+  },
+  {
+    "criterio": 3,
+    "caso": "sale-006 creada hace 11 días: avisa desde la creación",
+    "avisos": [
+      "Elena Muestra Castro – Primer contacto con Elena (mock) no tiene comunicaciones desde hace 11 días."
+    ]
+  },
+  {
+    "criterio": 3,
+    "caso": "El número de días se actualiza (14 días)",
+    "avisos": [
+      "Elena Muestra Castro – Primer contacto con Elena (mock) no tiene comunicaciones desde hace 14 días."
+    ]
+  },
+  {
+    "criterio": 2,
+    "caso": "sale-001: última comunicación hace 10 días: sin aviso de comunicación",
+    "avisos": []
+  },
+  {
+    "criterio": 2,
+    "caso": "sale-001: última comunicación hace 11 días: aviso",
+    "avisos": [
+      "Bruno Ficticio Solís – Café en grano para cafetería (mock) no tiene comunicaciones desde hace 11 días."
+    ]
+  },
+  {
+    "criterio": 4,
+    "caso": "Se registra una comunicación en sale-001",
+    "avisos": [
+      "Seguimiento vencido desde el 09/10/2026 con Carla Demo Vargas – Distribución mensual de café molido (mock).",
+      "Seguimiento vencido desde el 12/10/2026 con Bruno Ficticio Solís – Café en grano para cafetería (mock).",
+      "Carla Demo Vargas – Distribución mensual de café molido (mock) no tiene comunicaciones desde hace 16 días.",
+      "Elena Muestra Castro – Primer contacto con Elena (mock) no tiene comunicaciones desde hace 14 días."
+    ],
+    "conCampana": [
+      "Primer contacto con Elena (mock)",
+      "Distribución mensual de café molido (mock)",
+      "Café en grano para cafetería (mock)"
+    ]
+  },
+  {
+    "criterio": 5,
+    "caso": "sale-002 pasa a ganada",
+    "avisos": []
+  },
+  {
+    "criterio": 5,
+    "caso": "El contacto de sale-002 se desactiva",
+    "avisos": []
+  }
+]

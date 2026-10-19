@@ -141,7 +141,7 @@ export function NewSalePage() {
   if (fixed.status === 'notFound') {
     return (
       <main className="page">
-        <h1>Nueva posible venta</h1>
+        <h1>{SALE_MESSAGES.newSale}</h1>
         <p className="field-error" role="alert">
           {SALE_MESSAGES.contactNotFound}
         </p>
@@ -152,7 +152,7 @@ export function NewSalePage() {
 
   return (
     <main className="page">
-      <h1>Nueva posible venta</h1>
+      <h1>{SALE_MESSAGES.newSale}</h1>
       {fixed.status === 'loading' ? (
         <p>Cargando contacto…</p>
       ) : (

@@ -11,6 +11,7 @@ import { AuthContext } from '../../src/auth/AuthContext';
 import type { AuthState } from '../../src/auth/useAuthUser';
 import { SessionProvider } from '../../src/auth/SessionContext';
 import type { BoardSale } from '../../src/sales/board';
+import { listAlerts } from '../../src/sales/alertsApi';
 import { listActiveProducts } from '../../src/products/productsApi';
 import { getContactNames, listActiveContacts } from '../../src/sales/contactSearchApi';
 import { SaleCard } from '../../src/sales/SaleCard';
@@ -19,6 +20,7 @@ import type { Sale, SaleStage } from '../../src/shared/types';
 
 vi.mock('../../src/auth/signInWithUsername', () => ({ signInWithUsername: vi.fn() }));
 vi.mock('../../src/auth/signOutUser', () => ({ signOutUser: vi.fn() }));
+vi.mock('../../src/sales/alertsApi', () => ({ listAlerts: vi.fn() }));
 vi.mock('../../src/sales/salesApi', () => ({ listBoardSales: vi.fn(), listOpenSaleTitles: vi.fn(), createSale: vi.fn() }));
 vi.mock('../../src/sales/contactSearchApi', () => ({
   getContactNames: vi.fn(),
@@ -70,6 +72,7 @@ const sale = (id: string, stage: SaleStage, overrides: Partial<Sale> = {}): Sale
 });
 
 beforeEach(() => {
+  vi.mocked(listAlerts).mockResolvedValue([]);
   // Para cuando se navega al formulario de nueva posible venta.
   vi.mocked(listActiveContacts).mockResolvedValue([]);
   vi.mocked(listActiveProducts).mockResolvedValue([]);
@@ -174,6 +177,48 @@ describe('HU-305 Tablero de posibles ventas', () => {
     await screen.findAllByRole('link', { name: /Ana Prueba Mora/ });
     await waitFor(() => expect(getContactNames).toHaveBeenCalledTimes(1));
     expect(getContactNames).toHaveBeenCalledWith(['contact-001', 'contact-001']);
+  });
+});
+
+describe('HU-314/HU-315 campana en el tablero', () => {
+  const alertOf = (saleId: string, kind: 'seguimiento_hoy' | 'sin_comunicacion') => ({
+    id: `${saleId}:${kind}`,
+    kind,
+    saleId,
+    contactId: 'contact-001',
+    contactName: 'Ana Prueba Mora',
+    saleTitle: 'Venta',
+    stage: 'contactado' as const,
+    message: 'Aviso',
+    date: new Date('2026-10-19T15:00:00Z'),
+  });
+  const bells = () => screen.queryAllByRole('img', { name: 'Aviso pendiente' });
+
+  it('solo las tarjetas con aviso (de seguimiento o de falta de comunicación) muestran la campana', async () => {
+    vi.mocked(listBoardSales).mockResolvedValue([sale('s1', 'contactado'), sale('s2', 'contactado'), sale('s3', 'en_negociacion')]);
+    vi.mocked(listAlerts).mockResolvedValue([alertOf('s1', 'seguimiento_hoy'), alertOf('s3', 'sin_comunicacion')]);
+    renderBoard();
+    await screen.findAllByRole('link', { name: /Ana Prueba Mora/ });
+    expect(bells()).toHaveLength(2);
+    const withBell = screen.getAllByRole('link').filter((l) => within(l).queryByRole('img', { name: 'Aviso pendiente' }));
+    expect(withBell.map((l) => l.getAttribute('href'))).toEqual(['/posibles-ventas/s1', '/posibles-ventas/s3']);
+  });
+
+  it('una venta con los dos avisos muestra una sola campana', async () => {
+    vi.mocked(listBoardSales).mockResolvedValue([sale('s1', 'contactado')]);
+    vi.mocked(listAlerts).mockResolvedValue([alertOf('s1', 'seguimiento_hoy'), alertOf('s1', 'sin_comunicacion')]);
+    renderBoard();
+    await screen.findAllByRole('link', { name: /Ana Prueba Mora/ });
+    expect(bells()).toHaveLength(1);
+  });
+
+  it('si no se pueden calcular los avisos el tablero se muestra igual, sin campanas', async () => {
+    vi.mocked(listBoardSales).mockResolvedValue([sale('s1', 'contactado')]);
+    vi.mocked(listAlerts).mockRejectedValue(new Error('sin red'));
+    renderBoard();
+    await screen.findAllByRole('link', { name: /Ana Prueba Mora/ });
+    expect(bells()).toHaveLength(0);
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 });
 

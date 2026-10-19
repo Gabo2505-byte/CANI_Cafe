@@ -1,0 +1,67 @@
+Evidencia de pruebas HU-313 - 2026-10-19 17:03 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas de HU-313 (pantalla y lógica) ==
+ ✓ tests/unit/stageChange.test.ts > HU-310 quién puede cambiar de etapa > una posible venta en "nuevo_interesado" sí 3ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 quién puede cambiar de etapa > una posible venta en "contactado" sí 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 quién puede cambiar de etapa > una posible venta en "cotizacion_enviada" sí 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 quién puede cambiar de etapa > una posible venta en "en_negociacion" sí 1ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 quién puede cambiar de etapa > una "ganada" no 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 quién puede cambiar de etapa > una "perdida" no 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 opciones de la ventana > son las seis etapas, en el orden del tablero 1ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 opciones de la ventana > marca solo la etapa actual 1ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 opciones de la ventana > desde una etapa abierta se pueden elegir las otras cinco, hacia adelante y hacia atrás, incluidas ganada y perdida 1ms
+ ✓ tests/unit/stageChange.test.ts > HU-310 opciones de la ventana > la etapa actual no cuenta como un cambio 1ms
+ ✓ tests/unit/stageChange.test.ts > HU-310/HU-311/HU-313 cambios válidos > desde cualquier etapa abierta a cualquier otra etapa distinta, incluidas ganada y perdida 1ms
+ ✓ tests/unit/stageChange.test.ts > HU-310/HU-311/HU-313 cambios válidos > no se puede salir de ganada ni de perdida (la perdida se reabre con HU-312) 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-311 motivo de la pérdida > es opcional: vacío o solo espacios no es un error y se guarda como null 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-311 motivo de la pérdida > se guarda sin espacios a los lados 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-311 motivo de la pérdida > acepta hasta 250 caracteres; con 251 avisa 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-313 conversión a cliente > una "Persona interesada" pasa a "Cliente" 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-313 conversión a cliente > quien ya es cliente sigue siéndolo 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-313 conversión a cliente > distribuidor y otro no se tocan (el PDF no los menciona) 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-313 conversión a cliente > solo "Persona interesada" cambia de clasificación 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-313 textos > la pregunta es la del documento 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-313 textos > el mensaje con el nombre del contacto 0ms
+ ✓ tests/unit/stageChange.test.ts > HU-313 textos > franja verde de cada cambio 0ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 botón "Cambiar etapa" > aparece en el detalle de una posible venta abierta, junto a "Editar" 211ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 botón "Cambiar etapa" > no aparece en una venta ganada 44ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 botón "Cambiar etapa" > no aparece en una venta perdida 32ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > muestra las seis etapas y deja marcada la actual 163ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > "Guardar" está apagado mientras no se elija una etapa distinta 201ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > "Venta perdida" y "Venta ganada" se pueden elegir 122ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > hacia adelante: guarda el cambio, cierra la ventana y el detalle muestra la nueva etapa 247ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > hacia atrás también se puede 218ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > "Cancelar" y Escape cierran la ventana sin guardar 313ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > la confirmación vuelve a mostrarse en un segundo cambio 403ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > si no se guarda (falla) no aparece la confirmación 189ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > si falla el guardado lo avisa y la ventana sigue abierta 226ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-310 ventana "Cambiar etapa" > si la etapa cambió mientras tanto (otra pestaña) lo avisa 186ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-311 marcar como perdida desde la ventana "Cambiar etapa" > al elegir "Venta perdida" pregunta si está seguro y ofrece el motivo; con otras etapas no 266ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-311 marcar como perdida desde la ventana "Cambiar etapa" > el motivo es opcional: aceptar sin escribirlo guarda la pérdida 232ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-311 marcar como perdida desde la ventana "Cambiar etapa" > con motivo: se entrega para guardarlo 606ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-311 marcar como perdida desde la ventana "Cambiar etapa" > el motivo acepta como máximo 250 caracteres y muestra el contador 241ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-311 marcar como perdida desde la ventana "Cambiar etapa" > "Cancelar" deja la posible venta en su etapa y no guarda nada 685ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-311 marcar como perdida desde la ventana "Cambiar etapa" > si falla el guardado lo avisa, la ventana sigue abierta y el motivo escrito se conserva 372ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-313 marcar como ganada desde la ventana "Cambiar etapa" > al elegir "Venta ganada" pregunta si confirma; con otras etapas no 248ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-313 marcar como ganada desde la ventana "Cambiar etapa" > persona interesada: al aceptar pasa a ganada y aparece "Venta ganada. [Nombre] ahora es cliente." 218ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-313 marcar como ganada desde la ventana "Cambiar etapa" > si el contacto ya era cliente: "Venta ganada correctamente." 202ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-313 marcar como ganada desde la ventana "Cambiar etapa" > una venta ganada ya no puede cambiar de etapa: el botón "Cambiar etapa" desaparece 204ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-313 marcar como ganada desde la ventana "Cambiar etapa" > "Cancelar" no cambia nada 265ms
+ ✓ tests/components/ChangeStage.test.tsx > HU-313 marcar como ganada desde la ventana "Cambiar etapa" > si falla el guardado lo avisa y no muestra la confirmación 216ms
+ Test Files  2 passed (2)
+      Tests  47 passed (47)
+
+== Contra emulador (tests/sales/changeStage, bloque HU-313) ==
+una persona interesada pasa a cliente y la venta a Venta ganada, con su registro en el historial: ok
+solo se cambia la clasificación: el resto del contacto queda igual: ok
+si el contacto ya era cliente sigue siéndolo y no hay conversión: ok
+distribuidor y otro no cambian de clasificación: ok
+si el contacto ya no existe la venta se gana igual y no se crea ningún contacto: ok
+no afecta a las demás ventas ni a los demás contactos: ok
+es definitiva: una venta ganada ya no cambia de etapa: ok
+es atómico: si la etapa ya cambió no se toca ni la venta ni el contacto: ok
+ganar desde cualquier etapa abierta funciona: ok
+sin sesión no cambia nada: ni la venta ni el contacto: ok

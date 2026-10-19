@@ -5,11 +5,9 @@
 > Como administrador quiero crear una posible venta para un contacto
 > para que pueda darle seguimiento.
 
-## Estado: parcial
+## Estado: completa
 
-Solo falta una parte, que depende de Gabriel:
-
-- **Criterio 1 (botón en la ficha):** la pestaña "Posibles ventas" de la ficha es de Gabriel (HU-208) y aún no existe. La ruta `/posibles-ventas/nueva?contactId=...` ya está lista para que su botón la use.
+Los cinco criterios se cumplen. El botón en la ficha (criterio 1) se agregó el 2026-10-19 en la pestaña "Posibles ventas" de Gabriel (HU-208). Es un cambio mínimo en un archivo suyo (`src/contacts/ContactDetailPage.tsx`), hecho a pedido de Dylan; **Gabriel debe revisarlo**.
 
 ## Datos de prueba
 
@@ -21,11 +19,21 @@ Solo falta una parte, que depende de Gabriel:
 
 | # | Criterio | Resultado | Evidencia |
 |---|---|---|---|
-| 1 | Botón "Nueva posible venta" arriba a la derecha en "Posibles ventas" y en la pestaña "Posibles ventas" de la ficha. | ⚠️ Parcial | En "Posibles ventas": ✅ [01](01-posibles-ventas-boton.png), a 24 px del borde derecho y arriba. En la ficha: ⏳ pendiente (la pestaña es de Gabriel). La ruta ya acepta `?contactId=` para abrirlo con el contacto fijo ([09](09-contacto-fijo.png)). |
+| 1 | Botón "Nueva posible venta" arriba a la derecha en la pantalla "Posibles ventas" y en la pestaña "Posibles ventas" de la ficha de cada contacto. | ✅ Cumple | En "Posibles ventas": [01](01-posibles-ventas-boton.png), a 24 px del borde derecho y arriba. En la ficha: [12](12-ficha-boton-nueva-posible-venta.png), arriba a la derecha de la pestaña (junto a la tabla), también cuando el contacto no tiene ventas; no aparece en las otras pestañas. Al darle clic abre el formulario con el contacto ya elegido y sin poder cambiarlo ([13](13-formulario-desde-la-ficha.png)). |
 | 2 | El formulario tiene siete datos: contacto, título, etapa, monto estimado, productos, seguimiento y notas. | ✅ Cumple | [02](02-formulario.png). Etiquetas: Contacto, Título, Etapa, Monto estimado (₡), Fecha del próximo seguimiento, Notas, Productos. |
 | 3 | Obligatorios: contacto, título, etapa y monto. Opcionales: productos, seguimiento y notas. | ✅ Cumple | Obligatorios marcados con asterisco. Guardar vacío: "Seleccione un contacto.", "Ingrese el título.", "Ingrese un monto válido." ([03](03-obligatorios.png)). La etapa siempre tiene valor. Una venta con solo lo obligatorio se guarda. |
 | 4 | Al guardar, la posible venta aparece en el tablero, en la columna de su etapa, con el mensaje "Posible venta registrada correctamente.". | ✅ Cumple | Mensaje en franja verde que desaparece a los 5 s ([08](08-confirmacion.png)). La venta aparece en la columna de su etapa ([11](11-venta-en-su-columna.png), "Contactado · 1 · ₡ 350 000"; tablero: HU-305). En Firestore queda la venta (etapa, monto, seguimiento 00:00 de Costa Rica, notas), sus productos (`saleProducts`) y el primer registro de `stageHistory`; `createdAt` y `stageChangedAt` son iguales. |
 | 5 | Un contacto puede tener varias posibles ventas a la vez; crear una nueva no cambia las que ya tiene. | ✅ Cumple | Se crearon dos para el mismo contacto con títulos distintos; la primera quedó idéntica (`primeraSinCambios: true`). Prueba contra emulador equivalente. |
+
+## Integración 2 (venta creada desde un contacto, visible en su ficha, con una comunicación asociada)
+
+Recorrido completo en Edge, con los datos de [recorrido-ficha.json](recorrido-ficha.json):
+
+1. En la ficha de Bruno Ficticio Solís, pestaña "Posibles ventas", clic en "Nueva posible venta" ([12](12-ficha-boton-nueva-posible-venta.png)).
+2. El formulario trae a Bruno ya elegido y de solo lectura ([13](13-formulario-desde-la-ficha.png)). Se guarda "Venta creada desde la ficha" (₡ 275 000, Contactado) con "Posible venta registrada correctamente.".
+3. La venta aparece en la tabla de la ficha, la más reciente primero y con "Sin comunicaciones" ([14](14-venta-en-la-ficha.png)).
+4. En la pestaña "Comunicaciones", "Registrar comunicación": la lista de ventas ofrece "Todas sus posibles ventas", la nueva y la otra abierta de Bruno ([15](15-comunicacion-asociada-a-la-venta.png)).
+5. Al guardarla, `lastCommunicationAt` de esa venta queda con la fecha de la comunicación y el detalle muestra "Última comunicación: 19/10/2026" ([16](16-detalle-con-ultima-comunicacion.png)).
 
 ## Lo que se comprobó de HU-302, HU-303 y HU-304 dentro del formulario real
 
@@ -45,5 +53,6 @@ Solo falta una parte, que depende de Gabriel:
 Salida en [pruebas.txt](pruebas.txt).
 
 - `npm run typecheck`: sin errores.
-- Pruebas de HU-301: 13 de pantalla y 4 contra el emulador. Suite completa a la fecha: `npm test` 269/269 y `npm run test:emulators` 47/47.
+- Pruebas de HU-301: 13 de pantalla y 4 contra el emulador, más 3 de pantalla del botón en la ficha (`tests/components/ContactNewSaleButton.test.tsx`).
+- Suite completa a la fecha (2026-10-19, con el trabajo de Gabriel): `npm run typecheck` sin errores, `npm test` 409/409 y `npm run test:emulators` 85/85.
 - Se agregó la ruta `/posibles-ventas/nueva` (`routes.ts` y `AppRoutes.tsx`, dentro de `ProtectedRoute`).

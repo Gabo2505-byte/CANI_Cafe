@@ -1,0 +1,201 @@
+[
+  {
+    "criterio": 1,
+    "caso": "Botones del detalle de una venta abierta (sale-001, En negociación)",
+    "botones": [
+      "Cambiar etapa",
+      "Editar"
+    ]
+  },
+  {
+    "criterio": 1,
+    "caso": "Ventana \"Cambiar etapa\"",
+    "opciones": [
+      {
+        "texto": "Nuevo interesado",
+        "marcada": false,
+        "deshabilitada": false
+      },
+      {
+        "texto": "Contactado",
+        "marcada": false,
+        "deshabilitada": false
+      },
+      {
+        "texto": "Precio o cotización enviada",
+        "marcada": false,
+        "deshabilitada": false
+      },
+      {
+        "texto": "En negociación Etapa actual",
+        "marcada": true,
+        "deshabilitada": false
+      },
+      {
+        "texto": "Venta ganada",
+        "marcada": false,
+        "deshabilitada": true
+      },
+      {
+        "texto": "Venta perdida",
+        "marcada": false,
+        "deshabilitada": true
+      }
+    ],
+    "guardarDeshabilitado": true
+  },
+  {
+    "criterio": 3,
+    "caso": "Cancelar no cambia la etapa",
+    "ventanaAbierta": false,
+    "etapaEnFirestore": "en_negociacion"
+  },
+  {
+    "criterio": "2/3",
+    "caso": "Hacia atrás: En negociación → Precio o cotización enviada",
+    "etapaMostrada": "Precio o cotización enviada",
+    "historial": [
+      [
+        "19/10/2026",
+        "En negociación",
+        "Precio o cotización enviada"
+      ],
+      [
+        "01/10/2026",
+        "Precio o cotización enviada",
+        "En negociación"
+      ],
+      [
+        "24/09/2026",
+        "Contactado",
+        "Precio o cotización enviada"
+      ],
+      [
+        "18/09/2026",
+        "Nuevo interesado",
+        "Contactado"
+      ],
+      [
+        "15/09/2026",
+        "—",
+        "Nuevo interesado"
+      ]
+    ]
+  },
+  {
+    "criterio": "2/3",
+    "caso": "Saltando etapas: Precio o cotización enviada → Nuevo interesado",
+    "etapaActualMarcadaEnLaVentana": "Precio o cotización enviada Etapa actual",
+    "etapaMostrada": "Nuevo interesado",
+    "historial": [
+      [
+        "19/10/2026",
+        "Precio o cotización enviada",
+        "Nuevo interesado"
+      ],
+      [
+        "19/10/2026",
+        "En negociación",
+        "Precio o cotización enviada"
+      ],
+      [
+        "01/10/2026",
+        "Precio o cotización enviada",
+        "En negociación"
+      ],
+      [
+        "24/09/2026",
+        "Contactado",
+        "Precio o cotización enviada"
+      ],
+      [
+        "18/09/2026",
+        "Nuevo interesado",
+        "Contactado"
+      ],
+      [
+        "15/09/2026",
+        "—",
+        "Nuevo interesado"
+      ]
+    ]
+  },
+  {
+    "criterio": 3,
+    "caso": "Datos guardados",
+    "venta": {
+      "etapa": "nuevo_interesado",
+      "stageChangedAt": "2026-10-19T22:33:59.511Z",
+      "titulo": "Café en grano para cafetería (mock)",
+      "monto": "450000"
+    },
+    "registrosAntes": 4,
+    "registrosDespues": 6,
+    "cambiosNuevos": [
+      "en_negociacion → cotizacion_enviada",
+      "cotizacion_enviada → nuevo_interesado"
+    ]
+  },
+  {
+    "criterio": 4,
+    "caso": "La otra venta abierta de Bruno no cambió",
+    "igual": true,
+    "etapa": "contactado"
+  },
+  {
+    "criterio": 3,
+    "caso": "Tablero tras los cambios",
+    "enColumna": "Nuevo interesado · 2 · ₡ 450 000",
+    "columnas": [
+      {
+        "encabezado": "Nuevo interesado · 2 · ₡ 450 000",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)",
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "encabezado": "Contactado · 1 · ₡ 1 000",
+        "tarjetas": [
+          "Otra venta abierta de Bruno"
+        ]
+      },
+      {
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "encabezado": "En negociación · 0 · ₡ 0",
+        "tarjetas": []
+      },
+      {
+        "encabezado": "Venta ganada · 1 · ₡ 300 000",
+        "tarjetas": [
+          "Pedido de temporada navideña (mock)"
+        ]
+      },
+      {
+        "encabezado": "Venta perdida · 1 · ₡ 80 000",
+        "tarjetas": [
+          "Muestras para eventos (mock)"
+        ]
+      }
+    ]
+  },
+  {
+    "criterio": 1,
+    "caso": "Venta ganada (sale-003): sin \"Cambiar etapa\"",
+    "botones": [
+      "Editar"
+    ]
+  },
+  {
+    "criterio": 1,
+    "caso": "Venta perdida (sale-004): sin \"Cambiar etapa\"",
+    "botones": [
+      "Editar"
+    ]
+  }
+]

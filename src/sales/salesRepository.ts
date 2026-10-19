@@ -1,8 +1,36 @@
 // Lectura y escritura de `sales` para los formularios de posibles ventas.
-import { collection, doc, getDoc, getDocs, query, Timestamp, where, writeBatch, type Firestore } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  runTransaction,
+  Timestamp,
+  where,
+  writeBatch,
+  type Firestore,
+} from 'firebase/firestore';
 import { closedSalesCutoff } from './board';
+import { isDuplicateTitle } from './saleForm';
+import {
+  classificationAfterWin,
+  isValidStageChange,
+  lossReasonError,
+  normalizeLossReason,
+  type StageChangeResult,
+} from './stageChange';
 import { COLLECTIONS } from '../shared/constants/collections';
-import { isOpenSaleStage, OPEN_SALE_STAGES, type OpenSaleStage, type Sale, type SaleProduct, type StageHistory } from '../shared/types';
+import {
+  isOpenSaleStage,
+  OPEN_SALE_STAGES,
+  type ContactClassification,
+  type OpenSaleStage,
+  type Sale,
+  type SaleProduct,
+  type SaleStage,
+  type StageHistory,
+} from '../shared/types';
 
 /**
  * HU-303: títulos de las posibles ventas abiertas de un contacto (todas menos ganadas y perdidas).
@@ -129,4 +157,82 @@ export async function updateSaleIn(db: Firestore, saleId: string, input: SaleUpd
     batch.set(doc(db, COLLECTIONS.saleProducts, id), row);
   }
   await batch.commit();
+}
+
+/** HU-310: la etapa de la posible venta ya no es la que se esperaba (alguien la cambió entre tanto). */
+export class SaleStageConflictError extends Error {
+  constructor() {
+    super('sale-stage-conflict');
+    this.name = 'SaleStageConflictError';
+  }
+}
+
+/** HU-312: no se puede reabrir una perdida si el contacto ya tiene otra abierta con el mismo título. */
+export class SaleReopenDuplicateTitleError extends Error {
+  constructor() {
+    super('sale-reopen-duplicate-title');
+    this.name = 'SaleReopenDuplicateTitleError';
+  }
+}
+
+/**
+ * HU-310: mueve una posible venta abierta a otra etapa. HU-311: o la marca como perdida, con un motivo opcional
+ * (hasta 250 caracteres). HU-313: o la marca como ganada, y entonces una "Persona interesada" pasa a "Cliente".
+ *
+ * Todo en una sola transacción: actualiza `sales.stage` y `sales.stageChangedAt`, agrega un registro a
+ * `stageHistory` con su fecha (y el motivo si fue a "Venta perdida"; los anteriores no se tocan) y, si ganó, cambia
+ * `contacts.classification`. Esa es la única escritura sobre `contacts` (acordada con Gabriel): solo ese campo y solo
+ * de "Persona interesada" a "Cliente"; quien ya es cliente (o es distribuidor u otro) no se modifica.
+ * HU-312: una "Venta perdida" se reabre pasándola a una de las cuatro etapas abiertas; el registro nuevo no lleva
+ * motivo y los registros de pérdidas anteriores quedan. Si el contacto ya tiene otra posible venta abierta con el mismo
+ * título, no escribe nada y lanza SaleReopenDuplicateTitleError.
+ * Las demás ventas del contacto no cambian. Si la etapa guardada ya no es `expectedStage` (otra pestaña la cambió),
+ * no escribe nada y lanza SaleStageConflictError.
+ */
+export async function changeSaleStageIn(
+  db: Firestore,
+  saleId: string,
+  expectedStage: SaleStage,
+  newStage: SaleStage,
+  lossReason: string = '',
+): Promise<StageChangeResult> {
+  if (!isValidStageChange(expectedStage, newStage)) throw new Error(`Cambio de etapa no permitido: ${expectedStage} → ${newStage}.`);
+  if (newStage === 'perdida' && lossReasonError(lossReason)) throw new Error('El motivo de la pérdida es demasiado largo.');
+  const saleRef = doc(db, COLLECTIONS.sales, saleId);
+
+  if (expectedStage === 'perdida') {
+    // Firestore no consulta colecciones dentro de una transacción: el título se revisa antes de reabrir.
+    const current = await getDoc(saleRef);
+    if (!current.exists()) throw new Error(`La posible venta ${saleId} no existe.`);
+    if (current.get('stage') === 'perdida') {
+      const openTitles = await listOpenSaleTitlesIn(db, current.get('contactId') as string, saleId);
+      if (isDuplicateTitle(current.get('title') as string, openTitles)) throw new SaleReopenDuplicateTitleError();
+    }
+  }
+
+  return runTransaction(db, async (tx): Promise<StageChangeResult> => {
+    // En una transacción primero se lee todo y después se escribe.
+    const snap = await tx.get(saleRef);
+    if (!snap.exists()) throw new Error(`La posible venta ${saleId} no existe.`);
+    if (snap.get('stage') !== expectedStage) throw new SaleStageConflictError();
+
+    const contactRef = doc(db, COLLECTIONS.contacts, snap.get('contactId') as string);
+    const contactSnap = newStage === 'ganada' ? await tx.get(contactRef) : null;
+
+    const now = Timestamp.now();
+    // El motivo solo se guarda cuando la nueva etapa es "Venta perdida".
+    const reason = newStage === 'perdida' ? normalizeLossReason(lossReason) : null;
+    const entry: StageHistory = { saleId, previousStage: expectedStage, newStage, changedAt: now, lossReason: reason };
+    tx.update(saleRef, { stage: newStage, stageChangedAt: now });
+    tx.set(doc(collection(db, COLLECTIONS.stageHistory)), entry);
+
+    if (contactSnap?.exists()) {
+      const current = contactSnap.get('classification') as ContactClassification;
+      if (classificationAfterWin(current) !== current) {
+        tx.update(contactRef, { classification: classificationAfterWin(current) });
+        return { contactBecameClient: true, contactName: contactSnap.get('fullName') as string };
+      }
+    }
+    return { contactBecameClient: false, contactName: null };
+  });
 }

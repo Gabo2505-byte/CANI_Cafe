@@ -1,0 +1,17 @@
+Evidencia de pruebas HU-314 - 2026-10-19 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== npm test ==
+ Test Files  43 passed (43)
+      Tests  487 passed (487)
+
+== npm run test:emulators ==
+ Test Files  20 passed (20)
+      Tests  121 passed (121)
+
+Pruebas nuevas de HU-314:
+- tests/unit/alerts.test.ts: aviso para hoy y vencido con los textos del documento; límites a las 00:00 y 23:59:59 (hora de Costa Rica); desaparece con fecha borrada o nueva, venta ganada o perdida y contacto inactivo; una comunicación no lo quita; solo ventas abiertas de contactos activos (seis etapas); orden de los más antiguos primero.
+- tests/sales/alerts.emulator.test.ts: avisos calculados contra Firestore con reglas reales; exclusiones; comunicación reciente no quita el aviso; sin ventas; sin sesión no se puede consultar.
+- tests/components/Alerts.test.tsx: pantalla "Avisos" con la lista, enlace al detalle de la venta, caso sin avisos y error de carga.

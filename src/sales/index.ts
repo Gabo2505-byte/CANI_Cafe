@@ -23,7 +23,7 @@ export {
   type SaleFormErrors,
   type SaleFormValues,
 } from './saleForm';
-export { createSale, listOpenSaleTitles, updateSale } from './salesApi';
+export { changeSaleStage, createSale, listOpenSaleTitles, updateSale } from './salesApi';
 export { NewSalePage } from './NewSalePage';
 export { TimedNotice } from './TimedNotice';
 export { BOARD_MESSAGES, buildBoard, formatColumnHeader } from './board';
@@ -33,3 +33,8 @@ export { DETAIL_MESSAGES, sortHistory } from './saleDetail';
 export { loadSaleDetail } from './saleDetailApi';
 export { EDIT_MESSAGES, isNotesOnly, validateSaleEdit } from './saleEdit';
 export { SaleEditForm } from './SaleEditForm';
+export { ChangeStageDialog } from './ChangeStageDialog';
+export { canChangeStage, classificationAfterWin, stageChangeNotice, stageOptions, STAGE_CHANGE_MESSAGES } from './stageChange';
+export { ALERT_KIND_LABELS, ALERT_MESSAGES, buildAlerts, buildFollowUpAlerts, followUpAlert, noCommunicationAlert, type SaleAlert } from './alerts';
+export { listAlerts } from './alertsApi';
+export { useAlertCount } from './useAlertCount';

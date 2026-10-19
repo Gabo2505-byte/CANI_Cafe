@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { contactPath, ROUTES } from '../app/routes';
-import { SALE_STAGE_LABELS } from '../shared/types';
+import { SALE_STAGE_LABELS, type SaleStage } from '../shared/types';
 import { formatDateNumericCR } from '../shared/utils/dates';
 import { formatColones } from '../shared/utils/money';
 import {
@@ -11,8 +11,10 @@ import {
   sortHistory,
   type SaleDetailData,
 } from './saleDetail';
+import { ChangeStageDialog } from './ChangeStageDialog';
 import { loadSaleDetail } from './saleDetailApi';
 import { EDIT_MESSAGES } from './saleEdit';
+import { canChangeStage, STAGE_CHANGE_MESSAGES, stageChangeNotice, type StageChangeResult } from './stageChange';
 import { SaleEditForm } from './SaleEditForm';
 import { TimedNotice } from './TimedNotice';
 
@@ -27,8 +29,10 @@ export function SaleDetailPage() {
   const { saleId } = useParams();
   const [state, setState] = useState<LoadState>({ status: 'loading' });
   const [editing, setEditing] = useState(false);
-  // Cada guardado cambia la clave para que la confirmación de 5 segundos vuelva a mostrarse.
-  const [saved, setSaved] = useState(0);
+  const [changingStage, setChangingStage] = useState(false);
+  // Confirmación de 5 segundos (franja verde). Cada una lleva su propio `id` para que vuelva a mostrarse aunque el texto se repita.
+  const [notice, setNotice] = useState<{ id: number; message: string } | null>(null);
+  const showNotice = (message: string) => setNotice((prev) => ({ id: (prev?.id ?? 0) + 1, message }));
 
   const load = useCallback(
     async (isCancelled: () => boolean = () => false) => {
@@ -46,6 +50,7 @@ export function SaleDetailPage() {
     let cancelled = false;
     setState({ status: 'loading' });
     setEditing(false);
+    setChangingStage(false);
     void load(() => cancelled);
     return () => {
       cancelled = true;
@@ -55,12 +60,19 @@ export function SaleDetailPage() {
   async function handleSaved() {
     await load();
     setEditing(false);
-    setSaved((n) => n + 1);
+    showNotice(EDIT_MESSAGES.saved);
+  }
+
+  // HU-310: la etapa ya se cambió y quedó en el historial; se vuelve a leer para mostrarla.
+  async function handleStageChanged(newStage: SaleStage, result: StageChangeResult, previousStage: SaleStage) {
+    await load();
+    setChangingStage(false);
+    showNotice(stageChangeNotice(newStage, result, previousStage));
   }
 
   return (
     <main className="page">
-      {saved > 0 && <TimedNotice key={saved} message={EDIT_MESSAGES.saved} />}
+      {notice && <TimedNotice key={notice.id} message={notice.message} />}
       <p className="detail-back">
         <Link to={ROUTES.salesBoard}>{DETAIL_MESSAGES.back}</Link>
       </p>
@@ -76,6 +88,10 @@ export function SaleDetailPage() {
           detail={state.detail}
           editing={editing}
           onEdit={() => setEditing(true)}
+          changingStage={changingStage}
+          onChangeStage={() => setChangingStage(true)}
+          onCancelChangeStage={() => setChangingStage(false)}
+          onStageChanged={handleStageChanged}
           onCancel={() => setEditing(false)}
           onSaved={handleSaved}
         />
@@ -88,11 +104,25 @@ interface SaleDetailProps {
   detail: SaleDetailData;
   editing: boolean;
   onEdit: () => void;
+  changingStage: boolean;
+  onChangeStage: () => void;
+  onCancelChangeStage: () => void;
+  onStageChanged: (newStage: SaleStage, result: StageChangeResult, previousStage: SaleStage) => void;
   onCancel: () => void;
   onSaved: () => void;
 }
 
-function SaleDetail({ detail, editing, onEdit, onCancel, onSaved }: SaleDetailProps) {
+function SaleDetail({
+  detail,
+  editing,
+  onEdit,
+  changingStage,
+  onChangeStage,
+  onCancelChangeStage,
+  onStageChanged,
+  onCancel,
+  onSaved,
+}: SaleDetailProps) {
   const { sale, contactName, products, history } = detail;
   const rows: [string, React.ReactNode][] = [
     ['Etapa', SALE_STAGE_LABELS[sale.stage]],
@@ -123,14 +153,26 @@ function SaleDetail({ detail, editing, onEdit, onCancel, onSaved }: SaleDetailPr
       <div className="page-header">
         <h1>{sale.title}</h1>
         {!editing && (
-          <button type="button" onClick={onEdit}>
-            Editar
-          </button>
+          <div className="page-header-actions">
+            {/* HU-310: las abiertas cambian de etapa; HU-312: la perdida se reabre; la ganada ya no cambia. */}
+            {canChangeStage(sale) && (
+              <button type="button" className="button-secondary" onClick={onChangeStage}>
+                {STAGE_CHANGE_MESSAGES.button}
+              </button>
+            )}
+            <button type="button" onClick={onEdit}>
+              Editar
+            </button>
+          </div>
         )}
       </div>
       <p className="detail-contact">
         {contactName ? <Link to={contactPath(sale.contactId)}>{contactName}</Link> : '—'}
       </p>
+
+      {changingStage && (
+        <ChangeStageDialog saleId={sale.id} currentStage={sale.stage} onSaved={onStageChanged} onCancel={onCancelChangeStage} />
+      )}
 
       {editing ? (
         <SaleEditForm detail={detail} onSaved={onSaved} onCancel={onCancel} />

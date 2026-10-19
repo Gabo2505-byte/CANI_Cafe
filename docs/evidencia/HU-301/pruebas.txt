@@ -29,3 +29,9 @@ sin sesión no se puede crear y no queda nada guardado: ok
 == Suite completa ==
 npm test: 248/248
 npm run test:emulators: 42/42
+
+== Actualización 2026-10-19 (botón en la ficha de Gabriel) ==
+npm run typecheck: sin errores.
+Tests nuevos: tests/components/ContactNewSaleButton.test.tsx (3): botón en la pestaña Posibles ventas (también sin ventas), no aparece en otras pestañas, abre el formulario con el contacto fijo.
+npm test: 409/409
+npm run test:emulators: 85/85

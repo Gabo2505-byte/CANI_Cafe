@@ -1,0 +1,97 @@
+[
+  {
+    "criterio": "1",
+    "caso": "Botón en la pestaña \"Posibles ventas\" de la ficha de Bruno",
+    "boton": {
+      "texto": "Nueva posible venta",
+      "distanciaAlBordeDerechoDelPanel": 0,
+      "arribaDelPanel": 16
+    },
+    "apareceEnOtrasPestanas": {
+      "Comunicaciones": false,
+      "Productos de interés": false
+    }
+  },
+  {
+    "criterio": "1/HU-302 (3)",
+    "caso": "Formulario abierto desde la ficha",
+    "ruta": "/posibles-ventas/nueva?contactId=contact-002",
+    "contacto": {
+      "valor": "Bruno Ficticio Solís",
+      "soloLectura": true
+    }
+  },
+  {
+    "criterio": 4,
+    "caso": "Venta guardada",
+    "aviso": "Posible venta registrada correctamente.",
+    "enFirestore": {
+      "contactId": "contact-002",
+      "stage": "contactado",
+      "monto": "275000"
+    }
+  },
+  {
+    "caso": "La venta nueva aparece en la tabla de la ficha",
+    "filas": [
+      [
+        "Venta creada desde la ficha",
+        "Contactado",
+        "₡ 275 000",
+        "Sin seguimiento programado",
+        "Sin comunicaciones"
+      ],
+      [
+        "Pedido de temporada navideña (mock)",
+        "Venta ganada",
+        "₡ 300 000",
+        "Sin seguimiento programado",
+        "02/10/2026"
+      ],
+      [
+        "Café en grano para cafetería (mock)",
+        "En negociación",
+        "₡ 450 000",
+        "12/10/2026",
+        "02/10/2026"
+      ],
+      [
+        "Pedido antiguo de temporada (mock)",
+        "Venta ganada",
+        "₡ 250 000",
+        "Sin seguimiento programado",
+        "Sin comunicaciones"
+      ]
+    ]
+  },
+  {
+    "criterio": "HU-212",
+    "caso": "Comunicación asociada a la venta",
+    "opcionesDeVenta": [
+      "Todas sus posibles ventas",
+      "Venta creada desde la ficha",
+      "Café en grano para cafetería (mock)"
+    ],
+    "comunicaciones": [
+      {
+        "saleId": "J6mFR3FAhOkBWLwAV8Vx",
+        "nota": "Llamada de seguimiento para la venta nueva.",
+        "fecha": "2026-10-19T06:00:00Z"
+      }
+    ],
+    "ultimaComunicacionDeLaVenta": "2026-10-19T06:00:00Z"
+  },
+  {
+    "criterio": "HU-308 (3)",
+    "caso": "Detalle de la venta tras la comunicación",
+    "datos": {
+      "Etapa": "Contactado",
+      "Monto estimado": "₡ 275 000",
+      "Productos": "Sin productos",
+      "Próximo seguimiento": "Sin seguimiento programado",
+      "Notas": "Sin notas",
+      "Fecha de creación": "19/10/2026",
+      "Última comunicación": "19/10/2026"
+    }
+  }
+]

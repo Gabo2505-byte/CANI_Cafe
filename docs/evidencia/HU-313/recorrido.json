@@ -1,0 +1,112 @@
+[
+  {
+    "caso": "Antes: ficha de Elena",
+    "ficha": "Elena Muestra Castro | Persona interesada",
+    "enFirestore": "persona_interesada"
+  },
+  {
+    "criterio": 1,
+    "caso": "Al elegir \"Venta ganada\"",
+    "pregunta": "¿Confirma que esta venta fue ganada? El contacto pasará a ser cliente y la venta ya no podrá cambiar de etapa.",
+    "hayMotivoDePerdida": false,
+    "botones": [
+      "Cancelar",
+      "Aceptar"
+    ]
+  },
+  {
+    "criterio": 5,
+    "caso": "Cancelar",
+    "ventanaAbierta": false,
+    "etapaMostrada": "Nuevo interesado",
+    "etapaEnFirestore": "nuevo_interesado",
+    "clasificacion": "persona_interesada",
+    "registros": 1
+  },
+  {
+    "criterio": "2/4",
+    "caso": "Aceptar: persona interesada (Elena, sale-006)",
+    "aviso": "Venta ganada. Elena Muestra Castro ahora es cliente.",
+    "etapaMostrada": "Venta ganada",
+    "botones": [
+      "Editar"
+    ],
+    "firestore": {
+      "etapa": "ganada",
+      "clasificacionDeElena": "cliente",
+      "ultimoRegistro": {
+        "id": "lQAW4p657VvZUUfMifTp",
+        "saleId": "sale-006",
+        "previousStage": "nuevo_interesado",
+        "newStage": "ganada",
+        "changedAt": "2026-10-19T23:01:44.514Z",
+        "lossReason": null
+      }
+    }
+  },
+  {
+    "criterio": 2,
+    "caso": "Después: ficha de Elena",
+    "ficha": "Elena Muestra Castro | Cliente"
+  },
+  {
+    "criterio": 3,
+    "caso": "Aceptar: ya era cliente (Bruno, sale-001)",
+    "aviso": "Venta ganada correctamente.",
+    "etapaMostrada": "Venta ganada",
+    "botones": [
+      "Editar"
+    ],
+    "clasificacionDeBruno": "cliente"
+  },
+  {
+    "caso": "Aceptar: distribuidor (Carla, sale-002)",
+    "aviso": "Venta ganada correctamente.",
+    "etapaMostrada": "Venta ganada",
+    "clasificacionDeCarla": "distribuidor"
+  },
+  {
+    "criterio": 4,
+    "caso": "Venta ganada: sin \"Cambiar etapa\"",
+    "botones": [
+      "Editar"
+    ],
+    "etapa": "Venta ganada"
+  },
+  {
+    "caso": "Tablero",
+    "columnas": [
+      {
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "tarjetas": []
+      },
+      {
+        "encabezado": "Contactado · 0 · ₡ 0",
+        "tarjetas": []
+      },
+      {
+        "encabezado": "Precio o cotización enviada · 0 · ₡ 0",
+        "tarjetas": []
+      },
+      {
+        "encabezado": "En negociación · 0 · ₡ 0",
+        "tarjetas": []
+      },
+      {
+        "encabezado": "Venta ganada · 4 · ₡ 1 950 000",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)",
+          "Pedido de temporada navideña (mock)",
+          "Distribución mensual de café molido (mock)",
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "encabezado": "Venta perdida · 1 · ₡ 80 000",
+        "tarjetas": [
+          "Muestras para eventos (mock)"
+        ]
+      }
+    ]
+  }
+]

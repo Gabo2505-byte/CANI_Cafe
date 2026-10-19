@@ -1,0 +1,132 @@
+[
+  {
+    "caso": "Antes de elegir \"Venta perdida\"",
+    "hayPregunta": false,
+    "hayMotivo": false
+  },
+  {
+    "criterio": "1/2",
+    "caso": "Al elegir \"Venta perdida\"",
+    "pregunta": "¿Está seguro de que desea marcar esta venta como perdida?",
+    "etiquetaMotivo": "Motivo de la pérdida (opcional)",
+    "contador": "0/250",
+    "botones": [
+      "Cancelar",
+      "Aceptar"
+    ],
+    "cursorEnElMotivo": true,
+    "ganadaDeshabilitada": true
+  },
+  {
+    "criterio": 2,
+    "caso": "Escribir 300 caracteres en el motivo",
+    "caracteresQueQuedan": 250,
+    "contador": "250/250"
+  },
+  {
+    "criterio": 3,
+    "caso": "Cancelar",
+    "ventanaAbierta": false,
+    "etapaEnFirestore": "en_negociacion",
+    "etapaMostrada": "En negociación",
+    "registrosDeHistorial": 4
+  },
+  {
+    "criterio": 3,
+    "caso": "Aceptar con motivo (sale-001)",
+    "aviso": "Posible venta marcada como perdida.",
+    "etapaMostrada": "Venta perdida",
+    "botones": [
+      "Editar"
+    ],
+    "historial": [
+      [
+        "19/10/2026",
+        "En negociación",
+        "Venta perdida",
+        "El cliente eligió otro proveedor."
+      ],
+      [
+        "01/10/2026",
+        "Precio o cotización enviada",
+        "En negociación",
+        ""
+      ]
+    ],
+    "firestore": {
+      "etapa": "perdida",
+      "stageChangedAt": "2026-10-19T22:42:52.925Z",
+      "ultimoRegistro": {
+        "id": "gaA6O07Ja29oSDrRKFhV",
+        "saleId": "sale-001",
+        "previousStage": "en_negociacion",
+        "newStage": "perdida",
+        "changedAt": "2026-10-19T22:42:52.925Z",
+        "lossReason": "El cliente eligió otro proveedor."
+      }
+    }
+  },
+  {
+    "caso": "La confirmación desaparece a los 5 s",
+    "sigueVisible": false
+  },
+  {
+    "criterio": 2,
+    "caso": "Aceptar sin motivo (sale-002)",
+    "aviso": "Posible venta marcada como perdida.",
+    "etapaMostrada": "Venta perdida",
+    "historial": [
+      [
+        "19/10/2026",
+        "Precio o cotización enviada",
+        "Venta perdida",
+        "Sin motivo registrado"
+      ]
+    ],
+    "motivoEnFirestore": null
+  },
+  {
+    "criterio": 3,
+    "caso": "Tablero",
+    "columnas": [
+      {
+        "encabezado": "Nuevo interesado · 1 · ₡ 0",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "encabezado": "Contactado · 0 · ₡ 0",
+        "tarjetas": []
+      },
+      {
+        "encabezado": "Precio o cotización enviada · 0 · ₡ 0",
+        "tarjetas": []
+      },
+      {
+        "encabezado": "En negociación · 0 · ₡ 0",
+        "tarjetas": []
+      },
+      {
+        "encabezado": "Venta ganada · 1 · ₡ 300 000",
+        "tarjetas": [
+          "Pedido de temporada navideña (mock)"
+        ]
+      },
+      {
+        "encabezado": "Venta perdida · 3 · ₡ 1 730 000",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)",
+          "Café en grano para cafetería (mock)",
+          "Muestras para eventos (mock)"
+        ]
+      }
+    ]
+  },
+  {
+    "criterio": "HU-310",
+    "caso": "Franja verde al cambiar a una etapa abierta (sale-006)",
+    "aviso": "Etapa actualizada correctamente.",
+    "etapaMostrada": "Contactado"
+  }
+]
