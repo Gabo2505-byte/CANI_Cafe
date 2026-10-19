@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router';
-import { saleDetailPath } from '../app/routes';
+import { newSalePath, saleDetailPath } from '../app/routes';
 import { useLocationNotice } from '../shared/hooks/useLocationNotice';
 import {
   CONTACT_CLASSIFICATION_LABELS,
@@ -11,6 +11,7 @@ import { COMMUNICATION_MESSAGES, mediumLabel } from '../communications/communica
 import { listCommunicationsPage } from '../communications/communicationsApi';
 import type { CommunicationsCursor } from '../communications/communicationsRepository';
 import { RegisterCommunicationDialog } from '../communications/RegisterCommunicationDialog';
+import { SALE_MESSAGES } from '../sales/saleForm';
 import { TimedNotice } from '../sales/TimedNotice';
 import { formatDateNumericCR } from '../shared/utils/dates';
 import {
@@ -162,6 +163,7 @@ interface ContactTabsProps {
 }
 
 function ContactTabs({ contactId, records, savedCount, onTabChange, onRegisterCommunication }: ContactTabsProps) {
+  const navigate = useNavigate();
   const [active, setActiveTab] = useState<ContactTabId>('comunicaciones');
   const setActive = (id: ContactTabId) => {
     if (id !== active) onTabChange();
@@ -225,6 +227,14 @@ function ContactTabs({ contactId, records, savedCount, onTabChange, onRegisterCo
             {/* HU-211: la confirmación va junto al historial, donde se está mirando (no arriba de la página). */}
             {savedCount > 0 && <SavedNotice key={savedCount} message={COMMUNICATION_MESSAGES.saved} />}
           </>
+        )}
+        {/* HU-301: crear una posible venta para este contacto (el formulario lo trae ya elegido). */}
+        {active === 'ventas' && (
+          <div className="tab-panel-actions">
+            <button type="button" onClick={() => navigate(newSalePath(contactId))}>
+              {SALE_MESSAGES.newSale}
+            </button>
+          </div>
         )}
         {records.status === 'loading' && <p>{MSG.recordsLoading}</p>}
         {records.status === 'error' && (

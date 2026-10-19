@@ -5,6 +5,8 @@ import { toSortKey } from '../shared/utils/text';
 export const SALE_LIMITS = { title: 100, notes: 1000, maxAmount: 999_999_999 } as const;
 
 export const SALE_MESSAGES = {
+  /** Botón y título de la pantalla para crear una posible venta (tablero y ficha del contacto). */
+  newSale: 'Nueva posible venta',
   created: 'Posible venta registrada correctamente.',
   saveError: 'No se pudo registrar la posible venta. Intente de nuevo.',
   productsLoadError: 'No se pudieron cargar los productos. Intente de nuevo.',

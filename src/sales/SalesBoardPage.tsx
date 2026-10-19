@@ -4,6 +4,7 @@ import { ROUTES } from '../app/routes';
 import { useLocationNotice } from '../shared/hooks/useLocationNotice';
 import { formatColones } from '../shared/utils/money';
 import { BOARD_MESSAGES, buildBoard, type BoardSale } from './board';
+import { SALE_MESSAGES } from './saleForm';
 import { getContactNames } from './contactSearchApi';
 import { SaleCard } from './SaleCard';
 import { listBoardSales } from './salesApi';
@@ -47,7 +48,7 @@ export function SalesBoardPage() {
       <div className="page-header">
         <h1>Posibles ventas</h1>
         <button type="button" onClick={() => navigate(ROUTES.newSale)}>
-          Nueva posible venta
+          {SALE_MESSAGES.newSale}
         </button>
       </div>
 
