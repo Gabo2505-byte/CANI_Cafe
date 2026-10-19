@@ -35,5 +35,5 @@ export { EDIT_MESSAGES, isNotesOnly, validateSaleEdit } from './saleEdit';
 export { SaleEditForm } from './SaleEditForm';
 export { ChangeStageDialog } from './ChangeStageDialog';
 export { canChangeStage, classificationAfterWin, stageChangeNotice, stageOptions, STAGE_CHANGE_MESSAGES } from './stageChange';
-export { ALERT_MESSAGES, buildFollowUpAlerts, followUpAlert, type SaleAlert } from './alerts';
+export { ALERT_MESSAGES, buildAlerts, buildFollowUpAlerts, followUpAlert, noCommunicationAlert, type SaleAlert } from './alerts';
 export { listAlerts } from './alertsApi';

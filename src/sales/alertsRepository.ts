@@ -1,6 +1,6 @@
-// HU-314: lectura de lo necesario para calcular los avisos. Solo lectura; no se guarda ningún aviso.
+// HU-314 y HU-315: lectura de lo necesario para calcular los avisos. Solo lectura; no se guarda ningún aviso.
 import { collection, documentId, getDocs, query, where, type Firestore } from 'firebase/firestore';
-import { buildFollowUpAlerts, type AlertContact, type SaleAlert } from './alerts';
+import { buildAlerts, type AlertContact, type SaleAlert } from './alerts';
 import { COLLECTIONS } from '../shared/constants/collections';
 import { OPEN_SALE_STAGES, type Sale } from '../shared/types';
 
@@ -20,8 +20,8 @@ async function getAlertContactsIn(db: Firestore, ids: string[]): Promise<Map<str
 }
 
 /**
- * Avisos pendientes de las posibles ventas (hoy solo los de seguimiento, HU-314), los más antiguos primero.
- * Lee las ventas abiertas con fecha de seguimiento y el estado de sus contactos; el aviso se calcula con `now`
+ * Avisos pendientes de las posibles ventas (seguimiento, HU-314, y falta de comunicación, HU-315), los más antiguos primero.
+ * Lee las ventas abiertas y el estado de sus contactos; el aviso se calcula con `now`
  * (inyectable para las pruebas).
  */
 export async function listAlertsIn(db: Firestore, now: Date = new Date()): Promise<SaleAlert[]> {
@@ -31,5 +31,5 @@ export async function listAlertsIn(db: Firestore, now: Date = new Date()): Promi
     db,
     sales.map((s) => s.contactId),
   );
-  return buildFollowUpAlerts(sales, contacts, now);
+  return buildAlerts(sales, contacts, now);
 }

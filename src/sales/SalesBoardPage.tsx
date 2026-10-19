@@ -6,15 +6,20 @@ import { formatColones } from '../shared/utils/money';
 import { BOARD_MESSAGES, buildBoard, type BoardSale } from './board';
 import { SALE_MESSAGES } from './saleForm';
 import { getContactNames } from './contactSearchApi';
+import { listAlerts } from './alertsApi';
 import { SaleCard } from './SaleCard';
 import { listBoardSales } from './salesApi';
 import { TimedNotice } from './TimedNotice';
 
-type BoardState = { status: 'loading' } | { status: 'error' } | { status: 'ready'; items: BoardSale[] };
+type BoardState =
+  | { status: 'loading' }
+  | { status: 'error' }
+  | { status: 'ready'; items: BoardSale[]; alertSaleIds: Set<string> };
 
 /**
  * Pantalla "Posibles ventas". HU-301: botón "Nueva posible venta" y confirmación al registrar una.
  * HU-305: tablero de seis columnas, una por etapa, con conteo, suma de montos y tarjetas.
+ * HU-314/315: la tarjeta muestra la campana si la venta tiene un aviso pendiente.
  */
 export function SalesBoardPage() {
   const navigate = useNavigate();
@@ -25,13 +30,19 @@ export function SalesBoardPage() {
 
   useEffect(() => {
     let cancelled = false;
+    // Si fallan los avisos el tablero se muestra igual, sin campanas.
+    const alertSaleIds = listAlerts(now)
+      .then((alerts) => new Set(alerts.map((alert) => alert.saleId)))
+      .catch(() => new Set<string>());
     listBoardSales(now)
       .then(async (sales) => {
         const names = await getContactNames(sales.map((sale) => sale.contactId));
+        const withAlert = await alertSaleIds;
         if (cancelled) return;
         setState({
           status: 'ready',
           items: sales.map((sale) => ({ sale, contactName: names.get(sale.contactId) ?? '—' })),
+          alertSaleIds: withAlert,
         });
       })
       .catch(() => !cancelled && setState({ status: 'error' }));
@@ -71,7 +82,7 @@ export function SalesBoardPage() {
               ) : (
                 <ul className="board-cards">
                   {column.sales.map((item) => (
-                    <SaleCard key={item.sale.id} item={item} />
+                    <SaleCard key={item.sale.id} item={item} hasAlert={state.alertSaleIds.has(item.sale.id)} />
                   ))}
                 </ul>
               )}

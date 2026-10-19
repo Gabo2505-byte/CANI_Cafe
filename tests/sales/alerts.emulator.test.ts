@@ -1,8 +1,9 @@
-// HU-314 contra el emulador real de Firestore (con las reglas del repo). Corre con: npm run test:emulators
+// HU-314 y HU-315 contra el emulador real de Firestore (con las reglas del repo). Corre con: npm run test:emulators
 import { assertFails, initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import { doc, setDoc, Timestamp, type Firestore } from 'firebase/firestore';
 import { readFileSync } from 'node:fs';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { createCommunicationIn } from '../../src/communications/communicationsRepository';
 import { listAlertsIn } from '../../src/sales/alertsRepository';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
 
@@ -21,8 +22,9 @@ const baseSale = {
   estimatedAmount: 1000,
   nextFollowUpAt: at('2026-10-19T09:00:00'),
   notes: '',
-  createdAt: at('2026-09-01T09:00:00'),
-  stageChangedAt: at('2026-09-01T09:00:00'),
+  // Creada ayer: todavía no corresponde el aviso de falta de comunicación (HU-315).
+  createdAt: at('2026-10-18T09:00:00'),
+  stageChangedAt: at('2026-10-18T09:00:00'),
   lastCommunicationAt: null,
 };
 
@@ -86,5 +88,60 @@ describe('avisos de seguimiento contra Firestore (HU-314)', () => {
     await put('s-1', {});
     const anon = testEnv.unauthenticatedContext().firestore() as unknown as Firestore;
     await assertFails(listAlertsIn(anon, NOW));
+  });
+});
+
+describe('avisos por falta de comunicación contra Firestore (HU-315)', () => {
+  const kinds = async (now = NOW) => (await listAlertsIn(db, now)).map((a) => `${a.saleId}:${a.kind}`);
+  const quiet = { nextFollowUpAt: null, lastCommunicationAt: at('2026-10-01T10:00:00') };
+  const comm = (saleId: string | null, day: Date) => ({
+    contactId: 'c-1',
+    date: day,
+    medium: 'llamada' as const,
+    otherMedium: null,
+    saleId,
+    note: 'Nota',
+  });
+
+  it('avisa desde el día 11 con el número de días y usa la fecha de creación si nunca hubo comunicaciones', async () => {
+    await put('s-con', { ...quiet, title: 'Con historial' });
+    await put('s-nunca', { ...quiet, lastCommunicationAt: null, title: 'Nunca', createdAt: at('2026-10-05T10:00:00') });
+
+    const alerts = await listAlertsIn(db, NOW);
+    expect(alerts.map((a) => a.message)).toEqual([
+      'Ana Activa – Con historial no tiene comunicaciones desde hace 18 días.',
+      'Ana Activa – Nunca no tiene comunicaciones desde hace 14 días.',
+    ]);
+    // El día 10 aún no, el 11 sí (ejemplo del documento: última 01/10, aviso 12/10).
+    expect(await kinds(cr('2026-10-11T12:00:00'))).toEqual([]);
+    expect(await kinds(cr('2026-10-12T12:00:00'))).toEqual(['s-con:sin_comunicacion']);
+  });
+
+  it('registrar una comunicación sobre esa venta quita su aviso y no el de otra venta del contacto', async () => {
+    await put('s-a', quiet);
+    await put('s-b', quiet);
+    expect(await kinds()).toEqual(['s-a:sin_comunicacion', 's-b:sin_comunicacion']);
+
+    await createCommunicationIn(db, comm('s-a', NOW), 'admin-activo');
+    expect(await kinds()).toEqual(['s-b:sin_comunicacion']);
+  });
+
+  it('registrar una comunicación como "Todas sus posibles ventas" quita el aviso de todas las abiertas del contacto', async () => {
+    await put('s-a', quiet);
+    await put('s-b', quiet);
+    await createCommunicationIn(db, comm(null, NOW), 'admin-activo');
+    expect(await kinds()).toEqual([]);
+  });
+
+  it('solo avisa de ventas abiertas de contactos activos', async () => {
+    await put('s-ganada', { ...quiet, stage: 'ganada' });
+    await put('s-perdida', { ...quiet, stage: 'perdida' });
+    await put('s-inactivo', { ...quiet, contactId: 'c-2' });
+    expect(await kinds()).toEqual([]);
+  });
+
+  it('pueden convivir el aviso de seguimiento y el de falta de comunicación de la misma venta', async () => {
+    await put('s-1', { lastCommunicationAt: at('2026-10-01T10:00:00') });
+    expect((await kinds()).sort()).toEqual(['s-1:seguimiento_hoy', 's-1:sin_comunicacion']);
   });
 });

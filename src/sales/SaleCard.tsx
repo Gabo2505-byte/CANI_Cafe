@@ -6,7 +6,7 @@ import { BOARD_MESSAGES, type BoardSale } from './board';
 
 interface SaleCardProps {
   item: BoardSale;
-  /** ¿Tiene un aviso pendiente? Se conecta con los avisos de HU-314 y HU-315. */
+  /** ¿Tiene un aviso pendiente? Avisos de HU-314 y HU-315. */
   hasAlert?: boolean;
 }
 

@@ -1,0 +1,17 @@
+Evidencia de pruebas HU-315 - 2026-10-19 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== npm test ==
+ Test Files  43 passed (43)
+      Tests  511 passed (511)
+
+== npm run test:emulators ==
+ Test Files  20 passed (20)
+      Tests  126 passed (126)
+
+Pruebas nuevas o ajustadas de HU-315:
+- tests/unit/alerts.test.ts: texto del documento; límite de 10 y 11 días (ejemplo 01/10 -> 12/10 con 23:59:59 y 00:00); sin comunicaciones cuenta desde la creación; el número sube cada día; días calendario de Costa Rica; desaparece con una comunicación nueva; seis etapas; contacto inactivo o inexistente; cada venta por separado; convivencia con el aviso de seguimiento y orden.
+- tests/sales/alerts.emulator.test.ts: avisos contra Firestore; comunicación real (createCommunicationIn) sobre una venta quita solo su aviso; como "Todas sus posibles ventas" quita el de todas las abiertas del contacto; solo abiertas de contactos activos; convivencia de los dos avisos. Se ajustó la venta base de HU-314 (creada ayer) para que no mezcle ambos tipos.
+- tests/components/SalesBoard.test.tsx: campana en las tarjetas con aviso de cualquiera de los dos tipos, una sola campana con los dos avisos, y tablero sin campanas si falla el cálculo.

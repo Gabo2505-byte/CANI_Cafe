@@ -1,4 +1,4 @@
-// HU-314: avisos internos de las posibles ventas (funciones puras, sin Firebase).
+// HU-314 y HU-315: avisos internos de las posibles ventas (funciones puras, sin Firebase).
 // Los avisos no se guardan: se calculan al consultar a partir de las ventas y los contactos.
 import { isOpenSaleStage, type Sale } from '../shared/types';
 import { formatDateNumericCR, toCostaRicaDateKey } from '../shared/utils/dates';
@@ -10,7 +10,10 @@ export const ALERT_MESSAGES = {
   loadError: 'No se pudieron cargar los avisos. Intente de nuevo.',
 } as const;
 
-export type AlertKind = 'seguimiento_hoy' | 'seguimiento_vencido';
+/** HU-315: más de 10 días sin comunicaciones (desde el día 11). */
+export const NO_COMMUNICATION_AFTER_DAYS = 10;
+
+export type AlertKind = 'seguimiento_hoy' | 'seguimiento_vencido' | 'sin_comunicacion';
 
 export interface SaleAlert {
   /** Una venta genera como máximo un aviso de cada tipo. */
@@ -22,7 +25,7 @@ export interface SaleAlert {
   saleTitle: string;
   /** Texto del aviso. */
   message: string;
-  /** Fecha del aviso: el día del seguimiento. */
+  /** Fecha del aviso: el día del seguimiento, o (sin comunicación) el día en que empezó a avisar. */
   date: Date;
 }
 
@@ -76,6 +79,54 @@ export function followUpAlert(sale: Sale, contact: AlertContact | undefined, now
 export function buildFollowUpAlerts(sales: Sale[], contacts: Map<string, AlertContact>, now: Date): SaleAlert[] {
   return sales
     .map((sale) => followUpAlert(sale, contacts.get(sale.contactId), now))
+    .filter((alert): alert is SaleAlert => alert !== null)
+    .sort((a, b) => a.date.getTime() - b.date.getTime() || a.id.localeCompare(b.id));
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Días calendario de Costa Rica de `from` a `to` (0 si son el mismo día). */
+export function calendarDaysBetween(from: Date, to: Date): number {
+  const [fy, fm, fd] = toCostaRicaDateKey(from).split('-').map(Number);
+  const [ty, tm, td] = toCostaRicaDateKey(to).split('-').map(Number);
+  return Math.round((Date.UTC(ty, tm - 1, td) - Date.UTC(fy, fm - 1, fd)) / DAY_MS);
+}
+
+/** "[Contacto] – [título] no tiene comunicaciones desde hace [número] días." */
+export function noCommunicationMessage(contactName: string, title: string, days: number): string {
+  return `${contactName} – ${title} no tiene comunicaciones desde hace ${days} días.`;
+}
+
+/**
+ * HU-315: aviso por falta de comunicación de una posible venta, o null si no corresponde.
+ * La referencia es la última comunicación (`lastCommunicationAt`, que ya incluye las registradas como "Todas sus
+ * posibles ventas", HU-212) o, si nunca hubo, la fecha de creación. Hay aviso desde el día 11 (más de 10 días
+ * calendario de Costa Rica): con la última el 01/10/2026 aparece el 12/10/2026. El número se recalcula cada día.
+ * Solo ventas abiertas de contactos activos; cada venta se revisa por separado.
+ */
+export function noCommunicationAlert(sale: Sale, contact: AlertContact | undefined, now: Date): SaleAlert | null {
+  if (!contact || contact.status !== 'activo' || !isOpenSaleStage(sale.stage)) return null;
+
+  const reference = (sale.lastCommunicationAt ?? sale.createdAt).toDate();
+  const days = calendarDaysBetween(reference, now);
+  if (days <= NO_COMMUNICATION_AFTER_DAYS) return null;
+
+  return {
+    id: `${sale.id}:sin_comunicacion`,
+    kind: 'sin_comunicacion',
+    saleId: sale.id,
+    contactId: sale.contactId,
+    contactName: contact.fullName,
+    saleTitle: sale.title,
+    message: noCommunicationMessage(contact.fullName, sale.title, days),
+    date: new Date(reference.getTime() + (NO_COMMUNICATION_AFTER_DAYS + 1) * DAY_MS),
+  };
+}
+
+/** Todos los avisos (seguimiento y falta de comunicación) de las ventas dadas, los más antiguos primero. */
+export function buildAlerts(sales: Sale[], contacts: Map<string, AlertContact>, now: Date): SaleAlert[] {
+  return sales
+    .flatMap((sale) => [followUpAlert(sale, contacts.get(sale.contactId), now), noCommunicationAlert(sale, contacts.get(sale.contactId), now)])
     .filter((alert): alert is SaleAlert => alert !== null)
     .sort((a, b) => a.date.getTime() - b.date.getTime() || a.id.localeCompare(b.id));
 }
