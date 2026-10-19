@@ -106,8 +106,8 @@ describe('HU-310 botón "Cambiar etapa"', () => {
     expect(screen.getByRole('button', { name: 'Editar' })).toBeTruthy();
   });
 
-  it.each(['ganada', 'perdida'] as const)('no aparece en una venta %s', async (stage) => {
-    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf(stage));
+  it('no aparece en una venta ganada', async () => {
+    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('ganada'));
     renderDetail();
     await screen.findByRole('heading', { level: 1 });
     expect(screen.queryByRole('button', { name: 'Cambiar etapa' })).toBeNull();
@@ -265,8 +265,8 @@ describe('HU-311 marcar como perdida desde la ventana "Cambiar etapa"', () => {
     expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'contactado', 'perdida', '');
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     expect((await screen.findByRole('status')).textContent).toBe('Posible venta marcada como perdida.');
-    // Ya perdida: no se puede volver a mover desde aquí (se reabre con HU-312).
-    expect(screen.queryByRole('button', { name: 'Cambiar etapa' })).toBeNull();
+    // Ya perdida: "Cambiar etapa" sigue para poder reabrirla (HU-312).
+    expect(screen.getByRole('button', { name: 'Cambiar etapa' })).toBeTruthy();
   });
 
   it('con motivo: se entrega para guardarlo', async () => {
@@ -401,5 +401,50 @@ describe('HU-313 marcar como ganada desde la ventana "Cambiar etapa"', () => {
     expect((await screen.findByRole('alert')).textContent).toBe('No se pudo cambiar la etapa. Intente de nuevo.');
     expect(screen.getByRole('dialog')).toBeTruthy();
     expect(screen.queryByRole('status')).toBeNull();
+  });
+});
+
+describe('HU-312 reabrir una posible venta perdida', () => {
+  beforeEach(() => {
+    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('perdida'));
+  });
+
+  it('en una venta perdida aparece "Cambiar etapa", con la actual marcada y las cuatro abiertas elegibles', async () => {
+    const { dialog } = await openDialog();
+    expect(radio('Venta perdida Etapa actual').checked).toBe(true);
+    for (const name of ['Nuevo interesado', 'Contactado', 'Precio o cotización enviada', 'En negociación']) {
+      expect(radio(name).disabled).toBe(false);
+    }
+    // Desde "Venta perdida" no se puede pasar directamente a "Venta ganada".
+    expect(radio('Venta ganada').disabled).toBe(true);
+    expect(within(dialog).queryByText(/Motivo de la pérdida/)).toBeNull();
+  });
+
+  it('al elegir una etapa abierta guarda, cierra la ventana y muestra "Posible venta reabierta correctamente."', async () => {
+    const { user } = await openDialog();
+    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('contactado'));
+    await user.click(radio('Contactado'));
+    await user.click(save());
+
+    await waitFor(() => expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'perdida', 'contactado', undefined));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect((await screen.findByRole('status')).textContent).toBe('Posible venta reabierta correctamente.');
+    const stageRow = screen.getByText('Etapa', { selector: 'dt' }).parentElement as HTMLElement;
+    expect(within(stageRow).getByText('Contactado')).toBeTruthy();
+  });
+
+  it('si el contacto ya tiene otra abierta con el mismo título, muestra el mensaje y no reabre', async () => {
+    const { SaleReopenDuplicateTitleError } = await import('../../src/sales/salesRepository');
+    vi.mocked(changeSaleStage).mockRejectedValue(new SaleReopenDuplicateTitleError());
+    const { user } = await openDialog();
+    await user.click(radio('Contactado'));
+    await user.click(save());
+
+    expect((await screen.findByRole('alert')).textContent).toBe(
+      'Este contacto ya tiene una posible venta abierta con este título. Cambie el título antes de reabrirla.',
+    );
+    expect(screen.getByRole('dialog')).toBeTruthy();
+    expect(screen.queryByRole('status')).toBeNull();
+    expect(loadSaleDetail).toHaveBeenCalledTimes(1);
   });
 });

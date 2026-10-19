@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import type { SaleStage } from '../shared/types';
 import { changeSaleStage } from './salesApi';
-import { SaleStageConflictError } from './salesRepository';
+import { SaleReopenDuplicateTitleError, SaleStageConflictError } from './salesRepository';
 import { LOSS_REASON_MAX, lossReasonError, STAGE_CHANGE_MESSAGES, stageOptions, type StageChangeResult } from './stageChange';
 
 interface ChangeStageDialogProps {
@@ -9,7 +9,7 @@ interface ChangeStageDialogProps {
   /** Etapa en la que está hoy (la que se marca como actual). */
   currentStage: SaleStage;
   /** La etapa ya se cambió y quedó en el historial. Recibe la nueva etapa y lo que pasó con el contacto. */
-  onSaved: (newStage: SaleStage, result: StageChangeResult) => void;
+  onSaved: (newStage: SaleStage, result: StageChangeResult, previousStage: SaleStage) => void;
   onCancel: () => void;
 }
 
@@ -20,6 +20,7 @@ interface ChangeStageDialogProps {
  * (opcional, hasta 250 caracteres).
  * HU-313: al elegir "Venta ganada" pregunta si confirma que fue ganada (el contacto pasa a cliente y la venta ya
  * no podrá cambiar de etapa).
+ * HU-312: desde "Venta perdida" solo se pueden elegir las cuatro etapas abiertas (reabrir).
  */
 export function ChangeStageDialog({ saleId, currentStage, onSaved, onCancel }: ChangeStageDialogProps) {
   const titleId = useId();
@@ -31,7 +32,8 @@ export function ChangeStageDialog({ saleId, currentStage, onSaved, onCancel }: C
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const options = stageOptions(currentStage);
-  const isLoss = selected === 'perdida';
+  // En una venta perdida (HU-312) "Venta perdida" es la etapa actual: no hay nada que confirmar.
+  const isLoss = selected === 'perdida' && currentStage !== 'perdida';
   const isWin = selected === 'ganada';
   const reasonProblem = isLoss ? lossReasonError(reason) : null;
 
@@ -59,9 +61,15 @@ export function ChangeStageDialog({ saleId, currentStage, onSaved, onCancel }: C
     setError(null);
     try {
       const result = await changeSaleStage(saleId, currentStage, selected, isLoss ? reason : undefined);
-      onSaved(selected, result);
+      onSaved(selected, result, currentStage);
     } catch (e) {
-      setError(e instanceof SaleStageConflictError ? STAGE_CHANGE_MESSAGES.conflict : STAGE_CHANGE_MESSAGES.saveError);
+      setError(
+        e instanceof SaleReopenDuplicateTitleError
+          ? STAGE_CHANGE_MESSAGES.reopenDuplicateTitle
+          : e instanceof SaleStageConflictError
+            ? STAGE_CHANGE_MESSAGES.conflict
+            : STAGE_CHANGE_MESSAGES.saveError,
+      );
       setSaving(false);
     }
   }

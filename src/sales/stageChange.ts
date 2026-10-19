@@ -1,4 +1,4 @@
-// HU-310, HU-311 y HU-313: cambiar la etapa de una posible venta (funciones puras, sin Firebase).
+// HU-310, HU-311, HU-312 y HU-313: cambiar la etapa de una posible venta (funciones puras, sin Firebase).
 import { isOpenSaleStage, SALE_STAGES, SALE_STAGE_LABELS, type ContactClassification, type SaleStage } from '../shared/types';
 
 /** HU-311: el motivo de la pérdida es opcional y acepta como máximo 250 caracteres. */
@@ -22,6 +22,10 @@ export const STAGE_CHANGE_MESSAGES = {
   winQuestion: '¿Confirma que esta venta fue ganada? El contacto pasará a ser cliente y la venta ya no podrá cambiar de etapa.',
   /** HU-313: Venta ganada de alguien que ya era cliente (o que no cambia de clasificación). */
   won: 'Venta ganada correctamente.',
+  /** HU-312: franja verde al reabrir una posible venta perdida. */
+  reopened: 'Posible venta reabierta correctamente.',
+  /** HU-312: ya hay otra posible venta abierta del contacto con el mismo título. */
+  reopenDuplicateTitle: 'Este contacto ya tiene una posible venta abierta con este título. Cambie el título antes de reabrirla.',
   /** Botón que confirma la pérdida o la venta ganada ("Al aceptar..."). */
   accept: 'Aceptar',
 } as const;
@@ -40,28 +44,34 @@ export interface StageOption {
   selectable: boolean;
 }
 
-/** Solo las posibles ventas abiertas se pueden mover de etapa (una ganada es definitiva; una perdida se reabre, HU-312). */
+/** Las abiertas se mueven de etapa y la perdida se reabre (HU-312). Una ganada es definitiva (HU-313). */
 export function canChangeStage(sale: { stage: SaleStage }): boolean {
-  return isOpenSaleStage(sale.stage);
+  return sale.stage !== 'ganada';
 }
 
 /**
  * Las seis etapas en el orden del tablero, con la actual marcada. Desde una etapa abierta se puede ir a
  * cualquier otra, hacia adelante o hacia atrás. "Venta perdida" (HU-311) y "Venta ganada" (HU-313) piden
- * confirmación en la misma ventana.
+ * confirmación en la misma ventana. Desde "Venta perdida" solo se pueden elegir las cuatro abiertas (HU-312):
+ * "Venta ganada" aparece pero no se puede elegir.
  */
 export function stageOptions(current: SaleStage): StageOption[] {
   return SALE_STAGES.map((stage) => ({
     stage,
     label: SALE_STAGE_LABELS[stage],
     current: stage === current,
-    selectable: stage !== current,
+    selectable: isValidStageChange(current, stage),
   }));
 }
 
-/** ¿Es un cambio válido? Desde una etapa abierta a cualquier otra etapa distinta. */
+/**
+ * ¿Es un cambio válido? Desde una etapa abierta a cualquier otra etapa distinta. Desde "Venta perdida" solo a una
+ * de las cuatro abiertas (HU-312). Desde "Venta ganada" nunca.
+ */
 export function isValidStageChange(from: SaleStage, to: SaleStage): boolean {
-  return isOpenSaleStage(from) && SALE_STAGES.includes(to) && from !== to;
+  if (!SALE_STAGES.includes(to) || from === to) return false;
+  if (isOpenSaleStage(from)) return true;
+  return from === 'perdida' && isOpenSaleStage(to);
 }
 
 /** Motivo de la pérdida tal como se guarda: sin espacios a los lados, o null si no se escribió nada. */
@@ -90,8 +100,9 @@ export interface StageChangeResult {
   contactName: string | null;
 }
 
-/** Franja verde que corresponde a un cambio de etapa ya hecho. */
-export function stageChangeNotice(newStage: SaleStage, result: StageChangeResult): string {
+/** Franja verde que corresponde a un cambio de etapa ya hecho (`previousStage`: la etapa de la que venía). */
+export function stageChangeNotice(newStage: SaleStage, result: StageChangeResult, previousStage?: SaleStage): string {
+  if (previousStage === 'perdida') return STAGE_CHANGE_MESSAGES.reopened;
   if (newStage === 'perdida') return STAGE_CHANGE_MESSAGES.lost;
   if (newStage === 'ganada') {
     return result.contactBecameClient && result.contactName

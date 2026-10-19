@@ -64,10 +64,10 @@ export function SaleDetailPage() {
   }
 
   // HU-310: la etapa ya se cambió y quedó en el historial; se vuelve a leer para mostrarla.
-  async function handleStageChanged(newStage: SaleStage, result: StageChangeResult) {
+  async function handleStageChanged(newStage: SaleStage, result: StageChangeResult, previousStage: SaleStage) {
     await load();
     setChangingStage(false);
-    showNotice(stageChangeNotice(newStage, result));
+    showNotice(stageChangeNotice(newStage, result, previousStage));
   }
 
   return (
@@ -107,7 +107,7 @@ interface SaleDetailProps {
   changingStage: boolean;
   onChangeStage: () => void;
   onCancelChangeStage: () => void;
-  onStageChanged: (newStage: SaleStage, result: StageChangeResult) => void;
+  onStageChanged: (newStage: SaleStage, result: StageChangeResult, previousStage: SaleStage) => void;
   onCancel: () => void;
   onSaved: () => void;
 }
@@ -154,7 +154,7 @@ function SaleDetail({
         <h1>{sale.title}</h1>
         {!editing && (
           <div className="page-header-actions">
-            {/* HU-310: solo las posibles ventas abiertas se pueden mover de etapa. */}
+            {/* HU-310: las abiertas cambian de etapa; HU-312: la perdida se reabre; la ganada ya no cambia. */}
             {canChangeStage(sale) && (
               <button type="button" className="button-secondary" onClick={onChangeStage}>
                 {STAGE_CHANGE_MESSAGES.button}

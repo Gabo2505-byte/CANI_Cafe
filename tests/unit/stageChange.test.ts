@@ -17,8 +17,11 @@ describe('HU-310 quién puede cambiar de etapa', () => {
   it.each(OPEN_SALE_STAGES)('una posible venta en "%s" sí', (stage) => {
     expect(canChangeStage({ stage })).toBe(true);
   });
-  it.each(['ganada', 'perdida'] as const)('una "%s" no', (stage) => {
-    expect(canChangeStage({ stage })).toBe(false);
+  it('una "ganada" no (es definitiva)', () => {
+    expect(canChangeStage({ stage: 'ganada' })).toBe(false);
+  });
+  it('una "perdida" sí (HU-312: se reabre)', () => {
+    expect(canChangeStage({ stage: 'perdida' })).toBe(true);
   });
 });
 
@@ -65,9 +68,36 @@ describe('HU-310/HU-311/HU-313 cambios válidos', () => {
     }
   });
 
-  it('no se puede salir de ganada ni de perdida (la perdida se reabre con HU-312)', () => {
-    const closed: SaleStage[] = ['ganada', 'perdida'];
-    for (const from of closed) for (const to of SALE_STAGES) expect(isValidStageChange(from, to)).toBe(false);
+  it('desde ganada no se sale a ninguna etapa', () => {
+    for (const to of SALE_STAGES) expect(isValidStageChange('ganada', to)).toBe(false);
+  });
+
+  it('HU-312: desde perdida solo a las cuatro abiertas, nunca a ganada ni a la misma', () => {
+    const open: readonly SaleStage[] = OPEN_SALE_STAGES;
+    for (const to of SALE_STAGES) expect(isValidStageChange('perdida', to)).toBe(open.includes(to));
+    expect(isValidStageChange('perdida', 'ganada')).toBe(false);
+  });
+});
+
+describe('HU-312 reabrir una perdida', () => {
+  it('desde "Venta perdida" se pueden elegir las cuatro abiertas; "Venta ganada" aparece pero no se puede elegir', () => {
+    const options = stageOptions('perdida');
+    expect(options.filter((o) => o.selectable).map((o) => o.stage)).toEqual([...OPEN_SALE_STAGES]);
+    expect(options.find((o) => o.stage === 'ganada')).toMatchObject({ selectable: false, current: false });
+    expect(options.find((o) => o.stage === 'perdida')).toMatchObject({ selectable: false, current: true });
+  });
+
+  it('los textos son los del documento', () => {
+    expect(STAGE_CHANGE_MESSAGES.reopened).toBe('Posible venta reabierta correctamente.');
+    expect(STAGE_CHANGE_MESSAGES.reopenDuplicateTitle).toBe(
+      'Este contacto ya tiene una posible venta abierta con este título. Cambie el título antes de reabrirla.',
+    );
+  });
+
+  it('la franja verde al reabrir es la de HU-312, sea cual sea la etapa abierta elegida', () => {
+    const none = { contactBecameClient: false, contactName: null };
+    for (const to of OPEN_SALE_STAGES) expect(stageChangeNotice(to, none, 'perdida')).toBe('Posible venta reabierta correctamente.');
+    expect(stageChangeNotice('contactado', none, 'nuevo_interesado')).toBe('Etapa actualizada correctamente.');
   });
 });
 

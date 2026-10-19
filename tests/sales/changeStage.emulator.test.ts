@@ -3,7 +3,7 @@ import { assertFails, initializeTestEnvironment, type RulesTestEnvironment } fro
 import { collection, doc, getDoc, getDocs, query, setDoc, Timestamp, where, type Firestore } from 'firebase/firestore';
 import { readFileSync } from 'node:fs';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { changeSaleStageIn, SaleStageConflictError } from '../../src/sales/salesRepository';
+import { changeSaleStageIn, SaleReopenDuplicateTitleError, SaleStageConflictError } from '../../src/sales/salesRepository';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
 
 const PROJECT_ID = 'demo-cani-crm-change-stage';
@@ -108,7 +108,7 @@ describe('cambiar la etapa de una posible venta (HU-310)', () => {
 
   it('no mueve una venta ganada o perdida ni a la misma etapa', async () => {
     await expect(changeSaleStageIn(db, 's-ganada', 'ganada', 'contactado')).rejects.toThrow(/no permitido/);
-    await expect(changeSaleStageIn(db, 's-perdida', 'perdida', 'contactado')).rejects.toThrow(/no permitido/);
+    await expect(changeSaleStageIn(db, 's-perdida', 'perdida', 'ganada')).rejects.toThrow(/no permitido/);
     await expect(changeSaleStageIn(db, 's-1', 'contactado', 'contactado')).rejects.toThrow(/no permitido/);
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
     expect(await historyOf('s-1')).toHaveLength(1);
@@ -162,11 +162,11 @@ describe('marcar una posible venta como perdida (HU-311)', () => {
     expect((await historyOf('s-1'))[1].lossReason).toBeNull();
   });
 
-  it('no afecta a las demás ventas del contacto y la perdida no se puede volver a mover desde aquí', async () => {
+  it('no afecta a las demás ventas del contacto y la perdida no pasa directo a ganada', async () => {
     const before = (await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).data();
     await changeSaleStageIn(db, 's-1', 'contactado', 'perdida', 'Motivo');
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).data()).toEqual(before);
-    await expect(changeSaleStageIn(db, 's-1', 'perdida', 'contactado')).rejects.toThrow(/no permitido/);
+    await expect(changeSaleStageIn(db, 's-1', 'perdida', 'ganada')).rejects.toThrow(/no permitido/);
   });
 
   it('si la etapa guardada ya no es la esperada no escribe nada', async () => {
@@ -257,5 +257,85 @@ describe('marcar una posible venta como ganada (HU-313)', () => {
     await assertFails(changeSaleStageIn(anon, 's-1', 'contactado', 'ganada'));
     expect(await classificationOf('c-1')).toBe('persona_interesada');
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
+  });
+});
+
+describe('reabrir una posible venta perdida (HU-312)', () => {
+  const classificationOf = async (id: string) => (await getDoc(doc(db, COLLECTIONS.contacts, id))).get('classification');
+
+  it('pasa a la etapa abierta elegida, con su fecha y un registro nuevo sin motivo', async () => {
+    await changeSaleStageIn(db, 's-1', 'contactado', 'perdida', 'Eligió a otro');
+    await changeSaleStageIn(db, 's-1', 'perdida', 'en_negociacion', 'Esto no se guarda');
+
+    const sale = (await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).data()!;
+    expect(sale.stage).toBe('en_negociacion');
+    const history = await historyOf('s-1');
+    expect(history.map((h) => `${h.previousStage ?? '-'}>${h.newStage}`)).toEqual(['->contactado', 'contactado>perdida', 'perdida>en_negociacion']);
+    expect(history[2].lossReason).toBeNull();
+    expect(history[2].changedAt.toMillis()).toBe(sale.stageChangedAt.toMillis());
+    // La pérdida anterior se conserva con su motivo.
+    expect(history[1].lossReason).toBe('Eligió a otro');
+  });
+
+  it('se puede reabrir a cada una de las cuatro etapas abiertas', async () => {
+    for (const to of ['nuevo_interesado', 'contactado', 'cotizacion_enviada', 'en_negociacion'] as const) {
+      await testEnv.withSecurityRulesDisabled(async (ctx) => {
+        await setDoc(doc(ctx.firestore(), COLLECTIONS.sales, `p-${to}`), { ...baseSale, contactId: 'c-cliente', title: `Perdida ${to}`, stage: 'perdida' });
+      });
+      await changeSaleStageIn(db, `p-${to}`, 'perdida', to);
+      expect((await getDoc(doc(db, COLLECTIONS.sales, `p-${to}`))).get('stage')).toBe(to);
+    }
+  });
+
+  it('desde perdida no se pasa directo a ganada: no escribe nada ni toca al contacto', async () => {
+    await expect(changeSaleStageIn(db, 's-perdida', 'perdida', 'ganada')).rejects.toThrow(/no permitido/);
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-perdida'))).get('stage')).toBe('perdida');
+    expect(await classificationOf('c-1')).toBe('persona_interesada');
+    expect(await historyOf('s-perdida')).toEqual([]);
+  });
+
+  it('si se reabre y se vuelve a perder se suma otra pérdida con su fecha y motivo, sin borrar la anterior', async () => {
+    await changeSaleStageIn(db, 's-1', 'contactado', 'perdida', 'Primer motivo');
+    await changeSaleStageIn(db, 's-1', 'perdida', 'contactado');
+    await changeSaleStageIn(db, 's-1', 'contactado', 'perdida', 'Segundo motivo');
+
+    const losses = (await historyOf('s-1')).filter((h) => h.newStage === 'perdida');
+    expect(losses.map((h) => h.lossReason)).toEqual(['Primer motivo', 'Segundo motivo']);
+    expect(losses[1].changedAt.toMillis()).toBeGreaterThanOrEqual(losses[0].changedAt.toMillis());
+  });
+
+  it('si el contacto ya tiene otra abierta con el mismo título no reabre y no escribe nada', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      // Mismo título que "Perdida", distinto en mayúsculas y espacios, y del mismo contacto.
+      await setDoc(doc(ctx.firestore(), COLLECTIONS.sales, 's-igual'), { ...baseSale, title: ' PERDIDA ', stage: 'contactado' });
+    });
+    const before = (await getDoc(doc(db, COLLECTIONS.sales, 's-perdida'))).data();
+
+    await expect(changeSaleStageIn(db, 's-perdida', 'perdida', 'nuevo_interesado')).rejects.toBeInstanceOf(SaleReopenDuplicateTitleError);
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-perdida'))).data()).toEqual(before);
+    expect(await historyOf('s-perdida')).toEqual([]);
+  });
+
+  it('una abierta de otro contacto, o una ganada o perdida del mismo, con el mismo título no lo impide', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      const admin = ctx.firestore();
+      await setDoc(doc(admin, COLLECTIONS.sales, 's-otro-contacto'), { ...baseSale, contactId: 'c-cliente', title: 'Perdida', stage: 'contactado' });
+      await setDoc(doc(admin, COLLECTIONS.sales, 's-misma-ganada'), { ...baseSale, title: 'Perdida', stage: 'ganada' });
+      await setDoc(doc(admin, COLLECTIONS.sales, 's-misma-perdida'), { ...baseSale, title: 'Perdida', stage: 'perdida' });
+    });
+    await changeSaleStageIn(db, 's-perdida', 'perdida', 'contactado');
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-perdida'))).get('stage')).toBe('contactado');
+  });
+
+  it('si la etapa guardada ya no es perdida, lo avisa y no escribe nada', async () => {
+    await expect(changeSaleStageIn(db, 's-1', 'perdida', 'en_negociacion')).rejects.toBeInstanceOf(SaleStageConflictError);
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
+    expect(await historyOf('s-1')).toHaveLength(1);
+  });
+
+  it('sin sesión no se puede reabrir', async () => {
+    const anon = testEnv.unauthenticatedContext().firestore() as unknown as Firestore;
+    await assertFails(changeSaleStageIn(anon, 's-perdida', 'perdida', 'contactado'));
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-perdida'))).get('stage')).toBe('perdida');
   });
 });

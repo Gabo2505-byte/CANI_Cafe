@@ -1,0 +1,17 @@
+Evidencia de pruebas HU-312 - 2026-10-19 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== npm test ==
+ Test Files  41 passed (41)
+      Tests  462 passed (462)
+
+== npm run test:emulators ==
+ Test Files  19 passed (19)
+      Tests  116 passed (116)
+
+Pruebas nuevas o ajustadas de HU-312:
+- tests/unit/stageChange.test.ts: canChangeStage en perdida; cambios válidos desde perdida (solo a las cuatro abiertas, nunca a ganada); opciones de la ventana; textos literales; franja verde al reabrir.
+- tests/components/ChangeStage.test.tsx: botón en una perdida; etapas elegibles y "Venta ganada" deshabilitada; reabrir con franja verde; error de título repetido.
+- tests/sales/changeStage.emulator.test.ts: reabrir a cada etapa abierta con registro sin motivo; perdida -> ganada rechazada; reabrir y volver a perder suma otra pérdida; título repetido (sin mayúsculas ni espacios) bloquea sin escribir; abierta de otro contacto o ganada/perdida del mismo no bloquean; conflicto de etapa; sin sesión.

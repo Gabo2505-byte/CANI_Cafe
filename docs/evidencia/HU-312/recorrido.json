@@ -1,0 +1,154 @@
+[
+  {
+    "criterio": 1,
+    "caso": "Ventana \"Cambiar etapa\" en una perdida",
+    "etapa": "Venta perdida",
+    "botones": [
+      "Cambiar etapa",
+      "Editar"
+    ],
+    "registros": 3,
+    "opciones": [
+      {
+        "etapa": "Nuevo interesado",
+        "marcada": false,
+        "deshabilitada": false
+      },
+      {
+        "etapa": "Contactado",
+        "marcada": false,
+        "deshabilitada": false
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "marcada": false,
+        "deshabilitada": false
+      },
+      {
+        "etapa": "En negociación",
+        "marcada": false,
+        "deshabilitada": false
+      },
+      {
+        "etapa": "Venta ganada",
+        "marcada": false,
+        "deshabilitada": true
+      },
+      {
+        "etapa": "Venta perdida Etapa actual",
+        "marcada": true,
+        "deshabilitada": false
+      }
+    ],
+    "hayPreguntaDePerdida": false,
+    "botonesVentana": [
+      "Cancelar",
+      "Guardar"
+    ]
+  },
+  {
+    "criterio": 4,
+    "caso": "Reabrir con otra abierta del mismo título (sale-duplicada, en mayúsculas)",
+    "mensaje": "Este contacto ya tiene una posible venta abierta con este título. Cambie el título antes de reabrirla.",
+    "ventanaAbierta": true,
+    "hayFranjaVerde": false,
+    "etapaEnFirestore": "perdida",
+    "registros": 3
+  },
+  {
+    "criterio": "1/2",
+    "caso": "Reabrir a En negociación",
+    "aviso": "Posible venta reabierta correctamente.",
+    "etapaMostrada": "En negociación",
+    "botones": [
+      "Cambiar etapa",
+      "Editar"
+    ],
+    "historialMostrado": [
+      "19/10/2026 · Venta perdida · En negociación · ",
+      "08/10/2026 · Contactado · Venta perdida · El cliente eligió otro proveedor.",
+      "16/09/2026 · Nuevo interesado · Contactado · ",
+      "10/09/2026 · — · Nuevo interesado · "
+    ],
+    "firestore": {
+      "etapa": "en_negociacion",
+      "ultimoRegistro": {
+        "id": "BI2kbSUh2WMUFNP9VETl",
+        "saleId": "sale-004",
+        "previousStage": "perdida",
+        "newStage": "en_negociacion",
+        "changedAt": "2026-10-19T23:17:21.621Z",
+        "lossReason": null
+      },
+      "registros": 4
+    }
+  },
+  {
+    "caso": "Tablero tras reabrir",
+    "columnas": [
+      {
+        "encabezado": "Nuevo interesado · 1 · ₡ 0",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "encabezado": "Contactado · 0 · ₡ 0",
+        "tarjetas": []
+      },
+      {
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "encabezado": "En negociación · 2 · ₡ 530 000",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)",
+          "Muestras para eventos (mock)"
+        ]
+      },
+      {
+        "encabezado": "Venta ganada · 1 · ₡ 300 000",
+        "tarjetas": [
+          "Pedido de temporada navideña (mock)"
+        ]
+      },
+      {
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "tarjetas": []
+      }
+    ]
+  },
+  {
+    "criterio": 3,
+    "caso": "Volver a perderla con otro motivo",
+    "aviso": "Posible venta marcada como perdida.",
+    "etapaMostrada": "Venta perdida",
+    "historialMostrado": [
+      "19/10/2026 · En negociación · Venta perdida · Volvió a decidir que no por el precio.",
+      "19/10/2026 · Venta perdida · En negociación · ",
+      "08/10/2026 · Contactado · Venta perdida · El cliente eligió otro proveedor.",
+      "16/09/2026 · Nuevo interesado · Contactado · ",
+      "10/09/2026 · — · Nuevo interesado · "
+    ],
+    "perdidasEnFirestore": [
+      {
+        "changedAt": "2026-10-08T21:00:00Z",
+        "lossReason": "El cliente eligió otro proveedor."
+      },
+      {
+        "changedAt": "2026-10-19T23:17:26.862Z",
+        "lossReason": "Volvió a decidir que no por el precio."
+      }
+    ]
+  },
+  {
+    "caso": "Cancelar al reabrir",
+    "ventanaAbierta": false,
+    "etapaMostrada": "Venta perdida",
+    "etapaEnFirestore": "perdida",
+    "registros": 5
+  }
+]

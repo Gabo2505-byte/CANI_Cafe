@@ -12,6 +12,7 @@ import {
   type Firestore,
 } from 'firebase/firestore';
 import { closedSalesCutoff } from './board';
+import { isDuplicateTitle } from './saleForm';
 import {
   classificationAfterWin,
   isValidStageChange,
@@ -166,6 +167,14 @@ export class SaleStageConflictError extends Error {
   }
 }
 
+/** HU-312: no se puede reabrir una perdida si el contacto ya tiene otra abierta con el mismo título. */
+export class SaleReopenDuplicateTitleError extends Error {
+  constructor() {
+    super('sale-reopen-duplicate-title');
+    this.name = 'SaleReopenDuplicateTitleError';
+  }
+}
+
 /**
  * HU-310: mueve una posible venta abierta a otra etapa. HU-311: o la marca como perdida, con un motivo opcional
  * (hasta 250 caracteres). HU-313: o la marca como ganada, y entonces una "Persona interesada" pasa a "Cliente".
@@ -174,6 +183,9 @@ export class SaleStageConflictError extends Error {
  * `stageHistory` con su fecha (y el motivo si fue a "Venta perdida"; los anteriores no se tocan) y, si ganó, cambia
  * `contacts.classification`. Esa es la única escritura sobre `contacts` (acordada con Gabriel): solo ese campo y solo
  * de "Persona interesada" a "Cliente"; quien ya es cliente (o es distribuidor u otro) no se modifica.
+ * HU-312: una "Venta perdida" se reabre pasándola a una de las cuatro etapas abiertas; el registro nuevo no lleva
+ * motivo y los registros de pérdidas anteriores quedan. Si el contacto ya tiene otra posible venta abierta con el mismo
+ * título, no escribe nada y lanza SaleReopenDuplicateTitleError.
  * Las demás ventas del contacto no cambian. Si la etapa guardada ya no es `expectedStage` (otra pestaña la cambió),
  * no escribe nada y lanza SaleStageConflictError.
  */
@@ -187,6 +199,16 @@ export async function changeSaleStageIn(
   if (!isValidStageChange(expectedStage, newStage)) throw new Error(`Cambio de etapa no permitido: ${expectedStage} → ${newStage}.`);
   if (newStage === 'perdida' && lossReasonError(lossReason)) throw new Error('El motivo de la pérdida es demasiado largo.');
   const saleRef = doc(db, COLLECTIONS.sales, saleId);
+
+  if (expectedStage === 'perdida') {
+    // Firestore no consulta colecciones dentro de una transacción: el título se revisa antes de reabrir.
+    const current = await getDoc(saleRef);
+    if (!current.exists()) throw new Error(`La posible venta ${saleId} no existe.`);
+    if (current.get('stage') === 'perdida') {
+      const openTitles = await listOpenSaleTitlesIn(db, current.get('contactId') as string, saleId);
+      if (isDuplicateTitle(current.get('title') as string, openTitles)) throw new SaleReopenDuplicateTitleError();
+    }
+  }
 
   return runTransaction(db, async (tx): Promise<StageChangeResult> => {
     // En una transacción primero se lee todo y después se escribe.
