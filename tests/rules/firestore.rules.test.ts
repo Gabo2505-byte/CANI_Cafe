@@ -36,7 +36,7 @@ beforeEach(async () => {
   });
 });
 
-// `communications` tiene reglas propias (HU-211): ver tests/communications/communicationRules.emulator.test.ts.
+// `communications` tiene reglas propias (HU-211): ver tests/communications/createCommunication.emulator.test.ts y communicationSale.emulator.test.ts.
 const ALL_COLLECTIONS = Object.values(COLLECTIONS).filter((c) => c !== COLLECTIONS.communications);
 
 describe('firestore.rules', () => {

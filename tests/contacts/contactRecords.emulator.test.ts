@@ -93,7 +93,14 @@ describe('HU-207 registros de la ficha desde Firestore', () => {
   });
 
   it('contacto sin registros: todo vacío', async () => {
-    expect(await loadContactRecordsIn(db, 'sin-registros')).toEqual({ communications: [], sales: [], products: [] });
+    expect(await loadContactRecordsIn(db, 'sin-registros')).toEqual({
+      communications: [],
+      communicationsTotal: 0,
+      communicationsCursor: null,
+      userNames: {},
+      sales: [],
+      products: [],
+    });
   });
 
   it('sin sesión no se pueden leer', async () => {
