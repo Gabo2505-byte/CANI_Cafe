@@ -2,14 +2,14 @@ import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import type { SaleStage } from '../shared/types';
 import { changeSaleStage } from './salesApi';
 import { SaleStageConflictError } from './salesRepository';
-import { LOSS_REASON_MAX, lossReasonError, STAGE_CHANGE_MESSAGES, stageOptions } from './stageChange';
+import { LOSS_REASON_MAX, lossReasonError, STAGE_CHANGE_MESSAGES, stageOptions, type StageChangeResult } from './stageChange';
 
 interface ChangeStageDialogProps {
   saleId: string;
   /** Etapa en la que está hoy (la que se marca como actual). */
   currentStage: SaleStage;
-  /** La etapa ya se cambió y quedó en el historial. Recibe la nueva etapa. */
-  onSaved: (newStage: SaleStage) => void;
+  /** La etapa ya se cambió y quedó en el historial. Recibe la nueva etapa y lo que pasó con el contacto. */
+  onSaved: (newStage: SaleStage, result: StageChangeResult) => void;
   onCancel: () => void;
 }
 
@@ -17,7 +17,9 @@ interface ChangeStageDialogProps {
  * HU-310: ventana "Cambiar etapa" con las seis etapas y la actual marcada. Al guardar, la posible venta pasa
  * a la nueva etapa y el cambio queda en el historial.
  * HU-311: al elegir "Venta perdida" la misma ventana pregunta si está seguro y deja escribir el motivo
- * (opcional, hasta 250 caracteres). "Venta ganada" aún no se puede elegir (HU-313).
+ * (opcional, hasta 250 caracteres).
+ * HU-313: al elegir "Venta ganada" pregunta si confirma que fue ganada (el contacto pasa a cliente y la venta ya
+ * no podrá cambiar de etapa).
  */
 export function ChangeStageDialog({ saleId, currentStage, onSaved, onCancel }: ChangeStageDialogProps) {
   const titleId = useId();
@@ -30,6 +32,7 @@ export function ChangeStageDialog({ saleId, currentStage, onSaved, onCancel }: C
   const [error, setError] = useState<string | null>(null);
   const options = stageOptions(currentStage);
   const isLoss = selected === 'perdida';
+  const isWin = selected === 'ganada';
   const reasonProblem = isLoss ? lossReasonError(reason) : null;
 
   useEffect(() => {
@@ -55,15 +58,14 @@ export function ChangeStageDialog({ saleId, currentStage, onSaved, onCancel }: C
     setSaving(true);
     setError(null);
     try {
-      await changeSaleStage(saleId, currentStage, selected, isLoss ? reason : undefined);
-      onSaved(selected);
+      const result = await changeSaleStage(saleId, currentStage, selected, isLoss ? reason : undefined);
+      onSaved(selected, result);
     } catch (e) {
       setError(e instanceof SaleStageConflictError ? STAGE_CHANGE_MESSAGES.conflict : STAGE_CHANGE_MESSAGES.saveError);
       setSaving(false);
     }
   }
 
-  const hasClosingOptions = options.some((o) => !o.selectable && !o.current);
   return (
     <div className="dialog-backdrop">
       <div className="dialog dialog-form" role="dialog" aria-modal="true" aria-labelledby={titleId}>
@@ -94,7 +96,13 @@ export function ChangeStageDialog({ saleId, currentStage, onSaved, onCancel }: C
               </label>
             ))}
           </fieldset>
-          {hasClosingOptions && <p className="field-help">{STAGE_CHANGE_MESSAGES.closingSoon}</p>}
+          {isWin && (
+            <div className="win-confirm">
+              <p id={questionId} className="win-question">
+                {STAGE_CHANGE_MESSAGES.winQuestion}
+              </p>
+            </div>
+          )}
 
           {isLoss && (
             <div className="loss-confirm">
@@ -142,10 +150,10 @@ export function ChangeStageDialog({ saleId, currentStage, onSaved, onCancel }: C
             <button
               type="submit"
               className={isLoss ? 'button-danger' : undefined}
-              aria-describedby={isLoss ? questionId : undefined}
+              aria-describedby={isLoss || isWin ? questionId : undefined}
               disabled={saving || selected === currentStage}
             >
-              {saving ? 'Guardando…' : isLoss ? STAGE_CHANGE_MESSAGES.accept : 'Guardar'}
+              {saving ? 'Guardando…' : isLoss || isWin ? STAGE_CHANGE_MESSAGES.accept : 'Guardar'}
             </button>
           </div>
         </form>

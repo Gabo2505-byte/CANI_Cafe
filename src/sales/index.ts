@@ -34,4 +34,4 @@ export { loadSaleDetail } from './saleDetailApi';
 export { EDIT_MESSAGES, isNotesOnly, validateSaleEdit } from './saleEdit';
 export { SaleEditForm } from './SaleEditForm';
 export { ChangeStageDialog } from './ChangeStageDialog';
-export { canChangeStage, stageOptions, STAGE_CHANGE_MESSAGES } from './stageChange';
+export { canChangeStage, classificationAfterWin, stageChangeNotice, stageOptions, STAGE_CHANGE_MESSAGES } from './stageChange';

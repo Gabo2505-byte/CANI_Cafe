@@ -36,6 +36,14 @@ beforeEach(async () => {
   await testEnv.withSecurityRulesDisabled(async (ctx) => {
     const admin = ctx.firestore();
     await setDoc(doc(admin, COLLECTIONS.users, 'admin-activo'), { username: 'admin', email: 'a@example.com', active: true });
+    await setDoc(doc(admin, COLLECTIONS.contacts, 'c-1'), { fullName: 'Ana Interesada', classification: 'persona_interesada', status: 'activo', email: 'ana@example.com' });
+    await setDoc(doc(admin, COLLECTIONS.contacts, 'c-cliente'), { fullName: 'Bruno Cliente', classification: 'cliente', status: 'activo' });
+    await setDoc(doc(admin, COLLECTIONS.contacts, 'c-distribuidor'), { fullName: 'Carla Distribuidora', classification: 'distribuidor', status: 'activo' });
+    await setDoc(doc(admin, COLLECTIONS.contacts, 'c-otro'), { fullName: 'Diego Otro', classification: 'otro', status: 'activo' });
+    await setDoc(doc(admin, COLLECTIONS.sales, 's-cliente'), { ...baseSale, contactId: 'c-cliente', title: 'De un cliente' });
+    await setDoc(doc(admin, COLLECTIONS.sales, 's-distribuidor'), { ...baseSale, contactId: 'c-distribuidor', title: 'De un distribuidor' });
+    await setDoc(doc(admin, COLLECTIONS.sales, 's-otro'), { ...baseSale, contactId: 'c-otro', title: 'De un otro' });
+    await setDoc(doc(admin, COLLECTIONS.sales, 's-sin-contacto'), { ...baseSale, contactId: 'no-existe', title: 'Sin contacto' });
     await setDoc(doc(admin, COLLECTIONS.sales, 's-1'), baseSale);
     // Otra venta abierta del mismo contacto: no debe verse afectada.
     await setDoc(doc(admin, COLLECTIONS.sales, 's-hermana'), { ...baseSale, title: 'Hermana', stage: 'en_negociacion' });
@@ -98,11 +106,10 @@ describe('cambiar la etapa de una posible venta (HU-310)', () => {
     expect(await historyOf('s-1')).toHaveLength(1);
   });
 
-  it('no mueve una venta ganada o perdida, ni a la misma etapa, ni (todavía) a ganada', async () => {
+  it('no mueve una venta ganada o perdida ni a la misma etapa', async () => {
     await expect(changeSaleStageIn(db, 's-ganada', 'ganada', 'contactado')).rejects.toThrow(/no permitido/);
     await expect(changeSaleStageIn(db, 's-perdida', 'perdida', 'contactado')).rejects.toThrow(/no permitido/);
     await expect(changeSaleStageIn(db, 's-1', 'contactado', 'contactado')).rejects.toThrow(/no permitido/);
-    await expect(changeSaleStageIn(db, 's-1', 'contactado', 'ganada')).rejects.toThrow(/no permitido/);
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
     expect(await historyOf('s-1')).toHaveLength(1);
   });
@@ -166,5 +173,89 @@ describe('marcar una posible venta como perdida (HU-311)', () => {
     await expect(changeSaleStageIn(db, 's-1', 'nuevo_interesado', 'perdida', 'Motivo')).rejects.toBeInstanceOf(SaleStageConflictError);
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
     expect(await historyOf('s-1')).toHaveLength(1);
+  });
+});
+
+describe('marcar una posible venta como ganada (HU-313)', () => {
+  const classificationOf = async (id: string) => (await getDoc(doc(db, COLLECTIONS.contacts, id))).get('classification');
+
+  it('una persona interesada pasa a cliente y la venta a "Venta ganada", con su registro en el historial', async () => {
+    const result = await changeSaleStageIn(db, 's-1', 'contactado', 'ganada');
+
+    expect(result).toEqual({ contactBecameClient: true, contactName: 'Ana Interesada' });
+    expect(await classificationOf('c-1')).toBe('cliente');
+    const sale = (await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).data()!;
+    expect(sale.stage).toBe('ganada');
+    expect(sale.stageChangedAt.toMillis()).toBeGreaterThan(baseSale.stageChangedAt.toMillis());
+    const history = await historyOf('s-1');
+    expect(history).toHaveLength(2);
+    expect(history[1]).toMatchObject({ previousStage: 'contactado', newStage: 'ganada', lossReason: null });
+    expect(history[1].changedAt.toMillis()).toBe(sale.stageChangedAt.toMillis());
+  });
+
+  it('solo se cambia la clasificación: el resto del contacto queda igual', async () => {
+    await changeSaleStageIn(db, 's-1', 'contactado', 'ganada');
+    expect((await getDoc(doc(db, COLLECTIONS.contacts, 'c-1'))).data()).toEqual({
+      fullName: 'Ana Interesada',
+      classification: 'cliente',
+      status: 'activo',
+      email: 'ana@example.com',
+    });
+  });
+
+  it('si el contacto ya era cliente sigue siéndolo y no hay conversión', async () => {
+    const result = await changeSaleStageIn(db, 's-cliente', 'contactado', 'ganada');
+    expect(result).toEqual({ contactBecameClient: false, contactName: null });
+    expect(await classificationOf('c-cliente')).toBe('cliente');
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-cliente'))).get('stage')).toBe('ganada');
+  });
+
+  it('distribuidor y otro no cambian de clasificación', async () => {
+    expect(await changeSaleStageIn(db, 's-distribuidor', 'contactado', 'ganada')).toEqual({ contactBecameClient: false, contactName: null });
+    expect(await changeSaleStageIn(db, 's-otro', 'contactado', 'ganada')).toEqual({ contactBecameClient: false, contactName: null });
+    expect(await classificationOf('c-distribuidor')).toBe('distribuidor');
+    expect(await classificationOf('c-otro')).toBe('otro');
+  });
+
+  it('si el contacto ya no existe la venta se gana igual y no se crea ningún contacto', async () => {
+    const result = await changeSaleStageIn(db, 's-sin-contacto', 'contactado', 'ganada');
+    expect(result).toEqual({ contactBecameClient: false, contactName: null });
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-sin-contacto'))).get('stage')).toBe('ganada');
+    expect((await getDoc(doc(db, COLLECTIONS.contacts, 'no-existe'))).exists()).toBe(false);
+  });
+
+  it('no afecta a las demás ventas ni a los demás contactos', async () => {
+    const hermana = (await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).data();
+    await changeSaleStageIn(db, 's-1', 'contactado', 'ganada');
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).data()).toEqual(hermana);
+    expect(await classificationOf('c-cliente')).toBe('cliente');
+    expect(await classificationOf('c-distribuidor')).toBe('distribuidor');
+  });
+
+  it('es definitiva: una venta ganada ya no cambia de etapa', async () => {
+    await changeSaleStageIn(db, 's-1', 'contactado', 'ganada');
+    for (const to of ['nuevo_interesado', 'contactado', 'en_negociacion', 'perdida'] as const) {
+      await expect(changeSaleStageIn(db, 's-1', 'ganada', to)).rejects.toThrow(/no permitido/);
+    }
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('ganada');
+  });
+
+  it('es atómico: si la etapa ya cambió no se toca ni la venta ni el contacto', async () => {
+    await expect(changeSaleStageIn(db, 's-1', 'nuevo_interesado', 'ganada')).rejects.toBeInstanceOf(SaleStageConflictError);
+    expect(await classificationOf('c-1')).toBe('persona_interesada');
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
+    expect(await historyOf('s-1')).toHaveLength(1);
+  });
+
+  it('ganar desde cualquier etapa abierta funciona (aunque se haya saltado alguna)', async () => {
+    await changeSaleStageIn(db, 's-hermana', 'en_negociacion', 'ganada');
+    expect(await classificationOf('c-1')).toBe('cliente');
+  });
+
+  it('sin sesión no cambia nada: ni la venta ni el contacto', async () => {
+    const anon = testEnv.unauthenticatedContext().firestore() as unknown as Firestore;
+    await assertFails(changeSaleStageIn(anon, 's-1', 'contactado', 'ganada'));
+    expect(await classificationOf('c-1')).toBe('persona_interesada');
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
   });
 });

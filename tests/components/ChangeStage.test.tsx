@@ -82,7 +82,7 @@ function renderDetail() {
 
 beforeEach(() => {
   vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('contactado'));
-  vi.mocked(changeSaleStage).mockResolvedValue(undefined);
+  vi.mocked(changeSaleStage).mockResolvedValue({ contactBecameClient: false, contactName: null });
 });
 afterEach(() => {
   cleanup();
@@ -141,12 +141,11 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
     expect(save().disabled).toBe(true);
   });
 
-  it('"Venta perdida" se puede elegir; "Venta ganada" se ve pero todavía no', async () => {
+  it('"Venta perdida" y "Venta ganada" se pueden elegir', async () => {
     await openDialog();
     expect(radio('Venta perdida').disabled).toBe(false);
-    expect(radio('Venta ganada').disabled).toBe(true);
+    expect(radio('Venta ganada').disabled).toBe(false);
     expect(radio('Nuevo interesado').disabled).toBe(false);
-    expect(screen.getByText('Marcar una posible venta como ganada estará disponible pronto.')).toBeTruthy();
   });
 
   it('hacia adelante: guarda el cambio, cierra la ventana y el detalle muestra la nueva etapa', async () => {
@@ -319,5 +318,88 @@ describe('HU-311 marcar como perdida desde la ventana "Cambiar etapa"', () => {
     expect((await screen.findByRole('alert')).textContent).toBe('No se pudo cambiar la etapa. Intente de nuevo.');
     expect(reason().value).toBe('Motivo');
     expect(screen.getByRole('dialog')).toBeTruthy();
+  });
+});
+
+describe('HU-313 marcar como ganada desde la ventana "Cambiar etapa"', () => {
+  const QUESTION =
+    '¿Confirma que esta venta fue ganada? El contacto pasará a ser cliente y la venta ya no podrá cambiar de etapa.';
+
+  it('al elegir "Venta ganada" pregunta si confirma; con otras etapas no', async () => {
+    const { user } = await openDialog();
+    expect(screen.queryByText(QUESTION)).toBeNull();
+
+    await user.click(radio('Venta ganada'));
+    expect(screen.getByText(QUESTION)).toBeTruthy();
+    // No es una pérdida: no pide motivo ni usa la pregunta de la pérdida.
+    expect(screen.queryByLabelText(/^Motivo de la pérdida/)).toBeNull();
+    expect(screen.queryByText('¿Está seguro de que desea marcar esta venta como perdida?')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Guardar' })).toBeNull();
+    expect((screen.getByRole('button', { name: 'Aceptar' }) as HTMLButtonElement).disabled).toBe(false);
+
+    await user.click(radio('En negociación'));
+    expect(screen.queryByText(QUESTION)).toBeNull();
+  });
+
+  it('persona interesada: al aceptar pasa a ganada y aparece "Venta ganada. [Nombre] ahora es cliente."', async () => {
+    vi.mocked(changeSaleStage).mockResolvedValue({ contactBecameClient: true, contactName: 'Bruno Ficticio Solís' });
+    const { user } = await openDialog();
+    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('ganada'));
+    await user.click(radio('Venta ganada'));
+    await user.click(screen.getByRole('button', { name: 'Aceptar' }));
+
+    await waitFor(() => expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'contactado', 'ganada', undefined));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect((await screen.findByRole('status')).textContent).toBe('Venta ganada. Bruno Ficticio Solís ahora es cliente.');
+    const stageRow = screen.getByText('Etapa', { selector: 'dt' }).parentElement as HTMLElement;
+    expect(within(stageRow).getByText('Venta ganada')).toBeTruthy();
+  });
+
+  it('si el contacto ya era cliente: "Venta ganada correctamente."', async () => {
+    vi.mocked(changeSaleStage).mockResolvedValue({ contactBecameClient: false, contactName: null });
+    const { user } = await openDialog();
+    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('ganada'));
+    await user.click(radio('Venta ganada'));
+    await user.click(screen.getByRole('button', { name: 'Aceptar' }));
+    expect((await screen.findByRole('status')).textContent).toBe('Venta ganada correctamente.');
+  });
+
+  it('una venta ganada ya no puede cambiar de etapa: el botón "Cambiar etapa" desaparece', async () => {
+    const { user } = await openDialog();
+    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('ganada'));
+    await user.click(radio('Venta ganada'));
+    await user.click(screen.getByRole('button', { name: 'Aceptar' }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    await screen.findByRole('status');
+    expect(screen.queryByRole('button', { name: 'Cambiar etapa' })).toBeNull();
+    // Editar sigue (solo notas, HU-309).
+    expect(screen.getByRole('button', { name: 'Editar' })).toBeTruthy();
+  });
+
+  it('"Cancelar" no cambia nada', async () => {
+    const { user } = await openDialog();
+    await user.click(radio('Venta ganada'));
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(changeSaleStage).not.toHaveBeenCalled();
+    expect(loadSaleDetail).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('status')).toBeNull();
+    const stageRow = screen.getByText('Etapa', { selector: 'dt' }).parentElement as HTMLElement;
+    expect(within(stageRow).getByText('Contactado')).toBeTruthy();
+    // Al abrirla otra vez parte de la etapa actual, sin la pregunta.
+    await user.click(screen.getByRole('button', { name: 'Cambiar etapa' }));
+    await screen.findByRole('dialog');
+    expect(screen.queryByText(QUESTION)).toBeNull();
+  });
+
+  it('si falla el guardado lo avisa y no muestra la confirmación', async () => {
+    vi.mocked(changeSaleStage).mockRejectedValue(new Error('sin red'));
+    const { user } = await openDialog();
+    await user.click(radio('Venta ganada'));
+    await user.click(screen.getByRole('button', { name: 'Aceptar' }));
+    expect((await screen.findByRole('alert')).textContent).toBe('No se pudo cambiar la etapa. Intente de nuevo.');
+    expect(screen.getByRole('dialog')).toBeTruthy();
+    expect(screen.queryByRole('status')).toBeNull();
   });
 });

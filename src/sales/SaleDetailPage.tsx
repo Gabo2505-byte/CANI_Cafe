@@ -14,7 +14,7 @@ import {
 import { ChangeStageDialog } from './ChangeStageDialog';
 import { loadSaleDetail } from './saleDetailApi';
 import { EDIT_MESSAGES } from './saleEdit';
-import { canChangeStage, STAGE_CHANGE_MESSAGES } from './stageChange';
+import { canChangeStage, STAGE_CHANGE_MESSAGES, stageChangeNotice, type StageChangeResult } from './stageChange';
 import { SaleEditForm } from './SaleEditForm';
 import { TimedNotice } from './TimedNotice';
 
@@ -64,10 +64,10 @@ export function SaleDetailPage() {
   }
 
   // HU-310: la etapa ya se cambió y quedó en el historial; se vuelve a leer para mostrarla.
-  async function handleStageChanged(newStage: SaleStage) {
+  async function handleStageChanged(newStage: SaleStage, result: StageChangeResult) {
     await load();
     setChangingStage(false);
-    showNotice(newStage === 'perdida' ? STAGE_CHANGE_MESSAGES.lost : STAGE_CHANGE_MESSAGES.changed);
+    showNotice(stageChangeNotice(newStage, result));
   }
 
   return (
@@ -107,7 +107,7 @@ interface SaleDetailProps {
   changingStage: boolean;
   onChangeStage: () => void;
   onCancelChangeStage: () => void;
-  onStageChanged: (newStage: SaleStage) => void;
+  onStageChanged: (newStage: SaleStage, result: StageChangeResult) => void;
   onCancel: () => void;
   onSaved: () => void;
 }

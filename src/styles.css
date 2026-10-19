@@ -1028,3 +1028,18 @@ textarea[aria-invalid='true'] {
   font-weight: 600;
   color: #7a1c14;
 }
+
+/* HU-313: pregunta al marcar una posible venta como ganada */
+.win-confirm {
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  background: #eef6ef;
+  border: 1px solid #b7d7bc;
+  border-radius: 6px;
+}
+
+.win-question {
+  margin: 0;
+  font-weight: 600;
+  color: #1e5631;
+}

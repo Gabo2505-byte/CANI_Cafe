@@ -1,13 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
   canChangeStage,
+  classificationAfterWin,
   isValidStageChange,
   LOSS_REASON_MAX,
   lossReasonError,
   normalizeLossReason,
+  stageChangeNotice,
   stageOptions,
+  STAGE_CHANGE_MESSAGES,
+  wonAndConvertedMessage,
 } from '../../src/sales/stageChange';
-import { OPEN_SALE_STAGES, SALE_STAGES, type SaleStage } from '../../src/shared/types';
+import { CONTACT_CLASSIFICATIONS, OPEN_SALE_STAGES, SALE_STAGES, type SaleStage } from '../../src/shared/types';
 
 describe('HU-310 quién puede cambiar de etapa', () => {
   it.each(OPEN_SALE_STAGES)('una posible venta en "%s" sí', (stage) => {
@@ -37,38 +41,33 @@ describe('HU-310 opciones de la ventana', () => {
     }
   });
 
-  it('desde una etapa abierta se pueden elegir las otras tres abiertas (hacia adelante y hacia atrás) y "Venta perdida"', () => {
+  it('desde una etapa abierta se pueden elegir las otras cinco, hacia adelante y hacia atrás, incluidas ganada y perdida', () => {
     for (const from of OPEN_SALE_STAGES) {
       const selectable = stageOptions(from)
         .filter((o) => o.selectable)
         .map((o) => o.stage);
-      expect(selectable).toEqual([...OPEN_SALE_STAGES.filter((s) => s !== from), 'perdida']);
+      expect(selectable).toEqual(SALE_STAGES.filter((s) => s !== from));
     }
   });
 
-  it('"Venta ganada" aparece pero todavía no se puede elegir (HU-313); la actual tampoco cuenta como cambio', () => {
-    const options = stageOptions('nuevo_interesado');
-    expect(options.find((o) => o.stage === 'ganada')).toMatchObject({ selectable: false, current: false });
-    expect(options.find((o) => o.stage === 'perdida')).toMatchObject({ selectable: true, current: false });
-    expect(options.find((o) => o.stage === 'nuevo_interesado')).toMatchObject({ selectable: false, current: true });
+  it('la etapa actual no cuenta como un cambio', () => {
+    expect(stageOptions('nuevo_interesado').find((o) => o.stage === 'nuevo_interesado')).toMatchObject({
+      selectable: false,
+      current: true,
+    });
   });
 });
 
-describe('HU-310/HU-311 cambios válidos', () => {
-  it('toda pareja de etapas abiertas distintas es válida', () => {
+describe('HU-310/HU-311/HU-313 cambios válidos', () => {
+  it('desde cualquier etapa abierta a cualquier otra etapa distinta, incluidas ganada y perdida', () => {
     for (const from of OPEN_SALE_STAGES) {
-      for (const to of OPEN_SALE_STAGES) expect(isValidStageChange(from, to)).toBe(from !== to);
+      for (const to of SALE_STAGES) expect(isValidStageChange(from, to)).toBe(from !== to);
     }
   });
 
-  it('desde cualquier etapa abierta se puede marcar como perdida', () => {
-    for (const from of OPEN_SALE_STAGES) expect(isValidStageChange(from, 'perdida')).toBe(true);
-  });
-
-  it('no se puede salir de ganada ni de perdida, ni quedarse en la misma etapa, ni (todavía) ir a ganada', () => {
+  it('no se puede salir de ganada ni de perdida (la perdida se reabre con HU-312)', () => {
     const closed: SaleStage[] = ['ganada', 'perdida'];
     for (const from of closed) for (const to of SALE_STAGES) expect(isValidStageChange(from, to)).toBe(false);
-    for (const from of OPEN_SALE_STAGES) expect(isValidStageChange(from, 'ganada')).toBe(false);
   });
 });
 
@@ -88,5 +87,47 @@ describe('HU-311 motivo de la pérdida', () => {
     expect(LOSS_REASON_MAX).toBe(250);
     expect(lossReasonError('m'.repeat(250))).toBeNull();
     expect(lossReasonError('m'.repeat(251))).toBe('El motivo acepta como máximo 250 caracteres.');
+  });
+});
+
+describe('HU-313 conversión a cliente', () => {
+  it('una "Persona interesada" pasa a "Cliente"', () => {
+    expect(classificationAfterWin('persona_interesada')).toBe('cliente');
+  });
+
+  it('quien ya es cliente sigue siéndolo', () => {
+    expect(classificationAfterWin('cliente')).toBe('cliente');
+  });
+
+  it('distribuidor y otro no se tocan (el PDF no los menciona)', () => {
+    expect(classificationAfterWin('distribuidor')).toBe('distribuidor');
+    expect(classificationAfterWin('otro')).toBe('otro');
+  });
+
+  it('solo "Persona interesada" cambia de clasificación', () => {
+    const changed = CONTACT_CLASSIFICATIONS.filter((c) => classificationAfterWin(c) !== c);
+    expect(changed).toEqual(['persona_interesada']);
+  });
+});
+
+describe('HU-313 textos', () => {
+  it('la pregunta es la del documento', () => {
+    expect(STAGE_CHANGE_MESSAGES.winQuestion).toBe(
+      '¿Confirma que esta venta fue ganada? El contacto pasará a ser cliente y la venta ya no podrá cambiar de etapa.',
+    );
+  });
+
+  it('el mensaje con el nombre del contacto', () => {
+    expect(wonAndConvertedMessage('Ana Prueba Mora')).toBe('Venta ganada. Ana Prueba Mora ahora es cliente.');
+  });
+
+  it('franja verde de cada cambio', () => {
+    const none = { contactBecameClient: false, contactName: null };
+    expect(stageChangeNotice('ganada', { contactBecameClient: true, contactName: 'Ana Prueba Mora' })).toBe(
+      'Venta ganada. Ana Prueba Mora ahora es cliente.',
+    );
+    expect(stageChangeNotice('ganada', none)).toBe('Venta ganada correctamente.');
+    expect(stageChangeNotice('perdida', none)).toBe('Posible venta marcada como perdida.');
+    expect(stageChangeNotice('contactado', none)).toBe('Etapa actualizada correctamente.');
   });
 });
