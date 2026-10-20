@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router';
+import { NavLink } from 'react-router';
 import { useSession } from '../auth/SessionContext';
 import { LOGOUT_ERROR_MESSAGE } from '../auth/sessionMessages';
 import { useAlertCount } from '../sales/useAlertCount';
+import { Logo } from '../shared/ui/Logo';
 import { ROUTES } from './routes';
 
 const NAV_ITEMS = [
@@ -33,9 +34,7 @@ export function TopBar() {
 
   return (
     <header className="topbar">
-      <Link to={ROUTES.contacts} className="topbar-brand">
-        CANI Café
-      </Link>
+      <Logo variant="bar" to={ROUTES.contacts} />
       <nav aria-label="Principal">
         <ul className="topbar-nav">
           {NAV_ITEMS.map((item) => (

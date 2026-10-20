@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router';
 import { ROUTES, safeRedirect } from '../app/routes';
+import { Logo } from '../shared/ui/Logo';
 import { useAuth } from './AuthContext';
 import { loginErrorFromAuth, validateLoginInput, type LoginErrors } from './loginErrors';
 import { PasswordInput } from './PasswordInput';
@@ -62,7 +63,7 @@ export function LoginPage() {
   return (
     <main className="login">
       <form className="card" onSubmit={handleSubmit} noValidate>
-        <h1>CANI Café</h1>
+        <Logo variant="login" />
         {notice && (
           <p className="notice-success" role="status">
             {notice}

@@ -1,0 +1,47 @@
+{
+  "loginH1": [
+    {
+      "nombre": "CANI Café",
+      "nivel": 1
+    }
+  ],
+  "loginH1Texto": "CANI Café",
+  "logoBarra1x": {
+    "x": 40,
+    "y": 17.59375,
+    "height": 40,
+    "width": 170.296875
+  },
+  "logoBarra2x": {
+    "x": 40,
+    "y": 17.59375,
+    "height": 40,
+    "width": 170.296875
+  },
+  "enlaceLogo": [
+    "CANI Café"
+  ],
+  "enlaceLogoTexto": "CANI Café",
+  "imagenesDecorativas": [
+    {
+      "alt": "",
+      "alto": 40,
+      "cargada": true
+    },
+    {
+      "alt": "",
+      "alto": 24,
+      "cargada": true
+    }
+  ],
+  "favicon": {
+    "enlaces": [
+      "/favicon.ico",
+      "/favicon.png"
+    ],
+    "respuestas": [
+      "/favicon.ico: 200 image/x-icon",
+      "/favicon.png: 200 image/png"
+    ]
+  }
+}
