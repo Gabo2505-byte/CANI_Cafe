@@ -1,0 +1,54 @@
+[
+  {
+    "pantalla": "Tablero",
+    "enlacesDeLaBarra": [
+      {
+        "texto": "Contactos",
+        "visible": "CONTACTOS"
+      },
+      {
+        "texto": "Gestión de ventas",
+        "visible": "GESTIÓN DE VENTAS"
+      },
+      {
+        "texto": "Avisos4",
+        "visible": "AVISOS\n4"
+      }
+    ],
+    "h1": {
+      "texto": "Gestión de ventas",
+      "visible": "GESTIÓN DE VENTAS"
+    },
+    "botonesConNombreAccesible": [
+      "Nuevo registro"
+    ],
+    "botonTextoVisible": "+Nuevo registro",
+    "plusAriaHidden": "true"
+  },
+  {
+    "pantalla": "Formulario",
+    "h1": "Nuevo registro"
+  },
+  {
+    "pantalla": "Ficha, pestaña de ventas",
+    "pestanas": [
+      "Comunicaciones (2)",
+      "Posibles ventas (3)",
+      "Productos de interés (3)"
+    ],
+    "botonesConNombreAccesible": [
+      "Nuevo registro"
+    ],
+    "botonTextoVisible": "+Nuevo registro"
+  },
+  {
+    "pantalla": "Detalle",
+    "enlaceVolver": [
+      "← Volver a gestión de ventas"
+    ]
+  },
+  {
+    "pantalla": "Detalle",
+    "alPulsarVolverLlevaA": "/posibles-ventas"
+  }
+]
