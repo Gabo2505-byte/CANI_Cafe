@@ -224,6 +224,12 @@ button:hover:not(:disabled) {
   border-color: var(--color-accent-hover);
 }
 
+/* "+" decorativo de los botones de agregar (AddButtonLabel; aria-hidden, fuera del nombre accesible) */
+.button-plus {
+  margin-right: 0.4rem;
+  font-weight: 700;
+}
+
 button:active:not(:disabled) {
   transform: translateY(1px);
 }

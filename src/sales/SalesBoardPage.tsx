@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../app/routes';
+import { SALES_LABELS } from '../shared/constants/labels';
 import { useLocationNotice } from '../shared/hooks/useLocationNotice';
+import { AddButtonLabel } from '../shared/ui/AddButtonLabel';
 import { formatColones } from '../shared/utils/money';
 import { BOARD_MESSAGES, buildBoard, type BoardSale } from './board';
-import { SALE_MESSAGES } from './saleForm';
 import { getContactNames } from './contactSearchApi';
 import { listAlerts } from './alertsApi';
 import { SaleCard } from './SaleCard';
@@ -17,7 +18,7 @@ type BoardState =
   | { status: 'ready'; items: BoardSale[]; alertSaleIds: Set<string>; overdueSaleIds: Set<string> };
 
 /**
- * Pantalla "Posibles ventas". HU-301: botón "Nueva posible venta" y confirmación al registrar una.
+ * Pantalla "Gestión de ventas". HU-301: botón "+ Nuevo registro" y confirmación al registrar una.
  * HU-305: tablero de seis columnas, una por etapa, con conteo, suma de montos y tarjetas.
  * HU-314/315: la tarjeta muestra la campana si la venta tiene un aviso pendiente, y la fecha de seguimiento en rojo
  * si tiene el aviso "Seguimiento vencido" (el mismo cálculo de día calendario de Costa Rica de HU-314).
@@ -57,9 +58,9 @@ export function SalesBoardPage() {
     <main className="page page-wide">
       <TimedNotice message={notice} />
       <div className="page-header">
-        <h1>Posibles ventas</h1>
+        <h1>{SALES_LABELS.boardTitle}</h1>
         <button type="button" onClick={() => navigate(ROUTES.newSale)}>
-          {SALE_MESSAGES.newSale}
+          <AddButtonLabel>{SALES_LABELS.newRecord}</AddButtonLabel>
         </button>
       </div>
 

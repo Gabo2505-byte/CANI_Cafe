@@ -101,11 +101,11 @@ const row = (label: string) => screen.getByText(label, { selector: 'dt' }).paren
 const valueOf = (label: string) => within(row(label)).getByText((_, el) => el?.tagName === 'DD').textContent;
 
 describe('HU-308 Detalle de la posible venta', () => {
-  it('arriba tiene el enlace "← Volver a posibles ventas", el título y el contacto', async () => {
+  it('arriba tiene el enlace "← Volver a gestión de ventas", el título y el contacto', async () => {
     vi.mocked(loadSaleDetail).mockResolvedValue(detail());
     renderDetail();
     expect(await screen.findByRole('heading', { level: 1, name: 'Café en grano para cafetería' })).toBeTruthy();
-    expect(screen.getByRole('link', { name: '← Volver a posibles ventas' }).getAttribute('href')).toBe('/posibles-ventas');
+    expect(screen.getByRole('link', { name: '← Volver a gestión de ventas' }).getAttribute('href')).toBe('/posibles-ventas');
     expect(screen.getByRole('link', { name: 'Bruno Ficticio Solís' }).getAttribute('href')).toBe('/contactos/contact-002');
     expect(loadSaleDetail).toHaveBeenCalledWith('sale-001');
   });
@@ -120,7 +120,7 @@ describe('HU-308 Detalle de la posible venta', () => {
   it('el enlace de volver lleva al tablero', async () => {
     vi.mocked(loadSaleDetail).mockResolvedValue(detail());
     renderDetail();
-    await userEvent.setup().click(await screen.findByRole('link', { name: '← Volver a posibles ventas' }));
+    await userEvent.setup().click(await screen.findByRole('link', { name: '← Volver a gestión de ventas' }));
     expect(currentLocation.pathname).toBe('/posibles-ventas');
   });
 
@@ -178,7 +178,7 @@ describe('HU-308 Detalle de la posible venta', () => {
     vi.mocked(loadSaleDetail).mockResolvedValue(null);
     renderDetail('no-existe');
     expect((await screen.findByRole('alert')).textContent).toBe('No se encontró la posible venta.');
-    expect(screen.getByRole('link', { name: '← Volver a posibles ventas' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: '← Volver a gestión de ventas' })).toBeTruthy();
     expect(screen.queryByRole('table')).toBeNull();
   });
 

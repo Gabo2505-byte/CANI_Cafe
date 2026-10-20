@@ -47,15 +47,15 @@ describe('HU-103 Navegar por el sistema interno', () => {
     expect(screen.queryByRole('banner')).toBeNull();
   });
 
-  it('muestra de izquierda a derecha: CANI Café, Contactos, Posibles ventas, Avisos y Cerrar sesión', () => {
+  it('muestra de izquierda a derecha: CANI Café, Contactos, Gestión de ventas, Avisos y Cerrar sesión', () => {
     renderAt('/contactos');
     const items = [...topBar().querySelectorAll('a, button')].map((el) => el.textContent);
-    expect(items).toEqual(['CANI Café', 'Contactos', 'Posibles ventas', 'Avisos', 'Cerrar sesión']);
+    expect(items).toEqual(['CANI Café', 'Contactos', 'Gestión de ventas', 'Avisos', 'Cerrar sesión']);
   });
 
   it.each([
     ['Contactos', '/avisos'],
-    ['Posibles ventas', '/contactos'],
+    ['Gestión de ventas', '/contactos'],
     ['Avisos', '/contactos'],
   ])('clic en "%s" abre esa pantalla y la opción queda resaltada', async (name, startPath) => {
     const user = userEvent.setup();
@@ -65,7 +65,7 @@ describe('HU-103 Navegar por el sistema interno', () => {
     expect(screen.getByRole('heading', { level: 1, name })).toBeTruthy();
     expect(option(name).getAttribute('aria-current')).toBe('page');
     expect(option(name).classList.contains('active')).toBe(true);
-    const others = ['Contactos', 'Posibles ventas', 'Avisos'].filter((n) => n !== name);
+    const others = ['Contactos', 'Gestión de ventas', 'Avisos'].filter((n) => n !== name);
     for (const other of others) expect(option(other).getAttribute('aria-current')).toBeNull();
   });
 

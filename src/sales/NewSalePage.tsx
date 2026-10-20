@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { ROUTES } from '../app/routes';
 import { listActiveProducts } from '../products/productsApi';
+import { SALES_LABELS } from '../shared/constants/labels';
 import type { NoticeState } from '../shared/hooks/useLocationNotice';
 import type { Contact, Product } from '../shared/types';
 import { toCostaRicaDateKey } from '../shared/utils/dates';
@@ -29,7 +30,7 @@ import { createSale, listOpenSaleTitles } from './salesApi';
 type FixedContactState = { status: 'none' } | { status: 'loading' } | { status: 'notFound' } | { status: 'ready'; contact: Contact };
 
 /**
- * HU-301: formulario "Nueva posible venta" con siete datos: contacto (HU-302), título, etapa, monto,
+ * HU-301: formulario "Nuevo registro" (crear una posible venta) con siete datos: contacto (HU-302), título, etapa, monto,
  * fecha de seguimiento y notas (HU-303) y productos (HU-304). Con `?contactId=` (desde la ficha)
  * el contacto viene elegido y no se puede cambiar.
  */
@@ -141,18 +142,18 @@ export function NewSalePage() {
   if (fixed.status === 'notFound') {
     return (
       <main className="page">
-        <h1>{SALE_MESSAGES.newSale}</h1>
+        <h1>{SALES_LABELS.newRecordTitle}</h1>
         <p className="field-error" role="alert">
           {SALE_MESSAGES.contactNotFound}
         </p>
-        <Link to={ROUTES.salesBoard}>Volver a Posibles ventas</Link>
+        <Link to={ROUTES.salesBoard}>{SALES_LABELS.backToBoard}</Link>
       </main>
     );
   }
 
   return (
     <main className="page">
-      <h1>{SALE_MESSAGES.newSale}</h1>
+      <h1>{SALES_LABELS.newRecordTitle}</h1>
       {fixed.status === 'loading' ? (
         <p>Cargando contacto…</p>
       ) : (

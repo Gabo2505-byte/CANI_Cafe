@@ -98,12 +98,12 @@ async function fillRequired(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe('HU-301 Crear una posible venta', () => {
-  it('la pantalla "Posibles ventas" tiene el botón "Nueva posible venta", que abre el formulario', async () => {
+  it('la pantalla "Gestión de ventas" tiene el botón "+ Nuevo registro", que abre el formulario "Nuevo registro"', async () => {
     const user = userEvent.setup();
     renderAt('/posibles-ventas');
-    await user.click(screen.getByRole('button', { name: 'Nueva posible venta' }));
+    await user.click(screen.getByRole('button', { name: 'Nuevo registro' }));
     expect(currentLocation.pathname).toBe('/posibles-ventas/nueva');
-    expect(screen.getByRole('heading', { name: 'Nueva posible venta' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 1, name: 'Nuevo registro' })).toBeTruthy();
   });
 
   it('el formulario tiene los siete datos', async () => {

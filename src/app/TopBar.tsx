@@ -3,13 +3,14 @@ import { NavLink } from 'react-router';
 import { useSession } from '../auth/SessionContext';
 import { LOGOUT_ERROR_MESSAGE } from '../auth/sessionMessages';
 import { useAlertCount } from '../sales/useAlertCount';
+import { NAV_LABELS } from '../shared/constants/labels';
 import { Logo } from '../shared/ui/Logo';
 import { ROUTES } from './routes';
 
 const NAV_ITEMS = [
-  { to: ROUTES.contacts, label: 'Contactos' },
-  { to: ROUTES.salesBoard, label: 'Posibles ventas' },
-  { to: ROUTES.alerts, label: 'Avisos' },
+  { to: ROUTES.contacts, label: NAV_LABELS.contacts },
+  { to: ROUTES.salesBoard, label: NAV_LABELS.sales },
+  { to: ROUTES.alerts, label: NAV_LABELS.alerts },
 ] as const;
 
 /** HU-103: barra superior de todas las pantallas internas. HU-104: cerrar sesión. */
