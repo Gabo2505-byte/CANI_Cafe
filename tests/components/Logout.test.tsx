@@ -140,7 +140,7 @@ describe('HU-104 Cerrar sesión', () => {
       </AuthContext.Provider>,
     );
     expect(currentLocation.pathname).toBe('/ingreso');
-    expect(screen.queryByRole('heading', { level: 1, name: 'Posibles ventas' })).toBeNull();
+    expect(screen.queryByRole('heading', { level: 1, name: 'Gestión de ventas' })).toBeNull();
     expect(screen.queryByText(LOGOUT_SUCCESS_MESSAGE)).toBeNull();
   });
 

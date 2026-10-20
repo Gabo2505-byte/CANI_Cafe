@@ -198,7 +198,7 @@ describe('HU-316 criterio 1: círculo rojo en la barra', () => {
     await waitFor(() => expect(within(avisosLink()).getByText('1')).toBeTruthy());
 
     vi.mocked(listAlerts).mockResolvedValue([]);
-    await user.click(within(screen.getByRole('banner')).getByRole('link', { name: 'Posibles ventas' }));
+    await user.click(within(screen.getByRole('banner')).getByRole('link', { name: 'Gestión de ventas' }));
     await waitFor(() => expect(document.querySelector('.topbar-count')).toBeNull());
   });
 });

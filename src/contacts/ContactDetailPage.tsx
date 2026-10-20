@@ -11,7 +11,8 @@ import { COMMUNICATION_MESSAGES, mediumLabel } from '../communications/communica
 import { listCommunicationsPage } from '../communications/communicationsApi';
 import type { CommunicationsCursor } from '../communications/communicationsRepository';
 import { RegisterCommunicationDialog } from '../communications/RegisterCommunicationDialog';
-import { SALE_MESSAGES } from '../sales/saleForm';
+import { SALES_LABELS } from '../shared/constants/labels';
+import { AddButtonLabel } from '../shared/ui/AddButtonLabel';
 import { TimedNotice } from '../sales/TimedNotice';
 import { formatDateNumericCR } from '../shared/utils/dates';
 import {
@@ -228,11 +229,11 @@ function ContactTabs({ contactId, records, savedCount, onTabChange, onRegisterCo
             {savedCount > 0 && <SavedNotice key={savedCount} message={COMMUNICATION_MESSAGES.saved} />}
           </>
         )}
-        {/* HU-301: crear una posible venta para este contacto (el formulario lo trae ya elegido). */}
+        {/* HU-301: botón "+ Nuevo registro" para crear una venta de este contacto (el formulario lo trae ya elegido). */}
         {active === 'ventas' && (
           <div className="tab-panel-actions">
             <button type="button" onClick={() => navigate(newSalePath(contactId))}>
-              {SALE_MESSAGES.newSale}
+              <AddButtonLabel>{SALES_LABELS.newRecord}</AddButtonLabel>
             </button>
           </div>
         )}

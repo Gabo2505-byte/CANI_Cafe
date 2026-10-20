@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-// HU-301 (criterio 1): botón "Nueva posible venta" en la pestaña "Posibles ventas" de la ficha del contacto
+// HU-301 (criterio 1): botón "+ Nuevo registro" en la pestaña "Posibles ventas" de la ficha del contacto
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { User as FirebaseUser } from 'firebase/auth';
@@ -97,10 +97,10 @@ async function openSalesTab() {
   return user;
 }
 
-describe('HU-301 botón "Nueva posible venta" en la ficha', () => {
+describe('HU-301 botón "+ Nuevo registro" en la ficha', () => {
   it('aparece en la pestaña "Posibles ventas", arriba a la derecha, aunque el contacto no tenga ventas', async () => {
     await openSalesTab();
-    const button = await screen.findByRole('button', { name: 'Nueva posible venta' });
+    const button = await screen.findByRole('button', { name: 'Nuevo registro' });
     expect(button.closest('.tab-panel-actions')).not.toBeNull();
     expect(await screen.findByText('Este contacto no tiene posibles ventas.')).toBeTruthy();
   });
@@ -109,14 +109,14 @@ describe('HU-301 botón "Nueva posible venta" en la ficha', () => {
     const user = userEvent.setup();
     renderContact();
     await screen.findByRole('tab', { name: /^Comunicaciones/ });
-    expect(screen.queryByRole('button', { name: 'Nueva posible venta' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Nuevo registro' })).toBeNull();
     await user.click(screen.getByRole('tab', { name: /^Productos de interés/ }));
-    expect(screen.queryByRole('button', { name: 'Nueva posible venta' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Nuevo registro' })).toBeNull();
   });
 
   it('al darle clic abre el formulario con este contacto ya elegido y sin poder cambiarlo', async () => {
     const user = await openSalesTab();
-    await user.click(await screen.findByRole('button', { name: 'Nueva posible venta' }));
+    await user.click(await screen.findByRole('button', { name: 'Nuevo registro' }));
 
     expect(currentLocation.pathname).toBe('/posibles-ventas/nueva');
     expect(currentLocation.search).toBe('?contactId=contact-002');

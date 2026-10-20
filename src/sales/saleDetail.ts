@@ -1,8 +1,9 @@
 // HU-308: datos y textos del detalle de una posible venta (funciones puras, sin Firebase).
+import { SALES_LABELS } from '../shared/constants/labels';
 import type { Sale, StageHistory } from '../shared/types';
 
 export const DETAIL_MESSAGES = {
-  back: '← Volver a posibles ventas',
+  back: SALES_LABELS.backToBoard,
   loading: 'Cargando…',
   notFound: 'No se encontró la posible venta.',
   loadError: 'No se pudo cargar la posible venta. Intente de nuevo.',

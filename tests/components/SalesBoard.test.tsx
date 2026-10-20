@@ -151,11 +151,28 @@ describe('HU-305 Tablero de posibles ventas', () => {
     expect(currentLocation.pathname).toBe('/posibles-ventas/sale-xyz');
   });
 
-  it('el botón "Nueva posible venta" sigue ahí', async () => {
+  it('el botón "+ Nuevo registro" sigue ahí', async () => {
     vi.mocked(listBoardSales).mockResolvedValue([]);
     renderBoard();
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Nueva posible venta' }));
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Nuevo registro' }));
     expect(currentLocation.pathname).toBe('/posibles-ventas/nueva');
+  });
+
+  it('el nombre accesible del botón es exactamente "Nuevo registro" (sin el "+")', async () => {
+    vi.mocked(listBoardSales).mockResolvedValue([]);
+    renderBoard();
+    const button = screen.getByRole('button', { name: /registro/ });
+    expect(button).toBe(screen.getByRole('button', { name: 'Nuevo registro' }));
+    expect(screen.queryByRole('button', { name: '+ Nuevo registro' })).toBeNull();
+  });
+
+  it('el "+" del botón se ve pero es decorativo (aria-hidden)', async () => {
+    vi.mocked(listBoardSales).mockResolvedValue([]);
+    renderBoard();
+    const button = screen.getByRole('button', { name: 'Nuevo registro' });
+    const plus = button.querySelector('[aria-hidden="true"]');
+    expect(plus?.textContent).toBe('+');
+    expect(button.textContent).toBe('+Nuevo registro');
   });
 
   it('si falla la carga lo avisa y no muestra columnas', async () => {
