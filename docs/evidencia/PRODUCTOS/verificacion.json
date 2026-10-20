@@ -1,0 +1,106 @@
+{
+  "filaVacia": {
+    "presentacionDeshabilitada": true,
+    "opcionesVariedad": [
+      "Seleccione una variedad",
+      "Villa Sarchí",
+      "Caturra",
+      "Catuaí",
+      "Kenia",
+      "San Roque",
+      "Milenio",
+      "Centroamericano",
+      "Casiopea",
+      "Geisha"
+    ],
+    "opcionesPresentacion": [
+      "Seleccione una presentación"
+    ],
+    "variedadesCaben": {
+      "anchoUtil": 189,
+      "masAncha": {
+        "t": "Seleccione una variedad",
+        "w": 186
+      },
+      "opcionesQueNoCaben": []
+    }
+  },
+  "alElegirVariedad": {
+    "presentacionHabilitada": true,
+    "opcionesPresentacion": [
+      "Seleccione una presentación",
+      "Bolsa de 250 g, grano entero",
+      "Bolsa de 250 g, molido",
+      "Bolsa de 340 g, grano entero",
+      "Bolsa de 340 g, molido",
+      "Bolsa de 500 g, grano entero",
+      "Bolsa de 500 g, molido",
+      "Bolsa de 1 kg, grano entero",
+      "Bolsa de 1 kg, molido"
+    ],
+    "presentacionesCaben": {
+      "anchoUtil": 229,
+      "masAncha": {
+        "t": "Bolsa de 340 g, grano entero",
+        "w": 220
+      },
+      "opcionesQueNoCaben": []
+    }
+  },
+  "filaCompleta": {
+    "variedad": {
+      "texto": "Centroamericano",
+      "anchoDelTexto": 131,
+      "anchoUtilDelSelect": 189,
+      "seCorta": false
+    },
+    "presentacion": {
+      "texto": "Bolsa de 250 g, grano entero",
+      "anchoDelTexto": 219,
+      "anchoUtilDelSelect": 229,
+      "seCorta": false
+    }
+  },
+  "alCambiarLaVariedad": {
+    "valor": "",
+    "textoMostrado": "Seleccione una presentación"
+  },
+  "errores": [
+    "Seleccione un producto o elimine la fila.",
+    "Ingrese una cantidad entre 1 y 9999.",
+    "Seleccione un producto o elimine la fila.",
+    "Ingrese una cantidad entre 1 y 9999.",
+    "Este producto ya fue agregado."
+  ],
+  "tecladoVariedadPorPrefijo": "Geisha",
+  "tecladoPresentacion": "Bolsa de 250 g, grano entero",
+  "ordenDeTab": [
+    "Variedad del producto 1",
+    "(presentación deshabilitada) → Cantidad del producto 1",
+    "Presentación del producto 1",
+    "Cantidad del producto 1",
+    "Quitar producto 1"
+  ],
+  "edicionPrecarga": [
+    {
+      "variedad": "Caturra",
+      "presentacion": "Bolsa de 1 kg, grano entero",
+      "cantidad": "10"
+    },
+    {
+      "variedad": "Caturra",
+      "presentacion": "Bolsa de 340 g, grano entero",
+      "cantidad": "20"
+    }
+  ],
+  "detalleProductos": [
+    "Caturra · Bolsa de 1 kg, grano entero — 10 unidades",
+    "Caturra · Bolsa de 340 g, grano entero — 20 unidades"
+  ],
+  "productosDeInteres": [
+    "Caturra · Bolsa de 1 kg, grano entero",
+    "Caturra · Bolsa de 340 g, grano entero",
+    "Villa Sarchí · Bolsa de 1 kg, grano entero",
+    "Villa Sarchí · Bolsa de 1 kg, molido"
+  ]
+}
