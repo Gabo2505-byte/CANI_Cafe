@@ -222,6 +222,44 @@ describe('HU-314/HU-315 campana en el tablero', () => {
   });
 });
 
+describe('Rediseño: fecha de seguimiento vencida en rojo en la tarjeta', () => {
+  const old = Timestamp.fromDate(new Date('2026-10-05T15:00:00Z'));
+  const overdueAlert = (saleId: string) => ({
+    id: `${saleId}:seguimiento_vencido`,
+    kind: 'seguimiento_vencido' as const,
+    saleId,
+    contactId: 'contact-001',
+    contactName: 'Ana Prueba Mora',
+    saleTitle: `Venta ${saleId}`,
+    stage: 'contactado' as const,
+    message: 'Seguimiento vencido',
+    date: old.toDate(),
+  });
+  // El color rojo lo da la clase "is-overdue" en styles.css (jsdom no aplica estilos).
+  const followUpOf = (saleId: string) =>
+    screen.getAllByRole('link').find((l) => l.getAttribute('href') === `/posibles-ventas/${saleId}`)!.querySelector('.sale-card-follow-up')!;
+
+  it('una venta con el aviso "Seguimiento vencido" muestra su fecha de seguimiento en rojo', async () => {
+    vi.mocked(listBoardSales).mockResolvedValue([sale('s1', 'contactado', { nextFollowUpAt: old })]);
+    vi.mocked(listAlerts).mockResolvedValue([overdueAlert('s1')]);
+    renderBoard();
+    await screen.findAllByRole('link', { name: /Ana Prueba Mora/ });
+    expect(followUpOf('s1').textContent).toBe('Seguimiento: 05/10/2026');
+    expect(followUpOf('s1').className).toContain('is-overdue');
+  });
+
+  it('una venta ganada con fecha de seguimiento vieja no se pinta en rojo (no tiene aviso)', async () => {
+    vi.mocked(listBoardSales).mockResolvedValue([
+      sale('s1', 'ganada', { nextFollowUpAt: old, stageChangedAt: Timestamp.fromDate(new Date()) }),
+    ]);
+    vi.mocked(listAlerts).mockResolvedValue([]);
+    renderBoard();
+    await screen.findAllByRole('link', { name: /Ana Prueba Mora/ });
+    expect(followUpOf('s1').textContent).toBe('Seguimiento: 05/10/2026');
+    expect(followUpOf('s1').className).not.toContain('is-overdue');
+  });
+});
+
 describe('HU-305 campana de aviso en la tarjeta', () => {
   const item: BoardSale = { sale: sale('s1', 'contactado'), contactName: 'Ana Prueba Mora' };
   const renderCard = (hasAlert?: boolean) =>
