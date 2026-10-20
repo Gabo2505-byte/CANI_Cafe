@@ -1,8 +1,10 @@
-// Datos de prueba 100% ficticios: nombres inventados, correos @example.com / .test, teléfonos 0000xxxx.
+// Datos de prueba ficticios: nombres inventados, correos @example.com / .test, teléfonos 0000xxxx. La única excepción
+// es el catálogo de productos (catalogData.ts), que es el oficial de CANI Café.
 // IDs y fechas fijos para que el seed sea idempotente y determinista.
 import type { Timestamp } from 'firebase/firestore';
 import type { Communication, Contact, Product, Sale, SaleProduct, StageHistory, User } from '../../src/shared/types';
 import { toSortKey } from '../../src/shared/utils/text';
+import { buildCatalogProducts, catalogProductId } from './catalogData';
 
 /** Documento listo para escribir: sin `id` (va como id del doc) y con Date en lugar de Timestamp. */
 type ToDate<V> = V extends Timestamp ? Date : V;
@@ -194,75 +196,26 @@ export const seedSales: Seeded<Sale>[] = [
   },
 ];
 
-// PROVISIONAL: productos de ejemplo mientras el cliente entrega el catálogo real
-// (nombre, presentación y descripción). Para reemplazarlos basta con editar esta lista.
-export const seedProducts: Seeded<Product>[] = [
-  {
-    id: 'product-001',
-    data: {
-      name: 'Café en grano',
-      presentation: 'Bolsa de 340 g',
-      description: 'Café en grano tostado, producto de ejemplo.',
-      active: true,
-    },
-  },
-  {
-    id: 'product-002',
-    data: {
-      name: 'Café en grano',
-      presentation: 'Bolsa de 1 kg',
-      description: 'Café en grano tostado en presentación familiar, producto de ejemplo.',
-      active: true,
-    },
-  },
-  {
-    id: 'product-003',
-    data: {
-      name: 'Café molido',
-      presentation: 'Bolsa de 340 g',
-      description: 'Café molido listo para preparar, producto de ejemplo.',
-      active: true,
-    },
-  },
-  {
-    id: 'product-004',
-    data: {
-      name: 'Café molido',
-      presentation: 'Bolsa de 1 kg',
-      description: 'Café molido para cafeterías, producto de ejemplo.',
-      active: true,
-    },
-  },
-  {
-    id: 'product-005',
-    data: {
-      name: 'Café para espresso',
-      presentation: 'Bolsa de 2,5 kg',
-      description: 'Mezcla para máquina de espresso, producto de ejemplo.',
-      active: true,
-    },
-  },
-  {
-    // Inactivo: no aparece al elegir productos, pero sigue existiendo para ventas antiguas.
-    id: 'product-006',
-    data: {
-      name: 'Café de temporada',
-      presentation: 'Bolsa de 250 g',
-      description: 'Producto descontinuado, de ejemplo.',
-      active: false,
-    },
-  },
-];
+// Catálogo oficial del cliente: 72 productos (9 variedades × 4 pesos × 2 formatos). Los datos están en catalogData.ts
+// y son reales, no ficticios (excepción a la regla de datos de prueba; ver CLAUDE.md).
+export const seedProducts: Seeded<Product>[] = buildCatalogProducts();
 
 /** `saleProducts` no tiene `id` en el contrato: el id del documento es `${saleId}_${productId}`. */
 type SeedSaleProduct = SaleProduct & { id: string };
+const P_CATURRA_340_GRANO = catalogProductId('caturra', '0340', 'grano');
+const P_CATURRA_1000_GRANO = catalogProductId('caturra', '1000', 'grano');
+const P_CATUAI_340_MOLIDO = catalogProductId('catuai', '0340', 'molido');
+const P_SARCHI_1000_GRANO = catalogProductId('villa-sarchi', '1000', 'grano');
+const P_SARCHI_1000_MOLIDO = catalogProductId('villa-sarchi', '1000', 'molido');
+const P_GEISHA_250_GRANO = catalogProductId('geisha', '0250', 'grano');
 export const seedSaleProducts: Seeded<SeedSaleProduct>[] = [
-  { id: 'sale-001_product-001', data: { saleId: 'sale-001', productId: 'product-001', quantity: 20 } },
-  { id: 'sale-001_product-002', data: { saleId: 'sale-001', productId: 'product-002', quantity: 10 } },
-  { id: 'sale-002_product-003', data: { saleId: 'sale-002', productId: 'product-003', quantity: 50 } },
-  { id: 'sale-003_product-002', data: { saleId: 'sale-003', productId: 'product-002', quantity: 5 } },
-  { id: 'sale-003_product-004', data: { saleId: 'sale-003', productId: 'product-004', quantity: 5 } },
-  { id: 'sale-004_product-005', data: { saleId: 'sale-004', productId: 'product-005', quantity: 3 } },
+  // Productos de las ventas de ejemplo, reasignados al catálogo oficial (los montos y avisos no dependen de ellos).
+  { id: 'sale-001_prod-02-caturra-0340-grano', data: { saleId: 'sale-001', productId: P_CATURRA_340_GRANO, quantity: 20 } },
+  { id: 'sale-001_prod-02-caturra-1000-grano', data: { saleId: 'sale-001', productId: P_CATURRA_1000_GRANO, quantity: 10 } },
+  { id: 'sale-002_prod-03-catuai-0340-molido', data: { saleId: 'sale-002', productId: P_CATUAI_340_MOLIDO, quantity: 50 } },
+  { id: 'sale-003_prod-01-villa-sarchi-1000-grano', data: { saleId: 'sale-003', productId: P_SARCHI_1000_GRANO, quantity: 5 } },
+  { id: 'sale-003_prod-01-villa-sarchi-1000-molido', data: { saleId: 'sale-003', productId: P_SARCHI_1000_MOLIDO, quantity: 5 } },
+  { id: 'sale-004_prod-09-geisha-0250-grano', data: { saleId: 'sale-004', productId: P_GEISHA_250_GRANO, quantity: 3 } },
 ];
 
 /**

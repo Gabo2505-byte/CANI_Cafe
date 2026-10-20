@@ -923,7 +923,7 @@ textarea[aria-invalid='true'] {
 .sale-products {
   min-width: 0;
   margin: 0.35rem 0 0.75rem;
-  padding: 0.5rem var(--space-4) var(--space-4);
+  padding: 0.5rem var(--space-3) var(--space-4);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius);
 }
@@ -949,17 +949,34 @@ textarea[aria-invalid='true'] {
   margin: 0.3rem 0 0;
 }
 
+/*
+ * Fila de producto en dos líneas (el producto se elige en dos pasos y cuatro controles no caben en el ancho del
+ * formulario, de unos 500 px útiles): arriba, Variedad y Presentación (más ancha, por "Bolsa de 250 g, grano entero");
+ * abajo, Cantidad con "unidades" a la izquierda y la X a la derecha.
+ */
 .sale-product-controls {
-  display: flex;
+  /* Variedad con el ancho justo para "Seleccione una variedad"; Presentación con el resto (≥ "Bolsa de 250 g, grano entero"). */
+  display: grid;
+  grid-template-columns: minmax(0, 14.4rem) minmax(0, 1fr);
   align-items: center;
   gap: 0.5rem;
 }
 
 .sale-product-controls select {
-  flex: 1;
   min-width: 0;
-  padding: 0.5rem;
+  padding: 0.5rem 1.9rem 0.5rem 0.55rem;
   font: inherit;
+  text-overflow: ellipsis;
+}
+
+.sale-product-quantity {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sale-product-controls .sale-product-remove {
+  justify-self: end;
 }
 
 .sale-product-controls input {

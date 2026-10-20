@@ -45,7 +45,7 @@ describe('seed', () => {
     expect(await count(COLLECTIONS.contacts)).toBe(5);
     expect(await count(COLLECTIONS.communications)).toBe(6);
     expect(await count(COLLECTIONS.sales)).toBe(6);
-    expect(await count(COLLECTIONS.products)).toBe(6);
+    expect(await count(COLLECTIONS.products)).toBe(72); // catálogo oficial: 9 variedades × 4 pesos × 2 formatos
     expect(await count(COLLECTIONS.saleProducts)).toBe(6);
     expect(await count(COLLECTIONS.stageHistory)).toBe(15);
 
@@ -95,7 +95,8 @@ describe('seed', () => {
     const productIds = new Set(products.docs.map((d) => d.id));
     const saleIds = new Set(sales.docs.map((d) => d.id));
 
-    expect(products.docs.some((d) => d.get('active') === false)).toBe(true);
+    // El catálogo oficial no tiene productos inactivos: todos se pueden elegir.
+    expect(products.docs.every((d) => d.get('active') === true)).toBe(true);
     for (const snap of saleProducts.docs) {
       const row = snap.data();
       expect(snap.id).toBe(`${row.saleId}_${row.productId}`);

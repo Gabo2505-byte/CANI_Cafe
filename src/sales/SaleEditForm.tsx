@@ -35,7 +35,7 @@ export function SaleEditForm({ detail, onSaved, onCancel }: SaleEditFormProps) {
 
   const [values, setValues] = useState<SaleEditValues>(original);
   const [rows, setRows] = useState<SaleProductRow[]>(() =>
-    detail.products.map((p) => ({ ...newSaleProductRow(), productId: p.productId, quantity: String(p.quantity) })),
+    detail.products.map((p) => ({ ...newSaleProductRow(), variety: p.name, productId: p.productId, quantity: String(p.quantity) })),
   );
   const [catalog, setCatalog] = useState<Product[]>([]);
   const [productsFailed, setProductsFailed] = useState(false);
