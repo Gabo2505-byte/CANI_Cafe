@@ -127,7 +127,8 @@ describe('HU-301 Crear una posible venta', () => {
     await fillRequired(user);
     await user.selectOptions(screen.getByLabelText(/^Etapa/), 'en_negociacion');
     await user.click(screen.getByRole('button', { name: 'Agregar producto' }));
-    await user.selectOptions(screen.getByLabelText('Producto 1'), 'product-001');
+    await user.selectOptions(screen.getByLabelText('Variedad del producto 1'), 'Café en grano');
+    await user.selectOptions(screen.getByLabelText('Presentación del producto 1'), 'product-001');
     await user.type(screen.getByLabelText('Cantidad del producto 1'), '20');
     await user.click(screen.getByRole('button', { name: 'Guardar' }));
 

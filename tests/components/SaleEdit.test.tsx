@@ -130,7 +130,9 @@ describe('HU-309 Editar una posible venta', () => {
     expect(amount().value).toBe('450000');
     expect(followUp().value).toBe('2099-01-10');
     expect(notes().value).toBe('Quiere probar muestras.');
-    expect((screen.getByLabelText('Producto 1') as HTMLSelectElement).value).toBe('p1');
+    // La variedad y la presentación vienen del producto guardado (sin esperar al catálogo).
+    expect((screen.getByLabelText('Variedad del producto 1') as HTMLSelectElement).value).toBe('Café en grano');
+    expect((screen.getByLabelText('Presentación del producto 1') as HTMLSelectElement).value).toBe('p1');
     expect((screen.getByLabelText('Cantidad del producto 1') as HTMLInputElement).value).toBe('20');
     // La etapa no se edita aquí.
     expect(screen.queryByLabelText(/^Etapa/)).toBeNull();
@@ -140,10 +142,14 @@ describe('HU-309 Editar una posible venta', () => {
   it('un producto inactivo que la venta ya tenía sigue en la lista; los demás inactivos, no', async () => {
     await openEditor();
     await waitFor(() => expect(listProducts).toHaveBeenCalled());
-    const options = Array.from((screen.getByLabelText('Producto 2') as HTMLSelectElement).options).map((o) => o.text);
-    expect(options).toContain('Café de temporada · Bolsa de 250 g');
-    expect(options).toContain('Café molido · Bolsa de 1 kg');
-    expect(options).not.toContain('Café descontinuado · Bolsa de 500 g');
+    const texts = (label: string) => Array.from((screen.getByLabelText(label) as HTMLSelectElement).options).map((o) => o.text);
+    const varieties = texts('Variedad del producto 2');
+    expect(varieties).toContain('Café de temporada');
+    expect(varieties).toContain('Café molido');
+    expect(varieties).not.toContain('Café descontinuado');
+    // La fila del producto inactivo conserva su variedad y su presentación.
+    expect((screen.getByLabelText('Variedad del producto 2') as HTMLSelectElement).value).toBe('Café de temporada');
+    expect(texts('Presentación del producto 2')).toContain('Bolsa de 250 g');
   });
 
   it('al guardar muestra "Cambios guardados correctamente." y vuelve al detalle ya actualizado', async () => {
@@ -177,7 +183,8 @@ describe('HU-309 Editar una posible venta', () => {
     const user = await openEditor();
     await user.click(screen.getByRole('button', { name: 'Quitar producto 2' }));
     await user.click(screen.getByRole('button', { name: 'Agregar producto' }));
-    await user.selectOptions(screen.getByLabelText('Producto 2'), 'p2');
+    await user.selectOptions(screen.getByLabelText('Variedad del producto 2'), 'Café molido');
+    await user.selectOptions(screen.getByLabelText('Presentación del producto 2'), 'p2');
     await user.type(screen.getByLabelText('Cantidad del producto 2'), '7');
     await user.clear(screen.getByLabelText('Cantidad del producto 1'));
     await user.type(screen.getByLabelText('Cantidad del producto 1'), '25');
@@ -236,7 +243,8 @@ describe('HU-309 Editar una posible venta', () => {
     const user = await openEditor();
     await user.clear(screen.getByLabelText('Cantidad del producto 1'));
     await user.type(screen.getByLabelText('Cantidad del producto 1'), '0');
-    await user.selectOptions(screen.getByLabelText('Producto 2'), 'p1');
+    await user.selectOptions(screen.getByLabelText('Variedad del producto 2'), 'Café en grano');
+    await user.selectOptions(screen.getByLabelText('Presentación del producto 2'), 'p1');
     await user.click(screen.getByRole('button', { name: 'Agregar producto' }));
     await user.click(screen.getByRole('button', { name: 'Guardar' }));
     await waitFor(() => expect(alerts().length).toBeGreaterThan(0));

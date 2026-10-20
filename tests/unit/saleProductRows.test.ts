@@ -6,7 +6,8 @@ import {
   type SaleProductRow,
 } from '../../src/sales/saleProductRows';
 
-const row = (key: string, productId: string, quantity: string): SaleProductRow => ({ key, productId, quantity });
+// `variety` es solo de pantalla (el producto elegido en dos pasos): la validación mira solo el producto completo.
+const row = (key: string, productId: string, quantity: string): SaleProductRow => ({ key, variety: '', productId, quantity });
 
 describe('HU-304 cantidad', () => {
   it.each([['1', 1], ['9999', 9999], [' 25 ', 25], ['007', 7]])('acepta "%s"', (text, value) => {
@@ -36,6 +37,19 @@ describe('HU-304 validación de filas', () => {
     expect(validateSaleProductRows([row('a', '', '5')]).a).toEqual({
       product: 'Seleccione un producto o elimine la fila.',
     });
+  });
+
+  it('variedad elegida pero sin presentación: el mismo mensaje (el producto es variedad + presentación)', () => {
+    const conVariedad: SaleProductRow = { key: 'a', variety: 'Geisha', productId: '', quantity: '5' };
+    expect(validateSaleProductRows([conVariedad]).a).toEqual({ product: 'Seleccione un producto o elimine la fila.' });
+  });
+
+  it('la misma variedad con otra presentación (otro producto) no es repetida', () => {
+    const errors = validateSaleProductRows([
+      { key: 'a', variety: 'Caturra', productId: 'prod-02-caturra-0340-grano', quantity: '1' },
+      { key: 'b', variety: 'Caturra', productId: 'prod-02-caturra-1000-grano', quantity: '1' },
+    ]);
+    expect(errors).toEqual({});
   });
 
   it('fila totalmente vacía muestra los dos mensajes', () => {
