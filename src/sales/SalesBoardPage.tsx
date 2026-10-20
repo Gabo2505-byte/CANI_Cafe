@@ -14,12 +14,13 @@ import { TimedNotice } from './TimedNotice';
 type BoardState =
   | { status: 'loading' }
   | { status: 'error' }
-  | { status: 'ready'; items: BoardSale[]; alertSaleIds: Set<string> };
+  | { status: 'ready'; items: BoardSale[]; alertSaleIds: Set<string>; overdueSaleIds: Set<string> };
 
 /**
  * Pantalla "Posibles ventas". HU-301: botón "Nueva posible venta" y confirmación al registrar una.
  * HU-305: tablero de seis columnas, una por etapa, con conteo, suma de montos y tarjetas.
- * HU-314/315: la tarjeta muestra la campana si la venta tiene un aviso pendiente.
+ * HU-314/315: la tarjeta muestra la campana si la venta tiene un aviso pendiente, y la fecha de seguimiento en rojo
+ * si tiene el aviso "Seguimiento vencido" (el mismo cálculo de día calendario de Costa Rica de HU-314).
  */
 export function SalesBoardPage() {
   const navigate = useNavigate();
@@ -31,18 +32,17 @@ export function SalesBoardPage() {
   useEffect(() => {
     let cancelled = false;
     // Si fallan los avisos el tablero se muestra igual, sin campanas.
-    const alertSaleIds = listAlerts(now)
-      .then((alerts) => new Set(alerts.map((alert) => alert.saleId)))
-      .catch(() => new Set<string>());
+    const alerts = listAlerts(now).catch(() => []);
     listBoardSales(now)
       .then(async (sales) => {
         const names = await getContactNames(sales.map((sale) => sale.contactId));
-        const withAlert = await alertSaleIds;
+        const pending = await alerts;
         if (cancelled) return;
         setState({
           status: 'ready',
           items: sales.map((sale) => ({ sale, contactName: names.get(sale.contactId) ?? '—' })),
-          alertSaleIds: withAlert,
+          alertSaleIds: new Set(pending.map((alert) => alert.saleId)),
+          overdueSaleIds: new Set(pending.filter((alert) => alert.kind === 'seguimiento_vencido').map((alert) => alert.saleId)),
         });
       })
       .catch(() => !cancelled && setState({ status: 'error' }));
@@ -72,17 +72,26 @@ export function SalesBoardPage() {
       {state.status === 'ready' && (
         <div className="board">
           {columns.map((column) => (
-            <section key={column.stage} className="board-column" aria-label={column.label}>
+            <section key={column.stage} className={`board-column board-column-${column.stage}`} aria-label={column.label}>
               <h2 className="board-column-header">
-                {/* "En negociación · 4 · ₡ 820 000": el monto no se parte en dos líneas. */}
-                {column.label} · {column.count} · <span className="board-column-total">{formatColones(column.total)}</span>
+                {/* El texto sigue siendo "En negociación · 4 · ₡ 820 000"; los span solo lo reparten en dos líneas. */}
+                <span className="board-column-title">{column.label}</span>
+                {' · '}
+                <span className="board-column-summary">
+                  {column.count} · <span className="board-column-total">{formatColones(column.total)}</span>
+                </span>
               </h2>
               {column.sales.length === 0 ? (
                 <p className="board-empty">{BOARD_MESSAGES.empty}</p>
               ) : (
                 <ul className="board-cards">
                   {column.sales.map((item) => (
-                    <SaleCard key={item.sale.id} item={item} hasAlert={state.alertSaleIds.has(item.sale.id)} />
+                    <SaleCard
+                      key={item.sale.id}
+                      item={item}
+                      hasAlert={state.alertSaleIds.has(item.sale.id)}
+                      followUpOverdue={state.overdueSaleIds.has(item.sale.id)}
+                    />
                   ))}
                 </ul>
               )}

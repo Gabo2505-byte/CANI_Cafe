@@ -46,7 +46,7 @@ export function AlertsPage() {
           {ALERT_MESSAGES.loadError}
         </p>
       )}
-      {state.status === 'ready' && state.alerts.length === 0 && <p>{ALERT_MESSAGES.empty}</p>}
+      {state.status === 'ready' && state.alerts.length === 0 && <p className="empty-state">{ALERT_MESSAGES.empty}</p>}
       {state.status === 'ready' && state.alerts.length > 0 && (
         <div className="table-wrapper">
           <table className="data-table alerts-table">

@@ -18,6 +18,8 @@
     "test:emulators": "firebase emulators:exec --only auth,firestore --project demo-cani-crm-test \"vitest run --config vitest.emulators.config.ts\""
   },
   "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
     "firebase": "^13.0.0",
     "libphonenumber-js": "^1.13.15",
     "react": "^19.3.0",

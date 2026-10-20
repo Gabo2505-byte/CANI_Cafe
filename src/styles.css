@@ -1,35 +1,265 @@
+/* =====================================================================================================
+   CANI Café: estilos del sistema interno (un solo archivo, ordenado por secciones).
+   Tema oscuro espresso con acento dorado, a partir de la pantalla aprobada por el cliente (tablero).
+   Todos los colores, fuentes, radios, sombras y espacios salen de los tokens de abajo: cambiar un token
+   cambia toda la app. Solo escritorio (≥ 1366 × 768).
+   ===================================================================================================== */
+
+/* -----------------------------------------------------------------------------------------------------
+   0. Tokens
+   Contrastes (WCAG): texto principal ≥ 13:1, secundario ≥ 6.5:1, dorado ≥ 7:1 y vencido/error ≥ 5.1:1
+   sobre las tres superficies; borde de campos 3.3:1 (≥ 3:1 de componentes); placeholder 5:1.
+   ----------------------------------------------------------------------------------------------------- */
 :root {
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  color: #2b1d14;
-  background: #f7f3ef;
+  /* Superficies: fondo → columna/panel → tarjeta/campo */
+  --color-bg: #1a110c;
+  --color-surface: #241911;
+  --color-surface-raised: #2e2118;
+  --color-surface-hover: #3a2a1f;
+
+  /* Bordes: el suave es decorativo; el fuerte delimita campos y controles (≥ 3:1) */
+  --color-border: #4a3829;
+  --color-border-strong: #856f57;
+
+  /* Texto */
+  --color-text: #f3e9da;
+  --color-text-secondary: #b8a58f;
+  --color-text-muted: #a08f7a;
+  --color-text-disabled: #8f7e6b;
+
+  /* Acento dorado: acción principal y estado activo */
+  --color-accent: #d4a762;
+  --color-accent-hover: #e2b97a;
+  --color-on-accent: #1a110c;
+
+  /* Estados */
+  --color-danger: #e8705f; /* errores y seguimiento vencido (rojo) */
+  --color-danger-hover: #ef8a7b;
+  --color-warning: #e9a23b; /* seguimiento para hoy (naranja) */
+  --color-attention: #f2d04d; /* sin comunicación (amarillo) */
+  --color-success: #8db58a; /* venta ganada, cliente */
+  --color-success-bg: #1f3a24; /* franja verde de confirmación */
+  --color-success-text: #cfe8cc;
+  --color-info: #9cc3ee; /* persona interesada */
+  --color-lost: #9a8873; /* venta perdida: atenuada pero legible (≥ 4.5:1) */
+  --color-count: #c62828; /* círculo de avisos, con número blanco (5.6:1) */
+  --color-on-count: #fff;
+  --color-backdrop: rgb(10 6 4 / 0.72);
+
+  /* Tipografía */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.85rem;
+  --font-size-md: 0.95rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-title: 2.5rem; /* títulos serif: solo desde ~24 px */
+  --font-size-subtitle: 1.6rem;
+  --letter-spacing-caps: 0.06em;
+
+  /* Espacios (escala de 4 px) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 2.5rem;
+
+  /* Radios y sombras */
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.35);
+  --shadow-popup: 0 10px 28px rgb(0 0 0 / 0.55);
+  --shadow-dialog: 0 18px 48px rgb(0 0 0 / 0.65);
+
+  /* Ancho de lectura de fichas y detalles (datos, pestañas, historial) */
+  --content-width: 960px;
+
+  /* Foco visible: anillo dorado de 2 px separado del elemento */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
+  color-scheme: dark; /* selects, fechas y barras de desplazamiento nativas en oscuro */
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
 }
 
+/* -----------------------------------------------------------------------------------------------------
+   1. Base: cuerpo, títulos, enlaces, foco, campos y botones
+   ----------------------------------------------------------------------------------------------------- */
 body {
   margin: 0;
+  background: var(--color-bg);
 }
 
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-accent);
+  outline-offset: var(--focus-ring-offset);
+}
+
+::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--color-text-secondary);
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline-offset: 0;
+  border-color: var(--color-accent);
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  color: var(--color-text-disabled);
+  background: var(--color-surface);
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.65rem;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Selects con flecha propia (la nativa no sigue el tema); el texto y las opciones no cambian */
+select {
+  appearance: none;
+  padding-right: 2.25rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23b8a58f' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px 8px;
+  cursor: pointer;
+}
+
+select:hover {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23d4a762' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+select option {
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+}
+
+textarea {
+  resize: vertical;
+  line-height: 1.45;
+}
+
+/* Fecha: el ícono del calendario sigue el tema oscuro por color-scheme; solo se aclara al pasar el cursor */
+input[type='date'] {
+  min-height: 2.65rem;
+}
+
+input[type='date']::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+input[type='date']::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+input[type='radio'],
+input[type='checkbox'] {
+  accent-color: var(--color-accent);
+}
+
+/* Botón principal: dorado con texto oscuro (8.4:1) */
+button {
+  padding: 0.6rem 1.1rem;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* -----------------------------------------------------------------------------------------------------
+   2. Pantalla de ingreso y contenedores generales
+   ----------------------------------------------------------------------------------------------------- */
 .login {
   max-width: 420px;
-  margin: 4rem auto;
-  padding: 0 1rem;
+  margin: 4.5rem auto;
+  padding: 0 var(--space-4);
 }
 
 .page {
-  padding: 1.5rem;
+  padding: var(--space-4) var(--space-7) var(--space-6);
 }
 
 .loading {
-  padding: 1.5rem;
+  padding: var(--space-5) var(--space-7);
+  color: var(--color-text-secondary);
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 1.5rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-6) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-popup);
 }
 
 .card h1 {
@@ -39,16 +269,12 @@ body {
 
 .card label {
   font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
 }
 
-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.login .card button[type='submit'] {
+  margin-top: var(--space-2);
 }
 
 .password-field {
@@ -67,41 +293,89 @@ input {
   padding: 0 0.6rem;
   display: flex;
   align-items: center;
-  color: #6b5a4e;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+}
+
+.password-field .password-toggle:hover:not(:disabled) {
+  color: var(--color-accent);
   background: transparent;
 }
 
-button {
-  padding: 0.6rem;
-  font-size: 1rem;
-  color: #fff;
-  background: #6b3e26;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+/* -----------------------------------------------------------------------------------------------------
+   3. Logo oficial (escudo, nombre y frase como imágenes en src/assets/; ver Logo.tsx)
+   ----------------------------------------------------------------------------------------------------- */
+.logo img {
+  display: block;
+  width: auto;
 }
 
-button:disabled {
-  opacity: 0.6;
+/* Barra superior: escudo a la izquierda y "CANI CAFÉ" al lado (la frase manuscrita no se lee a este tamaño) */
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
 }
 
-/* HU-104: aviso en el ingreso y error al cerrar sesión */
+.logo-bar .logo-escudo {
+  height: 40px;
+}
+
+.logo-bar .logo-nombre {
+  height: 24px;
+}
+
+/* Ingreso: composición vertical centrada, como el logo original */
+.logo-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--space-5);
+}
+
+.logo-login .logo-escudo {
+  height: 92px;
+}
+
+.logo-login .logo-heading {
+  line-height: 0;
+  margin: var(--space-4) 0 0;
+}
+
+.logo-login .logo-nombre {
+  height: 44px;
+}
+
+.logo-login .logo-frase {
+  height: 40px;
+  margin-top: var(--space-2);
+}
+
+/* -----------------------------------------------------------------------------------------------------
+   4. Mensajes: franja verde de confirmación, errores bajo el campo
+   ----------------------------------------------------------------------------------------------------- */
+/* HU-104 y demás: confirmación en franja verde (9.5:1) */
 .notice-success {
   margin: -0.25rem 0 0.75rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.6rem 0.9rem;
   font-size: 0.9rem;
-  color: #1e5631;
-  background: #e3f4e8;
-  border-radius: 4px;
+  font-weight: 500;
+  color: var(--color-success-text);
+  background: var(--color-success-bg);
+  border: 1px solid var(--color-success);
+  border-left-width: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .topbar-error {
   margin: 0 0 0 auto;
   padding: 0.3rem 0.6rem;
   font-size: 0.85rem;
-  color: #fff;
-  background: #b00020;
-  border-radius: 4px;
+  color: var(--color-on-accent);
+  background: var(--color-danger);
+  border-radius: var(--radius-sm);
 }
 
 .topbar-error + .topbar-logout {
@@ -112,18 +386,22 @@ button:disabled {
   cursor: wait;
 }
 
+/* Errores en rojo debajo del campo (5.1:1 o más sobre todas las superficies) */
 .field-error {
   margin: -0.25rem 0 0.5rem;
   font-size: 0.85rem;
-  color: #b00020;
+  font-weight: 500;
+  color: var(--color-danger);
 }
 
-/* HU-204: tabla de contactos y paginación */
+/* -----------------------------------------------------------------------------------------------------
+   5. Tablas y paginación (HU-204 y otras)
+   ----------------------------------------------------------------------------------------------------- */
 .table-wrapper {
   overflow-x: auto;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
 }
 
 .data-table {
@@ -134,9 +412,13 @@ button:disabled {
 
 .data-table th,
 .data-table td {
-  padding: 0.6rem 0.9rem;
+  padding: 0.65rem 0.9rem;
   text-align: left;
-  border-bottom: 1px solid #eee4dc;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 /* Textos largos sin espacios (ej. un nombre de 100 letras) se parten y no empujan las demás columnas. */
@@ -154,9 +436,12 @@ button:disabled {
 }
 
 .data-table th {
-  font-size: 0.85rem;
-  color: #6b5a4e;
-  background: #f7f3ef;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-raised);
 }
 
 .clickable-row {
@@ -164,17 +449,18 @@ button:disabled {
 }
 
 .clickable-row:hover {
-  background: #faf6f2;
+  background: var(--color-surface-hover);
 }
 
 .clickable-row a {
   font-weight: 600;
-  color: #4a2a1a;
+  color: var(--color-text);
   text-decoration: none;
 }
 
 .clickable-row a:hover,
 .clickable-row a:focus-visible {
+  color: var(--color-accent);
   text-decoration: underline;
 }
 
@@ -187,46 +473,66 @@ button:disabled {
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 1.25rem;
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+}
+
+.pagination button {
+  min-width: 7rem;
+  padding: 0.45rem 0.9rem;
+  font-size: var(--font-size-md);
+}
+
+/* "Anterior"/"Siguiente" deshabilitados: atenuados con color explícito (4.7:1), borde suave, sin opacity */
+.pagination button:disabled {
+  opacity: 1;
+  color: var(--color-text-disabled);
+  border-color: var(--color-border);
 }
 
 .empty-state {
   padding: 2rem;
   text-align: center;
-  color: #6b5a4e;
-  background: #fff;
-  border-radius: 8px;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
 }
 
+/* -----------------------------------------------------------------------------------------------------
+   6. Formularios (HU-201, HU-203 y otras)
+   ----------------------------------------------------------------------------------------------------- */
 /* HU-203: contador de caracteres */
 .char-counter {
   margin: -0.35rem 0 0.4rem;
   font-size: 0.8rem;
   text-align: right;
-  color: #8a7a6e;
+  color: var(--color-text-muted);
 }
 
 /* Llegar al máximo es válido: aviso informativo, no rojo de error. */
 .char-counter.at-limit {
-  color: #8a5a00;
+  color: var(--color-warning);
   font-weight: 600;
 }
 
 .field-error-link {
   font-weight: 600;
-  color: #6b3e26;
+  color: var(--color-accent);
 }
 
 input[aria-invalid='true'],
+select[aria-invalid='true'],
 textarea[aria-invalid='true'] {
-  border-color: #b00020;
+  border-color: var(--color-danger);
 }
 
 .forgot-link {
-  margin-top: 0.25rem;
+  margin-top: var(--space-2);
   font-size: 0.9rem;
   text-align: center;
-  color: #6b3e26;
+  color: var(--color-accent);
 }
 
 /* HU-201: encabezado de pantalla, formulario, ficha y diálogo */
@@ -238,8 +544,15 @@ textarea[aria-invalid='true'] {
   gap: 0.75rem;
 }
 
+/* Títulos de pantalla en serif y mayúsculas (el texto no cambia: es solo estilo) */
 .page h1 {
-  margin: 0 0 1rem;
+  margin: 0 0 0.75rem;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-title);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-caps);
+  overflow-wrap: anywhere;
 }
 
 .form {
@@ -249,33 +562,46 @@ textarea[aria-invalid='true'] {
   max-width: 520px;
 }
 
+/* Formulario de pantalla completa (nuevo contacto, nueva posible venta): en un panel, como las tarjetas */
+.page > .form {
+  box-sizing: border-box;
+  max-width: 600px;
+  padding: var(--space-4) var(--space-6) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
 .form label {
   font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
 }
 
 .form textarea {
   width: 100%;
   box-sizing: border-box;
-  padding: 0.5rem;
+  padding: 0.55rem 0.65rem;
   margin-bottom: 0.5rem;
   font: inherit;
-  border: 1px solid #ccc;
-  border-radius: 4px;
 }
 
 .form-hint {
   margin: 0.5rem 0 0.25rem;
+  padding-left: 0.6rem;
   font-size: 0.85rem;
-  color: #6b5a4e;
+  color: var(--color-text-secondary);
+  border-left: 2px solid var(--color-accent);
 }
 
 .required {
-  color: #b00020;
+  color: var(--color-danger);
 }
 
 .optional {
-  color: #6b5a4e;
+  color: var(--color-text-muted);
   font-size: 0.85rem;
+  font-weight: 400;
 }
 
 .phone-field {
@@ -286,7 +612,7 @@ textarea[aria-invalid='true'] {
 
 .phone-field input {
   margin-bottom: 0;
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
 /* HU-202: lista de países con buscador, agrupada por letras */
@@ -303,16 +629,21 @@ textarea[aria-invalid='true'] {
   padding: 0 0.6rem;
   font-weight: 600;
   white-space: nowrap;
-  color: #2b1d14;
-  background: #efe7e0;
-  border: 1px solid #ccc;
+  color: var(--color-text);
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border-strong);
   border-right: none;
-  border-radius: 4px 0 0 4px;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.country-picker-trigger:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  border-color: var(--color-text-secondary);
 }
 
 .country-picker-caret {
   font-size: 0.8rem;
-  color: #6b5a4e;
+  color: var(--color-text-secondary);
 }
 
 .country-picker-popup {
@@ -321,10 +652,10 @@ textarea[aria-invalid='true'] {
   left: 0;
   z-index: 20;
   width: min(20rem, 85vw);
-  background: #fff;
-  border: 1px solid #d8cbc0;
-  border-radius: 6px;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 0.15);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-popup);
 }
 
 .country-picker-search {
@@ -346,9 +677,9 @@ textarea[aria-invalid='true'] {
   padding: 0.2rem 0.75rem;
   font-size: 0.8rem;
   font-weight: 700;
-  color: #6b5a4e;
-  background: #f7f3ef;
-  border-top: 1px solid #eee4dc;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
 }
 
 .country-picker-option {
@@ -356,35 +687,64 @@ textarea[aria-invalid='true'] {
   cursor: pointer;
 }
 
+.country-picker-option:hover,
 .country-picker-option.active {
-  background: #efe7e0;
+  background: var(--color-surface-hover);
 }
 
 .country-picker-option.selected {
   font-weight: 700;
+  color: var(--color-accent);
 }
 
 .country-picker-empty {
   margin: 0.5rem 0.75rem;
-  color: #6b5a4e;
+  color: var(--color-text-secondary);
 }
 
 .form-actions,
 .dialog-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
+  gap: 0.75rem;
+  margin-top: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
 }
 
+.form-actions button,
+.dialog-actions button {
+  min-width: 7.5rem;
+}
+
+/* Botón secundario: transparente con borde claro (7.8:1). Lo usan Cancelar, la paginación, Ver más, Quitar, etc. */
 .button-secondary {
-  color: #4a2a1a;
-  background: #fff;
-  border: 1px solid #b9a596;
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid var(--color-text-secondary);
 }
 
+.button-secondary:hover:not(:disabled) {
+  color: var(--color-accent);
+  background: var(--color-surface-hover);
+  border-color: var(--color-accent);
+}
+
+.button-secondary:disabled {
+  color: var(--color-text-disabled);
+  border-color: var(--color-border-strong);
+}
+
+/* Botón de peligro: rojo con texto oscuro (6.1:1). Confirmaciones que descartan o pierden algo. */
 .button-danger {
-  background: #b00020;
+  color: var(--color-on-accent);
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.button-danger:hover:not(:disabled) {
+  background: var(--color-danger-hover);
+  border-color: var(--color-danger-hover);
 }
 
 .detail-list {
@@ -402,128 +762,185 @@ textarea[aria-invalid='true'] {
 
 .detail-list dt {
   font-weight: 600;
-  color: #6b5a4e;
+  color: var(--color-text-secondary);
 }
 
 .detail-list dd {
   margin: 0;
 }
 
+/* Ventanas (diálogos): panel con borde fuerte sobre un fondo oscurecido */
 .dialog-backdrop {
   position: fixed;
   inset: 0;
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: rgb(0 0 0 / 0.4);
+  background: var(--color-backdrop);
+  backdrop-filter: blur(2px);
 }
 
 .dialog {
-  max-width: 420px;
-  padding: 1.25rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 0.2);
+  max-width: 440px;
+  padding: var(--space-5) var(--space-6);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-dialog);
 }
 
 .dialog-message {
   margin: 0;
+  font-size: var(--font-size-base);
+  line-height: 1.55;
 }
 
-/* HU-103: barra superior */
+/* -----------------------------------------------------------------------------------------------------
+   7. Barra superior (HU-103) con el círculo de avisos (HU-316)
+   ----------------------------------------------------------------------------------------------------- */
 .topbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 1.5rem;
-  padding: 0.6rem 1.5rem;
-  color: #fff;
-  background: #4a2a1a;
+  gap: 0.5rem 2rem;
+  padding: 1rem var(--space-7) 0.75rem;
+  color: var(--color-text);
+  background: var(--color-bg);
 }
 
 .topbar-brand {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #fff;
+  color: var(--color-text);
   text-decoration: none;
+}
+
+.topbar-brand:hover {
+  color: var(--color-text);
+}
+
+/* Las opciones van centradas entre el logo y "Cerrar sesión", como en la pantalla aprobada. */
+.topbar nav {
+  display: flex;
+  flex: 1;
+  justify-content: center;
 }
 
 .topbar-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
+  gap: var(--space-5);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .topbar-link {
-  display: block;
-  padding: 0.45rem 0.8rem;
-  color: #f3e6dc;
+  display: flex;
+  align-items: center;
+  padding: 0.35rem 0.1rem;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text);
   text-decoration: none;
-  border-radius: 4px;
+  border-bottom: 2px solid transparent;
 }
 
 .topbar-link:hover {
-  background: rgb(255 255 255 / 0.1);
+  color: var(--color-accent);
 }
 
-/* Opción de la pantalla actual */
+/* Opción de la pantalla actual: dorada y subrayada */
 .topbar-link.active {
-  font-weight: 700;
-  color: #4a2a1a;
-  background: #f3e6dc;
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
 }
 
-/* HU-316: círculo rojo con la cantidad de avisos */
+/* HU-316: círculo rojo con la cantidad de avisos (número blanco, 5.6:1) */
 .topbar-count {
   display: inline-block;
-  min-width: 1.3rem;
-  margin-left: 0.4rem;
+  min-width: 1.35rem;
+  margin-left: 0.45rem;
   padding: 0 0.35rem;
-  font-size: 0.75rem;
+  box-sizing: border-box;
+  font-size: var(--font-size-xs);
   font-weight: 700;
-  line-height: 1.3rem;
+  line-height: 1.35rem;
   text-align: center;
-  color: #fff;
-  background: #c62828;
-  border-radius: 999px;
+  letter-spacing: 0;
+  color: var(--color-on-count);
+  background: var(--color-count);
+  border-radius: var(--radius-pill);
 }
 
 .topbar-logout {
   margin-left: auto;
-  color: #fff;
+  padding: 0.45rem 0.9rem;
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  color: var(--color-text);
   background: transparent;
-  border: 1px solid rgb(255 255 255 / 0.6);
+  border: 1px solid var(--color-text-secondary);
 }
 
-.topbar-logout:hover {
-  background: rgb(255 255 255 / 0.1);
+.topbar-logout:hover:not(:disabled) {
+  color: var(--color-accent);
+  background: transparent;
+  border-color: var(--color-accent);
 }
 
+/* Etiqueta "Emuladores locales" (solo en desarrollo) */
 .badge {
   position: fixed;
   right: 0.5rem;
   bottom: 0.5rem;
   margin: 0;
-  padding: 0.2rem 0.6rem;
-  font-size: 0.8rem;
-  background: #ffe9a8;
-  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-attention);
+  background: var(--color-bg);
+  border: 1px solid var(--color-attention);
+  border-radius: var(--radius-pill);
+  pointer-events: none; /* no tapa clics de lo que haya debajo */
 }
 
+/* -----------------------------------------------------------------------------------------------------
+   8. Posibles ventas: formulario (HU-302, HU-303 y HU-304)
+   ----------------------------------------------------------------------------------------------------- */
 /* HU-304: filas de productos de una posible venta */
 .sale-products {
-  margin: 0 0 0.75rem;
-  padding: 0.5rem 0.75rem 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  min-width: 0;
+  margin: 0.35rem 0 0.75rem;
+  padding: 0.5rem var(--space-4) var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+}
+
+.sale-products legend {
+  padding: 0 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.sale-products > .button-secondary {
+  margin-top: 0.25rem;
+  padding: 0.4rem 0.9rem;
+  font-size: var(--font-size-md);
 }
 
 .sale-product-row {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.sale-product-row .field-error {
+  margin: 0.3rem 0 0;
 }
 
 .sale-product-controls {
@@ -537,25 +954,28 @@ textarea[aria-invalid='true'] {
   min-width: 0;
   padding: 0.5rem;
   font: inherit;
-  border: 1px solid #ccc;
-  border-radius: 4px;
 }
 
 .sale-product-controls input {
   width: 6rem;
+  margin-bottom: 0;
   padding: 0.5rem;
   font: inherit;
-  border: 1px solid #ccc;
-  border-radius: 4px;
 }
 
 .sale-product-unit {
   font-size: 0.85rem;
-  color: #6b5a4e;
+  color: var(--color-text-secondary);
 }
 
 .sale-product-remove {
-  padding: 0.4rem 0.7rem;
+  padding: 0.4rem 0.75rem;
+  font-size: var(--font-size-sm);
+}
+
+.sale-product-remove:hover:not(:disabled) {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
 }
 
 /* HU-302: selector de contacto */
@@ -571,7 +991,9 @@ textarea[aria-invalid='true'] {
 }
 
 .contact-picker-fixed {
-  background: #f1ebe6;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-style: dashed;
 }
 
 .contact-picker-list {
@@ -584,10 +1006,10 @@ textarea[aria-invalid='true'] {
   list-style: none;
   max-height: 16rem;
   overflow-y: auto;
-  background: #fff;
-  border: 1px solid #b9a596;
-  border-radius: 4px;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-popup);
 }
 
 .contact-picker-option {
@@ -597,128 +1019,257 @@ textarea[aria-invalid='true'] {
   cursor: pointer;
 }
 
+.contact-picker-option:hover,
 .contact-picker-option.active {
-  background: #f1ebe6;
+  background: var(--color-surface-hover);
+}
+
+.contact-picker-option.active {
+  box-shadow: inset 3px 0 0 var(--color-accent);
 }
 
 .contact-picker-email {
   font-size: 0.85rem;
-  color: #6b5a4e;
+  color: var(--color-text-secondary);
 }
 
 .contact-picker-empty {
   padding: 0.5rem 0.75rem;
-  color: #6b5a4e;
+  color: var(--color-text-secondary);
 }
 
 /* HU-303: el selector de etapa con el mismo aspecto que los demás campos */
 .form > select {
   width: 100%;
   box-sizing: border-box;
-  padding: 0.5rem;
+  padding: 0.55rem 0.65rem;
   margin-bottom: 0.5rem;
   font: inherit;
-  border: 1px solid #ccc;
-  border-radius: 4px;
 }
 
-/* HU-305: tablero de seis columnas */
+/* -----------------------------------------------------------------------------------------------------
+   9. Tablero de posibles ventas (HU-305) — fiel a la pantalla aprobada
+   ----------------------------------------------------------------------------------------------------- */
 .page-wide {
   max-width: none;
 }
 
+/* Encabezado del tablero: título y botón, con una línea debajo */
+.page-wide > .page-header {
+  padding-bottom: var(--space-4);
+  margin-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.page-wide > .page-header h1 {
+  margin: 0;
+}
+
+/*
+ * Seis columnas de la misma altura que llegan hasta abajo de la pantalla aunque estén vacías. Con subgrid, los
+ * encabezados de todas las columnas comparten la altura del más alto ("Precio o cotización enviada" ocupa tres
+ * líneas) y las tarjetas de todas las columnas empiezan en la misma fila, como en la pantalla aprobada.
+ */
 .board {
   display: grid;
-  grid-template-columns: repeat(6, minmax(190px, 1fr));
-  gap: 0.75rem;
-  align-items: start;
+  grid-template-columns: repeat(6, minmax(180px, 1fr));
+  grid-template-rows: auto 1fr;
+  gap: 0 var(--space-3);
+  align-items: stretch;
+  /* Alto de la pantalla menos la barra superior y el encabezado del tablero (≈ 224 px a 1366 × 768; más bajo y la página hace scroll). */
+  min-height: calc(100vh - 14rem);
   overflow-x: auto;
   padding-bottom: 0.5rem;
 }
 
 .board-column {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: 0;
+  align-content: start;
   min-width: 0;
-  padding: 0.5rem;
-  background: #ece4dd;
-  border-radius: 8px;
+  padding: var(--space-4) var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
 }
 
+/* "NUEVO INTERESADO" arriba y "2 · ₡ 450 000" abajo, con un subrayado dorado corto. El conteo y el subrayado
+   quedan pegados abajo para que se alineen entre columnas aunque el nombre de la etapa ocupe más líneas. */
 .board-column-header {
-  margin: 0 0 0.5rem;
-  font-size: 0.9rem;
-  line-height: 1.3;
-  color: #4a2a1a;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0;
+  padding-bottom: var(--space-4);
+  /*
+   * NO BORRAR font-size: 0. El encabezado es "<span>etapa</span> · <span>conteo · monto</span>": el " · " suelto
+   * entre los dos span tiene que existir para que el nombre accesible sea exactamente "En negociación · 3 · ₡ 1 450 000"
+   * (las pruebas de HU-305 lo buscan así; si el separador va dentro de un span se pierden los espacios). Con
+   * font-size 0 ese separador no se ve ni ocupa espacio; cada span define su propio tamaño de letra.
+   */
+  font-size: 0;
+  line-height: 1.25;
+  text-align: center;
+  color: var(--color-text);
+}
+
+.board-column-header::after {
+  content: '';
+  width: 2.5rem;
+  height: 2px;
+  margin-top: var(--space-2);
+  background: var(--color-accent);
+  border-radius: 1px;
+}
+
+.board-column-title {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.board-column-summary {
+  margin-top: 0.2rem;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.board-column-total {
+  white-space: nowrap;
+  color: var(--color-accent);
 }
 
 .board-empty {
-  margin: 0.5rem 0;
+  margin: var(--space-2) 0 0;
   font-size: 0.85rem;
-  color: #6b5a4e;
+  font-style: italic;
+  text-align: center;
+  color: var(--color-text-secondary);
 }
 
 .board-cards {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  align-self: start;
+  gap: var(--space-3);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .sale-card {
-  background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.sale-card:hover {
+  border-color: var(--color-border-strong);
 }
 
 .sale-card-link {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.5rem 0.6rem;
+  gap: 0.1rem;
+  padding: 0.6rem 0.7rem;
   color: inherit;
   text-decoration: none;
+  border-radius: var(--radius);
 }
 
-.sale-card-link:hover,
+.sale-card-link:hover {
+  color: inherit;
+  background: var(--color-surface-hover);
+}
+
 .sale-card-link:focus-visible {
-  background: #faf6f2;
-  border-radius: 6px;
+  outline-offset: 1px;
 }
 
 .sale-card-contact {
   display: flex;
   justify-content: space-between;
   gap: 0.25rem;
+  font-size: var(--font-size-md);
   font-weight: 600;
+  line-height: 1.3;
   overflow-wrap: anywhere;
 }
 
+/* Campana de aviso pendiente (HU-314/315) */
 .sale-card-bell {
-  color: #b00020;
+  display: inline-flex;
+  flex: none;
+  padding-top: 0.15rem;
+  color: var(--color-danger);
 }
 
 .sale-card-title {
+  font-size: var(--font-size-sm);
+  line-height: 1.35;
+  color: var(--color-text-secondary);
   overflow-wrap: anywhere;
 }
 
 .sale-card-amount {
-  font-weight: 600;
-  color: #6b3e26;
+  margin-top: 0.3rem;
+  font-weight: 700;
+  color: var(--color-accent);
 }
 
 .sale-card-follow-up {
-  font-size: 0.85rem;
-  color: #6b5a4e;
+  font-size: 0.8rem;
+  color: var(--color-text);
 }
 
-.board-column-total {
-  white-space: nowrap;
+/* Fecha de seguimiento vencida, en rojo */
+.sale-card-follow-up.is-overdue {
+  color: var(--color-danger);
 }
 
-/* HU-308: detalle de una posible venta */
+/* Venta ganada: subrayado y borde verdes */
+.board-column-ganada .board-column-header::after {
+  background: var(--color-success);
+}
+
+.board-column-ganada .sale-card {
+  border-color: var(--color-success);
+}
+
+/* Venta perdida: atenuada con colores explícitos (sin opacity), legible ≥ 4.5:1 */
+.board-column-perdida .board-column-header,
+.board-column-perdida .board-column-summary,
+.board-column-perdida .board-column-total {
+  color: var(--color-lost);
+}
+
+.board-column-perdida .board-column-header::after {
+  background: var(--color-border-strong);
+}
+
+.board-column-perdida .sale-card {
+  background: var(--color-surface);
+  box-shadow: none;
+}
+
+.board-column-perdida .sale-card-link,
+.board-column-perdida .sale-card-title,
+.board-column-perdida .sale-card-amount,
+.board-column-perdida .sale-card-follow-up {
+  color: var(--color-lost);
+}
+
+/* -----------------------------------------------------------------------------------------------------
+   10. Detalle de una posible venta (HU-308)
+   ----------------------------------------------------------------------------------------------------- */
 .detail-contact {
-  margin: -0.5rem 0 1rem;
+  margin: -0.25rem 0 var(--space-4);
   font-size: 1.05rem;
 }
 
@@ -734,18 +1285,78 @@ textarea[aria-invalid='true'] {
 
 .page h2 {
   margin: 1.5rem 0 0.75rem;
+  font-family: var(--font-serif);
+  font-size: var(--font-size-subtitle);
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
-.detail-back a,
+/* El encabezado de columna del tablero es un h2 pero va en sans (es menor de 24 px). */
+.page .board-column-header {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0; /* ver la nota "NO BORRAR font-size: 0" en el tablero */
+  letter-spacing: 0;
+}
+
+.detail-back {
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-md);
+}
+
+.detail-back a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.detail-back a:hover {
+  text-decoration: underline;
+}
+
 .detail-contact a {
-  color: #6b3e26;
+  color: var(--color-accent);
 }
 
+/* HU-308: datos de la venta en un panel, del mismo ancho que el historial de etapas (como la ficha del contacto) */
 .detail-list.detail-list-wide {
-  max-width: 760px;
+  box-sizing: border-box;
+  max-width: var(--content-width);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
 }
 
-/* HU-207: ficha del contacto */
+.detail-list-wide + section {
+  max-width: var(--content-width);
+}
+
+/* Título y botones "Cambiar etapa"/"Editar" alineados con el borde derecho del panel y del historial
+   (en el detalle de la venta, el encabezado viene justo después de "Volver a posibles ventas"). */
+.detail-back + .page-header {
+  flex-wrap: nowrap;
+  gap: var(--space-5);
+  max-width: var(--content-width);
+}
+
+/* Un título largo pasa a dos líneas en lugar de empujar los botones hacia abajo. */
+.detail-back + .page-header h1 {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-back + .page-header .page-header-actions {
+  flex: none;
+}
+
+.detail-list-wide dd {
+  overflow-wrap: anywhere;
+}
+
+
+/* -----------------------------------------------------------------------------------------------------
+   11. Ficha del contacto (HU-207, HU-208, HU-211 a HU-213)
+   ----------------------------------------------------------------------------------------------------- */
 .contact-title {
   display: flex;
   flex-wrap: wrap;
@@ -764,37 +1375,36 @@ textarea[aria-invalid='true'] {
   font-size: 0.85rem;
   font-weight: 600;
   white-space: nowrap;
-  color: #4a3b30;
-  background: #eee4dc;
-  border: 1px solid #d8c8bb;
-  border-radius: 999px;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
 }
 
 /* "Persona interesada" en azul, "Cliente" en verde. */
 .classification-badge.classification-persona_interesada {
-  color: #0b4a8b;
-  background: #e3effc;
-  border-color: #9cc3ee;
+  color: var(--color-info);
+  border-color: var(--color-info);
 }
 
 .classification-badge.classification-cliente {
-  color: #1b5e20;
-  background: #e5f4e6;
-  border-color: #a5d6a7;
+  color: var(--color-success);
+  border-color: var(--color-success);
 }
 
 .contact-data {
   box-sizing: border-box;
-  max-width: 760px;
-  padding: 1rem 1.25rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+  /* Mismo ancho que las pestañas y sus listas (.contact-tabs) */
+  max-width: var(--content-width);
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
 }
 
 .page .contact-data h2 {
   margin: 0 0 0.75rem;
-  font-size: 1.1rem;
+  font-size: 1.5rem;
 }
 
 .contact-data .detail-list {
@@ -806,13 +1416,13 @@ textarea[aria-invalid='true'] {
 }
 
 .value-missing {
-  color: #8a7a6e;
+  color: var(--color-text-muted);
   font-style: italic;
 }
 
 .contact-tabs {
   /* HU-208: la tabla de posibles ventas tiene cinco columnas. */
-  max-width: 960px;
+  max-width: var(--content-width);
   margin-top: 1.5rem;
 }
 
@@ -820,32 +1430,42 @@ textarea[aria-invalid='true'] {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
-  border-bottom: 2px solid #e0d3c8;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .tab-list .tab {
-  margin-bottom: -2px;
+  margin-bottom: -1px;
   padding: 0.55rem 1rem;
-  color: #6b5a4e;
+  font-weight: 500;
+  color: var(--color-text-secondary);
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  border-radius: 6px 6px 0 0;
+  border-radius: var(--radius) var(--radius) 0 0;
   cursor: pointer;
 }
 
-.tab-list .tab:hover {
-  background: #efe7e0;
+.tab-list .tab:hover:not(:disabled) {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-color: transparent;
 }
 
-.tab-list .tab[aria-selected='true'] {
+/* La pestaña activa se mantiene dorada y subrayada también con el cursor encima. */
+.tab-list .tab[aria-selected='true'],
+.tab-list .tab[aria-selected='true']:hover:not(:disabled) {
   font-weight: 600;
-  color: #4a2a1a;
-  border-bottom-color: #6b3e26;
+  color: var(--color-accent);
+  background: transparent;
+  border-bottom-color: var(--color-accent);
 }
 
 .tab-panel {
-  padding: 1rem 0;
+  padding: var(--space-4) 0;
+}
+
+.tab-panel:focus-visible {
+  outline-offset: 4px;
 }
 
 .record-list {
@@ -857,16 +1477,16 @@ textarea[aria-invalid='true'] {
 }
 
 .record-list li {
-  padding: 0.6rem 0.9rem;
-  background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  padding: 0.75rem 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
 }
 
 .record-meta {
   margin: 0 0 0.25rem;
   font-size: 0.85rem;
-  color: #6b5a4e;
+  color: var(--color-text-secondary);
 }
 
 .record-note {
@@ -904,34 +1524,36 @@ textarea[aria-invalid='true'] {
 }
 
 .dialog-title {
-  margin: 0 0 0.75rem;
-  font-size: 1.2rem;
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 600;
 }
 
 .dialog-form .form {
   max-width: none;
+  gap: 0.25rem;
+}
+
+.dialog.dialog-form {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
 }
 
 .dialog-form .form select {
   width: 100%;
   box-sizing: border-box;
-  padding: 0.5rem;
+  padding: 0.55rem 0.65rem;
   margin-bottom: 0.5rem;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
 }
 
-.dialog-form select[aria-invalid='true'] {
-  border-color: #b00020;
-}
 
 /* HU-212: ayuda del campo "Posible venta" */
 .field-help {
   margin: -0.35rem 0 0.4rem;
   font-size: 0.8rem;
-  color: #8a7a6e;
+  color: var(--color-text-muted);
 }
 
 /* HU-213: historial de comunicaciones */
@@ -946,17 +1568,17 @@ textarea[aria-invalid='true'] {
 
 .communication-date {
   font-weight: 600;
-  color: #4a3b30;
+  color: var(--color-text);
 }
 
 .communication-sale {
   font-size: 0.9rem;
-  color: #4a3b30;
+  color: var(--color-text-secondary);
 }
 
 .communication-by {
   font-size: 0.8rem;
-  color: #8a7a6e;
+  color: var(--color-text-muted);
 }
 
 .load-more {
@@ -970,7 +1592,9 @@ textarea[aria-invalid='true'] {
   margin: 0 0 0.75rem;
 }
 
-/* HU-310: botón y ventana "Cambiar etapa" */
+/* -----------------------------------------------------------------------------------------------------
+   12. Cambiar etapa, perdida y ganada (HU-310, HU-311 y HU-313)
+   ----------------------------------------------------------------------------------------------------- */
 .page-header-actions {
   display: flex;
   gap: 0.5rem;
@@ -986,21 +1610,27 @@ textarea[aria-invalid='true'] {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.5rem 0.25rem;
+  padding: 0.45rem 0.5rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
+.stage-option:hover:not(.is-disabled) {
+  background: var(--color-surface-hover);
+}
+
 .stage-option.is-disabled {
-  color: #9a8b80;
+  color: var(--color-text-disabled);
   cursor: not-allowed;
 }
 
 .stage-option-current {
   padding: 0.1rem 0.5rem;
   font-size: 0.8rem;
-  color: #4a2a1a;
-  background: #f1ebe6;
-  border-radius: 999px;
+  color: var(--color-accent);
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-pill);
 }
 
 .sr-only {
@@ -1018,11 +1648,17 @@ textarea[aria-invalid='true'] {
 .form .stage-option {
   justify-content: flex-start;
   margin: 0;
+  color: var(--color-text);
+}
+
+.form .stage-option.is-disabled {
+  color: var(--color-text-disabled);
 }
 
 .form .stage-option input[type='radio'] {
   flex: none;
-  width: auto;
+  width: 1rem;
+  height: 1rem;
   margin: 0;
 }
 
@@ -1033,59 +1669,63 @@ textarea[aria-invalid='true'] {
   gap: 0.35rem;
   margin: 0.5rem 0;
   padding: 0.75rem;
-  background: #fbf0ee;
-  border: 1px solid #e3b9b3;
-  border-radius: 6px;
+  background: color-mix(in srgb, var(--color-danger) 8%, transparent);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius);
 }
 
 .loss-question {
   margin: 0;
   font-weight: 600;
-  color: #7a1c14;
+  color: var(--color-danger);
 }
 
 /* HU-313: pregunta al marcar una posible venta como ganada */
 .win-confirm {
   margin: 0.5rem 0;
   padding: 0.75rem;
-  background: #eef6ef;
-  border: 1px solid #b7d7bc;
-  border-radius: 6px;
+  background: color-mix(in srgb, var(--color-success) 8%, transparent);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius);
 }
 
 .win-question {
   margin: 0;
   font-weight: 600;
-  color: #1e5631;
+  color: var(--color-success);
 }
 
-/* HU-316: tipo de aviso con color (rojo, naranja y amarillo) y su texto */
+/* -----------------------------------------------------------------------------------------------------
+   13. Avisos (HU-316): tipo con color — rojo, naranja y amarillo — y su texto
+   ----------------------------------------------------------------------------------------------------- */
 .alert-type {
   display: inline-block;
   padding: 0.15rem 0.6rem;
   font-size: 0.85rem;
   font-weight: 600;
   white-space: nowrap;
-  border-radius: 999px;
+  color: var(--color-on-accent);
+  border-radius: var(--radius-pill);
 }
 
 .alert-type-overdue {
-  color: #fff;
-  background: #c62828;
+  background: var(--color-danger);
 }
 
 .alert-type-today {
-  color: #3b1d00;
-  background: #ff9800;
+  background: var(--color-warning);
 }
 
 .alert-type-silent {
-  color: #3b3000;
-  background: #fdd835;
+  background: var(--color-attention);
 }
 
 .alerts-table td:first-child {
   max-width: none;
+}
+
+.alerts-table td:nth-child(5) {
+  color: var(--color-text-secondary);
 }
 
 /* La fecha dd/mm/aaaa no se parte en dos líneas. */
