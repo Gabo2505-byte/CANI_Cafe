@@ -126,7 +126,7 @@ describe('avisos por falta de comunicación contra Firestore (HU-315)', () => {
     expect(await kinds()).toEqual(['s-b:sin_comunicacion']);
   });
 
-  it('registrar una comunicación como "Todas sus posibles ventas" quita el aviso de todas las abiertas del contacto', async () => {
+  it('registrar una comunicación como "Todas sus oportunidades de venta" quita el aviso de todas las abiertas del contacto', async () => {
     await put('s-a', quiet);
     await put('s-b', quiet);
     await createCommunicationIn(db, comm(null, NOW), 'admin-activo');

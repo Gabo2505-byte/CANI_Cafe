@@ -78,7 +78,7 @@ describe('HU-303 validación del formulario', () => {
       valid({ title: 'CAFE en grano para su cafetería' }),
       context({ openTitles: ['Café en grano para su cafetería'] }),
     );
-    expect(errors.title).toBe('Este contacto ya tiene una posible venta abierta con este título.');
+    expect(errors.title).toBe('Este contacto ya tiene una oportunidad de venta abierta con este título.');
   });
 
   it('monto vacío o fuera de rango: Ingrese un monto válido.', () => {

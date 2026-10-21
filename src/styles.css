@@ -1572,7 +1572,7 @@ textarea[aria-invalid='true'] {
 }
 
 
-/* HU-212: ayuda del campo "Posible venta" */
+/* HU-212: ayuda del campo "Oportunidad de venta" */
 .field-help {
   margin: -0.35rem 0 0.4rem;
   font-size: 0.8rem;

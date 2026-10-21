@@ -160,7 +160,7 @@ export function RegisterCommunicationDialog({ contactId, openSales, onSaved, onC
             </>
           )}
 
-          <label htmlFor="communication-sale">Posible venta</label>
+          <label htmlFor="communication-sale">Oportunidad de venta</label>
           <select
             id="communication-sale"
             value={values.sale}
@@ -176,7 +176,7 @@ export function RegisterCommunicationDialog({ contactId, openSales, onSaved, onC
             ))}
           </select>
           <p id="communication-sale-help" className="field-help">
-            Elija "Todas sus posibles ventas" si la conversación no fue sobre una en particular.
+            Elija "Todas sus oportunidades de venta" si la conversación no fue sobre una en particular.
           </p>
           <FieldError id="communication-sale-error" message={errors.sale} />
 

@@ -26,7 +26,7 @@ vi.mock('../../src/contacts/contactsApi', () => ({
   countContacts: vi.fn(),
   listContactsPage: vi.fn(),
 }));
-// Pantalla a la que se navega desde la pestaña "Posibles ventas".
+// Pantalla a la que se navega desde la pestaña "Oportunidades de venta".
 vi.mock('../../src/sales/saleDetailApi', () => ({ loadSaleDetail: vi.fn().mockResolvedValue(null) }));
 
 const active: AuthState = {
@@ -272,7 +272,7 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
     expect(await screen.findByRole('tab', { name: 'Comunicaciones (2)' })).toBeTruthy();
     expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual([
       'Comunicaciones (2)',
-      'Posibles ventas (3)',
+      'Oportunidades de venta (3)',
       'Productos de interés (4)',
     ]);
     expect(tabs).toHaveLength(3);
@@ -286,8 +286,8 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
   it('criterio 5: al elegir otra pestaña se ven sus registros', async () => {
     const user = userEvent.setup();
     renderAt('/contactos/contact-002');
-    await user.click(await screen.findByRole('tab', { name: 'Posibles ventas (3)' }));
-    expect(screen.getByRole('tab', { name: 'Posibles ventas (3)' }).getAttribute('aria-selected')).toBe('true');
+    await user.click(await screen.findByRole('tab', { name: 'Oportunidades de venta (3)' }));
+    expect(screen.getByRole('tab', { name: 'Oportunidades de venta (3)' }).getAttribute('aria-selected')).toBe('true');
     expect(within(screen.getByRole('tabpanel')).getByRole('link', { name: 'Café en grano para cafetería' }).getAttribute('href')).toBe(
       '/posibles-ventas/sale-001',
     );
@@ -302,7 +302,7 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
     const first = await screen.findByRole('tab', { name: 'Comunicaciones (2)' });
     first.focus();
     await user.keyboard('{ArrowRight}');
-    expect(screen.getByRole('tab', { name: 'Posibles ventas (3)' }).getAttribute('aria-selected')).toBe('true');
+    expect(screen.getByRole('tab', { name: 'Oportunidades de venta (3)' }).getAttribute('aria-selected')).toBe('true');
     await user.keyboard('{ArrowLeft}{ArrowLeft}');
     expect(screen.getByRole('tab', { name: 'Productos de interés (4)' }).getAttribute('aria-selected')).toBe('true');
   });
@@ -313,8 +313,8 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
     renderAt('/contactos/contact-002');
     expect(await screen.findByRole('tab', { name: 'Comunicaciones (0)' })).toBeTruthy();
     expect(screen.getByText('Este contacto no tiene comunicaciones registradas.')).toBeTruthy(); // HU-213
-    await user.click(screen.getByRole('tab', { name: 'Posibles ventas (0)' }));
-    expect(screen.getByText('Este contacto no tiene posibles ventas.')).toBeTruthy();
+    await user.click(screen.getByRole('tab', { name: 'Oportunidades de venta (0)' }));
+    expect(screen.getByText('Este contacto no tiene oportunidades de venta.')).toBeTruthy();
     await user.click(screen.getByRole('tab', { name: 'Productos de interés (0)' }));
     expect(screen.getByText('Sin productos de interés.')).toBeTruthy();
   });

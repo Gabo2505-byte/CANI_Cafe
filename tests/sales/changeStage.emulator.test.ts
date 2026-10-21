@@ -61,7 +61,7 @@ const historyOf = async (saleId: string) => {
   return snap.docs.map((d) => d.data()).sort((a, b) => a.changedAt.toMillis() - b.changedAt.toMillis());
 };
 
-describe('cambiar la etapa de una posible venta (HU-310)', () => {
+describe('cambiar la etapa de una oportunidad de venta (HU-310)', () => {
   it('actualiza la etapa y su fecha y agrega un registro al historial sin borrar los anteriores', async () => {
     await changeSaleStageIn(db, 's-1', 'contactado', 'en_negociacion');
 
@@ -93,7 +93,7 @@ describe('cambiar la etapa de una posible venta (HU-310)', () => {
     ]);
   });
 
-  it('no afecta a las demás posibles ventas del mismo contacto', async () => {
+  it('no afecta a las demás oportunidades de venta del mismo contacto', async () => {
     const before = (await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).data();
     await changeSaleStageIn(db, 's-1', 'contactado', 'en_negociacion');
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).data()).toEqual(before);
@@ -127,7 +127,7 @@ describe('cambiar la etapa de una posible venta (HU-310)', () => {
   });
 });
 
-describe('marcar una posible venta como perdida (HU-311)', () => {
+describe('marcar una oportunidad de venta como perdida (HU-311)', () => {
   it('pasa a "Venta perdida" y guarda la fecha y el motivo en el historial', async () => {
     await changeSaleStageIn(db, 's-1', 'contactado', 'perdida', '  El cliente eligió otro proveedor.  ');
 
@@ -176,7 +176,7 @@ describe('marcar una posible venta como perdida (HU-311)', () => {
   });
 });
 
-describe('marcar una posible venta como ganada (HU-313)', () => {
+describe('marcar una oportunidad de venta como ganada (HU-313)', () => {
   const classificationOf = async (id: string) => (await getDoc(doc(db, COLLECTIONS.contacts, id))).get('classification');
 
   it('una persona interesada pasa a cliente y la venta a "Venta ganada", con su registro en el historial', async () => {
@@ -260,7 +260,7 @@ describe('marcar una posible venta como ganada (HU-313)', () => {
   });
 });
 
-describe('reabrir una posible venta perdida (HU-312)', () => {
+describe('reabrir una oportunidad de venta perdida (HU-312)', () => {
   const classificationOf = async (id: string) => (await getDoc(doc(db, COLLECTIONS.contacts, id))).get('classification');
 
   it('pasa a la etapa abierta elegida, con su fecha y un registro nuevo sin motivo', async () => {

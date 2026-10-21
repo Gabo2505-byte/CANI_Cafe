@@ -90,28 +90,28 @@ describe('HU-211 formulario de comunicación', () => {
   });
 });
 
-describe('HU-212 posible venta de la comunicación', () => {
+describe('HU-212 oportunidad de venta de la comunicación', () => {
   const open = [
     { id: 's1', title: 'Café en grano para cafetería' },
     { id: 's2', title: 'Distribución mensual' },
   ];
 
-  it('opciones: "Todas sus posibles ventas" primero y luego las abiertas', () => {
+  it('opciones: "Todas sus oportunidades de venta" primero y luego las abiertas', () => {
     expect(saleOptions(open)).toEqual([
-      { value: 'todas', label: 'Todas sus posibles ventas' },
+      { value: 'todas', label: 'Todas sus oportunidades de venta' },
       { value: 's1', label: 'Café en grano para cafetería' },
       { value: 's2', label: 'Distribución mensual' },
     ]);
-    expect(saleOptions([])).toEqual([{ value: 'todas', label: 'Todas sus posibles ventas' }]);
+    expect(saleOptions([])).toEqual([{ value: 'todas', label: 'Todas sus oportunidades de venta' }]);
   });
 
-  it('"Todas sus posibles ventas" viene elegida', () => {
+  it('"Todas sus oportunidades de venta" viene elegida', () => {
     expect(emptyCommunicationForm(TODAY).sale).toBe(ALL_SALES);
   });
 
-  it('es obligatoria: vacía o una venta que no está entre las abiertas → "Seleccione la posible venta."', () => {
-    expect(validateCommunicationForm(form({ sale: '' }), TODAY, ['s1']).sale).toBe('Seleccione la posible venta.');
-    expect(validateCommunicationForm(form({ sale: 'ganada' }), TODAY, ['s1']).sale).toBe('Seleccione la posible venta.');
+  it('es obligatoria: vacía o una venta que no está entre las abiertas → "Seleccione la oportunidad de venta."', () => {
+    expect(validateCommunicationForm(form({ sale: '' }), TODAY, ['s1']).sale).toBe('Seleccione la oportunidad de venta.');
+    expect(validateCommunicationForm(form({ sale: 'ganada' }), TODAY, ['s1']).sale).toBe('Seleccione la oportunidad de venta.');
     expect(validateCommunicationForm(form({ sale: 's1' }), TODAY, ['s1'])).toEqual({});
     expect(validateCommunicationForm(form({ sale: ALL_SALES }), TODAY, [])).toEqual({});
   });

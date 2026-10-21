@@ -85,7 +85,7 @@ afterEach(() => {
 
 const column = (label: string) => screen.getByRole('region', { name: label });
 
-describe('HU-305 Tablero de posibles ventas', () => {
+describe('HU-305 Tablero de oportunidades de venta', () => {
   it('muestra seis columnas con su conteo y suma, aunque no haya ventas', async () => {
     vi.mocked(listBoardSales).mockResolvedValue([]);
     renderBoard();
@@ -101,12 +101,12 @@ describe('HU-305 Tablero de posibles ventas', () => {
     ]);
   });
 
-  it('una columna sin ventas dice "Sin posibles ventas."', async () => {
+  it('una columna sin ventas dice "Sin oportunidades de venta."', async () => {
     vi.mocked(listBoardSales).mockResolvedValue([sale('s1', 'contactado')]);
     renderBoard();
     await screen.findByRole('heading', { name: 'Contactado · 1 · ₡ 100 000' });
-    expect(within(column('Nuevo interesado')).getByText('Sin posibles ventas.')).toBeTruthy();
-    expect(within(column('Contactado')).queryByText('Sin posibles ventas.')).toBeNull();
+    expect(within(column('Nuevo interesado')).getByText('Sin oportunidades de venta.')).toBeTruthy();
+    expect(within(column('Contactado')).queryByText('Sin oportunidades de venta.')).toBeNull();
   });
 
   it('cada venta aparece en la columna de su etapa y el encabezado suma los montos', async () => {
@@ -144,48 +144,48 @@ describe('HU-305 Tablero de posibles ventas', () => {
     expect(card.textContent).toContain('Sin seguimiento programado');
   });
 
-  it('al dar clic en una tarjeta se abre el detalle de esa posible venta', async () => {
+  it('al dar clic en una tarjeta se abre el detalle de esa oportunidad de venta', async () => {
     vi.mocked(listBoardSales).mockResolvedValue([sale('sale-xyz', 'contactado')]);
     renderBoard();
     await userEvent.setup().click(await screen.findByRole('link', { name: /Ana Prueba Mora/ }));
     expect(currentLocation.pathname).toBe('/posibles-ventas/sale-xyz');
   });
 
-  it('el botón "+ Nuevo registro" sigue ahí', async () => {
+  it('el botón "+ Nueva oportunidad" sigue ahí', async () => {
     vi.mocked(listBoardSales).mockResolvedValue([]);
     renderBoard();
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Nuevo registro' }));
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Nueva oportunidad' }));
     expect(currentLocation.pathname).toBe('/posibles-ventas/nueva');
   });
 
-  it('el nombre accesible del botón es exactamente "Nuevo registro" (sin el "+")', async () => {
+  it('el nombre accesible del botón es exactamente "Nueva oportunidad" (sin el "+")', async () => {
     vi.mocked(listBoardSales).mockResolvedValue([]);
     renderBoard();
-    const button = screen.getByRole('button', { name: /registro/ });
-    expect(button).toBe(screen.getByRole('button', { name: 'Nuevo registro' }));
-    expect(screen.queryByRole('button', { name: '+ Nuevo registro' })).toBeNull();
+    const button = screen.getByRole('button', { name: /oportunidad/i });
+    expect(button).toBe(screen.getByRole('button', { name: 'Nueva oportunidad' }));
+    expect(screen.queryByRole('button', { name: '+ Nueva oportunidad' })).toBeNull();
   });
 
   it('el "+" del botón se ve pero es decorativo (aria-hidden)', async () => {
     vi.mocked(listBoardSales).mockResolvedValue([]);
     renderBoard();
-    const button = screen.getByRole('button', { name: 'Nuevo registro' });
+    const button = screen.getByRole('button', { name: 'Nueva oportunidad' });
     const plus = button.querySelector('[aria-hidden="true"]');
     expect(plus?.textContent).toBe('+');
-    expect(button.textContent).toBe('+Nuevo registro');
+    expect(button.textContent).toBe('+Nueva oportunidad');
   });
 
   it('si falla la carga lo avisa y no muestra columnas', async () => {
     vi.mocked(listBoardSales).mockRejectedValue(new Error('sin red'));
     renderBoard();
-    expect((await screen.findByRole('alert')).textContent).toBe('No se pudieron cargar las posibles ventas. Intente de nuevo.');
+    expect((await screen.findByRole('alert')).textContent).toBe('No se pudieron cargar las oportunidades de venta. Intente de nuevo.');
     expect(screen.queryByRole('region')).toBeNull();
   });
 
   it('mientras carga lo indica', async () => {
     vi.mocked(listBoardSales).mockReturnValue(new Promise(() => {}));
     renderBoard();
-    expect(await screen.findByText('Cargando posibles ventas…')).toBeTruthy();
+    expect(await screen.findByText('Cargando oportunidades de venta…')).toBeTruthy();
   });
 
   it('pide una sola vez los nombres de los contactos de las ventas', async () => {

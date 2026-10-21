@@ -117,7 +117,7 @@ async function openEditor() {
   return user;
 }
 
-describe('HU-309 Editar una posible venta', () => {
+describe('HU-309 Editar una oportunidad de venta', () => {
   it('en el detalle hay un botón "Editar" arriba, junto al título', async () => {
     renderDetail();
     const button = await screen.findByRole('button', { name: 'Editar' });
@@ -225,14 +225,14 @@ describe('HU-309 Editar una posible venta', () => {
     expect(updateSale).not.toHaveBeenCalled();
   });
 
-  it('un título igual al de otra posible venta abierta del contacto no se guarda', async () => {
+  it('un título igual al de otra oportunidad de venta abierta del contacto no se guarda', async () => {
     vi.mocked(listOpenSaleTitles).mockResolvedValue(['Pedido de temporada']);
     const user = await openEditor();
     await user.clear(title());
     await user.type(title(), 'pedido DE temporada');
     await user.click(screen.getByRole('button', { name: 'Guardar' }));
     await waitFor(() =>
-      expect(alerts()).toEqual(['Este contacto ya tiene una posible venta abierta con este título.']),
+      expect(alerts()).toEqual(['Este contacto ya tiene una oportunidad de venta abierta con este título.']),
     );
     // Se comparan solo las otras ventas: se excluye la que se edita.
     expect(listOpenSaleTitles).toHaveBeenCalledWith('contact-002', 'sale-001');

@@ -28,7 +28,7 @@ export const CONTACT_DETAIL_MESSAGES = {
   noCommunications: 'Este contacto no tiene comunicaciones registradas.',
   loadMore: 'Ver más',
   loadMoreError: 'No se pudieron cargar más comunicaciones. Intente de nuevo.',
-  noSales: 'Este contacto no tiene posibles ventas.',
+  noSales: 'Este contacto no tiene oportunidades de venta.',
   noFollowUp: 'Sin seguimiento programado',
   noCommunication: 'Sin comunicaciones',
   noProducts: 'Sin productos de interés.',
@@ -37,7 +37,7 @@ export const CONTACT_DETAIL_MESSAGES = {
 /** Las tres pestañas, en orden. La primera es la que se ve al abrir la ficha. */
 export const CONTACT_TABS = [
   { id: 'comunicaciones', label: 'Comunicaciones' },
-  { id: 'ventas', label: 'Posibles ventas' },
+  { id: 'ventas', label: 'Oportunidades de venta' },
   { id: 'productos', label: 'Productos de interés' },
 ] as const;
 export type ContactTabId = (typeof CONTACT_TABS)[number]['id'];
@@ -157,11 +157,11 @@ export function openSaleOptions(sales: Sale[]): { id: string; title: string }[] 
 
 /**
  * HU-212: a qué posible venta corresponde una comunicación, para el historial:
- * "Todas sus posibles ventas", el título de la venta, o null si es una comunicación antigua sin ese dato.
+ * "Todas sus oportunidades de venta", el título de la venta, o null si es una comunicación antigua sin ese dato.
  */
 export function communicationSaleLabel(communication: Pick<Communication, 'saleId' | 'appliesToAllSales'>, sales: Sale[]): string | null {
   if (communication.saleId) return sales.find((sale) => sale.id === communication.saleId)?.title ?? '—';
-  return communication.appliesToAllSales ? 'Todas sus posibles ventas' : null;
+  return communication.appliesToAllSales ? 'Todas sus oportunidades de venta' : null;
 }
 
 /** HU-213: "Registrado por: …": el usuario, o "Sistema (formulario web)" si llegó del sitio web. */
@@ -173,7 +173,7 @@ export function registeredByLabel(
   return `Registrado por: ${(communication.userId && userNames[communication.userId]) || '—'}`;
 }
 
-/** HU-208: columnas de la tabla de la pestaña "Posibles ventas". */
+/** HU-208: columnas de la tabla de la pestaña "Oportunidades de venta". */
 export const CONTACT_SALES_COLUMNS = ['Título', 'Etapa', 'Monto estimado', 'Próximo seguimiento', 'Última comunicación'] as const;
 
 /** HU-208: celdas de una fila (mismos formatos que el tablero y el detalle de HU-308). */

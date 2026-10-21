@@ -64,7 +64,7 @@ async function choose(user: User, n: number, varietyName: string, productId: str
   await user.selectOptions(presentation(n), productId);
 }
 
-describe('HU-304 Productos de la posible venta', () => {
+describe('HU-304 Productos de la oportunidad de venta', () => {
   it('empieza sin filas y "Agregar producto" suma una con variedad, presentación, cantidad y "X"', async () => {
     const { user } = await setup();
     expect(screen.queryByLabelText('Variedad del producto 1')).toBeNull();

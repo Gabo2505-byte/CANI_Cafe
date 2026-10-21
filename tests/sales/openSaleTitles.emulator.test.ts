@@ -35,7 +35,7 @@ afterAll(async () => {
   await testEnv?.cleanup();
 });
 
-describe('títulos de posibles ventas abiertas (HU-303)', () => {
+describe('títulos de oportunidades de venta abiertas (HU-303)', () => {
   it('trae solo los títulos de las abiertas de ese contacto', async () => {
     const db = testEnv.authenticatedContext('admin-activo').firestore() as unknown as Firestore;
     expect((await listOpenSaleTitlesIn(db, 'c-1')).sort()).toEqual(['Abierta dos', 'Abierta uno']);

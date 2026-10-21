@@ -20,7 +20,7 @@ const today = () => communicationDayToDate(toCostaRicaDateKey(new Date()));
 const valid = (overrides: Record<string, unknown> = {}) => ({
   contactId: 'contact-001',
   saleId: null,
-  appliesToAllSales: true, // HU-212: "Todas sus posibles ventas"
+  appliesToAllSales: true, // HU-212: "Todas sus oportunidades de venta"
   date: Timestamp.fromDate(today()),
   medium: 'whatsapp',
   otherMedium: null,

@@ -52,7 +52,7 @@ afterAll(async () => {
   await testEnv?.cleanup();
 });
 
-describe('detalle de una posible venta (HU-308)', () => {
+describe('detalle de una oportunidad de venta (HU-308)', () => {
   it('trae la venta, el contacto, los productos con nombre y el historial del más reciente al más antiguo', async () => {
     const db = testEnv.authenticatedContext('admin-activo').firestore() as unknown as Firestore;
     const result = await loadSaleDetailIn(db, 's-1');

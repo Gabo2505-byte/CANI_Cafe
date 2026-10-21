@@ -11,21 +11,21 @@ export const STAGE_CHANGE_MESSAGES = {
   /** Franja verde tras cambiar de etapa (el PDF no da un texto para HU-310). */
   changed: 'Etapa actualizada correctamente.',
   saveError: 'No se pudo cambiar la etapa. Intente de nuevo.',
-  conflict: 'La etapa de esta posible venta cambió. Cierre esta ventana y vuelva a intentarlo.',
+  conflict: 'La etapa de esta oportunidad de venta cambió. Cierre esta ventana y vuelva a intentarlo.',
   /** HU-311: pregunta al elegir "Venta perdida". */
   lossQuestion: '¿Está seguro de que desea marcar esta venta como perdida?',
   lossReasonLabel: 'Motivo de la pérdida',
   /** Franja verde tras marcar como perdida (el PDF no da un texto para HU-311). */
-  lost: 'Posible venta marcada como perdida.',
+  lost: 'Oportunidad de venta marcada como perdida.',
   lossReasonTooLong: `El motivo acepta como máximo ${LOSS_REASON_MAX} caracteres.`,
   /** HU-313: pregunta al elegir "Venta ganada". */
   winQuestion: '¿Confirma que esta venta fue ganada? El contacto pasará a ser cliente y la venta ya no podrá cambiar de etapa.',
   /** HU-313: Venta ganada de alguien que ya era cliente (o que no cambia de clasificación). */
   won: 'Venta ganada correctamente.',
   /** HU-312: franja verde al reabrir una posible venta perdida. */
-  reopened: 'Posible venta reabierta correctamente.',
+  reopened: 'Oportunidad de venta reabierta correctamente.',
   /** HU-312: ya hay otra posible venta abierta del contacto con el mismo título. */
-  reopenDuplicateTitle: 'Este contacto ya tiene una posible venta abierta con este título. Cambie el título antes de reabrirla.',
+  reopenDuplicateTitle: 'Este contacto ya tiene una oportunidad de venta abierta con este título. Cambie el título antes de reabrirla.',
   /** Botón que confirma la pérdida o la venta ganada ("Al aceptar..."). */
   accept: 'Aceptar',
 } as const;

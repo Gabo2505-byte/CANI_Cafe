@@ -56,10 +56,10 @@ describe('HU-309 reglas al editar', () => {
     );
   });
 
-  it('el título nuevo no puede repetir el de otra posible venta abierta del contacto', () => {
+  it('el título nuevo no puede repetir el de otra oportunidad de venta abierta del contacto', () => {
     const s = sale();
     const errors = validateSaleEdit(s, edit(s, { title: 'PEDIDO de temporada' }), ctx(['Pedido de temporada']));
-    expect(errors.title).toBe('Este contacto ya tiene una posible venta abierta con este título.');
+    expect(errors.title).toBe('Este contacto ya tiene una oportunidad de venta abierta con este título.');
   });
 
   it('un título que no se tocó no se revisa contra otras ventas', () => {

@@ -18,7 +18,7 @@ type BoardState =
   | { status: 'ready'; items: BoardSale[]; alertSaleIds: Set<string>; overdueSaleIds: Set<string> };
 
 /**
- * Pantalla "Gestión de ventas". HU-301: botón "+ Nuevo registro" y confirmación al registrar una.
+ * Pantalla "Gestión de ventas". HU-301: botón "+ Nueva oportunidad" y confirmación al registrar una.
  * HU-305: tablero de seis columnas, una por etapa, con conteo, suma de montos y tarjetas.
  * HU-314/315: la tarjeta muestra la campana si la venta tiene un aviso pendiente, y la fecha de seguimiento en rojo
  * si tiene el aviso "Seguimiento vencido" (el mismo cálculo de día calendario de Costa Rica de HU-314).
@@ -60,7 +60,7 @@ export function SalesBoardPage() {
       <div className="page-header">
         <h1>{SALES_LABELS.boardTitle}</h1>
         <button type="button" onClick={() => navigate(ROUTES.newSale)}>
-          <AddButtonLabel>{SALES_LABELS.newRecord}</AddButtonLabel>
+          <AddButtonLabel>{SALES_LABELS.newOpportunity}</AddButtonLabel>
         </button>
       </div>
 

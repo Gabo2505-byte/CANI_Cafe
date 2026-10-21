@@ -229,11 +229,11 @@ function ContactTabs({ contactId, records, savedCount, onTabChange, onRegisterCo
             {savedCount > 0 && <SavedNotice key={savedCount} message={COMMUNICATION_MESSAGES.saved} />}
           </>
         )}
-        {/* HU-301: botón "+ Nuevo registro" para crear una venta de este contacto (el formulario lo trae ya elegido). */}
+        {/* HU-301: botón "+ Nueva oportunidad" para crear una venta de este contacto (el formulario lo trae ya elegido). */}
         {active === 'ventas' && (
           <div className="tab-panel-actions">
             <button type="button" onClick={() => navigate(newSalePath(contactId))}>
-              <AddButtonLabel>{SALES_LABELS.newRecord}</AddButtonLabel>
+              <AddButtonLabel>{SALES_LABELS.newOpportunity}</AddButtonLabel>
             </button>
           </div>
         )}
@@ -313,7 +313,7 @@ function CommunicationsPanel({ contactId, records }: { contactId: string; record
               <p className="record-meta">
                 <span className="communication-date">{formatDateNumericCR(c.date)}</span> · <span>{mediumLabel(c)}</span>
               </p>
-              {sale && <p className="communication-sale">Posible venta: {sale}</p>}
+              {sale && <p className="communication-sale">Oportunidad de venta: {sale}</p>}
               <p className="record-note">{c.note}</p>
               <p className="communication-by">{registeredByLabel(c, userNames)}</p>
             </li>

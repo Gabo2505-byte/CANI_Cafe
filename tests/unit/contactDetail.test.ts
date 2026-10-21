@@ -68,7 +68,7 @@ describe('HU-207 contactDataRows', () => {
 describe('HU-207 tabLabel', () => {
   it('indica el conteo entre paréntesis', () => {
     expect(tabLabel('Comunicaciones', 3)).toBe('Comunicaciones (3)');
-    expect(tabLabel('Posibles ventas', 0)).toBe('Posibles ventas (0)');
+    expect(tabLabel('Oportunidades de venta', 0)).toBe('Oportunidades de venta (0)');
   });
   it('sin conteo mientras no se conoce', () => {
     expect(tabLabel('Productos de interés', null)).toBe('Productos de interés');
@@ -152,7 +152,7 @@ describe('HU-207 orden de comunicaciones y ventas', () => {
   });
 });
 
-describe('HU-208 tabla de posibles ventas del contacto', () => {
+describe('HU-208 tabla de oportunidades de venta del contacto', () => {
   const cr = (localIso: string) => Timestamp.fromDate(new Date(`${localIso}-06:00`));
   const base = {
     contactId: 'c1',
@@ -217,9 +217,9 @@ describe('HU-212 ventas elegibles y venta de cada comunicación', () => {
     ]);
   });
 
-  it('en el historial: título de la venta, "Todas sus posibles ventas" o nada (comunicaciones antiguas)', () => {
+  it('en el historial: título de la venta, "Todas sus oportunidades de venta" o nada (comunicaciones antiguas)', () => {
     expect(communicationSaleLabel({ saleId: 'b', appliesToAllSales: false }, sales)).toBe('Abierta B');
-    expect(communicationSaleLabel({ saleId: null, appliesToAllSales: true }, sales)).toBe('Todas sus posibles ventas');
+    expect(communicationSaleLabel({ saleId: null, appliesToAllSales: true }, sales)).toBe('Todas sus oportunidades de venta');
     expect(communicationSaleLabel({ saleId: null, appliesToAllSales: false }, sales)).toBeNull();
     expect(communicationSaleLabel({ saleId: 'borrada', appliesToAllSales: false }, sales)).toBe('—');
   });

@@ -13,17 +13,17 @@ export const COMMUNICATION_MESSAGES = {
   mediumRequired: 'Seleccione el medio.',
   otherMediumRequired: 'Indique cuál fue el medio.',
   otherMediumTooLong: `El medio acepta como máximo ${COMMUNICATION_LIMITS.otherMedium} caracteres.`,
-  saleRequired: 'Seleccione la posible venta.',
-  saleNotOpen: 'La posible venta elegida ya no está abierta. Elija otra o "Todas sus posibles ventas".',
+  saleRequired: 'Seleccione la oportunidad de venta.',
+  saleNotOpen: 'La oportunidad de venta elegida ya no está abierta. Elija otra o "Todas sus oportunidades de venta".',
   noteRequired: 'Ingrese la nota.',
   noteTooLong: `La nota acepta como máximo ${COMMUNICATION_LIMITS.note} caracteres.`,
   /** Aviso informativo del contador (no es un error: el dato es válido). */
   atLimit: (max: number) => `Llegó al máximo de ${max} caracteres.`,
 } as const;
 
-/** HU-212: valor del campo "Posible venta" cuando la conversación no fue sobre una venta en particular. */
+/** HU-212: valor del campo "Oportunidad de venta" cuando la conversación no fue sobre una venta en particular. */
 export const ALL_SALES = 'todas';
-export const ALL_SALES_LABEL = 'Todas sus posibles ventas';
+export const ALL_SALES_LABEL = 'Todas sus oportunidades de venta';
 
 /** Posible venta abierta (ni ganada ni perdida) que se puede elegir. */
 export interface OpenSaleOption {
@@ -31,7 +31,7 @@ export interface OpenSaleOption {
   title: string;
 }
 
-/** HU-212: "Todas sus posibles ventas" primero (la opción automática) y luego las abiertas del contacto. */
+/** HU-212: "Todas sus oportunidades de venta" primero (la opción automática) y luego las abiertas del contacto. */
 export function saleOptions(openSales: OpenSaleOption[]): { value: string; label: string }[] {
   return [{ value: ALL_SALES, label: ALL_SALES_LABEL }, ...openSales.map((sale) => ({ value: sale.id, label: sale.title }))];
 }
@@ -51,7 +51,7 @@ export interface CommunicationFormValues {
   note: string;
 }
 
-/** Valores iniciales: la fecha viene con el día de hoy (en Costa Rica) y "Todas sus posibles ventas" elegida. */
+/** Valores iniciales: la fecha viene con el día de hoy (en Costa Rica) y "Todas sus oportunidades de venta" elegida. */
 export function emptyCommunicationForm(today: string): CommunicationFormValues {
   return { date: today, medium: '', otherMedium: '', sale: ALL_SALES, note: '' };
 }
@@ -79,7 +79,7 @@ export function validateCommunicationForm(
     else if (other.length > COMMUNICATION_LIMITS.otherMedium) errors.otherMedium = COMMUNICATION_MESSAGES.otherMediumTooLong;
   }
 
-  // HU-212: la posible venta es obligatoria: "Todas sus posibles ventas" o una abierta del contacto.
+  // HU-212: la posible venta es obligatoria: "Todas sus oportunidades de venta" o una abierta del contacto.
   if (!values.sale || (values.sale !== ALL_SALES && !openSaleIds.includes(values.sale))) {
     errors.sale = COMMUNICATION_MESSAGES.saleRequired;
   }
@@ -102,7 +102,7 @@ export interface NewCommunicationInput {
   medium: CommunicationMedium;
   otherMedium: string | null;
   /**
-   * HU-212: posible venta a la que corresponde, o null/sin indicar = "Todas sus posibles ventas".
+   * HU-212: posible venta a la que corresponde, o null/sin indicar = "Todas sus oportunidades de venta".
    * Lo que llega sin elegir venta (por ejemplo, el formulario del sitio web) queda como "Todas".
    */
   saleId?: string | null;

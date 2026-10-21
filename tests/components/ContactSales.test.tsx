@@ -113,7 +113,7 @@ const brunoSales = (): Sale[] =>
 async function openSalesTab(sales: Sale[]) {
   vi.mocked(loadContactRecords).mockResolvedValue({ communications: [], sales, products: [] });
   renderContact();
-  await userEvent.setup().click(await screen.findByRole('tab', { name: `Posibles ventas (${sales.length})` }));
+  await userEvent.setup().click(await screen.findByRole('tab', { name: `Oportunidades de venta (${sales.length})` }));
   return screen.getByRole('tabpanel');
 }
 
@@ -127,7 +127,7 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-describe('HU-208 Ver las posibles ventas de un contacto', () => {
+describe('HU-208 Ver las oportunidades de venta de un contacto', () => {
   it('criterio 1: tabla con título, etapa, monto estimado, próximo seguimiento y última comunicación', async () => {
     const panel = await openSalesTab(brunoSales());
     expect(within(panel).getAllByRole('columnheader').map((h) => h.textContent)).toEqual([
@@ -180,9 +180,9 @@ describe('HU-208 Ver las posibles ventas de un contacto', () => {
     );
   });
 
-  it('criterio 4: sin posibles ventas → "Este contacto no tiene posibles ventas." (sin tabla)', async () => {
+  it('criterio 4: sin oportunidades de venta → "Este contacto no tiene oportunidades de venta." (sin tabla)', async () => {
     const panel = await openSalesTab([]);
-    expect(within(panel).getByText('Este contacto no tiene posibles ventas.')).toBeTruthy();
+    expect(within(panel).getByText('Este contacto no tiene oportunidades de venta.')).toBeTruthy();
     expect(within(panel).queryByRole('table')).toBeNull();
   });
 });

@@ -106,7 +106,7 @@ const field = (label: string) => within(dialog()).getByLabelText(label) as HTMLS
 async function openDialog() {
   renderContact();
   const user = userEvent.setup();
-  await screen.findByRole('tab', { name: 'Posibles ventas (4)' }); // registros cargados
+  await screen.findByRole('tab', { name: 'Oportunidades de venta (4)' }); // registros cargados
   await user.click(screen.getByRole('button', { name: 'Registrar comunicación' }));
   return user;
 }
@@ -123,49 +123,49 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-describe('HU-212 Relacionar una comunicación con una posible venta', () => {
-  it('criterio 1: la ventana pide a qué posible venta corresponde (campo obligatorio)', async () => {
+describe('HU-212 Relacionar una comunicación con una oportunidad de venta', () => {
+  it('criterio 1: la ventana pide a qué oportunidad de venta corresponde (campo obligatorio)', async () => {
     await openDialog();
-    const select = field('Posible venta');
+    const select = field('Oportunidad de venta');
     expect(select.tagName).toBe('SELECT');
     expect(select.required).toBe(true);
   });
 
-  it('criterio 2: opciones = "Todas sus posibles ventas" + títulos de las abiertas (sin ganadas ni perdidas)', async () => {
+  it('criterio 2: opciones = "Todas sus oportunidades de venta" + títulos de las abiertas (sin ganadas ni perdidas)', async () => {
     await openDialog();
-    expect(within(field('Posible venta')).getAllByRole('option').map((o) => o.textContent)).toEqual([
-      'Todas sus posibles ventas',
+    expect(within(field('Oportunidad de venta')).getAllByRole('option').map((o) => o.textContent)).toEqual([
+      'Todas sus oportunidades de venta',
       'Café molido para hotel',
       'Café en grano para cafetería',
     ]);
   });
 
-  it('criterio 2: "Todas sus posibles ventas" viene elegida', async () => {
+  it('criterio 2: "Todas sus oportunidades de venta" viene elegida', async () => {
     await openDialog();
-    const select = field('Posible venta');
-    expect(select.selectedOptions[0].textContent).toBe('Todas sus posibles ventas');
+    const select = field('Oportunidad de venta');
+    expect(select.selectedOptions[0].textContent).toBe('Todas sus oportunidades de venta');
     expect(within(dialog()).getByText(/si la conversación no fue sobre una en particular/)).toBeTruthy();
   });
 
-  it('criterio 2: un contacto sin ventas abiertas solo tiene "Todas sus posibles ventas"', async () => {
+  it('criterio 2: un contacto sin ventas abiertas solo tiene "Todas sus oportunidades de venta"', async () => {
     vi.mocked(loadContactRecords).mockResolvedValue({ communications: [], sales: sales.filter((s) => s.stage === 'ganada' || s.stage === 'perdida'), products: [] });
     renderContact();
     const user = userEvent.setup();
-    await screen.findByRole('tab', { name: /^Posibles ventas \(\d\)$/ });
+    await screen.findByRole('tab', { name: /^Oportunidades de venta \(\d\)$/ });
     await user.click(screen.getByRole('button', { name: 'Registrar comunicación' }));
-    expect(within(field('Posible venta')).getAllByRole('option').map((o) => o.textContent)).toEqual(['Todas sus posibles ventas']);
+    expect(within(field('Oportunidad de venta')).getAllByRole('option').map((o) => o.textContent)).toEqual(['Todas sus oportunidades de venta']);
   });
 
-  it('criterio 3: al elegir una posible venta se guarda con esa venta (el repositorio actualiza su última comunicación)', async () => {
+  it('criterio 3: al elegir una oportunidad de venta se guarda con esa venta (el repositorio actualiza su última comunicación)', async () => {
     const user = await openDialog();
     await fillRequired(user);
-    await user.selectOptions(field('Posible venta'), 'Café en grano para cafetería');
+    await user.selectOptions(field('Oportunidad de venta'), 'Café en grano para cafetería');
     await user.click(within(dialog()).getByRole('button', { name: 'Guardar' }));
     expect(createCommunication).toHaveBeenCalledWith(expect.objectContaining({ contactId: 'contact-002', saleId: 'sale-001' }), 'admin-uid');
     expect(await screen.findByText('Comunicación registrada correctamente.')).toBeTruthy();
   });
 
-  it('criterio 4: con "Todas sus posibles ventas" se guarda sin venta en particular (saleId null)', async () => {
+  it('criterio 4: con "Todas sus oportunidades de venta" se guarda sin venta en particular (saleId null)', async () => {
     const user = await openDialog();
     await fillRequired(user);
     await user.click(within(dialog()).getByRole('button', { name: 'Guardar' }));
@@ -176,14 +176,14 @@ describe('HU-212 Relacionar una comunicación con una posible venta', () => {
     vi.mocked(createCommunication).mockRejectedValue(new SaleNotOpenError());
     const user = await openDialog();
     await fillRequired(user);
-    await user.selectOptions(field('Posible venta'), 'Café molido para hotel');
+    await user.selectOptions(field('Oportunidad de venta'), 'Café molido para hotel');
     await user.click(within(dialog()).getByRole('button', { name: 'Guardar' }));
     expect(
-      await within(dialog()).findByText('La posible venta elegida ya no está abierta. Elija otra o "Todas sus posibles ventas".'),
+      await within(dialog()).findByText('La oportunidad de venta elegida ya no está abierta. Elija otra o "Todas sus oportunidades de venta".'),
     ).toBeTruthy();
   });
 
-  it('el historial indica a qué posible venta corresponde cada comunicación', async () => {
+  it('el historial indica a qué oportunidad de venta corresponde cada comunicación', async () => {
     vi.mocked(loadContactRecords).mockResolvedValue(
       records([
         comm('c1', { saleId: 'sale-001', date: cr('2026-10-03T00:00:00') }),
@@ -195,8 +195,8 @@ describe('HU-212 Relacionar una comunicación con una posible venta', () => {
     await within(panel).findByText('Nota c1');
     // HU-213: la posible venta va en su propia línea del recuadro.
     expect(within(panel).getAllByRole('listitem').map((li) => li.querySelector('.communication-sale')?.textContent)).toEqual([
-      'Posible venta: Café en grano para cafetería',
-      'Posible venta: Todas sus posibles ventas',
+      'Oportunidad de venta: Café en grano para cafetería',
+      'Oportunidad de venta: Todas sus oportunidades de venta',
     ]);
   });
 });

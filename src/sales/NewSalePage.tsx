@@ -30,7 +30,7 @@ import { createSale, listOpenSaleTitles } from './salesApi';
 type FixedContactState = { status: 'none' } | { status: 'loading' } | { status: 'notFound' } | { status: 'ready'; contact: Contact };
 
 /**
- * HU-301: formulario "Nuevo registro" (crear una posible venta) con siete datos: contacto (HU-302), título, etapa, monto,
+ * HU-301: formulario "Nueva oportunidad" (crear una posible venta) con siete datos: contacto (HU-302), título, etapa, monto,
  * fecha de seguimiento y notas (HU-303) y productos (HU-304). Con `?contactId=` (desde la ficha)
  * el contacto viene elegido y no se puede cambiar.
  */
@@ -142,7 +142,7 @@ export function NewSalePage() {
   if (fixed.status === 'notFound') {
     return (
       <main className="page">
-        <h1>{SALES_LABELS.newRecordTitle}</h1>
+        <h1>{SALES_LABELS.newOpportunityTitle}</h1>
         <p className="field-error" role="alert">
           {SALE_MESSAGES.contactNotFound}
         </p>
@@ -153,7 +153,7 @@ export function NewSalePage() {
 
   return (
     <main className="page">
-      <h1>{SALES_LABELS.newRecordTitle}</h1>
+      <h1>{SALES_LABELS.newOpportunityTitle}</h1>
       {fixed.status === 'loading' ? (
         <p>Cargando contacto…</p>
       ) : (
