@@ -1,0 +1,229 @@
+[
+  {
+    "pantalla": "Ficha, pestaña",
+    "hayDesbordePagina": false,
+    "cortes": [
+      {
+        "el": "span.sr-only",
+        "texto": "CANI Café",
+        "cortado": true,
+        "fuera": false
+      }
+    ],
+    "pestanas": [
+      "Comunicaciones (2)",
+      "Oportunidades de venta (3)",
+      "Productos de interés (4)"
+    ],
+    "botonesConNombreAccesible": [
+      "Nueva oportunidad"
+    ],
+    "botonTextoVisible": "+Nueva oportunidad",
+    "plusAriaHidden": "true",
+    "columnas": [
+      "Título",
+      "Etapa",
+      "Monto estimado",
+      "Próximo seguimiento",
+      "Última comunicación"
+    ]
+  },
+  {
+    "pantalla": "Ficha, comunicaciones",
+    "hayDesbordePagina": false,
+    "cortes": [
+      {
+        "el": "span.sr-only",
+        "texto": "CANI Café",
+        "cortado": true,
+        "fuera": false
+      }
+    ],
+    "lineas": [
+      "Oportunidad de venta: Todas sus oportunidades de venta",
+      "Oportunidad de venta: Café en grano para cafetería (mock)"
+    ]
+  },
+  {
+    "pantalla": "Diálogo Registrar comunicación",
+    "hayDesbordePagina": false,
+    "cortes": [
+      {
+        "el": "span.sr-only",
+        "texto": "CANI Café",
+        "cortado": true,
+        "fuera": false
+      }
+    ],
+    "campo": "Oportunidad de venta",
+    "opciones": [
+      "Todas sus oportunidades de venta",
+      "Café en grano para cafetería (mock)"
+    ],
+    "ayuda": [
+      "Elija \"Todas sus oportunidades de venta\" si la conversación no fue sobre una en particular."
+    ],
+    "selectAnchoUtil": {
+      "scrollWidth": 492,
+      "clientWidth": 492
+    }
+  },
+  {
+    "pantalla": "Tablero",
+    "hayDesbordePagina": false,
+    "cortes": [
+      {
+        "el": "span.sr-only",
+        "texto": "CANI Café",
+        "cortado": true,
+        "fuera": false
+      }
+    ],
+    "columnas": [
+      {
+        "encabezado": "Nuevo interesado · 1 · ₡ 0",
+        "tarjetas": 1,
+        "textoVacio": null
+      },
+      {
+        "encabezado": "Contactado · 0 · ₡ 0",
+        "tarjetas": 0,
+        "textoVacio": "Sin oportunidades de venta."
+      },
+      {
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "tarjetas": 1,
+        "textoVacio": null
+      },
+      {
+        "encabezado": "En negociación · 1 · ₡ 450 000",
+        "tarjetas": 1,
+        "textoVacio": null
+      },
+      {
+        "encabezado": "Venta ganada · 1 · ₡ 300 000",
+        "tarjetas": 1,
+        "textoVacio": null
+      },
+      {
+        "encabezado": "Venta perdida · 1 · ₡ 80 000",
+        "tarjetas": 1,
+        "textoVacio": null
+      }
+    ],
+    "botonesConNombreAccesible": [
+      "Nueva oportunidad"
+    ],
+    "botonTextoVisible": "+Nueva oportunidad",
+    "plusAriaHidden": "true",
+    "textosSinOportunidades": [
+      "Sin oportunidades de venta."
+    ]
+  },
+  {
+    "pantalla": "Avisos",
+    "hayDesbordePagina": false,
+    "cortes": [
+      {
+        "el": "span.sr-only",
+        "texto": "CANI Café",
+        "cortado": true,
+        "fuera": false
+      }
+    ],
+    "columnas": [
+      "Tipo",
+      "Contacto",
+      "Oportunidad de venta",
+      "Etapa",
+      "Detalle",
+      "Fecha del aviso"
+    ]
+  },
+  {
+    "pantalla": "Formulario",
+    "hayDesbordePagina": false,
+    "cortes": [
+      {
+        "el": "span.sr-only",
+        "texto": "CANI Café",
+        "cortado": true,
+        "fuera": false
+      }
+    ],
+    "h1": {
+      "texto": "Nueva oportunidad",
+      "visible": "NUEVA OPORTUNIDAD"
+    }
+  },
+  {
+    "pantalla": "Franja de éxito",
+    "hayDesbordePagina": false,
+    "cortes": [
+      {
+        "el": "span.sr-only",
+        "texto": "CANI Café",
+        "cortado": true,
+        "fuera": false
+      }
+    ],
+    "aviso": "Oportunidad de venta registrada correctamente.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "pantalla": "Error de título repetido",
+    "hayDesbordePagina": false,
+    "cortes": [
+      {
+        "el": "span.sr-only",
+        "texto": "CANI Café",
+        "cortado": true,
+        "fuera": false
+      }
+    ],
+    "mensaje": "Este contacto ya tiene una oportunidad de venta abierta con este título."
+  },
+  {
+    "pantalla": "Detalle",
+    "hayDesbordePagina": false,
+    "cortes": [
+      {
+        "el": "span.sr-only",
+        "texto": "CANI Café",
+        "cortado": true,
+        "fuera": false
+      }
+    ],
+    "enlaceVolver": [
+      "← Volver a gestión de ventas"
+    ]
+  },
+  {
+    "pantalla": "Reabrir",
+    "hayDesbordePagina": false,
+    "cortes": [
+      {
+        "el": "span.sr-only",
+        "texto": "CANI Café",
+        "cortado": true,
+        "fuera": false
+      }
+    ],
+    "aviso": "Oportunidad de venta reabierta correctamente."
+  },
+  {
+    "pantalla": "Detalle no encontrada",
+    "hayDesbordePagina": false,
+    "cortes": [
+      {
+        "el": "span.sr-only",
+        "texto": "CANI Café",
+        "cortado": true,
+        "fuera": false
+      }
+    ],
+    "texto": [
+      "No se encontró la oportunidad de venta."
+    ]
+  }
+]
