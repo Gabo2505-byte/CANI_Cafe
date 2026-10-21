@@ -97,13 +97,13 @@ async function fillRequired(user: ReturnType<typeof userEvent.setup>) {
   await user.type(amount(), '450000');
 }
 
-describe('HU-301 Crear una posible venta', () => {
-  it('la pantalla "Gestión de ventas" tiene el botón "+ Nuevo registro", que abre el formulario "Nuevo registro"', async () => {
+describe('HU-301 Crear una oportunidad de venta', () => {
+  it('la pantalla "Gestión de ventas" tiene el botón "+ Nueva oportunidad", que abre el formulario "Nueva oportunidad"', async () => {
     const user = userEvent.setup();
     renderAt('/posibles-ventas');
-    await user.click(screen.getByRole('button', { name: 'Nuevo registro' }));
+    await user.click(screen.getByRole('button', { name: 'Nueva oportunidad' }));
     expect(currentLocation.pathname).toBe('/posibles-ventas/nueva');
-    expect(screen.getByRole('heading', { level: 1, name: 'Nuevo registro' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 1, name: 'Nueva oportunidad' })).toBeTruthy();
   });
 
   it('el formulario tiene los siete datos', async () => {
@@ -143,7 +143,7 @@ describe('HU-301 Crear una posible venta', () => {
       products: [{ productId: 'product-001', quantity: 20 }],
     });
     await waitFor(() => expect(currentLocation.pathname).toBe('/posibles-ventas'));
-    expect((await screen.findByRole('status')).textContent).toBe('Posible venta registrada correctamente.');
+    expect((await screen.findByRole('status')).textContent).toBe('Oportunidad de venta registrada correctamente.');
   });
 
   it('se puede guardar sin productos, sin seguimiento y sin notas', async () => {
@@ -176,7 +176,7 @@ describe('HU-301 Crear una posible venta', () => {
     await fillRequired(user);
     await user.click(screen.getByRole('button', { name: 'Guardar' }));
     await waitFor(() =>
-      expect(alerts()).toEqual(['Este contacto ya tiene una posible venta abierta con este título.']),
+      expect(alerts()).toEqual(['Este contacto ya tiene una oportunidad de venta abierta con este título.']),
     );
     expect(listOpenSaleTitles).toHaveBeenCalledWith('contact-001');
     expect(createSale).not.toHaveBeenCalled();
@@ -204,7 +204,7 @@ describe('HU-301 Crear una posible venta', () => {
     await user.click(await screen.findByRole('option', { name: /Ana/ }));
     await fillRequired(user);
     await user.click(screen.getByRole('button', { name: 'Guardar' }));
-    await waitFor(() => expect(alerts()).toEqual(['No se pudo registrar la posible venta. Intente de nuevo.']));
+    await waitFor(() => expect(alerts()).toEqual(['No se pudo registrar la oportunidad de venta. Intente de nuevo.']));
     expect(currentLocation.pathname).toBe('/posibles-ventas/nueva');
     expect(title().value).toBe('Café en grano para su cafetería');
   });
@@ -256,8 +256,8 @@ describe('HU-301 mensajes de error', () => {
 describe('confirmación en franja verde', () => {
   it('desaparece sola a los 5 segundos', () => {
     vi.useFakeTimers();
-    render(<TimedNotice message="Posible venta registrada correctamente." />);
-    expect(screen.getByRole('status').textContent).toBe('Posible venta registrada correctamente.');
+    render(<TimedNotice message="Oportunidad de venta registrada correctamente." />);
+    expect(screen.getByRole('status').textContent).toBe('Oportunidad de venta registrada correctamente.');
     act(() => {
       vi.advanceTimersByTime(4900);
     });

@@ -117,7 +117,7 @@ describe('HU-211 Registrar una comunicación', () => {
   it('criterio 1: el botón solo está en la pestaña "Comunicaciones"', async () => {
     renderContact();
     await screen.findByRole('button', { name: 'Registrar comunicación' });
-    await userEvent.setup().click(screen.getByRole('tab', { name: /^Posibles ventas/ }));
+    await userEvent.setup().click(screen.getByRole('tab', { name: /^Oportunidades de venta/ }));
     expect(screen.queryByRole('button', { name: 'Registrar comunicación' })).toBeNull();
   });
 
@@ -202,7 +202,7 @@ describe('HU-211 Registrar una comunicación', () => {
         date: new Date(`${TODAY}T00:00:00-06:00`),
         medium: 'whatsapp',
         otherMedium: null,
-        saleId: null, // HU-212: "Todas sus posibles ventas" viene elegida
+        saleId: null, // HU-212: "Todas sus oportunidades de venta" viene elegida
         note: 'Pidió precios del café molido; se le envió la lista.',
       },
       'admin-uid',
@@ -232,7 +232,7 @@ describe('HU-211 Registrar una comunicación', () => {
     expect(message.compareDocumentPosition(firstCard) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(scrolled).toHaveBeenCalled(); // se desplaza hasta el mensaje si la página estaba más abajo
 
-    await user.click(screen.getByRole('tab', { name: /^Posibles ventas/ }));
+    await user.click(screen.getByRole('tab', { name: /^Oportunidades de venta/ }));
     await user.click(screen.getByRole('tab', { name: /^Comunicaciones/ }));
     expect(screen.queryByText('Comunicación registrada correctamente.')).toBeNull();
   });

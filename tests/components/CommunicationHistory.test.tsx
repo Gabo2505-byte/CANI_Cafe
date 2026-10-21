@@ -135,17 +135,17 @@ describe('HU-213 Consultar el historial de comunicaciones', () => {
     expect(notes()).toEqual(['Nota 1', 'Nota 2', 'Nota 3']);
   });
 
-  it('criterio 2: fecha, medio, posible venta, nota completa y quién la registró', async () => {
+  it('criterio 2: fecha, medio, oportunidad de venta, nota completa y quién la registró', async () => {
     const longNote = `Pidió precios. ${'a'.repeat(985)}`; // 1000 caracteres, sin recortar
     serveHistory([comm(1, { saleId: 'sale-010', appliesToAllSales: false, medium: 'whatsapp', note: longNote }), comm(2)]);
     renderContact();
     await screen.findByText(longNote);
     const [first, second] = cards();
     expect(first.querySelector('.record-meta')?.textContent).toBe('30/10/2026 · WhatsApp');
-    expect(within(first).getByText('Posible venta: Café para eventos')).toBeTruthy();
+    expect(within(first).getByText('Oportunidad de venta: Café para eventos')).toBeTruthy();
     expect(first.querySelector('.record-note')?.textContent).toHaveLength(1000);
     expect(within(first).getByText('Registrado por: admin')).toBeTruthy();
-    expect(within(second).getByText('Posible venta: Todas sus posibles ventas')).toBeTruthy();
+    expect(within(second).getByText('Oportunidad de venta: Todas sus oportunidades de venta')).toBeTruthy();
   });
 
   it('criterio 3: "Otro: Instagram" y "Registrado por: Sistema (formulario web)"', async () => {
@@ -195,7 +195,7 @@ describe('HU-213 Consultar el historial de comunicaciones', () => {
     await screen.findByText('Nota 1');
     await user.click(screen.getByRole('button', { name: 'Ver más' }));
     await screen.findByText('Nota 15');
-    await user.click(screen.getByRole('tab', { name: /^Posibles ventas/ }));
+    await user.click(screen.getByRole('tab', { name: /^Oportunidades de venta/ }));
     await user.click(screen.getByRole('tab', { name: 'Comunicaciones (15)' }));
     expect(cards()).toHaveLength(10);
     expect(screen.getByRole('button', { name: 'Ver más' })).toBeTruthy();

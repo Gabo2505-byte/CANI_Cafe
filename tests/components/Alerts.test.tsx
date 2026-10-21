@@ -89,11 +89,11 @@ const table = async () => (await screen.findByRole('table')) as HTMLTableElement
 const rowsOf = (t: HTMLElement) => within(t).getAllByRole('row').slice(1);
 
 describe('HU-316 criterio 2: tabla de avisos', () => {
-  it('tiene las columnas tipo, contacto, posible venta, etapa, detalle y fecha del aviso', async () => {
+  it('tiene las columnas tipo, contacto, oportunidad de venta, etapa, detalle y fecha del aviso', async () => {
     vi.mocked(listAlerts).mockResolvedValue([overdue]);
     renderAlerts();
     const headers = within(await table()).getAllByRole('columnheader');
-    expect(headers.map((h) => h.textContent)).toEqual(['Tipo', 'Contacto', 'Posible venta', 'Etapa', 'Detalle', 'Fecha del aviso']);
+    expect(headers.map((h) => h.textContent)).toEqual(['Tipo', 'Contacto', 'Oportunidad de venta', 'Etapa', 'Detalle', 'Fecha del aviso']);
   });
 
   it('cada fila muestra el tipo, el contacto, la venta, su etapa, el texto del aviso y la fecha dd/mm/aaaa', async () => {
@@ -132,7 +132,7 @@ describe('HU-316 criterio 3: el tipo se muestra con color', () => {
 });
 
 describe('HU-316 criterio 4: clic y caso sin avisos', () => {
-  it('al dar clic en un aviso se abre el detalle de la posible venta', async () => {
+  it('al dar clic en un aviso se abre el detalle de la oportunidad de venta', async () => {
     vi.mocked(listAlerts).mockResolvedValue([overdue]);
     const user = userEvent.setup();
     renderAlerts();

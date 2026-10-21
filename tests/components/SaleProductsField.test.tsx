@@ -64,7 +64,7 @@ async function choose(user: User, n: number, varietyName: string, productId: str
   await user.selectOptions(presentation(n), productId);
 }
 
-describe('HU-304 Productos de la posible venta', () => {
+describe('HU-304 Productos de la oportunidad de venta', () => {
   it('empieza sin filas y "Agregar producto" suma una con variedad, presentación, cantidad y "X"', async () => {
     const { user } = await setup();
     expect(screen.queryByLabelText('Variedad del producto 1')).toBeNull();
@@ -104,10 +104,25 @@ describe('HU-304 Productos de la posible venta', () => {
     const { user } = await setup();
     await user.click(screen.getByRole('button', { name: 'Agregar producto' }));
     expect(presentation(1).disabled).toBe(true);
-    expect(optionTexts(presentation(1))).toEqual(['Seleccione una presentación']);
+    expect(optionTexts(presentation(1))).toEqual(['Primero elija una variedad']);
 
     await user.selectOptions(variety(1), 'Caturra');
     expect(presentation(1).disabled).toBe(false);
+  });
+
+  it('la presentación deshabilitada indica "Primero elija una variedad"; al elegir variedad dice "Seleccione una presentación" y al borrarla vuelve a la instrucción', async () => {
+    const { user } = await setup();
+    await user.click(screen.getByRole('button', { name: 'Agregar producto' }));
+    expect(presentation(1).selectedOptions[0].text).toBe('Primero elija una variedad');
+
+    await user.selectOptions(variety(1), 'Caturra');
+    expect(presentation(1).disabled).toBe(false);
+    expect(presentation(1).selectedOptions[0].text).toBe('Seleccione una presentación');
+
+    await user.selectOptions(variety(1), '');
+    expect(presentation(1).disabled).toBe(true);
+    expect(presentation(1).selectedOptions[0].text).toBe('Primero elija una variedad');
+    expect(screen.getByRole('combobox', { name: 'Presentación del producto 1' })).toBe(presentation(1));
   });
 
   it('muestra solo las presentaciones de la variedad elegida, en el orden del catálogo', async () => {

@@ -21,6 +21,8 @@ interface SaleProductsFieldProps {
 export const PRODUCT_PLACEHOLDERS = {
   variety: 'Seleccione una variedad',
   presentation: 'Seleccione una presentación',
+  /** Mientras no hay variedad elegida, la presentación está deshabilitada y lo indica (sin literal en el PDF). */
+  presentationDisabled: 'Primero elija una variedad',
 } as const;
 
 /**
@@ -70,7 +72,9 @@ export function SaleProductsField({ products, rows, onChange, errors = {} }: Sal
                 aria-invalid={rowErrors?.product && row.variety ? true : undefined}
                 aria-describedby={rowErrors?.product && row.variety ? `${row.key}-product-error` : undefined}
               >
-                <option value="">{PRODUCT_PLACEHOLDERS.presentation}</option>
+                <option value="">
+                  {row.variety ? PRODUCT_PLACEHOLDERS.presentation : PRODUCT_PLACEHOLDERS.presentationDisabled}
+                </option>
                 {presentationsOf(row.variety).map((product) => (
                   <option key={product.id} value={product.id}>
                     {product.presentation}

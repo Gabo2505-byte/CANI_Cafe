@@ -39,7 +39,7 @@ const followUp = () => screen.getByLabelText(/^Fecha del próximo seguimiento/) 
 const notes = () => screen.getByLabelText(/^Notas/) as HTMLTextAreaElement;
 const errorsShown = () => screen.queryAllByRole('alert').map((a) => a.textContent);
 
-describe('HU-303 Datos de la posible venta', () => {
+describe('HU-303 Datos de la oportunidad de venta', () => {
   it('la etapa viene en "Nuevo interesado" y ofrece solo las cuatro abiertas', () => {
     setup();
     const stage = screen.getByLabelText(/^Etapa/) as HTMLSelectElement;
@@ -100,7 +100,7 @@ describe('HU-303 Datos de la posible venta', () => {
     await user.type(title(), 'cafe EN grano para su cafeteria');
     await user.type(amount(), '1000');
     await user.click(screen.getByRole('button', { name: 'Guardar' }));
-    expect(errorsShown()).toEqual(['Este contacto ya tiene una posible venta abierta con este título.']);
+    expect(errorsShown()).toEqual(['Este contacto ya tiene una oportunidad de venta abierta con este título.']);
     expect(onSave).not.toHaveBeenCalled();
   });
 

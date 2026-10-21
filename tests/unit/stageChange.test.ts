@@ -14,7 +14,7 @@ import {
 import { CONTACT_CLASSIFICATIONS, OPEN_SALE_STAGES, SALE_STAGES, type SaleStage } from '../../src/shared/types';
 
 describe('HU-310 quién puede cambiar de etapa', () => {
-  it.each(OPEN_SALE_STAGES)('una posible venta en "%s" sí', (stage) => {
+  it.each(OPEN_SALE_STAGES)('una oportunidad de venta en "%s" sí', (stage) => {
     expect(canChangeStage({ stage })).toBe(true);
   });
   it('una "ganada" no (es definitiva)', () => {
@@ -88,15 +88,15 @@ describe('HU-312 reabrir una perdida', () => {
   });
 
   it('los textos son los del documento', () => {
-    expect(STAGE_CHANGE_MESSAGES.reopened).toBe('Posible venta reabierta correctamente.');
+    expect(STAGE_CHANGE_MESSAGES.reopened).toBe('Oportunidad de venta reabierta correctamente.');
     expect(STAGE_CHANGE_MESSAGES.reopenDuplicateTitle).toBe(
-      'Este contacto ya tiene una posible venta abierta con este título. Cambie el título antes de reabrirla.',
+      'Este contacto ya tiene una oportunidad de venta abierta con este título. Cambie el título antes de reabrirla.',
     );
   });
 
   it('la franja verde al reabrir es la de HU-312, sea cual sea la etapa abierta elegida', () => {
     const none = { contactBecameClient: false, contactName: null };
-    for (const to of OPEN_SALE_STAGES) expect(stageChangeNotice(to, none, 'perdida')).toBe('Posible venta reabierta correctamente.');
+    for (const to of OPEN_SALE_STAGES) expect(stageChangeNotice(to, none, 'perdida')).toBe('Oportunidad de venta reabierta correctamente.');
     expect(stageChangeNotice('contactado', none, 'nuevo_interesado')).toBe('Etapa actualizada correctamente.');
   });
 });
@@ -157,7 +157,7 @@ describe('HU-313 textos', () => {
       'Venta ganada. Ana Prueba Mora ahora es cliente.',
     );
     expect(stageChangeNotice('ganada', none)).toBe('Venta ganada correctamente.');
-    expect(stageChangeNotice('perdida', none)).toBe('Posible venta marcada como perdida.');
+    expect(stageChangeNotice('perdida', none)).toBe('Oportunidad de venta marcada como perdida.');
     expect(stageChangeNotice('contactado', none)).toBe('Etapa actualizada correctamente.');
   });
 });

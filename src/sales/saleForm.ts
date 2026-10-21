@@ -5,14 +5,14 @@ import { toSortKey } from '../shared/utils/text';
 export const SALE_LIMITS = { title: 100, notes: 1000, maxAmount: 999_999_999 } as const;
 
 export const SALE_MESSAGES = {
-  created: 'Posible venta registrada correctamente.',
-  saveError: 'No se pudo registrar la posible venta. Intente de nuevo.',
+  created: 'Oportunidad de venta registrada correctamente.',
+  saveError: 'No se pudo registrar la oportunidad de venta. Intente de nuevo.',
   productsLoadError: 'No se pudieron cargar los productos. Intente de nuevo.',
   contactNotFound: 'No se encontró el contacto.',
   contactRequired: 'Seleccione un contacto.',
   titleRequired: 'Ingrese el título.',
   titleTooLong: `El título acepta como máximo ${SALE_LIMITS.title} caracteres.`,
-  titleDuplicated: 'Este contacto ya tiene una posible venta abierta con este título.',
+  titleDuplicated: 'Este contacto ya tiene una oportunidad de venta abierta con este título.',
   amountInvalid: 'Ingrese un monto válido.',
   followUpPast: 'La fecha de seguimiento no puede ser anterior a hoy.',
   notesTooLong: `Las notas aceptan como máximo ${SALE_LIMITS.notes} caracteres.`,

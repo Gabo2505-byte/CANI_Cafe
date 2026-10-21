@@ -9,7 +9,7 @@ export const ALERT_MESSAGES = {
   loading: 'Cargando avisos…',
   loadError: 'No se pudieron cargar los avisos. Intente de nuevo.',
   /** HU-316: encabezados de la tabla. */
-  columns: ['Tipo', 'Contacto', 'Posible venta', 'Etapa', 'Detalle', 'Fecha del aviso'],
+  columns: ['Tipo', 'Contacto', 'Oportunidad de venta', 'Etapa', 'Detalle', 'Fecha del aviso'],
 } as const;
 
 /** HU-315: más de 10 días sin comunicaciones (desde el día 11). */

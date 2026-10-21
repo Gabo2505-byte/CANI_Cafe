@@ -31,7 +31,7 @@ afterAll(async () => {
   await testEnv?.cleanup();
 });
 
-describe('crear una posible venta (HU-301)', () => {
+describe('crear una oportunidad de venta (HU-301)', () => {
   it('guarda la venta, sus productos y el primer registro del historial', async () => {
     const saleId = await createSaleIn(db, {
       contactId: 'contact-001',

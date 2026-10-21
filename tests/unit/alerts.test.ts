@@ -84,7 +84,7 @@ describe('HU-314 criterio 3: cuándo desaparece', () => {
     expect(followUpAlert({ ...vencida, nextFollowUpAt: followUp('2026-10-30T10:00:00') }, ana, NOW)).toBeNull();
   });
 
-  it.each(['ganada', 'perdida'] as const)('si la posible venta se pasa a "%s"', (stage) => {
+  it.each(['ganada', 'perdida'] as const)('si la oportunidad de venta se pasa a "%s"', (stage) => {
     expect(followUpAlert(sale({ stage }), ana, NOW)).toBeNull();
   });
 
@@ -156,7 +156,7 @@ describe('HU-315 criterio 1 y 2: más de 10 días sin comunicaciones', () => {
     expect(noCommunicationAlert(quiet(), ana, cr('2026-10-12T12:00:00'))).not.toBeNull();
   });
 
-  it('cuenta la última comunicación, que ya incluye las de "Todas sus posibles ventas"', () => {
+  it('cuenta la última comunicación, que ya incluye las de "Todas sus oportunidades de venta"', () => {
     const reciente = quiet({ lastCommunicationAt: lastComm('2026-10-15T10:00:00') });
     expect(noCommunicationAlert(reciente, ana, NOW)).toBeNull();
   });

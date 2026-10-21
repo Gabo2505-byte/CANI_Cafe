@@ -100,7 +100,7 @@ afterEach(() => {
 const row = (label: string) => screen.getByText(label, { selector: 'dt' }).parentElement as HTMLElement;
 const valueOf = (label: string) => within(row(label)).getByText((_, el) => el?.tagName === 'DD').textContent;
 
-describe('HU-308 Detalle de la posible venta', () => {
+describe('HU-308 Detalle de la oportunidad de venta', () => {
   it('arriba tiene el enlace "← Volver a gestión de ventas", el título y el contacto', async () => {
     vi.mocked(loadSaleDetail).mockResolvedValue(detail());
     renderDetail();
@@ -177,7 +177,7 @@ describe('HU-308 Detalle de la posible venta', () => {
   it('una venta que no existe lo avisa', async () => {
     vi.mocked(loadSaleDetail).mockResolvedValue(null);
     renderDetail('no-existe');
-    expect((await screen.findByRole('alert')).textContent).toBe('No se encontró la posible venta.');
+    expect((await screen.findByRole('alert')).textContent).toBe('No se encontró la oportunidad de venta.');
     expect(screen.getByRole('link', { name: '← Volver a gestión de ventas' })).toBeTruthy();
     expect(screen.queryByRole('table')).toBeNull();
   });
@@ -185,7 +185,7 @@ describe('HU-308 Detalle de la posible venta', () => {
   it('si falla la carga lo avisa', async () => {
     vi.mocked(loadSaleDetail).mockRejectedValue(new Error('sin red'));
     renderDetail();
-    expect((await screen.findByRole('alert')).textContent).toBe('No se pudo cargar la posible venta. Intente de nuevo.');
+    expect((await screen.findByRole('alert')).textContent).toBe('No se pudo cargar la oportunidad de venta. Intente de nuevo.');
   });
 
   it('si el contacto ya no existe no muestra enlace', async () => {

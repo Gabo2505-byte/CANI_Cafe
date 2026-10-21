@@ -65,8 +65,8 @@ afterAll(async () => {
   await testEnv?.cleanup();
 });
 
-describe('HU-212 relacionar una comunicación con una posible venta', () => {
-  it('con una posible venta: se guarda con su saleId y actualiza solo su última comunicación', async () => {
+describe('HU-212 relacionar una comunicación con una oportunidad de venta', () => {
+  it('con una oportunidad de venta: se guarda con su saleId y actualiza solo su última comunicación', async () => {
     const id = await createCommunicationIn(db, input({ saleId: 'abierta-1' }), 'admin-activo');
     const comm = (await getDoc(doc(db, COLLECTIONS.communications, id))).data();
     expect(comm).toMatchObject({ saleId: 'abierta-1', appliesToAllSales: false });
@@ -75,7 +75,7 @@ describe('HU-212 relacionar una comunicación con una posible venta', () => {
     expect(await lastOf('de-otro')).toBeNull();
   });
 
-  it('con "Todas sus posibles ventas": actualiza todas las abiertas del contacto, no las ganadas, perdidas ni de otros', async () => {
+  it('con "Todas sus oportunidades de venta": actualiza todas las abiertas del contacto, no las ganadas, perdidas ni de otros', async () => {
     const id = await createCommunicationIn(db, input({ saleId: null, date: communicationDayToDate('2026-10-18') }), 'admin-activo');
     expect((await getDoc(doc(db, COLLECTIONS.communications, id))).data()).toMatchObject({ saleId: null, appliesToAllSales: true });
     expect(await lastOf('abierta-1')).toBe(day('2026-10-18').toMillis());
@@ -85,7 +85,7 @@ describe('HU-212 relacionar una comunicación con una posible venta', () => {
     expect(await lastOf('de-otro')).toBeNull();
   });
 
-  it('sin indicar venta (como el formulario del sitio web) queda como "Todas sus posibles ventas"', async () => {
+  it('sin indicar venta (como el formulario del sitio web) queda como "Todas sus oportunidades de venta"', async () => {
     const { saleId: _omit, ...withoutSale } = input();
     const id = await createCommunicationIn(db, withoutSale, 'admin-activo');
     expect((await getDoc(doc(db, COLLECTIONS.communications, id))).data()).toMatchObject({ saleId: null, appliesToAllSales: true });

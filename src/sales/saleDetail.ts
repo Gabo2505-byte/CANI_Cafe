@@ -5,8 +5,8 @@ import type { Sale, StageHistory } from '../shared/types';
 export const DETAIL_MESSAGES = {
   back: SALES_LABELS.backToBoard,
   loading: 'Cargando…',
-  notFound: 'No se encontró la posible venta.',
-  loadError: 'No se pudo cargar la posible venta. Intente de nuevo.',
+  notFound: 'No se encontró la oportunidad de venta.',
+  loadError: 'No se pudo cargar la oportunidad de venta. Intente de nuevo.',
   noFollowUp: 'Sin seguimiento programado',
   noCommunications: 'Sin comunicaciones',
   noProducts: 'Sin productos',

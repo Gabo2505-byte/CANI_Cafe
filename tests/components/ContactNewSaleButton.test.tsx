@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-// HU-301 (criterio 1): botón "+ Nuevo registro" en la pestaña "Posibles ventas" de la ficha del contacto
+// HU-301 (criterio 1): botón "+ Nueva oportunidad" en la pestaña "Oportunidades de venta" de la ficha del contacto
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { User as FirebaseUser } from 'firebase/auth';
@@ -93,30 +93,44 @@ function renderContact() {
 async function openSalesTab() {
   const user = userEvent.setup();
   renderContact();
-  await user.click(await screen.findByRole('tab', { name: /^Posibles ventas/ }));
+  await user.click(await screen.findByRole('tab', { name: /^Oportunidades de venta/ }));
   return user;
 }
 
-describe('HU-301 botón "+ Nuevo registro" en la ficha', () => {
-  it('aparece en la pestaña "Posibles ventas", arriba a la derecha, aunque el contacto no tenga ventas', async () => {
+describe('HU-301 botón "+ Nueva oportunidad" en la ficha', () => {
+  it('aparece en la pestaña "Oportunidades de venta", arriba a la derecha, aunque el contacto no tenga ventas', async () => {
     await openSalesTab();
-    const button = await screen.findByRole('button', { name: 'Nuevo registro' });
+    const button = await screen.findByRole('button', { name: 'Nueva oportunidad' });
     expect(button.closest('.tab-panel-actions')).not.toBeNull();
-    expect(await screen.findByText('Este contacto no tiene posibles ventas.')).toBeTruthy();
+    expect(await screen.findByText('Este contacto no tiene oportunidades de venta.')).toBeTruthy();
+  });
+
+  it('el nombre accesible del botón es exactamente "Nueva oportunidad" (sin el "+")', async () => {
+    await openSalesTab();
+    const button = await screen.findByRole('button', { name: 'Nueva oportunidad' });
+    expect(screen.queryByRole('button', { name: '+ Nueva oportunidad' })).toBeNull();
+    expect(button.closest('.tab-panel-actions')).not.toBeNull();
+  });
+
+  it('el "+" del botón se ve pero es decorativo (aria-hidden)', async () => {
+    await openSalesTab();
+    const button = await screen.findByRole('button', { name: 'Nueva oportunidad' });
+    expect(button.querySelector('[aria-hidden="true"]')?.textContent).toBe('+');
+    expect(button.textContent).toBe('+Nueva oportunidad');
   });
 
   it('no aparece en las otras pestañas', async () => {
     const user = userEvent.setup();
     renderContact();
     await screen.findByRole('tab', { name: /^Comunicaciones/ });
-    expect(screen.queryByRole('button', { name: 'Nuevo registro' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Nueva oportunidad' })).toBeNull();
     await user.click(screen.getByRole('tab', { name: /^Productos de interés/ }));
-    expect(screen.queryByRole('button', { name: 'Nuevo registro' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Nueva oportunidad' })).toBeNull();
   });
 
   it('al darle clic abre el formulario con este contacto ya elegido y sin poder cambiarlo', async () => {
     const user = await openSalesTab();
-    await user.click(await screen.findByRole('button', { name: 'Nuevo registro' }));
+    await user.click(await screen.findByRole('button', { name: 'Nueva oportunidad' }));
 
     expect(currentLocation.pathname).toBe('/posibles-ventas/nueva');
     expect(currentLocation.search).toBe('?contactId=contact-002');

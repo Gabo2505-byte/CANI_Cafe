@@ -3,10 +3,10 @@ import { SALE_STAGES, SALE_STAGE_LABELS, type Sale, type SaleStage } from '../sh
 import { formatColones } from '../shared/utils/money';
 
 export const BOARD_MESSAGES = {
-  empty: 'Sin posibles ventas.',
+  empty: 'Sin oportunidades de venta.',
   noFollowUp: 'Sin seguimiento programado',
-  loading: 'Cargando posibles ventas…',
-  loadError: 'No se pudieron cargar las posibles ventas. Intente de nuevo.',
+  loading: 'Cargando oportunidades de venta…',
+  loadError: 'No se pudieron cargar las oportunidades de venta. Intente de nuevo.',
 } as const;
 
 /** Las ganadas y perdidas solo se muestran si llegaron a esa etapa en los últimos 30 días. */

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { isOpenSaleStage, OPEN_SALE_STAGES, SALE_STAGE_LABELS, SALE_STAGES } from '../../src/shared/types';
 
-describe('etapas de una posible venta', () => {
+describe('etapas de una oportunidad de venta', () => {
   it('son seis, en el orden del tablero', () => {
     expect(SALE_STAGES.map((stage) => SALE_STAGE_LABELS[stage])).toEqual([
       'Nuevo interesado',

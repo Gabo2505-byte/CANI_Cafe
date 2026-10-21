@@ -56,7 +56,7 @@ const productsOf = async (saleId: string) => {
   return Object.fromEntries(snap.docs.map((d) => [d.id, d.get('quantity')]));
 };
 
-describe('editar una posible venta (HU-309)', () => {
+describe('editar una oportunidad de venta (HU-309)', () => {
   it('guarda título, monto, seguimiento y notas sin tocar etapa, historial ni última comunicación', async () => {
     await updateSaleIn(db, 's-open', {
       title: '  Título nuevo ',

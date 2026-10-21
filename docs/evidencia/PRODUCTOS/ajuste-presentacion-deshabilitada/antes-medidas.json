@@ -1,0 +1,69 @@
+{
+  "deshabilitado": {
+    "disabled": true,
+    "textoMostrado": "Seleccione una presentación",
+    "anchoTexto": 219,
+    "anchoUtil": 229,
+    "cabe": true,
+    "opacity": "0.7",
+    "cursor": "pointer",
+    "color": "rgb(143, 126, 107)",
+    "fondo": "rgb(36, 25, 17)",
+    "bordeColor": "rgb(133, 111, 87)",
+    "bgRepeat": "repeat",
+    "bgPosition": "0% 0%",
+    "bgSize": "auto",
+    "opciones": [
+      "Seleccione una presentación"
+    ]
+  },
+  "habilitado": {
+    "disabled": false,
+    "textoMostrado": "Seleccione una presentación",
+    "anchoTexto": 219,
+    "anchoUtil": 229,
+    "cabe": true,
+    "opacity": "1",
+    "cursor": "pointer",
+    "color": "rgb(243, 233, 218)",
+    "fondo": "rgb(46, 33, 24)",
+    "bordeColor": "rgb(133, 111, 87)",
+    "bgRepeat": "no-repeat",
+    "bgPosition": "calc(100% - 12px) 50%",
+    "bgSize": "12px 8px",
+    "opciones": [
+      "Seleccione una presentación",
+      "Bolsa de 250 g, grano entero",
+      "Bolsa de 250 g, molido",
+      "Bolsa de 340 g, grano entero",
+      "Bolsa de 340 g, molido",
+      "Bolsa de 500 g, grano entero",
+      "Bolsa de 500 g, molido",
+      "Bolsa de 1 kg, grano entero",
+      "Bolsa de 1 kg, molido"
+    ]
+  },
+  "variedad": "Villa Sarchí",
+  "presentacionesAncho": {
+    "anchoUtil": 229,
+    "max": 220
+  },
+  "variedadBorrada": {
+    "disabled": true,
+    "textoMostrado": "Seleccione una presentación",
+    "anchoTexto": 219,
+    "anchoUtil": 229,
+    "cabe": true,
+    "opacity": "0.7",
+    "cursor": "pointer",
+    "color": "rgb(143, 126, 107)",
+    "fondo": "rgb(36, 25, 17)",
+    "bordeColor": "rgb(133, 111, 87)",
+    "bgRepeat": "repeat",
+    "bgPosition": "0% 0%",
+    "bgSize": "auto",
+    "opciones": [
+      "Seleccione una presentación"
+    ]
+  }
+}

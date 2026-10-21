@@ -99,7 +99,7 @@ const radio = (name: string) => screen.getByRole('radio', { name }) as HTMLInput
 const save = () => screen.getByRole('button', { name: 'Guardar' }) as HTMLButtonElement;
 
 describe('HU-310 botón "Cambiar etapa"', () => {
-  it('aparece en el detalle de una posible venta abierta, junto a "Editar"', async () => {
+  it('aparece en el detalle de una oportunidad de venta abierta, junto a "Editar"', async () => {
     renderDetail();
     const button = await screen.findByRole('button', { name: 'Cambiar etapa' });
     expect(button.closest('.page-header')?.querySelector('h1')?.textContent).toBe('Café en grano para cafetería');
@@ -228,7 +228,7 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
     await user.click(radio('En negociación'));
     await user.click(save());
     expect((await screen.findByRole('alert')).textContent).toBe(
-      'La etapa de esta posible venta cambió. Cierre esta ventana y vuelva a intentarlo.',
+      'La etapa de esta oportunidad de venta cambió. Cierre esta ventana y vuelva a intentarlo.',
     );
   });
 });
@@ -264,7 +264,7 @@ describe('HU-311 marcar como perdida desde la ventana "Cambiar etapa"', () => {
     await waitFor(() => expect(changeSaleStage).toHaveBeenCalledOnce());
     expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'contactado', 'perdida', '');
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
-    expect((await screen.findByRole('status')).textContent).toBe('Posible venta marcada como perdida.');
+    expect((await screen.findByRole('status')).textContent).toBe('Oportunidad de venta marcada como perdida.');
     // Ya perdida: "Cambiar etapa" sigue para poder reabrirla (HU-312).
     expect(screen.getByRole('button', { name: 'Cambiar etapa' })).toBeTruthy();
   });
@@ -288,7 +288,7 @@ describe('HU-311 marcar como perdida desde la ventana "Cambiar etapa"', () => {
     expect(screen.getByText('250/250')).toBeTruthy();
   });
 
-  it('"Cancelar" deja la posible venta en su etapa y no guarda nada', async () => {
+  it('"Cancelar" deja la oportunidad de venta en su etapa y no guarda nada', async () => {
     const { user } = await openDialog();
     await user.click(radio('Venta perdida'));
     await user.type(reason(), 'No debe guardarse');
@@ -404,7 +404,7 @@ describe('HU-313 marcar como ganada desde la ventana "Cambiar etapa"', () => {
   });
 });
 
-describe('HU-312 reabrir una posible venta perdida', () => {
+describe('HU-312 reabrir una oportunidad de venta perdida', () => {
   beforeEach(() => {
     vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('perdida'));
   });
@@ -420,7 +420,7 @@ describe('HU-312 reabrir una posible venta perdida', () => {
     expect(within(dialog).queryByText(/Motivo de la pérdida/)).toBeNull();
   });
 
-  it('al elegir una etapa abierta guarda, cierra la ventana y muestra "Posible venta reabierta correctamente."', async () => {
+  it('al elegir una etapa abierta guarda, cierra la ventana y muestra "Oportunidad de venta reabierta correctamente."', async () => {
     const { user } = await openDialog();
     vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('contactado'));
     await user.click(radio('Contactado'));
@@ -428,7 +428,7 @@ describe('HU-312 reabrir una posible venta perdida', () => {
 
     await waitFor(() => expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'perdida', 'contactado', undefined));
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
-    expect((await screen.findByRole('status')).textContent).toBe('Posible venta reabierta correctamente.');
+    expect((await screen.findByRole('status')).textContent).toBe('Oportunidad de venta reabierta correctamente.');
     const stageRow = screen.getByText('Etapa', { selector: 'dt' }).parentElement as HTMLElement;
     expect(within(stageRow).getByText('Contactado')).toBeTruthy();
   });
@@ -441,7 +441,7 @@ describe('HU-312 reabrir una posible venta perdida', () => {
     await user.click(save());
 
     expect((await screen.findByRole('alert')).textContent).toBe(
-      'Este contacto ya tiene una posible venta abierta con este título. Cambie el título antes de reabrirla.',
+      'Este contacto ya tiene una oportunidad de venta abierta con este título. Cambie el título antes de reabrirla.',
     );
     expect(screen.getByRole('dialog')).toBeTruthy();
     expect(screen.queryByRole('status')).toBeNull();
