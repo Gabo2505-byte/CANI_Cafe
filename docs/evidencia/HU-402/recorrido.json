@@ -63,23 +63,43 @@
   "restaurados": true,
   "meInteresaConFormulario": {
     "terceraTarjeta": {
+      "href": "/contactenos?producto=prod-01-villa-sarchi-0340-grano",
       "url": "/contactenos?producto=prod-01-villa-sarchi-0340-grano",
-      "producto": "Villa SarchíBolsa de 340 g, grano entero",
-      "marcado": true,
-      "cantidad": "1",
-      "otrosMarcados": 0,
-      "filaVisibleEnLaLista": true
+      "filas": 1,
+      "fila1": {
+        "variedad": "Villa Sarchí",
+        "presentacion": "Bolsa de 340 g, grano entero",
+        "presentacionDeshabilitada": false,
+        "cantidad": "1",
+        "placeholderCantidad": "Cantidad",
+        "errores": []
+      },
+      "productoIdElegido": "prod-01-villa-sarchi-0340-grano"
     },
     "tarjetaDelFinal": {
+      "href": "/contactenos?producto=prod-09-geisha-0500-molido",
       "url": "/contactenos?producto=prod-09-geisha-0500-molido",
-      "producto": "GeishaBolsa de 500 g, molido",
-      "marcado": true,
-      "cantidad": "1",
-      "otrosMarcados": 0,
-      "filaVisibleEnLaLista": true
+      "filas": 1,
+      "fila1": {
+        "variedad": "Geisha",
+        "presentacion": "Bolsa de 500 g, molido",
+        "presentacionDeshabilitada": false,
+        "cantidad": "1",
+        "placeholderCantidad": "Cantidad",
+        "errores": []
+      },
+      "productoIdElegido": "prod-09-geisha-0500-molido"
     },
     "productoInexistente": {
-      "marcados": 0
+      "filas": 1,
+      "fila1": {
+        "variedad": "",
+        "presentacion": "Primero elija una variedad",
+        "presentacionDeshabilitada": true,
+        "cantidad": "",
+        "placeholderCantidad": "Cantidad",
+        "errores": []
+      }
     }
   }
 }
