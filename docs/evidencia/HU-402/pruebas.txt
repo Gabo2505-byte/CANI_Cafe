@@ -1,9 +1,10 @@
 Evidencia de pruebas HU-402 - 2026-11-02 (America/Costa_Rica)
+Catálogo por variedad (opción C), rama dylan-catalogo-variedades.
 
 == npm run typecheck ==
 Sin errores.
 
-== Pruebas del sitio público (unitarias y de pantalla): salida detallada ==
+== Catálogo, descripción y aislamiento: salida detallada ==
  ✓ tests/unit/publicCatalog.test.ts > publicDescription (HU-402) > el tope es de 300 caracteres, el mismo del catálogo oficial
  ✓ tests/unit/publicCatalog.test.ts > publicDescription (HU-402) > deja intacta una descripción de hasta 300 caracteres
  ✓ tests/unit/publicCatalog.test.ts > publicDescription (HU-402) > recorta la que pasa de 300 y nunca devuelve más
@@ -13,6 +14,9 @@ Sin errores.
  ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /[\\/]src[\\/]shared[\\/]firebase[\\/]config/
  ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /[\\/]firebase[\\/]auth/
  ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /@firebase[\\/]auth/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /[\\/]firebase[\\/]firestore[\\/](?!lite[\\/])/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /@firebase[\\/]firestore[\\/]dist[\\/](?!lite[\\/])/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /@firebase[\\/]webchannel-wrapper[\\/](dist[\\/])?webchannel-blob/
  ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "identitytoolkit.googleapis.com"
  ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "securetoken"
  ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "/ingreso"
@@ -34,23 +38,29 @@ Sin errores.
  ✓ tests/components/PublicSite.test.tsx > HU-401 página Inicio > "¿Cómo comprar?" explica que los precios dependen del tipo de cliente y la cantidad, y que se piden por el formulario
  ✓ tests/components/PublicSite.test.tsx > HU-401 página Inicio > los botones llevan a Catálogo y a Contáctenos
  ✓ tests/components/PublicSite.test.tsx > HU-401 página Inicio > el título de la pestaña es "CANI Café | Inicio"
- ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > muestra arriba el texto de precios
- ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > muestra 72 tarjetas agrupadas en 9 variedades de 8, con nombre, presentación y descripción de hasta 300 caracteres
- ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > recorta una descripción de más de 300 caracteres
- ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > ninguna tarjeta muestra precios ni permite comprar
- ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > cada tarjeta tiene "Me interesa", que abre Contáctenos con ese producto
- ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > sin productos: "Pronto publicaremos nuestros productos."
- ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > si falla la carga, avisa y no muestra el mensaje de catálogo vacío
- Test Files  3 passed (3)
-      Tests  37 passed (37)
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo (una tarjeta por variedad) > muestra arriba el texto de precios
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo (una tarjeta por variedad) > muestra 9 tarjetas, una por variedad, en el orden del catálogo, en una sola rejilla
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo (una tarjeta por variedad) > cada tarjeta muestra el nombre, la descripción (de hasta 300 caracteres) y la presentación elegida
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo (una tarjeta por variedad) > el selector se llama "Presentación", tiene un nombre accesible por tarjeta y trae las 8 presentaciones en orden, con la primera elegida
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo (una tarjeta por variedad) > "Me interesa" abre Contáctenos con la presentación elegida por defecto (la primera)
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo (una tarjeta por variedad) > al cambiar la presentación, "Me interesa" lleva el id de la nueva y las demás tarjetas no cambian
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo (una tarjeta por variedad) > solo se ofrecen las presentaciones activas; si la primera no está, se elige la siguiente
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo (una tarjeta por variedad) > una variedad sin presentaciones activas no tiene tarjeta
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo (una tarjeta por variedad) > recorta una descripción de más de 300 caracteres
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo (una tarjeta por variedad) > ninguna tarjeta muestra precios ni permite comprar
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo (una tarjeta por variedad) > sin productos: "Pronto publicaremos nuestros productos."
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo (una tarjeta por variedad) > mientras carga: "Cargando catálogo..."
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo (una tarjeta por variedad) > si falla la carga, avisa y no muestra el mensaje de catálogo vacío
+      Tests  46 passed (46)
 
 == npm test (todo) ==
-Test Files  47 passed (47) | Tests  587 passed (587)
+Test Files  52 passed (52) | Tests  718 passed (718)
 
-== npm run test:emulators (reglas, seed y flujo contra emulador) ==
-Test Files  20 passed (20) | Tests  133 passed (133)
-Incluye las pruebas nuevas de reglas de products (tests/rules/firestore.rules.test.ts, 6 casos) y listPublicProductsIn sin sesión
-(tests/products/listProducts.emulator.test.ts).
+== npm run test:emulators ==
+Test Files  21 passed (21) | Tests  173 passed (173) (incluye la lectura pública de productos activos: tests/rules y tests/products)
 
-== npm run build / npm run build:publico ==
-Ambos en verde.
+== npm run build (sistema interno) ==
+Sin cambios: dist/ idéntico archivo por archivo a la línea base (index-JDqI_WiX.js e index-SIfwidEr.css).
+
+== npm run build:publico ==
+En verde: JS 502,50 kB (gzip 154,15 kB), CSS 20,46 kB.

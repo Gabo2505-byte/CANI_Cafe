@@ -37,7 +37,7 @@ Con filas vacías o repetidas el formulario no se envía y arriba aparece "Revis
 
 ## Preselección desde el catálogo (HU-402.4)
 
-Con `/contactenos?producto=<id>` la fila llega llena: variedad, presentación y cantidad 1. Un id inexistente o inactivo se ignora y queda la fila vacía. Ver [HU-402](../HU-402/README.md), capturas 06 y 07.
+Con `/contactenos?producto=<id>` la fila llega llena: variedad, presentación y cantidad 1. Un id inexistente o inactivo se ignora y queda la fila vacía. Ver [HU-402](../HU-402/README.md), captura 04.
 
 ## Lo que se envía (sin cambios)
 
