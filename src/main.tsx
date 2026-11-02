@@ -9,6 +9,7 @@ import '@fontsource/inter/600.css';
 import '@fontsource/inter/700.css';
 import '@fontsource/cormorant-garamond/600.css';
 import '@fontsource/cormorant-garamond/700.css';
+import './shared/styles/tokens.css';
 import './styles.css';
 
 createRoot(document.getElementById('root')!).render(

@@ -1,6 +1,7 @@
 # Dependencias y builds
 node_modules/
 dist/
+dist-publico/
 coverage/
 
 # Variables locales/de producción: pueden contener la configuración real.
