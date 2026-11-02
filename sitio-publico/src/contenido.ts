@@ -56,6 +56,8 @@ export const CATALOGO = {
   // Mensaje propio del sitio: la carga puede fallar y el criterio no define el texto (se confirma con el cliente).
   error: 'No se pudo cargar el catálogo. Intente de nuevo.',
   cargando: 'Cargando catálogo...',
+  // PROVISIONAL (catálogo por variedad): etiqueta del selector de presentación de cada tarjeta.
+  presentacion: 'Presentación',
 } as const;
 
 export const FORMULARIO = {

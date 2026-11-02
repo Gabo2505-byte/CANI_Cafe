@@ -245,17 +245,13 @@ a:hover {
 }
 
 /* -----------------------------------------------------------------------------------------------------
-   6. Catálogo: un grupo por variedad, tarjetas de tres por fila
+   6. Catálogo: una tarjeta por variedad (con su selector de presentación), tres por fila
    ----------------------------------------------------------------------------------------------------- */
-.pub-variety {
-  margin-top: var(--space-6);
-}
-
 .pub-cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-4);
-  margin: 0;
+  margin: var(--space-5) 0 0;
   padding: 0;
   list-style: none;
 }
@@ -263,22 +259,22 @@ a:hover {
 .pub-card {
   display: flex;
   flex-direction: column;
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-4) var(--space-5) var(--space-5);
   background: var(--color-surface-raised);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 }
 
+/* Nombre de la variedad: serif dorado, como los encabezados de sección */
 .pub-card-name {
-  margin: 0;
-  font-size: var(--font-size-lg);
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-subtitle);
   font-weight: 600;
-}
-
-.pub-card-presentation {
-  margin: var(--space-1) 0 var(--space-3);
-  font-weight: 600;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-caps);
   color: var(--color-accent);
 }
 
@@ -289,6 +285,22 @@ a:hover {
   line-height: 1.55;
   color: var(--color-text-secondary);
   overflow-wrap: anywhere;
+}
+
+.pub-card-field {
+  margin-bottom: var(--space-4);
+}
+
+.pub-card-field label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.pub-card-field select {
+  background-color: var(--color-surface);
 }
 
 .pub-card-button {
