@@ -66,10 +66,22 @@ export const FORMULARIO = {
   productos: 'Productos de interés',
   mensaje: 'Mensaje',
   enviar: 'Enviar',
-  // Encabezado de la columna de cantidades (HU-404 habla de un "espacio para la cantidad aproximada").
-  cantidadAproximada: 'Cantidad aproximada',
   // Los criterios solo dicen que el teléfono y el mensaje son opcionales; esta marca sigue el sistema interno.
   opcional: '(opcional)',
+} as const;
+
+/**
+ * Selector de productos de interés (HU-404), con el mismo funcionamiento que el del sistema interno: filas con variedad,
+ * presentación, cantidad y "X". PROVISIONALES (sin literal en los criterios): los toma del sistema interno.
+ */
+export const SELECTOR_PRODUCTOS = {
+  agregar: 'Agregar producto',
+  unidades: 'unidades',
+  variedad: 'Seleccione una variedad',
+  presentacion: 'Seleccione una presentación',
+  presentacionSinVariedad: 'Primero elija una variedad',
+  cantidad: 'Cantidad',
+  quitar: 'X',
 } as const;
 
 export const CONTACTENOS = {

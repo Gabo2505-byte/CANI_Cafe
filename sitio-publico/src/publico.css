@@ -603,107 +603,140 @@ button.pub-button {
 }
 
 /* -----------------------------------------------------------------------------------------------------
-   9. Productos de interés (HU-404): lista con desplazamiento propio, agrupada por variedad
+   9. Productos de interés (HU-404): filas con variedad, presentación, cantidad y "X" (mismo funcionamiento que el
+      selector del sistema interno, con los estilos y la paleta del sitio público)
    ----------------------------------------------------------------------------------------------------- */
 .pub-products-status {
   margin: var(--space-2) 0 var(--space-3);
   font-size: var(--font-size-md);
 }
 
-.pub-products-head {
-  display: flex;
-  justify-content: flex-end;
+/* Selects con flecha propia (la nativa no sigue el tema oscuro) */
+select {
   box-sizing: border-box;
+  min-width: 0;
   width: 100%;
-  margin: 0 0 var(--space-1);
-  padding-right: var(--space-4);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-muted);
-}
-
-.pub-products {
-  max-height: 20rem;
-  overflow-y: auto;
-  background: var(--color-surface-raised);
+  padding: 0.55rem 2rem 0.55rem 0.65rem;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--color-text);
+  text-overflow: ellipsis;
+  background-color: var(--color-surface-raised);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23d4a762' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 0.75rem;
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-sm);
-}
-
-.pub-products-variety {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  margin: 0;
-  padding: 0.3rem var(--space-3);
-  font-size: var(--font-size-sm);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-caps);
-  color: var(--color-accent);
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.pub-products-group:first-child .pub-products-variety {
-  border-top: none;
-}
-
-.pub-product-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 5.5rem;
-  align-items: center;
-  gap: 0 var(--space-3);
-  padding: 0.35rem var(--space-3);
-}
-
-.pub-product-row:hover {
-  background: var(--color-surface-hover);
-}
-
-.pub-product-check {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin: 0;
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--color-text);
+  appearance: none;
   cursor: pointer;
 }
 
-.pub-product-check input {
-  flex: none;
-  width: 1.1rem;
-  height: 1.1rem;
-  margin: 0;
+select:hover {
+  border-color: var(--color-text-secondary);
 }
 
-.pub-product-name {
-  font-weight: 600;
+select:focus-visible {
+  outline-offset: 0;
+  border-color: var(--color-accent);
 }
 
-.pub-product-name::after {
-  content: ' · ';
-  font-weight: 400;
+/* Presentación sin variedad: atenuada, con una sola flecha apagada; el texto (la indicación) sigue legible */
+select:disabled {
   color: var(--color-text-muted);
+  background-color: var(--color-surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23856f57' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  border-color: var(--color-border);
+  cursor: not-allowed;
 }
 
-.pub-product-presentation {
+select[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+
+select option {
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+}
+
+.pub-product-rows {
+  padding: var(--space-3);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.pub-product-row {
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Fila en dos líneas: arriba variedad y presentación; abajo la cantidad con "unidades" y la X a la derecha */
+.pub-product-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.pub-product-choice {
+  display: grid;
+  grid-column: 1 / -1;
+  /* Variedad con el ancho justo para "Seleccione una variedad"; la presentación con el resto */
+  grid-template-columns: minmax(0, 15.5rem) minmax(0, 1fr);
+  gap: var(--space-2);
+}
+
+.pub-product-rows select {
+  background-color: var(--color-surface);
+}
+
+.pub-product-rows select:disabled {
+  background-color: var(--color-bg);
+}
+
+.pub-product-quantity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.pub-product-quantity input {
+  width: 6rem;
+  margin: 0;
+  padding: 0.45rem 0.55rem;
+  text-align: right;
+  background: var(--color-surface);
+}
+
+.pub-product-unit {
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
 
-.pub-quantity {
-  margin: 0;
-  padding: 0.3rem 0.5rem;
-  text-align: right;
+/* Botones secundarios del selector ("X" y "Agregar producto"), más bajos que los de acción principal */
+button.pub-button-secondary {
+  padding: 0.4rem 0.9rem;
+  font-size: var(--font-size-md);
+}
+
+.pub-product-remove {
+  min-width: 2.4rem;
+}
+
+button.pub-product-remove:hover {
+  color: var(--color-danger);
+  background: transparent;
+  border-color: var(--color-danger);
 }
 
 .pub-product-error {
-  grid-column: 1 / -1;
-  margin: 0.2rem 0 0;
-  text-align: right;
+  margin: var(--space-1) 0 0;
+}
+
+.pub-product-add {
+  margin-bottom: var(--space-1);
 }
 
 /* -----------------------------------------------------------------------------------------------------

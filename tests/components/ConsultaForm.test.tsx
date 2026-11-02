@@ -6,6 +6,7 @@ import { MemoryRouter } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ConsultaForm } from '../../sitio-publico/src/components/ConsultaForm';
 import { ContactenosPage } from '../../sitio-publico/src/pages/ContactenosPage';
+import { filasDe } from '../helpers/filasProductos';
 
 // La página Contáctenos lee el catálogo; aquí no se consulta Firestore (las pruebas de la lista están en ProductosField.test.tsx).
 vi.mock('../../sitio-publico/src/firebase', () => ({ db: {} }));
@@ -177,7 +178,7 @@ describe('HU-501 criterios 1, 2 y 5: al dar clic en "Enviar"', () => {
   it('con una cantidad fuera de 1 a 9999 tampoco envía y avisa arriba', async () => {
     const onValido = vi.fn();
     const user = renderForm({
-      valoresIniciales: { nombre: 'Ana', correo: 'ana@example.com', intereses: { 'prod-1': '0' } },
+      valoresIniciales: { nombre: 'Ana', correo: 'ana@example.com', filas: filasDe({ 'prod-1': '0' }) },
       onValido,
     });
     await user.click(enviar());
@@ -188,12 +189,13 @@ describe('HU-501 criterios 1, 2 y 5: al dar clic en "Enviar"', () => {
   it('con los datos bien, envía los valores y no muestra errores', async () => {
     const onValido = vi.fn();
     const user = renderForm({
-      valoresIniciales: { nombre: 'Ana Pérez', correo: 'ana@example.com', intereses: { 'prod-1': '2' } },
+      valoresIniciales: { nombre: 'Ana Pérez', correo: 'ana@example.com', filas: filasDe({ 'prod-1': '2' }) },
       onValido,
     });
     await user.click(enviar());
     expect(onValido).toHaveBeenCalledTimes(1);
-    expect(onValido.mock.calls[0][0]).toMatchObject({ nombre: 'Ana Pérez', correo: 'ana@example.com', intereses: { 'prod-1': '2' } });
+    expect(onValido.mock.calls[0][0]).toMatchObject({ nombre: 'Ana Pérez', correo: 'ana@example.com' });
+    expect(onValido.mock.calls[0][0].filas).toMatchObject([{ productoId: 'prod-1', cantidad: '2' }]);
     expect(aviso()).toBeNull();
     expect(document.querySelectorAll('.field-error')).toHaveLength(0);
   });
@@ -201,7 +203,7 @@ describe('HU-501 criterios 1, 2 y 5: al dar clic en "Enviar"', () => {
   it('un teléfono mal escrito también impide enviar aunque lo demás esté bien', async () => {
     const onValido = vi.fn();
     const user = renderForm({
-      valoresIniciales: { nombre: 'Ana', correo: 'ana@example.com', intereses: { 'prod-1': '1' } },
+      valoresIniciales: { nombre: 'Ana', correo: 'ana@example.com', filas: filasDe({ 'prod-1': '1' }) },
       onValido,
     });
     await user.type(telefono(), '123');
@@ -213,7 +215,7 @@ describe('HU-501 criterios 1, 2 y 5: al dar clic en "Enviar"', () => {
 
   it('al corregir todo, el aviso de arriba desaparece y se puede enviar', async () => {
     const onValido = vi.fn();
-    const user = renderForm({ valoresIniciales: { intereses: { 'prod-1': '1' } }, onValido });
+    const user = renderForm({ valoresIniciales: { filas: filasDe({ 'prod-1': '1' }) }, onValido });
     await user.click(enviar());
     expect(aviso()).toBeTruthy();
     await user.type(nombre(), 'Ana');

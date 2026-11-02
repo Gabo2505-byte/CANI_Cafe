@@ -1,64 +1,70 @@
-import { useEffect, useId, useMemo, useRef, type FocusEvent } from 'react';
+import { useEffect, useMemo, useRef, type FocusEvent } from 'react';
 import { groupByVariety } from '../../../src/products/catalog';
 import type { Product } from '../../../src/shared/types';
-import { CATALOGO, FORMULARIO } from '../contenido';
+import { CATALOGO, SELECTOR_PRODUCTOS } from '../contenido';
+import { type ErroresFila, type FilaProducto, nuevaFila } from '../formulario/validacion';
 
 export type EstadoProductos = 'cargando' | 'error' | 'listo';
 
 interface ProductosFieldProps {
   productos: Product[];
   estado: EstadoProductos;
-  /** Productos marcados: id → cantidad escrita. */
-  intereses: Record<string, string>;
-  onMarcar: (id: string, marcado: boolean) => void;
-  onCantidad: (id: string, texto: string) => void;
-  /** Se llama al salir de la cantidad de un producto (para revisarla). */
-  onCantidadSalida: (id: string) => void;
-  /** Se llama al salir de toda la lista de productos (para revisar que haya al menos uno). */
+  filas: FilaProducto[];
+  onChange: (filas: FilaProducto[]) => void;
+  /** Errores de una fila, ya filtrados por lo que se debe mostrar (al salir del campo o al enviar). */
+  erroresFila: (clave: string) => ErroresFila;
+  /** Se llama al salir de la variedad y la presentación de una fila (para revisar que tenga producto). */
+  onProductoSalida: (clave: string) => void;
+  /** Se llama al salir de la cantidad de una fila. */
+  onCantidadSalida: (clave: string) => void;
+  /** Se llama al salir de todo el campo de productos (para revisar que haya al menos uno). */
   onSalir: () => void;
-  /** Error de la cantidad de un producto, ya filtrado por lo que se debe mostrar. */
-  errorCantidad: (id: string) => string | undefined;
   /** "Seleccione al menos un producto." (ya filtrado). */
   error?: string;
   errorId: string;
-  /** Producto cuya fila debe quedar a la vista dentro de la lista (por ejemplo, el elegido en el catálogo). */
-  mostrarId?: string | null;
 }
 
 /**
- * HU-404: los productos del catálogo, uno por fila y agrupados por variedad, dentro de una lista con desplazamiento
- * propio. Cada fila tiene una casilla, el nombre con la presentación y la cantidad aproximada (solo se puede escribir
- * si el producto está marcado; al marcarlo empieza en 1 y al desmarcarlo se borra).
+ * HU-404: productos de interés con el mismo funcionamiento que el selector del sistema interno, pero propio del sitio
+ * público (no puede importar src/sales). "Agregar producto" suma una fila donde el producto se elige en dos pasos
+ * (variedad y, ya elegida, su presentación) y se escribe la cantidad; la "X" quita la fila. Al elegir la presentación
+ * la cantidad empieza en 1.
  */
 export function ProductosField({
   productos,
   estado,
-  intereses,
-  onMarcar,
-  onCantidad,
+  filas,
+  onChange,
+  erroresFila,
+  onProductoSalida,
   onCantidadSalida,
   onSalir,
-  errorCantidad,
   error,
   errorId,
-  mostrarId,
 }: ProductosFieldProps) {
-  const uid = useId();
-  const panelRef = useRef<HTMLDivElement>(null);
-  const grupos = useMemo(() => groupByVariety(productos), [productos]);
+  const variedades = useMemo(() => groupByVariety(productos), [productos]);
+  const presentacionesDe = (variedad: string): Product[] => variedades.find((v) => v.name === variedad)?.products ?? [];
+  const actualizar = (clave: string, cambios: Partial<FilaProducto>) =>
+    onChange(filas.map((fila) => (fila.clave === clave ? { ...fila, ...cambios } : fila)));
 
-  // Deja a la vista la fila pedida desplazando solo la lista (no la página).
+  // Al agregar una fila, el foco pasa a su variedad.
+  const enfocarClave = useRef<string | null>(null);
+  const contenedorRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const panel = panelRef.current;
-    if (!mostrarId || !panel) return;
-    const fila = Array.from(panel.querySelectorAll<HTMLElement>('[data-producto]')).find((f) => f.dataset.producto === mostrarId);
-    if (!fila) return;
-    const arriba = fila.getBoundingClientRect().top - panel.getBoundingClientRect().top;
-    panel.scrollTop += arriba - (panel.clientHeight - fila.offsetHeight) / 2;
-  }, [mostrarId, grupos]);
+    if (!enfocarClave.current) return;
+    contenedorRef.current?.querySelector<HTMLSelectElement>(`[data-fila="${enfocarClave.current}"] select`)?.focus();
+    enfocarClave.current = null;
+  }, [filas]);
 
-  const salioDeLaLista = (e: FocusEvent<HTMLDivElement>) => {
-    if (!e.currentTarget.contains(e.relatedTarget)) onSalir();
+  const agregar = () => {
+    const fila = nuevaFila();
+    enfocarClave.current = fila.clave;
+    onChange([...filas, fila]);
+  };
+
+  // Se revisa al salir del conjunto, no al pasar de un control a otro dentro de él.
+  const alSalirDe = (accion: () => void) => (e: FocusEvent<HTMLElement>) => {
+    if (!e.currentTarget.contains(e.relatedTarget)) accion();
   };
 
   const mensajeError = error && (
@@ -67,96 +73,116 @@ export function ProductosField({
     </p>
   );
 
-  // Mientras no hay lista (cargando, con error o sin productos) también se avisa si se intentó enviar sin productos.
-  if (estado === 'cargando') {
+  // Mientras no hay catálogo (cargando, con error o sin productos) también se avisa si se intentó enviar sin productos.
+  if (estado !== 'listo' || variedades.length === 0) {
     return (
       <>
-        <p className="pub-status pub-products-status">{CATALOGO.cargando}</p>
-        {mensajeError}
-      </>
-    );
-  }
-  if (estado === 'error') {
-    return (
-      <>
-        <p className="pub-status pub-status-error pub-products-status" role="alert">
-          {CATALOGO.error}
-        </p>
-        {mensajeError}
-      </>
-    );
-  }
-  if (grupos.length === 0) {
-    return (
-      <>
-        <p className="pub-status pub-products-status">{CATALOGO.vacio}</p>
+        {estado === 'cargando' && <p className="pub-status pub-products-status">{CATALOGO.cargando}</p>}
+        {estado === 'error' && (
+          <p className="pub-status pub-status-error pub-products-status" role="alert">
+            {CATALOGO.error}
+          </p>
+        )}
+        {estado === 'listo' && <p className="pub-status pub-products-status">{CATALOGO.vacio}</p>}
         {mensajeError}
       </>
     );
   }
 
   return (
-    <>
-      <p className="pub-products-head" aria-hidden="true">
-        {FORMULARIO.cantidadAproximada}
-      </p>
-      {/* Lista con desplazamiento propio: se puede recorrer con el teclado (tabulador y flechas arriba/abajo). */}
-      <div
-        ref={panelRef}
-        className="pub-products"
-        role="region"
-        aria-label="Lista de productos"
-        tabIndex={0}
-        onBlur={salioDeLaLista}
-      >
-        {grupos.map((grupo) => (
-          <div key={grupo.name} className="pub-products-group">
-            <h3 className="pub-products-variety">{grupo.name}</h3>
-            {grupo.products.map((producto) => {
-              const marcado = Object.hasOwn(intereses, producto.id);
-              const errorFila = marcado ? errorCantidad(producto.id) : undefined;
-              const idCheck = `${uid}-${producto.id}`;
-              const idError = `${uid}-${producto.id}-error`;
-              return (
-                <div key={producto.id} className="pub-product-row" data-producto={producto.id}>
-                  <label className="pub-product-check" htmlFor={idCheck}>
-                    <input
-                      id={idCheck}
-                      type="checkbox"
-                      checked={marcado}
-                      onChange={(e) => onMarcar(producto.id, e.target.checked)}
-                    />
-                    <span>
-                      <span className="pub-product-name">{producto.name}</span>{' '}
-                      <span className="pub-product-presentation">{producto.presentation}</span>
-                    </span>
-                  </label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    autoComplete="off"
-                    maxLength={6}
-                    className="pub-quantity"
-                    aria-label={`Cantidad aproximada de ${producto.name}, ${producto.presentation}`}
-                    disabled={!marcado}
-                    value={marcado ? intereses[producto.id] : ''}
-                    onChange={(e) => onCantidad(producto.id, e.target.value)}
-                    onBlur={() => onCantidadSalida(producto.id)}
-                    aria-invalid={errorFila ? true : undefined}
-                    aria-describedby={errorFila ? idError : undefined}
-                  />
-                  {errorFila && (
-                    <p id={idError} className="field-error pub-product-error">
-                      {errorFila}
-                    </p>
-                  )}
-                </div>
-              );
-            })}
+    <div ref={contenedorRef} className="pub-product-rows" onBlur={alSalirDe(onSalir)}>
+      {filas.map((fila, indice) => {
+        const n = indice + 1;
+        const errores = erroresFila(fila.clave);
+        const idErrorProducto = `${fila.clave}-producto-error`;
+        const idErrorCantidad = `${fila.clave}-cantidad-error`;
+        // Como en el sistema interno: el error del producto se marca en la variedad si falta, si no en la presentación.
+        const errorEnVariedad = Boolean(errores.producto) && !fila.variedad;
+        const errorEnPresentacion = Boolean(errores.producto) && Boolean(fila.variedad);
+        return (
+          <div key={fila.clave} className="pub-product-row" data-fila={fila.clave}>
+            <div className="pub-product-controls">
+              <div className="pub-product-choice" onBlur={alSalirDe(() => onProductoSalida(fila.clave))}>
+                <select
+                  aria-label={`Variedad del producto ${n}`}
+                  value={fila.variedad}
+                  // Al cambiar la variedad se borra la presentación: era de otra variedad.
+                  onChange={(e) => actualizar(fila.clave, { variedad: e.target.value, productoId: '' })}
+                  aria-invalid={errorEnVariedad ? true : undefined}
+                  aria-describedby={errorEnVariedad ? idErrorProducto : undefined}
+                >
+                  <option value="">{SELECTOR_PRODUCTOS.variedad}</option>
+                  {variedades.map((variedad) => (
+                    <option key={variedad.name} value={variedad.name}>
+                      {variedad.name}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  aria-label={`Presentación del producto ${n}`}
+                  value={fila.productoId}
+                  disabled={!fila.variedad}
+                  onChange={(e) => {
+                    const productoId = e.target.value;
+                    // HU-404: al elegir la presentación, la cantidad empieza en 1 (si todavía no se escribió una).
+                    const cantidad = productoId && fila.cantidad.trim() === '' ? '1' : fila.cantidad;
+                    actualizar(fila.clave, { productoId, cantidad });
+                  }}
+                  aria-invalid={errorEnPresentacion ? true : undefined}
+                  aria-describedby={errorEnPresentacion ? idErrorProducto : undefined}
+                >
+                  <option value="">
+                    {fila.variedad ? SELECTOR_PRODUCTOS.presentacion : SELECTOR_PRODUCTOS.presentacionSinVariedad}
+                  </option>
+                  {presentacionesDe(fila.variedad).map((producto) => (
+                    <option key={producto.id} value={producto.id}>
+                      {producto.presentation}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="pub-product-quantity">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  maxLength={6}
+                  aria-label={`Cantidad aproximada del producto ${n}`}
+                  placeholder={SELECTOR_PRODUCTOS.cantidad}
+                  value={fila.cantidad}
+                  onChange={(e) => actualizar(fila.clave, { cantidad: e.target.value })}
+                  onBlur={() => onCantidadSalida(fila.clave)}
+                  aria-invalid={errores.cantidad ? true : undefined}
+                  aria-describedby={errores.cantidad ? idErrorCantidad : undefined}
+                />
+                <span className="pub-product-unit">{SELECTOR_PRODUCTOS.unidades}</span>
+              </div>
+              <button
+                type="button"
+                className="pub-button pub-button-secondary pub-product-remove"
+                aria-label={`Quitar producto ${n}`}
+                onClick={() => onChange(filas.filter((f) => f.clave !== fila.clave))}
+              >
+                {SELECTOR_PRODUCTOS.quitar}
+              </button>
+            </div>
+            {errores.producto && (
+              <p id={idErrorProducto} className="field-error pub-product-error">
+                {errores.producto}
+              </p>
+            )}
+            {errores.cantidad && (
+              <p id={idErrorCantidad} className="field-error pub-product-error">
+                {errores.cantidad}
+              </p>
+            )}
           </div>
-        ))}
-      </div>
+        );
+      })}
+      <button type="button" className="pub-button pub-button-secondary pub-product-add" onClick={agregar}>
+        {SELECTOR_PRODUCTOS.agregar}
+      </button>
       {mensajeError}
-    </>
+    </div>
   );
 }
