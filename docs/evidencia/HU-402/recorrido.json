@@ -1,0 +1,85 @@
+{
+  "catalogo": {
+    "textoSuperior": "Los precios varían según la cantidad y el tipo de cliente. Solicite información en Contáctenos.",
+    "totalTarjetas": 72,
+    "variedades": [
+      "Villa Sarchí",
+      "Caturra",
+      "Catuaí",
+      "Kenia",
+      "San Roque",
+      "Milenio",
+      "Centroamericano",
+      "Casiopea",
+      "Geisha"
+    ],
+    "tarjetasPorVariedad": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ],
+    "tarjetasPorFila": [
+      3,
+      2
+    ],
+    "descripcionMasLarga": 267,
+    "descripcionMasCorta": 215,
+    "primeraTarjeta": [
+      "Villa Sarchí",
+      "Bolsa de 250 g, grano entero",
+      "Variedad emblemática de Costa Rica, reconocida por su elegancia y excelente calidad en taza. Presenta una acidez brillante, cuerpo balanceado y notas dulces y frutales que ofrecen una experiencia limpia y armoniosa.",
+      "Me interesa"
+    ],
+    "botones": [
+      "Me interesa"
+    ],
+    "contienePrecios": false,
+    "botonesDeCompra": 0,
+    "sinDesplazamientoHorizontal": true,
+    "ancho": 1366,
+    "alto": 768
+  },
+  "titulo": "CANI Café | Catálogo",
+  "meInteresa": {
+    "hrefDeLaTerceraTarjeta": "/contactenos?producto=prod-01-villa-sarchi-0340-grano",
+    "urlDespuesDelClic": "/contactenos?producto=prod-01-villa-sarchi-0340-grano"
+  },
+  "unProductoInactivo": {
+    "idDesactivado": "prod-01-villa-sarchi-0250-grano",
+    "totalTarjetas": 71,
+    "aparece": false
+  },
+  "sinProductos": {
+    "mensaje": "Pronto publicaremos nuestros productos.",
+    "tarjetas": 0,
+    "textoSuperior": "Los precios varían según la cantidad y el tipo de cliente. Solicite información en Contáctenos."
+  },
+  "restaurados": true,
+  "meInteresaConFormulario": {
+    "terceraTarjeta": {
+      "url": "/contactenos?producto=prod-01-villa-sarchi-0340-grano",
+      "producto": "Villa SarchíBolsa de 340 g, grano entero",
+      "marcado": true,
+      "cantidad": "1",
+      "otrosMarcados": 0,
+      "filaVisibleEnLaLista": true
+    },
+    "tarjetaDelFinal": {
+      "url": "/contactenos?producto=prod-09-geisha-0500-molido",
+      "producto": "GeishaBolsa de 500 g, molido",
+      "marcado": true,
+      "cantidad": "1",
+      "otrosMarcados": 0,
+      "filaVisibleEnLaLista": true
+    },
+    "productoInexistente": {
+      "marcados": 0
+    }
+  }
+}

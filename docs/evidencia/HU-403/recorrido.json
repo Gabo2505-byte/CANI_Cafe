@@ -1,0 +1,48 @@
+{
+  "estructura": {
+    "titulo": "CANI Café | Contáctenos",
+    "tituloFormulario": "Envíenos su consulta",
+    "formularioIzquierda": {
+      "izq": 141,
+      "der": 775
+    },
+    "datosDerecha": {
+      "izq": 832,
+      "der": 1243
+    },
+    "formularioAntesQueDatos": true,
+    "datosDeContacto": "DATOS DE CONTACTO | TELÉFONO | +506 6045 7872 | CORREO | cmarotob@gmail.com | UBICACIÓN | Naranjo, Alajuela, Costa Rica",
+    "etiquetas": [
+      "Nombre completo *",
+      "Correo electrónico *",
+      "Teléfono (opcional)",
+      "Productos de interés *",
+      "Mensaje (opcional)"
+    ],
+    "asteriscos": [
+      "Nombre completo *",
+      "Correo electrónico *",
+      "Productos de interés *"
+    ],
+    "topes": {
+      "nombre": 100,
+      "correo": 100,
+      "mensaje": 1000
+    },
+    "contadorInicial": "0/1000",
+    "paisPorDefecto": "CR (+506)\n▾",
+    "paisAccesible": "País del teléfono: Costa Rica (+506)",
+    "sinDesplazamientoHorizontal": true,
+    "alturaDeLaPagina": 955
+  },
+  "topesAlEscribir": {
+    "nombre": 100,
+    "correo": 100,
+    "mensaje": 120,
+    "contador": "120/1000",
+    "mensajeTrasPegar1100": 1000,
+    "contadorMaximo": "1000/1000"
+  },
+  "paisElegido": "País del teléfono: Estados Unidos (+1)",
+  "erroresDeConsola": []
+}
