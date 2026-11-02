@@ -1,0 +1,60 @@
+Evidencia de pruebas HU-405 - 2026-11-02 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Envío, aislamiento y pantalla de HU-405: salida detallada ==
+ ✓ tests/unit/publicSubmit.test.ts > contrato de formRequests (PROVISIONAL) > nombre de la colección y topes, definidos en un solo lugar
+ ✓ tests/unit/publicSubmit.test.ts > aSolicitud: lo que se guarda > nombre sin espacios alrededor, correo en minúsculas, teléfono solo con dígitos y cantidades como números
+ ✓ tests/unit/publicSubmit.test.ts > aSolicitud: lo que se guarda > sin teléfono ni mensaje guarda null (no textos vacíos), aunque haya un país elegido
+ ✓ tests/unit/publicSubmit.test.ts > aSolicitud: lo que se guarda > los productos van en el orden del catálogo (variedad, peso, formato), no en el orden en que se marcaron
+ ✓ tests/unit/publicSubmit.test.ts > clasificarFallo: dos grupos > permission-denied es "reglas"; todo lo demás, incluido el tiempo límite, es "conexion"
+ ✓ tests/unit/publicSubmit.test.ts > crearEnviador: reglas de reintento (decisión 7 actualizada) > un envío que sale bien devuelve "ok" con un id nuevo
+ ✓ tests/unit/publicSubmit.test.ts > crearEnviador: reglas de reintento (decisión 7 actualizada) > regla a: en el primer intento, permission-denied es SIEMPRE error
+ ✓ tests/unit/publicSubmit.test.ts > crearEnviador: reglas de reintento (decisión 7 actualizada) > regla b: reintento con el mismo id tras un fallo de conexión: permission-denied cuenta como éxito
+ ✓ tests/unit/publicSubmit.test.ts > crearEnviador: reglas de reintento (decisión 7 actualizada) > regla b: reintento tras un rechazo de las reglas (no de conexión): permission-denied sigue siendo error
+ ✓ tests/unit/publicSubmit.test.ts > crearEnviador: reglas de reintento (decisión 7 actualizada) > regla b: tras varios fallos de conexión seguidos, el siguiente permission-denied cuenta como éxito
+ ✓ tests/unit/publicSubmit.test.ts > crearEnviador: reglas de reintento (decisión 7 actualizada) > regla c: si cambió cualquier dato después del error, se usa un id nuevo y permission-denied vuelve a ser error
+ ✓ tests/unit/publicSubmit.test.ts > crearEnviador: reglas de reintento (decisión 7 actualizada) > regla c: mientras no cambie nada, reutiliza el mismo id; tras un éxito, el siguiente envío usa uno nuevo
+ ✓ tests/unit/publicSubmit.test.ts > crearEnviador: reglas de reintento (decisión 7 actualizada) > si el guardado no responde en 10 s, devuelve "error" (conexión) y el reintento usa el mismo id
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > recoge el grafo de módulos del sitio público
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /[\\/]src[\\/](auth|sales|contacts|communications|app)[\\/]/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /[\\/]src[\\/]shared[\\/]firebase[\\/]config/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /[\\/]firebase[\\/]auth/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /@firebase[\\/]auth/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /[\\/]firebase[\\/]firestore[\\/](?!lite[\\/])/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /@firebase[\\/]firestore[\\/]dist[\\/](?!lite[\\/])/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /@firebase[\\/]webchannel-wrapper[\\/](dist[\\/])?webchannel-blob/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "identitytoolkit.googleapis.com"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "securetoken"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "/ingreso"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "/posibles-ventas"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "/avisos"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "Cerrar sesión"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "Gestión de ventas"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "₡"
+ ✓ tests/components/EnvioFormulario.test.tsx > HU-405 criterio 1: texto de privacidad > encima del botón "Enviar" aparece el texto literal
+ ✓ tests/components/EnvioFormulario.test.tsx > HU-405 criterio 2: "Enviando..." > al dar clic, el botón cambia a "Enviando..." y no se puede presionar otra vez hasta que termine
+ ✓ tests/components/EnvioFormulario.test.tsx > HU-405 criterio 2: "Enviando..." > con errores de datos no se envía ni aparece "Enviando..."
+ ✓ tests/components/EnvioFormulario.test.tsx > HU-405 criterio 3: envío correcto > el formulario se reemplaza por el agradecimiento y el botón "Enviar otra consulta"
+ ✓ tests/components/EnvioFormulario.test.tsx > HU-405 criterio 3: envío correcto > "Enviar otra consulta" muestra el formulario vacío, con Costa Rica y sin productos marcados
+ ✓ tests/components/EnvioFormulario.test.tsx > HU-405 criterio 4: error de conexión > aparece "No se pudo enviar el formulario. Intente de nuevo." y los datos escritos no se borran
+ ✓ tests/components/EnvioFormulario.test.tsx > HU-405 criterio 4: error de conexión > el error va encima del botón, y al reintentar con éxito se muestra el agradecimiento
+ ✓ tests/components/EnvioFormulario.test.tsx > HU-405 en la página Contáctenos (con el guardado simulado) > guarda la solicitud del contrato (correo en minúsculas, productos en orden del catálogo, null en lo vacío)
+ ✓ tests/components/EnvioFormulario.test.tsx > HU-405 en la página Contáctenos (con el guardado simulado) > sin conexión muestra el error; el reintento usa el mismo id; "Enviar otra consulta" quita el producto de la dirección
+      Tests  38 passed (38)
+
+== npm test (todo, dos corridas seguidas) ==
+Test Files  52 passed (52) | Tests  706 passed (706)
+
+== npm run test:emulators (reglas, seed y flujo contra emulador) ==
+Test Files  21 passed (21) | Tests  173 passed (173)
+Incluye tests/rules/formRequests.rules.test.ts: crear sin sesión (casos válidos y 23 rechazos), sin lectura/cambio/borrado
+sin sesión, reintento sobre el mismo id rechazado, y el envío real con Firestore Lite (reglas a, b y c y tiempo límite).
+También tests/rules/firestore.rules.test.ts (formRequests excluida del it.each) y tests/products/listProducts.emulator.test.ts
+(listPublicProductsIn con su propio cliente Lite).
+
+== Tamaño del JS del sitio público (npm run build:publico) ==
+Antes (SDK completo de Firestore): 842,88 kB | gzip 254,14 kB
+Después (Firestore Lite):          500,62 kB | gzip 153,57 kB
+El JS del sistema interno no cambió (mismo archivo index-JDqI_WiX.js).

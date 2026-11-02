@@ -1,0 +1,123 @@
+Evidencia de pruebas HU-404 - 2026-11-02 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas del formulario, la lista de productos y el aislamiento: salida detallada ==
+ ✓ tests/unit/publicForm.test.ts > HU-403 valores y topes > empieza vacío, con Costa Rica elegida y sin productos
+ ✓ tests/unit/publicForm.test.ts > HU-403 valores y topes > los topes son 100 (nombre y correo) y 1000 (mensaje)
+ ✓ tests/unit/publicForm.test.ts > HU-501 mensajes literales > son exactamente los de los criterios
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 2: datos obligatorios > un formulario completo no tiene errores
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 2: datos obligatorios > nombre vacío o solo espacios: "Este campo es obligatorio."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 2: datos obligatorios > correo vacío: "Este campo es obligatorio."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 2: datos obligatorios > ningún producto marcado: "Seleccione al menos un producto."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 2: datos obligatorios > el teléfono y el mensaje son opcionales
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 2: datos obligatorios > un formulario vacío marca nombre, correo y productos, pero no teléfono
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 3: correo nombre@dominio.com > "ana" no es válido
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 3: correo nombre@dominio.com > "ana@" no es válido
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 3: correo nombre@dominio.com > "ana@example" no es válido
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 3: correo nombre@dominio.com > "@example.com" no es válido
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 3: correo nombre@dominio.com > "ana@@example.com" no es válido
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 3: correo nombre@dominio.com > "a na@example.com" no es válido
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 3: correo nombre@dominio.com > "ana@exa mple.com" no es válido
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 3: correo nombre@dominio.com > "ana@example.com" es válido
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 3: correo nombre@dominio.com > "Ana.Perez+cafe@Example.CO.cr" es válido
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 3: correo nombre@dominio.com > "  ana@example.com  " es válido
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 3: correo nombre@dominio.com > el correo se normaliza a minúsculas y sin espacios alrededor
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: teléfono por país > Costa Rica: 8 dígitos (con espacios o guion se cuentan solo los números)
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: teléfono por país > Costa Rica con "1234567": "El teléfono debe tener 8 dígitos."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: teléfono por país > Costa Rica con "888812345": "El teléfono debe tener 8 dígitos."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: teléfono por país > Costa Rica con "12": "El teléfono debe tener 8 dígitos."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: teléfono por país > otro país: de 6 a 14 dígitos
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: teléfono por país > otro país con "12345": "El teléfono debe tener entre 6 y 14 dígitos."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: teléfono por país > otro país con "123456789012345": "El teléfono debe tener entre 6 y 14 dígitos."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: teléfono por país > texto sin números también se revisa (no se ignora en silencio)
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: teléfono por país > el mismo número es válido o no según el país elegido
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > "1" es válida
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > "9999" es válida
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > "250" es válida
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > " 5 " es válida
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > "": "Ingrese una cantidad entre 1 y 9999."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > "0": "Ingrese una cantidad entre 1 y 9999."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > "10000": "Ingrese una cantidad entre 1 y 9999."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > "-1": "Ingrese una cantidad entre 1 y 9999."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > "1.5": "Ingrese una cantidad entre 1 y 9999."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > "abc": "Ingrese una cantidad entre 1 y 9999."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > "1e3": "Ingrese una cantidad entre 1 y 9999."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > "12 3": "Ingrese una cantidad entre 1 y 9999."
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > el error es por producto: solo se marca el que está mal
+ ✓ tests/unit/publicForm.test.ts > HU-501 criterio 4: cantidad de 1 a 9999 > parseQuantity devuelve el número o null
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > recoge el grafo de módulos del sitio público
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /[\\/]src[\\/](auth|sales|contacts|communications|app)[\\/]/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /[\\/]src[\\/]shared[\\/]firebase[\\/]config/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /[\\/]firebase[\\/]auth/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /@firebase[\\/]auth/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "identitytoolkit.googleapis.com"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "securetoken"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "/ingreso"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "/posibles-ventas"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "/avisos"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "Cerrar sesión"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "Gestión de ventas"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "₡"
+ ✓ tests/components/ConsultaForm.test.tsx > HU-403 página Contáctenos > el formulario "Envíenos su consulta" va a la izquierda y los datos de contacto a la derecha
+ ✓ tests/components/ConsultaForm.test.tsx > HU-403 página Contáctenos > pide nombre, correo, teléfono, productos y mensaje
+ ✓ tests/components/ConsultaForm.test.tsx > HU-403 página Contáctenos > son obligatorios (con asterisco) nombre, correo y productos; teléfono y mensaje son opcionales
+ ✓ tests/components/ConsultaForm.test.tsx > HU-403 página Contáctenos > el nombre y el correo aceptan como máximo 100 caracteres y el mensaje 1000
+ ✓ tests/components/ConsultaForm.test.tsx > HU-403 página Contáctenos > el contador del mensaje, debajo del campo, muestra los caracteres escritos ("120/1000")
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 1: todos los productos, uno por fila > muestra los 72 productos, agrupados por variedad (9 grupos de 8), cada uno con su casilla y su cantidad
+ ✓ tests/components/ConsultaForm.test.tsx > HU-403 página Contáctenos > el teléfono trae Costa Rica (+506) elegida y se puede elegir otro país
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 1: todos los productos, uno por fila > cada fila muestra el nombre y la presentación del producto
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 1: todos los productos, uno por fila > la lista tiene desplazamiento propio y se alcanza con el teclado
+ ✓ tests/components/ConsultaForm.test.tsx > HU-501 criterio 1: revisión al salir de cada campo > nombre vacío: al pasar al siguiente campo aparece "Este campo es obligatorio." bajo el campo, en rojo
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 1: todos los productos, uno por fila > empieza sin ningún producto marcado y con todas las cantidades deshabilitadas y vacías
+ ✓ tests/components/ConsultaForm.test.tsx > HU-501 criterio 1: revisión al salir de cada campo > correo mal escrito: "Ingrese un correo electrónico válido."; al corregirlo desaparece
+ ✓ tests/components/ConsultaForm.test.tsx > HU-501 criterio 1: revisión al salir de cada campo > teléfono de Costa Rica con menos de 8 dígitos: "El teléfono debe tener 8 dígitos."
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 2: la cantidad > solo se puede escribir si el producto está marcado, y al marcarlo empieza en 1
+ ✓ tests/components/ConsultaForm.test.tsx > HU-501 criterio 1: revisión al salir de cada campo > teléfono de otro país: "El teléfono debe tener entre 6 y 14 dígitos."
+ ✓ tests/components/ConsultaForm.test.tsx > HU-501 criterio 1: revisión al salir de cada campo > el teléfono vacío no da error al salir (es opcional)
+ ✓ tests/components/ConsultaForm.test.tsx > HU-501 criterio 1: revisión al salir de cada campo > pasar por el selector de país hacia el número no revisa el teléfono todavía
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 2: la cantidad > acepta 1 sin error
+ ✓ tests/components/ConsultaForm.test.tsx > HU-501 criterios 1, 2 y 5: al dar clic en "Enviar" > con todo vacío no envía y muestra el aviso de arriba y los errores de nombre, correo y productos
+ ✓ tests/components/ConsultaForm.test.tsx > HU-501 criterios 1, 2 y 5: al dar clic en "Enviar" > con una cantidad fuera de 1 a 9999 tampoco envía y avisa arriba
+ ✓ tests/components/ConsultaForm.test.tsx > HU-501 criterios 1, 2 y 5: al dar clic en "Enviar" > con los datos bien, envía los valores y no muestra errores
+ ✓ tests/components/ConsultaForm.test.tsx > HU-501 criterios 1, 2 y 5: al dar clic en "Enviar" > un teléfono mal escrito también impide enviar aunque lo demás esté bien
+ ✓ tests/components/ConsultaForm.test.tsx > HU-501 criterios 1, 2 y 5: al dar clic en "Enviar" > al corregir todo, el aviso de arriba desaparece y se puede enviar
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 2: la cantidad > acepta 9999 sin error
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 2: la cantidad > acepta 250 sin error
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 2: la cantidad > "0" muestra "Ingrese una cantidad entre 1 y 9999." al salir del campo
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 2: la cantidad > "10000" muestra "Ingrese una cantidad entre 1 y 9999." al salir del campo
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 2: la cantidad > "1.5" muestra "Ingrese una cantidad entre 1 y 9999." al salir del campo
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 2: la cantidad > "abc" muestra "Ingrese una cantidad entre 1 y 9999." al salir del campo
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 2: la cantidad > "-3" muestra "Ingrese una cantidad entre 1 y 9999." al salir del campo
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 2: la cantidad > "" muestra "Ingrese una cantidad entre 1 y 9999." al salir del campo
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 2: la cantidad > al corregir la cantidad, el error desaparece
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 3: varios productos y desmarcar > se pueden marcar varios, cada uno con su propia cantidad
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 3: varios productos y desmarcar > al desmarcar un producto, su cantidad se borra y se deshabilita; al marcarlo otra vez empieza en 1
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 3: varios productos y desmarcar > desmarcar un producto con la cantidad mal escrita quita también su error
+ ✓ tests/components/ProductosField.test.tsx > HU-404 criterio 3: varios productos y desmarcar > desmarcar un producto no cambia la cantidad de los demás
+ ✓ tests/components/ProductosField.test.tsx > HU-501 con la lista de productos > "Seleccione al menos un producto." aparece al salir de la lista sin marcar nada, y se va al marcar uno
+ ✓ tests/components/ProductosField.test.tsx > HU-501 con la lista de productos > pasar de una casilla a otra dentro de la lista no revisa todavía
+ ✓ tests/components/ProductosField.test.tsx > HU-501 con la lista de productos > con una cantidad fuera de rango, "Enviar" no envía, avisa arriba y marca la fila en rojo
+ ✓ tests/components/ProductosField.test.tsx > HU-501 con la lista de productos > "Enviar" sin productos marcados muestra "Seleccione al menos un producto."
+ ✓ tests/components/ProductosField.test.tsx > HU-404 estados de la lista > mientras carga: "Cargando catálogo..."
+ ✓ tests/components/ProductosField.test.tsx > HU-404 estados de la lista > si falla la carga: "No se pudo cargar el catálogo. Intente de nuevo."
+ ✓ tests/components/ProductosField.test.tsx > HU-404 estados de la lista > sin productos: "Pronto publicaremos nuestros productos."
+ ✓ tests/components/ProductosField.test.tsx > HU-404 estados de la lista > sin lista también se avisa al enviar sin productos
+ ✓ tests/components/ProductosField.test.tsx > HU-402 criterio 4: el producto elegido en el catálogo llega marcado > con ?producto= se carga el catálogo y ese producto queda marcado, con cantidad 1
+ ✓ tests/components/ProductosField.test.tsx > HU-402 criterio 4: el producto elegido en el catálogo llega marcado > la fila elegida queda a la vista: se pide desplazar la lista hasta ella (solo la lista)
+ ✓ tests/components/ProductosField.test.tsx > HU-402 criterio 4: el producto elegido en el catálogo llega marcado > con el producto marcado, el formulario ya no exige elegir uno (solo faltan nombre y correo)
+ ✓ tests/components/ProductosField.test.tsx > HU-402 criterio 4: el producto elegido en el catálogo llega marcado > un producto que no existe o no está activo se ignora: no se marca nada
+ ✓ tests/components/ProductosField.test.tsx > HU-402 criterio 4: el producto elegido en el catálogo llega marcado > sin ?producto= no se marca nada
+ ✓ tests/components/ProductosField.test.tsx > HU-402 criterio 4: el producto elegido en el catálogo llega marcado > si el catálogo no carga, el formulario sigue disponible y avisa
+ ✓ tests/components/ProductosField.test.tsx > HU-402 criterio 4: el producto elegido en el catálogo llega marcado > el usuario puede desmarcar el producto preseleccionado
+ Test Files  4 passed (4)
+      Tests  107 passed (107)
+
+== npm test (todo) ==
+Test Files  50 passed (50) | Tests  681 passed (681)
+
+== npm run build:publico ==
+En verde.
+
+Nota: el botón Enviar todavía no escribe en Firestore (HU-405). No se corrió test:emulators en esta sub-fase: no cambió ninguna regla. La lectura pública de productos activos (regla de la Fase 2) se usó en el recorrido del navegador contra el emulador.

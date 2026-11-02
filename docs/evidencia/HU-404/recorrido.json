@@ -1,0 +1,106 @@
+{
+  "lista": {
+    "totalFilas": 72,
+    "grupos": [
+      "Villa Sarchí",
+      "Caturra",
+      "Catuaí",
+      "Kenia",
+      "San Roque",
+      "Milenio",
+      "Centroamericano",
+      "Casiopea",
+      "Geisha"
+    ],
+    "filasPorGrupo": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ],
+    "unaFilaPorProducto": true,
+    "cadaFilaTiene": true,
+    "primeraFila": "Villa SarchíBolsa de 250 g, grano entero",
+    "ultimaFila": "GeishaBolsa de 1 kg, molido",
+    "marcadosAlInicio": 0,
+    "cantidadesDeshabilitadasYVacias": true,
+    "listaConDesplazamientoPropio": true,
+    "alturaDeLaLista": 320,
+    "alturaDelContenido": 3367,
+    "sinDesplazamientoHorizontal": true
+  },
+  "desplazarLaListaNoMueveLaPagina": true,
+  "antesDeMarcar": {
+    "valor": "",
+    "deshabilitado": true
+  },
+  "alMarcarCaturra": {
+    "valor": "1",
+    "deshabilitado": false
+  },
+  "variosMarcados": {
+    "caturra": {
+      "valor": "12",
+      "deshabilitado": false
+    },
+    "geisha": {
+      "valor": "3",
+      "deshabilitado": false
+    },
+    "kenia": {
+      "valor": "9999",
+      "deshabilitado": false
+    },
+    "marcados": 3
+  },
+  "cantidadesInvalidas": {
+    "0": [
+      "Ingrese una cantidad entre 1 y 9999."
+    ],
+    "10000": [
+      "Ingrese una cantidad entre 1 y 9999."
+    ],
+    "1.5": [
+      "Ingrese una cantidad entre 1 y 9999."
+    ],
+    "abc": [
+      "Ingrese una cantidad entre 1 y 9999."
+    ],
+    "(vacía)": [
+      "Ingrese una cantidad entre 1 y 9999."
+    ]
+  },
+  "alCorregirLaCantidad": [],
+  "alDesmarcarGeisha": {
+    "valor": "",
+    "deshabilitado": true
+  },
+  "alVolverAMarcarGeisha": {
+    "valor": "1",
+    "deshabilitado": false
+  },
+  "otrosNoCambian": {
+    "caturra": {
+      "valor": "12",
+      "deshabilitado": false
+    },
+    "kenia": {
+      "valor": "25",
+      "deshabilitado": false
+    }
+  },
+  "enviarSinProductos": {
+    "errores": [
+      "Este campo es obligatorio.",
+      "Este campo es obligatorio.",
+      "Seleccione al menos un producto."
+    ],
+    "avisoArriba": "Revise los campos marcados en rojo."
+  },
+  "erroresDeConsola": []
+}

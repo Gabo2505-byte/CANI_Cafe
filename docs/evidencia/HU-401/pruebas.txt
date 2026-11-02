@@ -1,0 +1,56 @@
+Evidencia de pruebas HU-401 - 2026-11-02 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Pruebas del sitio público (unitarias y de pantalla): salida detallada ==
+ ✓ tests/unit/publicCatalog.test.ts > publicDescription (HU-402) > el tope es de 300 caracteres, el mismo del catálogo oficial
+ ✓ tests/unit/publicCatalog.test.ts > publicDescription (HU-402) > deja intacta una descripción de hasta 300 caracteres
+ ✓ tests/unit/publicCatalog.test.ts > publicDescription (HU-402) > recorta la que pasa de 300 y nunca devuelve más
+ ✓ tests/unit/publicCatalog.test.ts > publicDescription (HU-402) > ninguna descripción del catálogo oficial se recorta
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > recoge el grafo de módulos del sitio público
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /[\\/]src[\\/](auth|sales|contacts|communications|app)[\\/]/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /[\\/]src[\\/]shared[\\/]firebase[\\/]config/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /[\\/]firebase[\\/]auth/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > no incluye módulos que coincidan con /@firebase[\\/]auth/
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "identitytoolkit.googleapis.com"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "securetoken"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "/ingreso"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "/posibles-ventas"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "/avisos"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "Cerrar sesión"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "Gestión de ventas"
+ ✓ tests/unit/publicBuild.test.ts > build del sitio público > el bundle no contiene "₡"
+ ✓ tests/components/PublicSite.test.tsx > HU-401 encabezado, menú y pie > en /: nombre a la izquierda, menú con tres opciones y solo "Inicio" marcada como la actual
+ ✓ tests/components/PublicSite.test.tsx > HU-401 encabezado, menú y pie > en /catalogo: nombre a la izquierda, menú con tres opciones y solo "Catálogo" marcada como la actual
+ ✓ tests/components/PublicSite.test.tsx > HU-401 encabezado, menú y pie > en /contactenos: nombre a la izquierda, menú con tres opciones y solo "Contáctenos" marcada como la actual
+ ✓ tests/components/PublicSite.test.tsx > HU-401 encabezado, menú y pie > el nombre está antes que el menú en el encabezado
+ ✓ tests/components/PublicSite.test.tsx > HU-401 encabezado, menú y pie > el pie de / muestra teléfono, correo y ubicación, y nada más
+ ✓ tests/components/PublicSite.test.tsx > HU-401 encabezado, menú y pie > el pie de /catalogo muestra teléfono, correo y ubicación, y nada más
+ ✓ tests/components/PublicSite.test.tsx > HU-401 encabezado, menú y pie > el pie de /contactenos muestra teléfono, correo y ubicación, y nada más
+ ✓ tests/components/PublicSite.test.tsx > HU-401 encabezado, menú y pie > el sitio no pide usuario ni contraseña
+ ✓ tests/components/PublicSite.test.tsx > HU-401 página Inicio > tiene presentación con sus dos botones, "Quiénes somos" y "¿Cómo comprar?", en ese orden
+ ✓ tests/components/PublicSite.test.tsx > HU-401 página Inicio > "Quiénes somos" trae los tres párrafos y la cita como cita, entre el primero y el segundo
+ ✓ tests/components/PublicSite.test.tsx > HU-401 página Inicio > "¿Cómo comprar?" explica que los precios dependen del tipo de cliente y la cantidad, y que se piden por el formulario
+ ✓ tests/components/PublicSite.test.tsx > HU-401 página Inicio > los botones llevan a Catálogo y a Contáctenos
+ ✓ tests/components/PublicSite.test.tsx > HU-401 página Inicio > el título de la pestaña es "CANI Café | Inicio"
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > muestra arriba el texto de precios
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > muestra 72 tarjetas agrupadas en 9 variedades de 8, con nombre, presentación y descripción de hasta 300 caracteres
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > recorta una descripción de más de 300 caracteres
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > ninguna tarjeta muestra precios ni permite comprar
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > cada tarjeta tiene "Me interesa", que abre Contáctenos con ese producto
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > sin productos: "Pronto publicaremos nuestros productos."
+ ✓ tests/components/PublicSite.test.tsx > HU-402 página Catálogo > si falla la carga, avisa y no muestra el mensaje de catálogo vacío
+ Test Files  3 passed (3)
+      Tests  37 passed (37)
+
+== npm test (todo) ==
+Test Files  47 passed (47) | Tests  587 passed (587)
+
+== npm run test:emulators (reglas, seed y flujo contra emulador) ==
+Test Files  20 passed (20) | Tests  133 passed (133)
+Incluye las pruebas nuevas de reglas de products (tests/rules/firestore.rules.test.ts, 6 casos) y listPublicProductsIn sin sesión
+(tests/products/listProducts.emulator.test.ts).
+
+== npm run build / npm run build:publico ==
+Ambos en verde.

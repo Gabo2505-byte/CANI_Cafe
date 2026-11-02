@@ -1,0 +1,95 @@
+{
+  "criterio1": {
+    "texto": "Sus datos se utilizarán únicamente para responder su consulta.",
+    "encimaDelBoton": true,
+    "boton": "Enviar"
+  },
+  "criterio2": {
+    "alDarClic": {
+      "texto": "Enviando...",
+      "deshabilitado": true
+    },
+    "solicitudesTrasDobleClic": 1
+  },
+  "criterio3": {
+    "mensaje": "Gracias por su interés. CANI Café se comunicará con usted pronto.",
+    "boton": "Enviar otra consulta",
+    "formularioVisible": false,
+    "guardado": {
+      "id": "qgmYsRvl1iaANbdAfDmb",
+      "fullName": "Ana Prueba",
+      "email": "ana.prueba@example.com",
+      "phoneCountry": "CR",
+      "phoneNumber": "88881234",
+      "interests": [
+        {
+          "productId": "prod-01-villa-sarchi-0250-grano",
+          "quantity": 12
+        },
+        {
+          "productId": "prod-09-geisha-1000-molido",
+          "quantity": 1
+        }
+      ],
+      "message": "Quisiera conocer precios para cafetería.",
+      "processed": false,
+      "submittedAt": "2026-11-02T22:01:25.063Z"
+    },
+    "enviarOtraConsulta": {
+      "url": "/contactenos",
+      "nombre": "",
+      "correo": "",
+      "telefono": "",
+      "marcados": [],
+      "mensaje": ""
+    }
+  },
+  "criterio4SinConexion": {
+    "mensaje": "No se pudo enviar el formulario. Intente de nuevo.",
+    "msHastaElError": 84,
+    "datosIntactos": true,
+    "datos": {
+      "nombre": "Bruno Prueba",
+      "correo": "bruno@example.com",
+      "telefono": "8888-1234",
+      "marcados": [
+        "prod-01-villa-sarchi-0250-grano=12"
+      ],
+      "mensaje": "Sin conexión la primera vez."
+    },
+    "boton": {
+      "texto": "Enviar",
+      "deshabilitado": false
+    },
+    "guardadas": 0,
+    "reintento": {
+      "mensaje": "Gracias por su interés. CANI Café se comunicará con usted pronto.",
+      "guardadas": 1
+    }
+  },
+  "reglaB": {
+    "msHastaElError": 10044,
+    "mensaje": "No se pudo enviar el formulario. Intente de nuevo.",
+    "datosIntactos": true,
+    "guardadasTrasElError": [
+      "zb8uklebvtx53R9q6Nhy"
+    ],
+    "reintento": {
+      "mensaje": "Gracias por su interés. CANI Café se comunicará con usted pronto.",
+      "guardadas": [
+        "zb8uklebvtx53R9q6Nhy"
+      ]
+    }
+  },
+  "reglaC": [
+    {
+      "id": "7T2h0khBo6nTmmLtVpmx",
+      "message": "Mensaje corregido."
+    },
+    {
+      "id": "A6uovx1mUp67W6WXUuE4",
+      "message": "Primer mensaje."
+    }
+  ],
+  "erroresDeConsola": []
+}

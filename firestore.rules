@@ -64,7 +64,10 @@ service cloud.firestore {
 
     // Dylan: productos, ventas, etapas y avisos
     match /products/{productId} {
-      allow read, write: if isActiveUser();
+      // Sitio público (HU-402): cualquiera puede leer los productos activos, nunca los inactivos. Una consulta solo
+      // se permite si filtra con where('active', '==', true); sin ese filtro se deniega aunque haya productos activos.
+      allow read: if isActiveUser() || resource.data.active == true;
+      allow write: if isActiveUser();
     }
     match /sales/{saleId} {
       allow read, write: if isActiveUser();
@@ -74,6 +77,48 @@ service cloud.firestore {
     }
     match /stageHistory/{stageHistoryId} {
       allow read, write: if isActiveUser();
+    }
+
+    // PROVISIONAL de Dylan: lo reemplaza Gabriel (E5-020.1)
+    // Formulario del sitio público (HU-405): cualquiera puede CREAR una solicitud válida; sin sesión nadie la lee, la
+    // cambia ni la borra. Un reintento sobre un documento que ya existe cuenta como "update" y se rechaza.
+    // Contrato: src/shared/types/formRequest.ts.
+    // Límite conocido: las reglas no tienen ciclos y evalúan como máximo unas 1000 expresiones por petición, así que no
+    // alcanzan para revisar uno por uno hasta 72 productos (se probó: con 10 o más se pasa del tope y rechaza
+    // solicitudes válidas). Aquí se revisa que `interests` sea una lista de 1 a 72; el id y la cantidad (1 a 9999) de cada
+    // producto los revisa el formulario (HU-501) y debe revisarlos el procesamiento del sistema interno, que además
+    // comprueba que cada producto exista.
+    function isValidFormRequest(data) {
+      return data.keys().hasOnly(['fullName', 'email', 'phoneCountry', 'phoneNumber', 'interests', 'message', 'submittedAt', 'processed'])
+        && data.keys().hasAll(['fullName', 'email', 'phoneCountry', 'phoneNumber', 'interests', 'message', 'submittedAt', 'processed'])
+        && data.fullName is string
+        && data.fullName.trim().size() > 0
+        && data.fullName.size() <= 100
+        && data.email is string
+        && data.email.size() <= 100
+        && data.email == data.email.lower()
+        // nombre@dominio.com, igual que el formulario (en el texto de las reglas la barra va doble: \\s = espacio en blanco).
+        && data.email.matches('^[^\\s@]+@[^\\s@]+[.][^\\s@]+$')
+        // Teléfono opcional: los dos null, o país (ISO de 2 letras) y número solo con dígitos (8 en Costa Rica, 6 a 14 en otros).
+        && ((data.phoneCountry == null && data.phoneNumber == null)
+            || (data.phoneCountry is string
+                && data.phoneCountry.matches('^[A-Z]{2}$')
+                && data.phoneNumber is string
+                && (data.phoneCountry == 'CR'
+                      ? data.phoneNumber.matches('^[0-9]{8}$')
+                      : data.phoneNumber.matches('^[0-9]{6,14}$'))))
+        && data.interests is list
+        && data.interests.size() >= 1
+        && data.interests.size() <= 72
+        && (data.message == null || (data.message is string && data.message.size() > 0 && data.message.size() <= 1000))
+        && data.submittedAt == request.time
+        && data.processed == false;
+    }
+
+    match /formRequests/{requestId} {
+      allow create: if isValidFormRequest(request.resource.data);
+      // Con sesión activa se puede leer y procesar (lo define Gabriel en E5-020.1); sin sesión, nada.
+      allow read, update, delete: if isActiveUser();
     }
   }
 }

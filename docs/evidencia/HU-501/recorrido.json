@@ -1,0 +1,47 @@
+{
+  "alSalirNombreVacio": {
+    "errores": [
+      "Este campo es obligatorio."
+    ],
+    "avisoArriba": null
+  },
+  "alSalirCorreoMalEscrito": [
+    "Este campo es obligatorio.",
+    "Ingrese un correo electrónico válido."
+  ],
+  "alSalirTelefonoCostaRica7Digitos": [
+    "Este campo es obligatorio.",
+    "Ingrese un correo electrónico válido.",
+    "El teléfono debe tener 8 dígitos."
+  ],
+  "avisoArribaAntesDeEnviar": null,
+  "telefonoOtroPaisCon7Digitos": [
+    "Este campo es obligatorio.",
+    "Ingrese un correo electrónico válido."
+  ],
+  "telefonoOtroPaisCon5Digitos": [
+    "Este campo es obligatorio.",
+    "Ingrese un correo electrónico válido.",
+    "El teléfono debe tener entre 6 y 14 dígitos."
+  ],
+  "enviarVacio": {
+    "avisoArriba": "Revise los campos marcados en rojo.",
+    "errores": [
+      "Este campo es obligatorio.",
+      "Este campo es obligatorio.",
+      "Seleccione al menos un producto."
+    ],
+    "camposEnRojo": [
+      "nombre",
+      "correo"
+    ],
+    "avisoAntesDelPrimerCampo": true
+  },
+  "alCorregirNombreYCorreo": {
+    "avisoArriba": "Revise los campos marcados en rojo.",
+    "errores": [
+      "Seleccione al menos un producto."
+    ]
+  },
+  "peticionesAFirestoreAlEnviar": 0
+}

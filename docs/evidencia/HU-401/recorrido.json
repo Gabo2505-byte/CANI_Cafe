@@ -1,0 +1,128 @@
+{
+  "pagina_inicio": {
+    "titulo": "CANI Café | Inicio",
+    "cabecera": {
+      "nombreAccesible": "CANI Café",
+      "logoDerecha": 292,
+      "menuIzquierda": 907,
+      "nombreAIzquierdaDelMenu": true,
+      "logoPegadoAlBordeIzq": 108,
+      "links": [
+        {
+          "texto": "Inicio",
+          "actual": true,
+          "subrayado": true,
+          "color": "rgb(212, 167, 98)"
+        },
+        {
+          "texto": "Catálogo",
+          "actual": false,
+          "subrayado": false,
+          "color": "rgb(243, 233, 218)"
+        },
+        {
+          "texto": "Contáctenos",
+          "actual": false,
+          "subrayado": false,
+          "color": "rgb(243, 233, 218)"
+        }
+      ]
+    },
+    "pie": "TELÉFONO | +506 6045 7872 | CORREO | cmarotob@gmail.com | UBICACIÓN | Naranjo, Alajuela, Costa Rica",
+    "camposDeContrasena": 0,
+    "sinDesplazamientoHorizontal": true,
+    "robots": []
+  },
+  "pagina_catalogo": {
+    "titulo": "CANI Café | Catálogo",
+    "cabecera": {
+      "nombreAccesible": "CANI Café",
+      "logoDerecha": 292,
+      "menuIzquierda": 907,
+      "nombreAIzquierdaDelMenu": true,
+      "logoPegadoAlBordeIzq": 108,
+      "links": [
+        {
+          "texto": "Inicio",
+          "actual": false,
+          "subrayado": false,
+          "color": "rgb(243, 233, 218)"
+        },
+        {
+          "texto": "Catálogo",
+          "actual": true,
+          "subrayado": true,
+          "color": "rgb(212, 167, 98)"
+        },
+        {
+          "texto": "Contáctenos",
+          "actual": false,
+          "subrayado": false,
+          "color": "rgb(243, 233, 218)"
+        }
+      ]
+    },
+    "pie": "TELÉFONO | +506 6045 7872 | CORREO | cmarotob@gmail.com | UBICACIÓN | Naranjo, Alajuela, Costa Rica",
+    "camposDeContrasena": 0,
+    "sinDesplazamientoHorizontal": true,
+    "robots": []
+  },
+  "pagina_contactenos": {
+    "titulo": "CANI Café | Contáctenos",
+    "cabecera": {
+      "nombreAccesible": "CANI Café",
+      "logoDerecha": 299,
+      "menuIzquierda": 915,
+      "nombreAIzquierdaDelMenu": true,
+      "logoPegadoAlBordeIzq": 115,
+      "links": [
+        {
+          "texto": "Inicio",
+          "actual": false,
+          "subrayado": false,
+          "color": "rgb(243, 233, 218)"
+        },
+        {
+          "texto": "Catálogo",
+          "actual": false,
+          "subrayado": false,
+          "color": "rgb(243, 233, 218)"
+        },
+        {
+          "texto": "Contáctenos",
+          "actual": true,
+          "subrayado": true,
+          "color": "rgb(212, 167, 98)"
+        }
+      ]
+    },
+    "pie": "TELÉFONO | +506 6045 7872 | CORREO | cmarotob@gmail.com | UBICACIÓN | Naranjo, Alajuela, Costa Rica",
+    "camposDeContrasena": 0,
+    "sinDesplazamientoHorizontal": true,
+    "robots": []
+  },
+  "inicio": {
+    "h1": "Café de especialidad de las montañas de Naranjo",
+    "h2": [
+      "Quiénes somos",
+      "¿Cómo comprar?"
+    ],
+    "botonesDePresentacion": [
+      "Ver catálogo → /catalogo",
+      "Contáctenos → /contactenos"
+    ],
+    "citaEsBlockquote": "No solo cultivamos café; cuidamos cada semilla como el inicio de una experiencia sensorial única para los paladares más exigentes.",
+    "ordenQuienesSomos": [
+      "P",
+      "BLOCKQUOTE",
+      "P",
+      "P"
+    ],
+    "comoComprar": "Los precios de nuestros cafés dependen del tipo de cliente y de la cantidad que necesite. Elija en el catálogo los productos que le interesan, complete el formulario de Contáctenos y nos comunicaremos con usted con la información de precios."
+  },
+  "botonVerCatalogo": "/catalogo",
+  "botonContactenos": "/contactenos",
+  "menuAbreCatalogo": true,
+  "logoVuelveAInicio": true,
+  "erroresDeConsola": []
+}
