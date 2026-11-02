@@ -1,8 +1,11 @@
 // HT-002 contra el emulador real de Firestore (con las reglas del repo). Corre con: npm run test:emulators
 import { assertFails, initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
+import { deleteApp, initializeApp } from 'firebase/app';
 import { doc, setDoc, type Firestore } from 'firebase/firestore';
+import { connectFirestoreEmulator, getFirestore as getLiteFirestore } from 'firebase/firestore/lite';
 import { readFileSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { listPublicProductsIn } from '../../src/products/publicCatalog';
 import { listActiveProductsIn, listProductsIn } from '../../src/products/productsRepository';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
 
@@ -49,5 +52,16 @@ describe('catálogo de productos (HT-002)', () => {
   it('sin sesión no se puede leer el catálogo', async () => {
     const db = testEnv.unauthenticatedContext().firestore() as unknown as Firestore;
     await assertFails(listProductsIn(db));
+  });
+
+  it('sin sesión (sitio público, con Firestore Lite) solo se leen los productos activos, con su id', async () => {
+    // El sitio público usa Firestore Lite: necesita su propio cliente (sin sesión) contra el mismo proyecto del emulador,
+    // así que las reglas que cargó testEnv se aplican igual.
+    const app = initializeApp({ projectId: PROJECT_ID, apiKey: 'demo-api-key' }, 'publico-lite-productos');
+    const db = getLiteFirestore(app);
+    connectFirestoreEmulator(db, host, Number(port));
+    const products = await listPublicProductsIn(db).finally(() => deleteApp(app));
+    expect(products.map((p) => p.id).sort()).toEqual(['p-1', 'p-2']);
+    expect(products.every((p) => p.active)).toBe(true);
   });
 });

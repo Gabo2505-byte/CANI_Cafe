@@ -5,10 +5,11 @@ import {
   initializeTestEnvironment,
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { readFileSync } from 'node:fs';
-import { afterAll, beforeAll, beforeEach, describe, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
+import { FORM_REQUESTS_COLLECTION } from '../../src/shared/types/formRequest';
 
 // Proyecto propio para estas pruebas: clearFirestore() no toca los datos del seed.
 const PROJECT_ID = 'demo-cani-crm-rules';
@@ -37,7 +38,11 @@ beforeEach(async () => {
 });
 
 // `communications` tiene reglas propias (HU-211): ver tests/communications/createCommunication.emulator.test.ts y communicationSale.emulator.test.ts.
-const ALL_COLLECTIONS = Object.values(COLLECTIONS).filter((c) => c !== COLLECTIONS.communications);
+// `formRequests` (formulario del sitio público, HU-405) también: solo acepta solicitudes con su esquema, así que
+// `{ campo: 'valor' }` se rechaza a propósito. Ver tests/rules/formRequests.rules.test.ts.
+const ALL_COLLECTIONS = Object.values(COLLECTIONS).filter(
+  (c: string) => c !== COLLECTIONS.communications && c !== FORM_REQUESTS_COLLECTION,
+);
 
 describe('firestore.rules', () => {
   it('niega lectura y escritura sin autenticación', async () => {
@@ -69,5 +74,57 @@ describe('firestore.rules', () => {
     const db = testEnv.authenticatedContext('active-user').firestore();
     await assertFails(setDoc(doc(db, 'otraColeccion/x'), { campo: 'valor' }));
     await assertFails(setDoc(doc(db, 'contacts/contact-001/sub/x'), { campo: 'valor' }));
+  });
+
+  // HU-402: el sitio público lee solo los productos activos, sin sesión.
+  describe('products: lectura pública de los activos (HU-402)', () => {
+    beforeEach(async () => {
+      await testEnv.withSecurityRulesDisabled(async (ctx) => {
+        const db = ctx.firestore();
+        await setDoc(doc(db, 'products/activo'), { name: 'A', presentation: 'P', description: 'D', active: true });
+        await setDoc(doc(db, 'products/inactivo'), { name: 'B', presentation: 'P', description: 'D', active: false });
+      });
+    });
+
+    it('sin sesión se puede leer un producto activo, pero no uno inactivo', async () => {
+      const db = testEnv.unauthenticatedContext().firestore();
+      await assertSucceeds(getDoc(doc(db, 'products/activo')));
+      await assertFails(getDoc(doc(db, 'products/inactivo')));
+    });
+
+    it('sin sesión la consulta con where("active", "==", true) funciona y trae solo los activos', async () => {
+      const db = testEnv.unauthenticatedContext().firestore();
+      const snap = await assertSucceeds(getDocs(query(collection(db, 'products'), where('active', '==', true))));
+      expect(snap.docs.map((d) => d.id)).toEqual(['activo']);
+    });
+
+    it('sin sesión se deniega la consulta sin el filtro de activos, o con active == false', async () => {
+      const db = testEnv.unauthenticatedContext().firestore();
+      await assertFails(getDocs(collection(db, 'products')));
+      await assertFails(getDocs(query(collection(db, 'products'), where('active', '==', false))));
+    });
+
+    it('sin sesión no se puede crear, cambiar ni borrar un producto, ni leer otra colección', async () => {
+      const db = testEnv.unauthenticatedContext().firestore();
+      await assertFails(setDoc(doc(db, 'products/nuevo'), { name: 'X', active: true }));
+      await assertFails(setDoc(doc(db, 'products/activo'), { active: false }, { merge: true }));
+      await assertFails(deleteDoc(doc(db, 'products/activo')));
+      await assertFails(getDocs(collection(db, 'contacts')));
+      await assertFails(getDocs(query(collection(db, 'sales'), where('active', '==', true))));
+    });
+
+    it('con sesión activa se siguen leyendo todos los productos, también los inactivos', async () => {
+      const db = testEnv.authenticatedContext('active-user').firestore();
+      await assertSucceeds(getDoc(doc(db, 'products/inactivo')));
+      const snap = await assertSucceeds(getDocs(collection(db, 'products')));
+      expect(snap.size).toBe(2);
+    });
+
+    it('un usuario inactivo solo ve los activos, igual que cualquier visitante', async () => {
+      const db = testEnv.authenticatedContext('inactive-user').firestore();
+      await assertSucceeds(getDoc(doc(db, 'products/activo')));
+      await assertFails(getDoc(doc(db, 'products/inactivo')));
+      await assertFails(getDocs(collection(db, 'products')));
+    });
   });
 });
