@@ -54,3 +54,12 @@ Incluye las pruebas nuevas de reglas de products (tests/rules/firestore.rules.te
 
 == npm run build / npm run build:publico ==
 Ambos en verde.
+
+== Fase 3: acomodo visual y móvil (2026-11-02) ==
+npm run typecheck: sin errores.
+npm test: Test Files 52 passed (52) | Tests 718 passed (718).
+npm run test:emulators: Test Files 21 passed (21) | Tests 173 passed (173).
+Prueba de aislamiento (tests/unit/publicBuild.test.ts): 16 passed (16).
+npm run build (sistema interno): dist/ idéntico archivo por archivo a la línea base (index-JDqI_WiX.js e index-SIfwidEr.css).
+npm run build:publico: JS 502,63 kB (gzip 154,19 kB), CSS 22,37 kB (gzip 4,61 kB).
+Recorridos en Edge contra emuladores repetidos con el acomodo: sin errores de consola.

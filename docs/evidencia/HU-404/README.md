@@ -9,6 +9,7 @@
 
 ## Datos de prueba
 
+- Capturas rehechas con el acomodo visual y móvil de la fase 3: contenedor de 1280 px, encabezado y pie compactos, encabezado fijo al desplazar (escritorio). Ver la tabla de antes y después en [HU-401](../HU-401/README.md#acomodo-visual-y-móvil-fase-3).
 - Sitio público en `http://localhost:5174` contra Firebase Emulator Suite (`demo-cani-crm`), con el catálogo oficial cargado por `npm run seed` (72 productos, 9 variedades).
 - Recorrido automático en Microsoft Edge (headless) a **1366 × 768**. Detalle en [recorrido.json](recorrido.json). No envía el formulario.
 

@@ -16,7 +16,7 @@
     "boton": "Enviar otra consulta",
     "formularioVisible": false,
     "guardado": {
-      "id": "j6YQhGFQ8LM8o5TcavtH",
+      "id": "hyjsO0ofwSS9bpKf4vc2",
       "fullName": "Ana Prueba",
       "email": "ana.prueba@example.com",
       "phoneCountry": "CR",
@@ -33,7 +33,7 @@
       ],
       "message": "Quisiera conocer precios para cafetería.",
       "processed": false,
-      "submittedAt": "2026-11-02T23:01:22.042Z"
+      "submittedAt": "2026-11-03T00:01:57.972Z"
     },
     "enviarOtraConsulta": {
       "url": "/contactenos",
@@ -48,7 +48,7 @@
   },
   "criterio4SinConexion": {
     "mensaje": "No se pudo enviar el formulario. Intente de nuevo.",
-    "msHastaElError": 70,
+    "msHastaElError": 48,
     "datosIntactos": true,
     "datos": {
       "nombre": "Bruno Prueba",
@@ -70,26 +70,26 @@
     }
   },
   "reglaB": {
-    "msHastaElError": 10049,
+    "msHastaElError": 10047,
     "mensaje": "No se pudo enviar el formulario. Intente de nuevo.",
     "datosIntactos": true,
     "guardadasTrasElError": [
-      "mQ4c9fEgpFtizvB5HeeJ"
+      "iH9S2vNx53RxlmhwMe6h"
     ],
     "reintento": {
       "mensaje": "Gracias por su interés. CANI Café se comunicará con usted pronto.",
       "guardadas": [
-        "mQ4c9fEgpFtizvB5HeeJ"
+        "iH9S2vNx53RxlmhwMe6h"
       ]
     }
   },
   "reglaC": [
     {
-      "id": "0NPZ6CWxq1muekPlkWGz",
+      "id": "9t0CELtkWGyI6MA6xLwM",
       "message": "Primer mensaje."
     },
     {
-      "id": "SY5EboJ51oTePLa3cQqe",
+      "id": "b50OJdlnsDHx36wnvQOX",
       "message": "Mensaje corregido."
     }
   ],

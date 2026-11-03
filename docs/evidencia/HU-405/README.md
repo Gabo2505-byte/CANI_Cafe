@@ -7,6 +7,7 @@
 
 ## Datos de prueba
 
+- Capturas rehechas con el acomodo visual y móvil de la fase 3: contenedor de 1280 px, encabezado y pie compactos, encabezado fijo al desplazar (escritorio). Ver la tabla de antes y después en [HU-401](../HU-401/README.md#acomodo-visual-y-móvil-fase-3).
 - Capturas actualizadas con el selector de productos por filas ([HU-404](../HU-404/README.md)); el envío no cambió.
 - Sitio público en `http://localhost:5174` contra Firebase Emulator Suite (`demo-cani-crm`) con el catálogo cargado por `npm run seed`. Las solicitudes se escriben en la colección `formRequests` y se leen por REST para comprobar lo guardado. Datos ficticios (`ana.prueba@example.com`, etc.); el recorrido borra sus solicitudes al terminar.
 - Recorrido automático en Microsoft Edge (headless) a **1366 × 768**. La red lenta y la falta de conexión se simularon con las herramientas de Edge (Network.emulateNetworkConditions). Detalle en [recorrido.json](recorrido.json).

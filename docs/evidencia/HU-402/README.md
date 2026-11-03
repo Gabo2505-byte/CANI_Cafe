@@ -11,6 +11,7 @@
 
 - Sitio público en `http://localhost:5174` contra Firebase Emulator Suite (`demo-cani-crm`) con el catálogo oficial cargado por `npm run seed`: 72 productos, 9 variedades de 8 presentaciones.
 - Recorrido automático en Microsoft Edge (headless) a **1366 × 768**. Detalle en [recorrido.json](recorrido.json).
+- Capturas rehechas con el acomodo visual y móvil de la fase 3: contenedor de 1280 px, encabezado y pie compactos, encabezado fijo al desplazar (escritorio). Ver la tabla de antes y después en [HU-401](../HU-401/README.md#acomodo-visual-y-móvil-fase-3).
 - Para probar presentaciones inactivas, una variedad sin activas y "sin productos", el recorrido desactiva productos del emulador y **los reactiva al terminar** (`restaurados: true`).
 
 ## Criterios de aceptación
@@ -45,7 +46,8 @@ Se siguen leyendo solo los productos activos (`where('active', '==', true)`).
 - `sitio-publico/src/pages/CatalogoPage.tsx`: agrupa los productos activos por variedad con `groupByVariety` (orden del catálogo del cliente, por id) y pinta una tarjeta por grupo.
 - Cada tarjeta recuerda su presentación elegida. La descripción mostrada es la de esa presentación (es la misma en toda la variedad).
 - Mensajes de carga, error y catálogo vacío sin cambios. La regla de Firestore de lectura pública de activos no cambió.
-- El acomodo visual y la versión para móvil quedan para la fase siguiente. Aun así, la página bajó de 9647 px a 1539 px de alto a 1366 × 768, sin desplazamiento horizontal.
+- Alto de la página a 1366 × 768: 9647 px con 72 tarjetas, 1539 px con 9 tarjetas, y 1335 px con el acomodo de la fase 3. Las tarjetas miden 338 px y muestran la descripción y la presentación completas.
+- La rejilla tiene 3 columnas en escritorio, 2 desde 600 px y 1 en móvil. En móvil no hay desplazamiento horizontal (ver [HU-401](../HU-401/README.md#acomodo-visual-y-móvil-fase-3)).
 
 ## Pruebas automatizadas
 
