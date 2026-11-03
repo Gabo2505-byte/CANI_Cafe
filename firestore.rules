@@ -88,7 +88,9 @@ service cloud.firestore {
       allow read, write: if isActiveUser();
     }
 
-    // PROVISIONAL de Dylan: lo reemplaza Gabriel (E5-020.1)
+    // Formulario del sitio público. Contrato v3 confirmado (docs-local/CONTRATO_FORMULARIO.md).
+    // Creación (HU-405, Dylan): validación de Dylan sin cambios.
+    // Lectura y procesamiento (HU-502 a HU-504, Gabriel, E5-020.1): solo con sesión activa.
     // Formulario del sitio público (HU-405): cualquiera puede CREAR una solicitud válida; sin sesión nadie la lee, la
     // cambia ni la borra. Un reintento sobre un documento que ya existe cuenta como "update" y se rechaza.
     // Contrato: src/shared/types/formRequest.ts.
@@ -124,10 +126,36 @@ service cloud.firestore {
         && data.processed == false;
     }
 
+    // HU-502 y HU-503: el procesamiento del sistema interno (en el navegador del administrador, CC-01) solo puede tocar
+    // los campos de procesamiento; lo que envió la persona no se cambia. Una solicitud ya procesada no vuelve a cambiar.
+    // - Reclamo (evita el doble procesamiento): claimedAt = hora del servidor y claimedBy = quien procesa.
+    // - Cierre: processed = true con processedAt = hora del servidor y outcome; contactId si creó o actualizó,
+    //   error (hasta 500) si se rechazó.
+    function isValidFormRequestProcessing(before, after) {
+      let changed = after.diff(before).affectedKeys();
+      return before.processed == false
+        && changed.hasOnly(['processed', 'processedAt', 'contactId', 'outcome', 'error', 'claimedAt', 'claimedBy'])
+        && after.processed is bool
+        && (!changed.hasAny(['claimedAt']) || after.claimedAt == request.time)
+        && (!changed.hasAny(['claimedBy']) || after.claimedBy == request.auth.uid)
+        && (!changed.hasAny(['processedAt']) || after.processedAt == request.time)
+        && (!changed.hasAny(['outcome']) || after.outcome in ['created', 'updated', 'rejected'])
+        && (!changed.hasAny(['contactId']) || (after.contactId is string && after.contactId.size() > 0))
+        && (!changed.hasAny(['error']) || (after.error is string && after.error.size() > 0 && after.error.size() <= 500))
+        // Cerrar exige el resultado completo: rechazada con su error, creada o actualizada con su contacto.
+        && (after.processed == false
+              || (after.processedAt == request.time
+                  && (after.outcome == 'rejected'
+                        ? after.get('error', null) is string
+                        : (after.outcome in ['created', 'updated'] && after.get('contactId', null) is string))));
+    }
+
     match /formRequests/{requestId} {
       allow create: if isValidFormRequest(request.resource.data);
-      // Con sesión activa se puede leer y procesar (lo define Gabriel en E5-020.1); sin sesión, nada.
-      allow read, update, delete: if isActiveUser();
+      // Sin sesión, nada. Con sesión activa se lee y se procesa; nadie borra (las procesadas se conservan).
+      allow read: if isActiveUser();
+      allow update: if isActiveUser() && isValidFormRequestProcessing(resource.data, request.resource.data);
+      allow delete: if false;
     }
   }
 }
