@@ -1,0 +1,49 @@
+[
+  {
+    "caso": "Enlace del emulador",
+    "oobLinkSinCodigo": "http://127.0.0.1:9099/emulator/action?mode=resetPassword&lang=en&oobCode=…&apiKey=fake-api-key&continueUrl=http%3A%2F%2Flocalhost%3A5173%2Fnueva-contrasena%3Fu%3Dadmin%26rid%3D8ea2cf18563fb84f0f6b2873bcc7c1f0"
+  },
+  {
+    "caso": "Pantalla Crear nueva contraseña",
+    "etiquetas": [
+      "Nueva contraseña",
+      "Confirmar contraseña"
+    ],
+    "botonGuardar": true,
+    "regla": "Al menos 8 caracteres, con al menos una letra y un número.",
+    "reglaDebajoDelPrimerCampo": true
+  },
+  {
+    "caso": "Sin número: \"cafecafe\"",
+    "mensajes": [
+      "La contraseña debe tener al menos 8 caracteres, una letra y un número."
+    ]
+  },
+  {
+    "caso": "Confirmación distinta",
+    "mensajes": [
+      "Las contraseñas no coinciden."
+    ]
+  },
+  {
+    "caso": "Guardar",
+    "url": "/ingreso",
+    "mensaje": "Contraseña actualizada correctamente. Ya puede iniciar sesión."
+  },
+  {
+    "caso": "Ingreso con la contraseña anterior",
+    "mensajes": [
+      "La contraseña es incorrecta."
+    ]
+  },
+  {
+    "caso": "Ingreso con la contraseña nueva",
+    "url": "/contactos"
+  },
+  {
+    "caso": "Abrir de nuevo el enlace usado",
+    "mensajes": [
+      "El enlace ya no es válido. Solicite uno nuevo."
+    ]
+  }
+]

@@ -8,7 +8,7 @@ import { AuthContext } from '../../src/auth/AuthContext';
 import { checkResetLink } from '../../src/auth/resetLinkApi';
 import { SessionProvider } from '../../src/auth/SessionContext';
 
-vi.mock('../../src/auth/resetLinkApi', () => ({ checkResetLink: vi.fn(), markResetLinkUsed: vi.fn() }));
+vi.mock('../../src/auth/resetLinkApi', () => ({ checkResetLink: vi.fn(), saveNewPassword: vi.fn() }));
 vi.mock('../../src/auth/signInWithUsername', () => ({ signInWithUsername: vi.fn() }));
 vi.mock('../../src/auth/signOutUser', () => ({ signOutUser: vi.fn() }));
 

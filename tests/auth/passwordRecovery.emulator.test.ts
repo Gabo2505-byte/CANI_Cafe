@@ -1,4 +1,4 @@
-// HU-106 (y el envío de HU-107) contra los emuladores reales de Auth y Firestore. Corre con: npm run test:emulators
+// HU-106, HU-107 y HU-108 contra los emuladores reales de Auth y Firestore. Corre con: npm run test:emulators
 // El emulador de Auth no manda correos de verdad: guarda cada enlace y lo expone en /emulator/v1/projects/{id}/oobCodes.
 import { initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import { deleteApp, initializeApp, type FirebaseApp } from 'firebase/app';
@@ -7,7 +7,9 @@ import { doc, getDoc, setDoc, type Firestore } from 'firebase/firestore';
 import { readFileSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { checkResetLinkIn, markResetLinkUsedIn, parseResetLink, RESET_LINK_MINUTES } from '../../src/auth/passwordResetLinks';
+import { NEW_PASSWORD_MESSAGES, saveNewPasswordIn } from '../../src/auth/newPassword';
 import { RECOVERY_MESSAGES, requestPasswordResetIn } from '../../src/auth/passwordRecovery';
+import { signInWithUsernameOn } from '../../src/auth/signInWithUsernameOn';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
 
 const PROJECT_ID = 'demo-cani-crm-recovery';
@@ -140,3 +142,49 @@ describe('HU-107 validez del enlace (emuladores, sin sesión)', () => {
   });
 });
 
+
+describe('HU-108 Crear una nueva contraseña (emuladores, sin sesión)', () => {
+  const OLD = 'clave-123456';
+  const NEW = 'cafe2026nueva';
+
+  it('guarda la nueva contraseña: la anterior deja de funcionar, la nueva sirve y el enlace ya no', async () => {
+    await requestPasswordResetIn(auth, publicDb, USERNAME, ORIGIN);
+    const link = (await lastLink(EMAIL))!;
+    expect((await checkResetLinkIn(auth, publicDb, link)).ok).toBe(true);
+
+    expect(await saveNewPasswordIn(auth, publicDb, link, NEW)).toEqual({ ok: true });
+
+    // La contraseña anterior deja de funcionar; la nueva sí (ingreso por usuario, como en la pantalla).
+    await expect(signInWithUsernameOn(auth, publicDb, USERNAME, OLD)).rejects.toMatchObject({
+      code: expect.stringMatching(/auth\/(wrong-password|invalid-credential|invalid-login-credentials)/),
+    });
+    await signInWithUsernameOn(auth, publicDb, USERNAME, NEW);
+    expect(auth.currentUser?.email).toBe(EMAIL);
+    await signOut(auth);
+
+    // El enlace quedó usado en Firestore y Firebase tampoco acepta el código otra vez.
+    const saved = (await getDoc(doc(publicDb, COLLECTIONS.passwordResets, USERNAME))).data();
+    expect(saved).toMatchObject({ rid: link.rid, used: true });
+    expect(await checkResetLinkIn(auth, publicDb, link)).toEqual({ ok: false });
+    expect(await saveNewPasswordIn(auth, publicDb, link, 'otra2026clave')).toEqual({
+      ok: false,
+      message: 'El enlace ya no es válido. Solicite uno nuevo.',
+    });
+    await signInWithUsernameOn(auth, publicDb, USERNAME, NEW);
+    await signOut(auth);
+  });
+
+  it('un código inventado no cambia la contraseña y avisa que el enlace no es válido', async () => {
+    await requestPasswordResetIn(auth, publicDb, USERNAME, ORIGIN);
+    const link = (await lastLink(EMAIL))!;
+    expect(await saveNewPasswordIn(auth, publicDb, { ...link, oobCode: 'inventado' }, 'otra2026clave')).toEqual({
+      ok: false,
+      message: 'El enlace ya no es válido. Solicite uno nuevo.',
+    });
+    await signInWithUsernameOn(auth, publicDb, USERNAME, NEW);
+    await signOut(auth);
+    // El enlace verdadero sigue sirviendo.
+    expect((await checkResetLinkIn(auth, publicDb, link)).ok).toBe(true);
+    expect(NEW_PASSWORD_MESSAGES.saved).toBe('Contraseña actualizada correctamente. Ya puede iniciar sesión.');
+  });
+});

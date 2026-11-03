@@ -8,6 +8,8 @@ interface PasswordInputProps {
   inputRef?: Ref<HTMLInputElement>;
   /** id del mensaje de error asociado, si lo hay. */
   errorId?: string;
+  /** id de una indicación fija debajo del campo (HU-108: la regla de la contraseña). */
+  hintId?: string;
 }
 
 /** Campo de contraseña con ícono de ojo para mostrarla u ocultarla. */
@@ -18,8 +20,10 @@ export function PasswordInput({
   autoComplete = 'current-password',
   inputRef,
   errorId,
+  hintId,
 }: PasswordInputProps) {
   const [visible, setVisible] = useState(false);
+  const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined;
 
   return (
     <div className="password-field">
@@ -31,7 +35,7 @@ export function PasswordInput({
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
         aria-invalid={errorId ? true : undefined}
-        aria-describedby={errorId}
+        aria-describedby={describedBy}
       />
       <button
         type="button"
