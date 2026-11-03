@@ -42,6 +42,7 @@ export const COMO_COMPRAR = {
     'Los precios de nuestros cafés dependen del tipo de cliente y de la cantidad que necesite. Elija en el catálogo los productos que le interesan, complete el formulario de Contáctenos y nos comunicaremos con usted con la información de precios.',
 } as const;
 
+// CONFIRMADOS por el cliente (2026-11-02). La empresa no tiene un correo propio: se usa este.
 export const DATOS_CONTACTO = {
   telefono: '+506 6045 7872',
   correo: 'cmarotob@gmail.com',

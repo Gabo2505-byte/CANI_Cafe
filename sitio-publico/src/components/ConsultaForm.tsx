@@ -157,56 +157,59 @@ export function ConsultaForm({
         </p>
       )}
 
-      <div className="pub-field">
-        <label htmlFor={id('nombre')}>
-          {FORMULARIO.nombre}{' '}
-          <span className="pub-required" aria-hidden="true">
-            *
-          </span>
-        </label>
-        <input
-          id={id('nombre')}
-          type="text"
-          autoComplete="name"
-          maxLength={LIMITES.nombre}
-          value={valores.nombre}
-          onChange={(e) => cambiar({ nombre: e.target.value })}
-          onBlur={() => marcar('nombre')}
-          aria-required="true"
-          aria-invalid={errorNombre ? true : undefined}
-          aria-describedby={errorNombre ? errorId('nombre') : undefined}
-        />
-        {errorNombre && (
-          <p id={errorId('nombre')} className="field-error">
-            {errorNombre}
-          </p>
-        )}
-      </div>
+      {/* Nombre y correo en una fila (en móvil, uno debajo del otro) */}
+      <div className="pub-form-row">
+        <div className="pub-field">
+          <label htmlFor={id('nombre')}>
+            {FORMULARIO.nombre}{' '}
+            <span className="pub-required" aria-hidden="true">
+              *
+            </span>
+          </label>
+          <input
+            id={id('nombre')}
+            type="text"
+            autoComplete="name"
+            maxLength={LIMITES.nombre}
+            value={valores.nombre}
+            onChange={(e) => cambiar({ nombre: e.target.value })}
+            onBlur={() => marcar('nombre')}
+            aria-required="true"
+            aria-invalid={errorNombre ? true : undefined}
+            aria-describedby={errorNombre ? errorId('nombre') : undefined}
+          />
+          {errorNombre && (
+            <p id={errorId('nombre')} className="field-error">
+              {errorNombre}
+            </p>
+          )}
+        </div>
 
-      <div className="pub-field">
-        <label htmlFor={id('correo')}>
-          {FORMULARIO.correo}{' '}
-          <span className="pub-required" aria-hidden="true">
-            *
-          </span>
-        </label>
-        <input
-          id={id('correo')}
-          type="email"
-          autoComplete="email"
-          maxLength={LIMITES.correo}
-          value={valores.correo}
-          onChange={(e) => cambiar({ correo: e.target.value })}
-          onBlur={() => marcar('correo')}
-          aria-required="true"
-          aria-invalid={errorCorreo ? true : undefined}
-          aria-describedby={errorCorreo ? errorId('correo') : undefined}
-        />
-        {errorCorreo && (
-          <p id={errorId('correo')} className="field-error">
-            {errorCorreo}
-          </p>
-        )}
+        <div className="pub-field">
+          <label htmlFor={id('correo')}>
+            {FORMULARIO.correo}{' '}
+            <span className="pub-required" aria-hidden="true">
+              *
+            </span>
+          </label>
+          <input
+            id={id('correo')}
+            type="email"
+            autoComplete="email"
+            maxLength={LIMITES.correo}
+            value={valores.correo}
+            onChange={(e) => cambiar({ correo: e.target.value })}
+            onBlur={() => marcar('correo')}
+            aria-required="true"
+            aria-invalid={errorCorreo ? true : undefined}
+            aria-describedby={errorCorreo ? errorId('correo') : undefined}
+          />
+          {errorCorreo && (
+            <p id={errorId('correo')} className="field-error">
+              {errorCorreo}
+            </p>
+          )}
+        </div>
       </div>
 
       <div className="pub-field">

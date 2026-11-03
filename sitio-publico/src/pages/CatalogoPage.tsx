@@ -64,28 +64,31 @@ function TarjetaVariedad({ grupo }: { grupo: VarietyGroup }) {
     <li className="pub-card">
       <h2 className="pub-card-name">{grupo.name}</h2>
       <p className="pub-card-description">{publicDescription(elegido.description)}</p>
-      <div className="pub-card-field">
-        <label htmlFor={idSelector}>{CATALOGO.presentacion}</label>
-        <select
-          id={idSelector}
-          aria-label={`${CATALOGO.presentacion} de ${grupo.name}`}
-          value={elegido.id}
-          onChange={(e) => setElegidoId(e.target.value)}
+      {/* Selector de presentación y "Me interesa", al pie de la tarjeta */}
+      <div className="pub-card-actions">
+        <div className="pub-card-field">
+          <label htmlFor={idSelector}>{CATALOGO.presentacion}</label>
+          <select
+            id={idSelector}
+            aria-label={`${CATALOGO.presentacion} de ${grupo.name}`}
+            value={elegido.id}
+            onChange={(e) => setElegidoId(e.target.value)}
+          >
+            {grupo.products.map((producto) => (
+              <option key={producto.id} value={producto.id}>
+                {producto.presentation}
+              </option>
+            ))}
+          </select>
+        </div>
+        <Link
+          to={`/contactenos?producto=${encodeURIComponent(elegido.id)}`}
+          className="pub-button pub-card-button"
+          aria-label={`${CATALOGO.boton}: ${grupo.name}, ${elegido.presentation}`}
         >
-          {grupo.products.map((producto) => (
-            <option key={producto.id} value={producto.id}>
-              {producto.presentation}
-            </option>
-          ))}
-        </select>
+          {CATALOGO.boton}
+        </Link>
       </div>
-      <Link
-        to={`/contactenos?producto=${encodeURIComponent(elegido.id)}`}
-        className="pub-button pub-card-button"
-        aria-label={`${CATALOGO.boton}: ${grupo.name}, ${elegido.presentation}`}
-      >
-        {CATALOGO.boton}
-      </Link>
     </li>
   );
 }
