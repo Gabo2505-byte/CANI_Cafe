@@ -20,6 +20,15 @@ service cloud.firestore {
     match /users/{userId} {
       allow read, write: if isActiveUser();
     }
+    // HU-101 y HU-106: índice usuario → cuenta ({uid, email}); el id es el usuario normalizado.
+    // Sin sesión solo se lee UN documento por su id exacto (get): hace falta para ingresar y para recuperar la
+    // contraseña. Nadie sin sesión puede listar usuarios ni escribir. Riesgo aceptado: quien conozca un usuario
+    // puede ver el correo de esa cuenta (la pantalla de recuperación ya muestra parte de él).
+    match /usernames/{username} {
+      allow get: if true;
+      allow list: if isActiveUser();
+      allow write: if isActiveUser();
+    }
     match /contacts/{contactId} {
       allow read, write: if isActiveUser();
     }

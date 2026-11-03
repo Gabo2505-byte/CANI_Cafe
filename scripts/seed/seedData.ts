@@ -2,7 +2,7 @@
 // es el catálogo de productos (catalogData.ts), que es el oficial de CANI Café.
 // IDs y fechas fijos para que el seed sea idempotente y determinista.
 import type { Timestamp } from 'firebase/firestore';
-import type { Communication, Contact, Product, Sale, SaleProduct, StageHistory, User } from '../../src/shared/types';
+import type { Communication, Contact, Product, Sale, SaleProduct, StageHistory, User, UsernameEntry } from '../../src/shared/types';
 import { toSortKey } from '../../src/shared/utils/text';
 import { buildCatalogProducts, catalogProductId } from './catalogData';
 
@@ -22,6 +22,11 @@ export const SEED_ADMIN = {
 
 export const seedUsers: Seeded<User>[] = [
   { id: SEED_ADMIN.uid, data: { username: SEED_ADMIN.username, email: SEED_ADMIN.email, active: true } },
+];
+
+/** HU-101 y HU-106: índice usuario → cuenta. El id es el usuario normalizado. */
+export const seedUsernames: Seeded<UsernameEntry & { id: string }>[] = [
+  { id: SEED_ADMIN.username, data: { uid: SEED_ADMIN.uid, email: SEED_ADMIN.email } },
 ];
 
 // nameSortKey (HU-204) se calcula a partir de fullName, igual que al guardar desde la app.

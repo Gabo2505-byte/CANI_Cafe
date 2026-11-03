@@ -472,6 +472,13 @@ textarea[aria-invalid='true'] {
   color: var(--color-accent);
 }
 
+/* HU-106: título de la pantalla "Recuperar contraseña", debajo del logo */
+.recovery-title {
+  margin: 0 0 var(--space-2);
+  font-size: 1.15rem;
+  text-align: center;
+}
+
 /* HU-201: encabezado de pantalla, formulario, ficha y diálogo */
 .page-header {
   display: flex;

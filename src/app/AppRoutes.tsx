@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes, useParams } from 'react-router';
+import { ForgotPasswordPage } from '../auth/ForgotPasswordPage';
 import { LoginPage } from '../auth/LoginPage';
 import { ContactDetailPage } from '../contacts/ContactDetailPage';
 import { ContactsPage } from '../contacts/ContactsPage';
@@ -21,6 +22,8 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path={ROUTES.login} element={<LoginPage />} />
+      {/* HU-106: pública, como el ingreso. */}
+      <Route path={ROUTES.forgotPassword} element={<ForgotPasswordPage />} />
 
       {/* Pantallas internas: requieren sesión y llevan la barra superior. */}
       <Route

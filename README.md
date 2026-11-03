@@ -111,7 +111,7 @@ tests/
 - **Fechas:** se guardan como `Timestamp` de Firestore y se muestran con `src/shared/utils/dates.ts` (hora de Costa Rica).
 - **Relaciones:** se guardan por ID (`contactId`, `saleId`, `userId`), nunca copiando texto.
 - **Datos de prueba:** siempre ficticios (`@example.com`, `.test`, teléfonos `0000xxxx`).
-- **Avisos:** son internos. El sistema no envía correos, SMS ni WhatsApp.
+- **Avisos:** son internos. El sistema no envía correos, SMS ni WhatsApp. La única excepción es el correo de recuperación de contraseña (HU-107), que lo envía Firebase Auth.
 - **Índices:** el emulador **no** exige índices compuestos. Si agregás una consulta con `where` + `orderBy` sobre campos distintos, agregá el índice en `firestore.indexes.json`, porque en producción falla sin él.
 
 ## Usar un proyecto real (más adelante)
@@ -119,7 +119,8 @@ tests/
 1. Copiá `.env.example` a `.env.production.local` y completalo con la config web del proyecto.
 2. Corré `npx firebase login` y `npx firebase use --add` para elegir el proyecto real.
 3. Desplegá con `npx firebase deploy --only firestore:rules,firestore:indexes`.
-4. En *Authentication → Configuración → Acciones del usuario*, **desactivá la "Protección contra la enumeración de correos"**. Sin ese cambio, Auth no distingue "usuario inexistente" de "contraseña incorrecta" y no se cumple la HU-102.
+4. Cada cuenta de administrador se crea en *Authentication* con su **correo real** (ahí llega el enlace de recuperación, HU-107) y se registra en dos lugares de Firestore: `users/{uid}` (`username`, `email`, `active: true`) y `usernames/{usuario en minúsculas}` (`uid`, `email`). El ingreso y la recuperación buscan el usuario en `usernames`, así que una cuenta sin ese documento no puede ingresar.
+5. En *Authentication → Plantillas → Restablecimiento de contraseña*, poné el idioma en español y revisá el remitente (HU-107). La "Protección contra la enumeración de correos" puede quedar activada: el sistema sabe si un usuario existe por `usernames`, no por Auth (HU-102 y HU-106).
 
 El seed se niega a correr fuera de los emuladores o contra un proyecto que no sea `demo-*`.
 

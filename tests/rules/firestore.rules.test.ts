@@ -127,4 +127,34 @@ describe('firestore.rules', () => {
       await assertFails(getDocs(collection(db, 'products')));
     });
   });
+
+  // HU-101 y HU-106: el índice usuario → cuenta se lee por id sin sesión (ingreso y recuperación), nunca se lista
+  // ni se escribe sin sesión.
+  describe('usernames', () => {
+    beforeEach(async () => {
+      await testEnv.withSecurityRulesDisabled(async (ctx) => {
+        await setDoc(doc(ctx.firestore(), 'usernames/activo'), { uid: 'active-user', email: 'activo@example.com' });
+      });
+    });
+
+    it('sin sesión se lee un usuario por su id exacto', async () => {
+      const db = testEnv.unauthenticatedContext().firestore();
+      const snap = await assertSucceeds(getDoc(doc(db, 'usernames/activo')));
+      expect(snap.data()).toEqual({ uid: 'active-user', email: 'activo@example.com' });
+    });
+
+    it('sin sesión no se pueden listar ni buscar usuarios', async () => {
+      const db = testEnv.unauthenticatedContext().firestore();
+      await assertFails(getDocs(collection(db, 'usernames')));
+      await assertFails(getDocs(query(collection(db, 'usernames'), where('email', '==', 'activo@example.com'))));
+    });
+
+    it('sin sesión, o con usuario inactivo, no se puede crear, cambiar ni borrar', async () => {
+      for (const db of [testEnv.unauthenticatedContext().firestore(), testEnv.authenticatedContext('inactive-user').firestore()]) {
+        await assertFails(setDoc(doc(db, 'usernames/intruso'), { uid: 'x', email: 'x@example.com' }));
+        await assertFails(setDoc(doc(db, 'usernames/activo'), { uid: 'x', email: 'x@example.com' }));
+        await assertFails(deleteDoc(doc(db, 'usernames/activo')));
+      }
+    });
+  });
 });
