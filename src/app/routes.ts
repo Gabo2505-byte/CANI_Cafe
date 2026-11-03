@@ -8,6 +8,8 @@ export const ROUTES = {
   saleDetail: '/posibles-ventas/:saleId',
   alerts: '/avisos',
   forgotPassword: '/recuperar-contrasena',
+  /** HU-107 y HU-108: adonde lleva el botón del correo (acción personalizada de Firebase Auth). */
+  resetPassword: '/nueva-contrasena',
 } as const;
 
 /** Ruta de la ficha de un contacto. */

@@ -29,6 +29,34 @@ service cloud.firestore {
       allow list: if isActiveUser();
       allow write: if isActiveUser();
     }
+    // HU-107: último enlace de recuperación pedido por cada usuario ({rid, requestedAt, used}).
+    // Sin sesión (pantallas "Recuperar contraseña" y "Nueva contraseña"):
+    //   - se lee por id exacto, para saber si el enlace sigue sirviendo;
+    //   - se registra un enlace nuevo SOLO para un usuario que existe, con la hora del servidor y sin usar;
+    //   - se marca como usado sin cambiar nada más.
+    // No da acceso a nada: cambiar la contraseña exige además el código que Firebase manda al correo de la cuenta.
+    // Riesgo aceptado: quien conozca un usuario puede anular su enlace pendiente pidiendo otro (se le envía otro correo).
+    match /passwordResets/{username} {
+      allow get: if true;
+      allow list: if false;
+      allow create, update: if exists(/databases/$(database)/documents/usernames/$(username))
+        && (isNewResetRequest(request.resource.data) || isResetMarkedUsed());
+      allow delete: if false;
+    }
+    function isNewResetRequest(data) {
+      return data.keys().hasOnly(['rid', 'requestedAt', 'used'])
+        && data.keys().hasAll(['rid', 'requestedAt', 'used'])
+        && data.rid is string
+        && data.rid.matches('^[0-9a-f]{32}$')
+        && data.requestedAt == request.time
+        && data.used == false;
+    }
+    function isResetMarkedUsed() {
+      return resource != null
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['used'])
+        && resource.data.used == false
+        && request.resource.data.used == true;
+    }
     match /contacts/{contactId} {
       allow read, write: if isActiveUser();
     }

@@ -3,9 +3,10 @@
 import { initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import { deleteApp, initializeApp, type FirebaseApp } from 'firebase/app';
 import { connectAuthEmulator, createUserWithEmailAndPassword, getAuth, signOut, type Auth } from 'firebase/auth';
-import { doc, setDoc, type Firestore } from 'firebase/firestore';
+import { doc, getDoc, setDoc, type Firestore } from 'firebase/firestore';
 import { readFileSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { checkResetLinkIn, markResetLinkUsedIn, parseResetLink, RESET_LINK_MINUTES } from '../../src/auth/passwordResetLinks';
 import { RECOVERY_MESSAGES, requestPasswordResetIn } from '../../src/auth/passwordRecovery';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
 
@@ -16,6 +17,7 @@ const AUTH_HOST = process.env.FIREBASE_AUTH_EMULATOR_HOST;
 // GCLOUD_PROJECT), no bajo el projectId de la app de prueba.
 const AUTH_PROJECT_ID = process.env.GCLOUD_PROJECT ?? PROJECT_ID;
 const USERNAME = `prueba-hu106-${Date.now()}`;
+const ORIGIN = 'http://localhost:5173';
 const EMAIL = `d${Date.now()}@example.com`;
 let testEnv: RulesTestEnvironment;
 let app: FirebaseApp;
@@ -62,11 +64,11 @@ afterAll(async () => {
 
 describe('HU-106 Solicitar la recuperación de la contraseña (emuladores, sin sesión)', () => {
   it('usuario vacío → "Ingrese su usuario." y no se envía correo', async () => {
-    expect(await requestPasswordResetIn(auth, publicDb, '   ')).toEqual({ ok: false, message: RECOVERY_MESSAGES.emptyUsername });
+    expect(await requestPasswordResetIn(auth, publicDb, '   ', ORIGIN)).toEqual({ ok: false, message: RECOVERY_MESSAGES.emptyUsername });
   });
 
   it('usuario inexistente → "El usuario ingresado no existe." y no se envía correo', async () => {
-    expect(await requestPasswordResetIn(auth, publicDb, 'no-existe-nunca')).toEqual({
+    expect(await requestPasswordResetIn(auth, publicDb, 'no-existe-nunca', ORIGIN)).toEqual({
       ok: false,
       message: RECOVERY_MESSAGES.userNotFound,
     });
@@ -74,17 +76,67 @@ describe('HU-106 Solicitar la recuperación de la contraseña (emuladores, sin s
   });
 
   it('índice que apunta a una cuenta inexistente en Auth → "El usuario ingresado no existe."', async () => {
-    expect(await requestPasswordResetIn(auth, publicDb, 'cuenta-borrada')).toEqual({
+    expect(await requestPasswordResetIn(auth, publicDb, 'cuenta-borrada', ORIGIN)).toEqual({
       ok: false,
       message: RECOVERY_MESSAGES.userNotFound,
     });
   });
 
   it('usuario existente → envía el enlace al correo de la cuenta y devuelve el correo enmascarado', async () => {
-    const result = await requestPasswordResetIn(auth, publicDb, ` ${USERNAME.toUpperCase()} `);
+    const result = await requestPasswordResetIn(auth, publicDb, ` ${USERNAME.toUpperCase()} `, ORIGIN);
     expect(result).toEqual({ ok: true, maskedEmail: 'd*****@example.com' });
     const links = await resetLinksFor(EMAIL);
     expect(links).toHaveLength(1);
     expect(links[0].oobLink).toContain('mode=resetPassword');
   });
 });
+
+/** Último enlace "enviado" a un correo, leído como lo abriría la pantalla "Nueva contraseña". */
+async function lastLink(email: string) {
+  const links = await resetLinksFor(email);
+  const url = new URL(links[links.length - 1].oobLink);
+  return parseResetLink(url.search);
+}
+
+describe('HU-107 validez del enlace (emuladores, sin sesión)', () => {
+  it('el enlace lleva el usuario y el rid del registro, y sirve recién enviado', async () => {
+    await requestPasswordResetIn(auth, publicDb, USERNAME, ORIGIN);
+    const link = await lastLink(EMAIL);
+    expect(link).not.toBeNull();
+    expect(link!.username).toBe(USERNAME);
+    const saved = (await getDoc(doc(publicDb, COLLECTIONS.passwordResets, USERNAME))).data();
+    expect(saved).toMatchObject({ rid: link!.rid, used: false });
+    const check = await checkResetLinkIn(auth, publicDb, link!);
+    expect(check).toMatchObject({ ok: true, email: EMAIL });
+  });
+
+  it('deja de servir si se pidió un enlace nuevo', async () => {
+    await requestPasswordResetIn(auth, publicDb, USERNAME, ORIGIN);
+    const first = (await lastLink(EMAIL))!;
+    await requestPasswordResetIn(auth, publicDb, USERNAME, ORIGIN);
+    const second = (await lastLink(EMAIL))!;
+    expect(await checkResetLinkIn(auth, publicDb, first)).toEqual({ ok: false });
+    expect((await checkResetLinkIn(auth, publicDb, second)).ok).toBe(true);
+  });
+
+  it(`deja de servir ${RESET_LINK_MINUTES} minutos después de enviado`, async () => {
+    await requestPasswordResetIn(auth, publicDb, USERNAME, ORIGIN);
+    const link = (await lastLink(EMAIL))!;
+    const later = Date.now() + RESET_LINK_MINUTES * 60 * 1000 + 1000;
+    expect(await checkResetLinkIn(auth, publicDb, link, later)).toEqual({ ok: false });
+  });
+
+  it('deja de servir después de usarlo', async () => {
+    await requestPasswordResetIn(auth, publicDb, USERNAME, ORIGIN);
+    const link = (await lastLink(EMAIL))!;
+    await markResetLinkUsedIn(publicDb, link);
+    expect(await checkResetLinkIn(auth, publicDb, link)).toEqual({ ok: false });
+  });
+
+  it('un código inventado no sirve aunque el rid sea el actual', async () => {
+    await requestPasswordResetIn(auth, publicDb, USERNAME, ORIGIN);
+    const link = (await lastLink(EMAIL))!;
+    expect(await checkResetLinkIn(auth, publicDb, { ...link, oobCode: 'inventado' })).toEqual({ ok: false });
+  });
+});
+

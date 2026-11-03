@@ -5,7 +5,7 @@ import {
   initializeTestEnvironment,
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, setDoc, Timestamp, updateDoc, where } from 'firebase/firestore';
 import { readFileSync } from 'node:fs';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
@@ -41,7 +41,8 @@ beforeEach(async () => {
 // `formRequests` (formulario del sitio público, HU-405) también: solo acepta solicitudes con su esquema, así que
 // `{ campo: 'valor' }` se rechaza a propósito. Ver tests/rules/formRequests.rules.test.ts.
 const ALL_COLLECTIONS = Object.values(COLLECTIONS).filter(
-  (c: string) => c !== COLLECTIONS.communications && c !== FORM_REQUESTS_COLLECTION,
+  // `passwordResets` (HU-107) también tiene esquema propio: ver el bloque "passwordResets" al final.
+  (c: string) => c !== COLLECTIONS.communications && c !== FORM_REQUESTS_COLLECTION && c !== COLLECTIONS.passwordResets,
 );
 
 describe('firestore.rules', () => {
@@ -157,4 +158,44 @@ describe('firestore.rules', () => {
       }
     });
   });
+
+  // HU-107: registro del último enlace de recuperación, sin sesión.
+  describe('passwordResets', () => {
+    const RID = 'a'.repeat(32);
+    beforeEach(async () => {
+      await testEnv.withSecurityRulesDisabled(async (ctx) => {
+        await setDoc(doc(ctx.firestore(), 'usernames/activo'), { uid: 'active-user', email: 'activo@example.com' });
+      });
+    });
+    const publico = () => testEnv.unauthenticatedContext().firestore();
+
+    it('sin sesión se registra un enlace nuevo para un usuario existente y se lee por id', async () => {
+      await assertSucceeds(setDoc(doc(publico(), 'passwordResets/activo'), { rid: RID, requestedAt: serverTimestamp(), used: false }));
+      await assertSucceeds(getDoc(doc(publico(), 'passwordResets/activo')));
+    });
+
+    it('no se registra para un usuario que no existe, ni con hora inventada, rid inválido, usado o campos de más', async () => {
+      await assertFails(setDoc(doc(publico(), 'passwordResets/nadie'), { rid: RID, requestedAt: serverTimestamp(), used: false }));
+      await assertFails(setDoc(doc(publico(), 'passwordResets/activo'), { rid: RID, requestedAt: Timestamp.fromMillis(0), used: false }));
+      await assertFails(setDoc(doc(publico(), 'passwordResets/activo'), { rid: 'corto', requestedAt: serverTimestamp(), used: false }));
+      await assertFails(setDoc(doc(publico(), 'passwordResets/activo'), { rid: RID, requestedAt: serverTimestamp(), used: true }));
+      await assertFails(
+        setDoc(doc(publico(), 'passwordResets/activo'), { rid: RID, requestedAt: serverTimestamp(), used: false, extra: 1 }),
+      );
+    });
+
+    it('se marca como usado sin cambiar nada más, y uno usado no vuelve atrás', async () => {
+      await assertSucceeds(setDoc(doc(publico(), 'passwordResets/activo'), { rid: RID, requestedAt: serverTimestamp(), used: false }));
+      await assertFails(updateDoc(doc(publico(), 'passwordResets/activo'), { used: true, rid: 'b'.repeat(32) }));
+      await assertSucceeds(updateDoc(doc(publico(), 'passwordResets/activo'), { used: true }));
+      await assertFails(updateDoc(doc(publico(), 'passwordResets/activo'), { used: false }));
+    });
+
+    it('no se listan ni se borran', async () => {
+      await assertSucceeds(setDoc(doc(publico(), 'passwordResets/activo'), { rid: RID, requestedAt: serverTimestamp(), used: false }));
+      await assertFails(getDocs(collection(publico(), 'passwordResets')));
+      await assertFails(deleteDoc(doc(publico(), 'passwordResets/activo')));
+    });
+  });
 });
+

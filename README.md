@@ -120,7 +120,7 @@ tests/
 2. Corré `npx firebase login` y `npx firebase use --add` para elegir el proyecto real.
 3. Desplegá con `npx firebase deploy --only firestore:rules,firestore:indexes`.
 4. Cada cuenta de administrador se crea en *Authentication* con su **correo real** (ahí llega el enlace de recuperación, HU-107) y se registra en dos lugares de Firestore: `users/{uid}` (`username`, `email`, `active: true`) y `usernames/{usuario en minúsculas}` (`uid`, `email`). El ingreso y la recuperación buscan el usuario en `usernames`, así que una cuenta sin ese documento no puede ingresar.
-5. En *Authentication → Plantillas → Restablecimiento de contraseña*, poné el idioma en español y revisá el remitente (HU-107). La "Protección contra la enumeración de correos" puede quedar activada: el sistema sabe si un usuario existe por `usernames`, no por Auth (HU-102 y HU-106).
+5. Configurá el correo de recuperación siguiendo `docs/HU-107-plantilla-correo.md` (plantilla en español, remitente, asunto, URL de acción `/nueva-contrasena` y dominio autorizado). Cada cuenta necesita displayName = usuario. La "Protección contra la enumeración de correos" puede quedar activada: el sistema sabe si un usuario existe por `usernames`, no por Auth (HU-102 y HU-106).
 
 El seed se niega a correr fuera de los emuladores o contra un proyecto que no sea `demo-*`.
 
