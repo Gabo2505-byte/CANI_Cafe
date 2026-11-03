@@ -1,15 +1,8 @@
 {
-  "alSalirNombreVacio": {
-    "errores": [
-      "Este campo es obligatorio."
-    ],
-    "avisoArriba": null
-  },
-  "alSalirCorreoMalEscrito": [
-    "Este campo es obligatorio.",
-    "Ingrese un correo electrónico válido."
+  "alSalirNombreVacio": [
+    "Este campo es obligatorio."
   ],
-  "alSalirTelefonoCostaRica7Digitos": [
+  "alSalirDeNombreCorreoYTelefono": [
     "Este campo es obligatorio.",
     "Ingrese un correo electrónico válido.",
     "El teléfono debe tener 8 dígitos."
@@ -17,12 +10,14 @@
   "avisoArribaAntesDeEnviar": null,
   "telefonoOtroPaisCon7Digitos": [
     "Este campo es obligatorio.",
-    "Ingrese un correo electrónico válido."
+    "Ingrese un correo electrónico válido.",
+    "Seleccione al menos un producto."
   ],
   "telefonoOtroPaisCon5Digitos": [
     "Este campo es obligatorio.",
     "Ingrese un correo electrónico válido.",
-    "El teléfono debe tener entre 6 y 14 dígitos."
+    "El teléfono debe tener entre 6 y 14 dígitos.",
+    "Seleccione al menos un producto."
   ],
   "enviarVacio": {
     "avisoArriba": "Revise los campos marcados en rojo.",
@@ -30,18 +25,11 @@
       "Este campo es obligatorio.",
       "Este campo es obligatorio.",
       "Seleccione al menos un producto."
-    ],
-    "camposEnRojo": [
-      "nombre",
-      "correo"
-    ],
-    "avisoAntesDelPrimerCampo": true
-  },
-  "alCorregirNombreYCorreo": {
-    "avisoArriba": "Revise los campos marcados en rojo.",
-    "errores": [
-      "Seleccione al menos un producto."
     ]
   },
-  "peticionesAFirestoreAlEnviar": 0
+  "alCorregirTodo": {
+    "avisoArriba": null,
+    "errores": []
+  },
+  "erroresDeConsola": []
 }

@@ -7,8 +7,9 @@ import {
   LIMITE_ENVIO_MS,
   TiempoAgotado,
 } from '../../sitio-publico/src/formulario/envio';
-import { valoresIniciales } from '../../sitio-publico/src/formulario/validacion';
+import { nuevaFila, valoresIniciales } from '../../sitio-publico/src/formulario/validacion';
 import { FORM_REQUEST_LIMITS, FORM_REQUESTS_COLLECTION, type FormRequestData } from '../../src/shared/types/formRequest';
+import { filasDe } from '../helpers/filasProductos';
 
 const rechazoReglas = () => Object.assign(new Error('Missing or insufficient permissions.'), { code: 'permission-denied' });
 const sinConexion = () => Object.assign(new Error('Request failed with error: Failed to fetch'), { code: 'unknown' });
@@ -56,7 +57,7 @@ describe('aSolicitud: lo que se guarda', () => {
         correo: ' Ana.Perez@Example.COM ',
         paisTelefono: 'CR',
         telefono: '8888-1234',
-        intereses: { 'prod-02-caturra-0340-grano': ' 12 ' },
+        filas: filasDe({ 'prod-02-caturra-0340-grano': ' 12 ' }),
         mensaje: '  Hola  ',
       }),
     );
@@ -71,7 +72,7 @@ describe('aSolicitud: lo que se guarda', () => {
   });
 
   it('sin teléfono ni mensaje guarda null (no textos vacíos), aunque haya un país elegido', () => {
-    const datos = aSolicitud(valoresIniciales({ nombre: 'Ana', correo: 'ana@example.com', intereses: { a: '1' }, mensaje: '   ' }));
+    const datos = aSolicitud(valoresIniciales({ nombre: 'Ana', correo: 'ana@example.com', filas: filasDe({ a: '1' }), mensaje: '   ' }));
     expect(datos.phoneCountry).toBeNull();
     expect(datos.phoneNumber).toBeNull();
     expect(datos.message).toBeNull();
@@ -80,13 +81,13 @@ describe('aSolicitud: lo que se guarda', () => {
   it('los productos van en el orden del catálogo (variedad, peso, formato), no en el orden en que se marcaron', () => {
     const datos = aSolicitud(
       valoresIniciales({
-        intereses: {
+        filas: filasDe({
           'prod-09-geisha-0250-grano': '1',
           'prod-01-villa-sarchi-1000-molido': '2',
           'prod-01-villa-sarchi-0250-molido': '3',
           'prod-01-villa-sarchi-0250-grano': '4',
           'prod-04-kenia-0500-grano': '5',
-        },
+        }),
       }),
     );
     expect(datos.interests.map((i) => i.productId)).toEqual([
@@ -96,6 +97,21 @@ describe('aSolicitud: lo que se guarda', () => {
       'prod-04-kenia-0500-grano',
       'prod-09-geisha-0250-grano',
     ]);
+  });
+});
+
+describe('aSolicitud con filas (HU-404)', () => {
+  it('recibe las filas y guarda solo las que tienen producto, sin la variedad ni la clave de la fila', () => {
+    const datos = aSolicitud(
+      valoresIniciales({
+        filas: [
+          nuevaFila({ variedad: 'Kenia', productoId: 'prod-04-kenia-0500-grano', cantidad: '7' }),
+          nuevaFila({ variedad: 'Geisha' }),
+          nuevaFila(),
+        ],
+      }),
+    );
+    expect(datos.interests).toEqual([{ productId: 'prod-04-kenia-0500-grano', quantity: 7 }]);
   });
 });
 

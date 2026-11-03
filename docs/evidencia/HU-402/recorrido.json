@@ -1,7 +1,13 @@
 {
   "catalogo": {
+    "titulo": "CANI Café | Catálogo",
     "textoSuperior": "Los precios varían según la cantidad y el tipo de cliente. Solicite información en Contáctenos.",
-    "totalTarjetas": 72,
+    "totalTarjetas": 9,
+    "tarjetasPorFila": [
+      3,
+      3,
+      3
+    ],
     "variedades": [
       "Villa Sarchí",
       "Caturra",
@@ -13,7 +19,21 @@
       "Casiopea",
       "Geisha"
     ],
-    "tarjetasPorVariedad": [
+    "etiquetas": [
+      "Presentación"
+    ],
+    "nombresAccesibles": [
+      "Presentación de Villa Sarchí",
+      "Presentación de Caturra",
+      "Presentación de Catuaí",
+      "Presentación de Kenia",
+      "Presentación de San Roque",
+      "Presentación de Milenio",
+      "Presentación de Centroamericano",
+      "Presentación de Casiopea",
+      "Presentación de Geisha"
+    ],
+    "presentacionesPorTarjeta": [
       8,
       8,
       8,
@@ -24,62 +44,82 @@
       8,
       8
     ],
-    "tarjetasPorFila": [
-      3,
-      2
+    "presentacionesDeLaPrimera": [
+      "Bolsa de 250 g, grano entero",
+      "Bolsa de 250 g, molido",
+      "Bolsa de 340 g, grano entero",
+      "Bolsa de 340 g, molido",
+      "Bolsa de 500 g, grano entero",
+      "Bolsa de 500 g, molido",
+      "Bolsa de 1 kg, grano entero",
+      "Bolsa de 1 kg, molido"
+    ],
+    "elegidaPorDefecto": [
+      "Villa Sarchí: Bolsa de 250 g, grano entero",
+      "Caturra: Bolsa de 250 g, grano entero",
+      "Catuaí: Bolsa de 250 g, grano entero",
+      "Kenia: Bolsa de 250 g, grano entero",
+      "San Roque: Bolsa de 250 g, grano entero",
+      "Milenio: Bolsa de 250 g, grano entero",
+      "Centroamericano: Bolsa de 250 g, grano entero",
+      "Casiopea: Bolsa de 250 g, grano entero",
+      "Geisha: Bolsa de 250 g, grano entero"
     ],
     "descripcionMasLarga": 267,
-    "descripcionMasCorta": 215,
-    "primeraTarjeta": [
-      "Villa Sarchí",
-      "Bolsa de 250 g, grano entero",
-      "Variedad emblemática de Costa Rica, reconocida por su elegancia y excelente calidad en taza. Presenta una acidez brillante, cuerpo balanceado y notas dulces y frutales que ofrecen una experiencia limpia y armoniosa.",
-      "Me interesa"
-    ],
     "botones": [
       "Me interesa"
     ],
+    "enlaces": [
+      "/contactenos?producto=prod-01-villa-sarchi-0250-grano",
+      "/contactenos?producto=prod-02-caturra-0250-grano",
+      "/contactenos?producto=prod-03-catuai-0250-grano",
+      "/contactenos?producto=prod-04-kenia-0250-grano",
+      "/contactenos?producto=prod-05-san-roque-0250-grano",
+      "/contactenos?producto=prod-06-milenio-0250-grano",
+      "/contactenos?producto=prod-07-centroamericano-0250-grano",
+      "/contactenos?producto=prod-08-casiopea-0250-grano",
+      "/contactenos?producto=prod-09-geisha-0250-grano"
+    ],
     "contienePrecios": false,
-    "botonesDeCompra": 0,
-    "sinDesplazamientoHorizontal": true,
-    "ancho": 1366,
-    "alto": 768
+    "botonesOCampos": 0,
+    "altoPagina": 1335,
+    "sinDesplazamientoHorizontal": true
   },
-  "titulo": "CANI Café | Catálogo",
-  "meInteresa": {
-    "hrefDeLaTerceraTarjeta": "/contactenos?producto=prod-01-villa-sarchi-0340-grano",
-    "urlDespuesDelClic": "/contactenos?producto=prod-01-villa-sarchi-0340-grano"
+  "cambioDePresentacion": {
+    "elegida": "Bolsa de 1 kg, molido",
+    "href": "/contactenos?producto=prod-09-geisha-1000-molido",
+    "kenia": "/contactenos?producto=prod-04-kenia-0250-grano"
   },
-  "unProductoInactivo": {
-    "idDesactivado": "prod-01-villa-sarchi-0250-grano",
-    "totalTarjetas": 71,
-    "aparece": false
+  "meInteresaPresentacionElegida": {
+    "url": "/contactenos?producto=prod-09-geisha-1000-molido",
+    "filas": 1,
+    "variedad": "Geisha",
+    "presentacion": "Bolsa de 1 kg, molido",
+    "cantidad": "1"
+  },
+  "meInteresaPorDefecto": {
+    "url": "/contactenos?producto=prod-03-catuai-0250-grano",
+    "variedad": "Catuaí",
+    "presentacion": "Bolsa de 250 g, grano entero",
+    "cantidad": "1"
+  },
+  "conProductosInactivos": {
+    "desactivados": {
+      "kenia": 6,
+      "milenio": 8
+    },
+    "totalTarjetas": 8,
+    "hayTarjetaMilenio": false,
+    "keniaOpciones": [
+      "Bolsa de 500 g, molido",
+      "Bolsa de 1 kg, grano entero"
+    ],
+    "keniaElegida": "Bolsa de 500 g, molido"
   },
   "sinProductos": {
     "mensaje": "Pronto publicaremos nuestros productos.",
-    "tarjetas": 0,
-    "textoSuperior": "Los precios varían según la cantidad y el tipo de cliente. Solicite información en Contáctenos."
+    "tarjetas": 0
   },
   "restaurados": true,
-  "meInteresaConFormulario": {
-    "terceraTarjeta": {
-      "url": "/contactenos?producto=prod-01-villa-sarchi-0340-grano",
-      "producto": "Villa SarchíBolsa de 340 g, grano entero",
-      "marcado": true,
-      "cantidad": "1",
-      "otrosMarcados": 0,
-      "filaVisibleEnLaLista": true
-    },
-    "tarjetaDelFinal": {
-      "url": "/contactenos?producto=prod-09-geisha-0500-molido",
-      "producto": "GeishaBolsa de 500 g, molido",
-      "marcado": true,
-      "cantidad": "1",
-      "otrosMarcados": 0,
-      "filaVisibleEnLaLista": true
-    },
-    "productoInexistente": {
-      "marcados": 0
-    }
-  }
+  "erroresDeConsola": []
 }

@@ -25,7 +25,7 @@ export function InicioPage() {
         <h2 id="pub-quienes-titulo" className="pub-heading">
           {QUIENES_SOMOS.titulo}
         </h2>
-        <div className="pub-prose">
+        <div className="pub-prose pub-prose-columnas">
           <p>{QUIENES_SOMOS.parrafo1}</p>
           <blockquote className="pub-quote">{QUIENES_SOMOS.cita}</blockquote>
           <p>{QUIENES_SOMOS.parrafo2}</p>

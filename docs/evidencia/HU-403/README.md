@@ -9,14 +9,15 @@
 
 ## Datos de prueba
 
-- Sitio público en `http://localhost:5174`. Las capturas de esta carpeta se tomaron antes de agregar la lista de productos (la página no consultaba Firestore); la lista está en HU-404.
+- Sitio público en `http://localhost:5174`, contra emuladores (la página lee el catálogo para el selector de productos de HU-404).
+- Capturas rehechas con el acomodo visual y móvil de la fase 3: contenedor de 1280 px, encabezado y pie compactos, encabezado fijo al desplazar (escritorio). Ver la tabla de antes y después en [HU-401](../HU-401/README.md#acomodo-visual-y-móvil-fase-3).
 - Recorrido automático en Microsoft Edge (headless) a **1366 × 768**. Detalle en [recorrido.json](recorrido.json). Datos ficticios (`ana@example.com`, etc.).
 
 ## Criterios de aceptación
 
 | # | Criterio | Resultado | Evidencia |
 |---|---|---|---|
-| 1 | "Contáctenos" tiene el formulario "Envíenos su consulta" a la izquierda y los datos de contacto (teléfono, correo y ubicación) a la derecha. | ✅ Cumple | [01](01-contactenos.png). El formulario ocupa de x=141 a x=775 y los datos de x=832 a x=1243. La columna derecha muestra solo teléfono, correo y ubicación. |
+| 1 | "Contáctenos" tiene el formulario "Envíenos su consulta" a la izquierda y los datos de contacto (teléfono, correo y ubicación) a la derecha. | ✅ Cumple | [01](01-contactenos.png). El formulario ocupa de x=133 a x=891 y los datos de x=940 a x=1244. Nombre y correo van lado a lado. En móvil, una sola columna con los datos de contacto debajo. La columna derecha muestra solo teléfono, correo y ubicación. |
 | 2 | El formulario pide cinco datos: nombre completo, correo, teléfono, productos de interés y mensaje. | ✅ Cumple | [01](01-contactenos.png) y la lista de productos de [HU-404](../HU-404/README.md). |
 | 3 | Son obligatorios el nombre, el correo y al menos un producto. El teléfono y el mensaje son opcionales. | ✅ Cumple | Nombre, correo y productos llevan asterisco y `aria-required`; teléfono y mensaje dicen "(opcional)". Enviar sin productos da "Seleccione al menos un producto." ([HU-404 captura 05](../HU-404/05-sin-productos-marcados.png)). |
 | 4 | Nombre y correo aceptan como máximo 100 caracteres. El mensaje, 1000, con contador debajo ("120/1000"). | ✅ Cumple | [02](02-contador-120-de-1000.png). Al pegar 150 caracteres quedan 100 en nombre y en correo; al pegar 1100 en el mensaje quedan 1000 (`1000/1000`). El contador está debajo del mensaje. |

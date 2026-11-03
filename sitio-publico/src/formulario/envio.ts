@@ -26,9 +26,11 @@ export function aSolicitud(valores: ValoresFormulario): FormRequestData {
     email: normalizeEmail(valores.correo),
     phoneCountry: telefono ? valores.paisTelefono : null,
     phoneNumber: telefono || null,
-    interests: Object.entries(valores.intereses)
-      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
-      .map(([productId, cantidad]) => ({ productId, quantity: parseQuantity(cantidad) ?? 0 })),
+    // Las filas ya validadas no tienen productos vacíos ni repetidos; aun así se omiten las que no tengan producto.
+    interests: valores.filas
+      .filter((fila) => fila.productoId)
+      .map((fila) => ({ productId: fila.productoId, quantity: parseQuantity(fila.cantidad) ?? 0 }))
+      .sort((a, b) => (a.productId < b.productId ? -1 : a.productId > b.productId ? 1 : 0)),
     message: mensaje || null,
   };
 }

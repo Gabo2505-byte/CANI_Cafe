@@ -5,9 +5,12 @@ import { ENVIO, FORMULARIO } from '../contenido';
 import type { ResultadoEnvio } from '../formulario/envio';
 import {
   type CampoFormulario,
+  type ErroresFila,
+  type FilaProducto,
   hayErrores,
   LIMITES,
   MENSAJES,
+  nuevaFila,
   valoresIniciales as crearValores,
   type ValoresFormulario,
   validarFormulario,
@@ -18,7 +21,7 @@ interface ConsultaFormProps {
   /** Productos activos del catálogo, para la lista de productos de interés (HU-404). */
   productos?: Product[];
   estadoProductos?: EstadoProductos;
-  /** Producto elegido en el catálogo ("Me interesa"): empieza marcado y a la vista. Si no existe, se ignora. */
+  /** Producto elegido en el catálogo ("Me interesa"): llega como una fila ya llena. Si no existe o no está activo, se ignora. */
   productoInicial?: string | null;
   /** Valores con que empieza el formulario (por ejemplo, un producto preseleccionado). */
   valoresIniciales?: Partial<ValoresFormulario>;
@@ -46,8 +49,8 @@ export function ConsultaForm({
   const [valores, setValores] = useState<ValoresFormulario>(() => crearValores(valoresIniciales));
   const [tocados, setTocados] = useState<Partial<Record<CampoFormulario, boolean>>>({});
   const [intentado, setIntentado] = useState(false);
-  const [cantidadesTocadas, setCantidadesTocadas] = useState<Record<string, boolean>>({});
-  const [mostrarId, setMostrarId] = useState<string | null>(null);
+  // Partes de cada fila de productos de las que ya se salió (para mostrar sus errores).
+  const [filasTocadas, setFilasTocadas] = useState<Record<string, { producto?: boolean; cantidad?: boolean }>>({});
   const preseleccionAplicada = useRef(false);
   const [envio, setEnvio] = useState<EstadoEnvio>('inactivo');
   const agradecimientoRef = useRef<HTMLDivElement>(null);
@@ -57,15 +60,20 @@ export function ConsultaForm({
     if (envio === 'enviado') agradecimientoRef.current?.focus();
   }, [envio]);
 
-  // HU-402 criterio 4: el producto elegido en el catálogo llega marcado (una sola vez, cuando ya se conoce la lista).
+  // HU-402 criterio 4: el producto elegido en el catálogo llega como una fila ya llena (variedad, presentación y
+  // cantidad 1). Se aplica una sola vez, cuando ya se conoce el catálogo.
   useEffect(() => {
     if (!productoInicial || preseleccionAplicada.current) return;
-    if (!productos.some((p) => p.id === productoInicial)) return;
+    const producto = productos.find((p) => p.id === productoInicial);
+    if (!producto) return;
     preseleccionAplicada.current = true;
-    setValores((v) =>
-      Object.hasOwn(v.intereses, productoInicial) ? v : { ...v, intereses: { ...v.intereses, [productoInicial]: '1' } },
-    );
-    setMostrarId(productoInicial);
+    setValores((v) => {
+      if (v.filas.some((f) => f.productoId === producto.id)) return v;
+      const llena = nuevaFila({ variedad: producto.name, productoId: producto.id, cantidad: '1' });
+      // Si solo están las filas vacías del inicio, la fila llena las reemplaza; si no, se agrega al final.
+      const vacias = v.filas.every((f) => !f.variedad && !f.productoId && !f.cantidad.trim());
+      return { ...v, filas: vacias ? [llena] : [...v.filas, llena] };
+    });
   }, [productos, productoInicial]);
 
   const errores = useMemo(() => validarFormulario(valores), [valores]);
@@ -81,18 +89,21 @@ export function ConsultaForm({
   const errorTelefono = visible('telefono');
   const errorIntereses = visible('intereses');
 
-  const marcarProducto = (productoId: string, marcado: boolean) => {
-    setValores((v) => {
-      const { [productoId]: _quitado, ...resto } = v.intereses;
-      // Al marcarlo, la cantidad empieza en 1; al desmarcarlo, se borra.
-      return { ...v, intereses: marcado ? { ...v.intereses, [productoId]: '1' } : resto };
-    });
-    if (!marcado) setCantidadesTocadas(({ [productoId]: _quitada, ...resto }) => resto);
+  const cambiarFilas = (filas: FilaProducto[]) => {
+    setValores((v) => ({ ...v, filas }));
+    // Las filas quitadas dejan de contar como tocadas.
+    setFilasTocadas((t) => Object.fromEntries(Object.entries(t).filter(([clave]) => filas.some((f) => f.clave === clave))));
   };
-  const escribirCantidad = (productoId: string, texto: string) =>
-    setValores((v) => (Object.hasOwn(v.intereses, productoId) ? { ...v, intereses: { ...v.intereses, [productoId]: texto } } : v));
-  const errorCantidad = (productoId: string) =>
-    cantidadesTocadas[productoId] || intentado ? errores.cantidades[productoId] : undefined;
+  const tocarFila = (clave: string, parte: 'producto' | 'cantidad') =>
+    setFilasTocadas((t) => ({ ...t, [clave]: { ...t[clave], [parte]: true } }));
+  const erroresFila = (clave: string): ErroresFila => {
+    const deLaFila = errores.filas[clave] ?? {};
+    const tocada = filasTocadas[clave] ?? {};
+    return {
+      producto: tocada.producto || intentado ? deLaFila.producto : undefined,
+      cantidad: tocada.cantidad || intentado ? deLaFila.cantidad : undefined,
+    };
+  };
 
   const salioDelTelefono = (e: FocusEvent<HTMLDivElement>) => {
     // El teléfono tiene dos controles (país y número): se revisa al salir del conjunto, no de cada uno.
@@ -115,8 +126,7 @@ export function ConsultaForm({
     setValores(crearValores());
     setTocados({});
     setIntentado(false);
-    setCantidadesTocadas({});
-    setMostrarId(null);
+    setFilasTocadas({});
     setEnvio('inactivo');
     onOtraConsulta?.();
   };
@@ -147,56 +157,59 @@ export function ConsultaForm({
         </p>
       )}
 
-      <div className="pub-field">
-        <label htmlFor={id('nombre')}>
-          {FORMULARIO.nombre}{' '}
-          <span className="pub-required" aria-hidden="true">
-            *
-          </span>
-        </label>
-        <input
-          id={id('nombre')}
-          type="text"
-          autoComplete="name"
-          maxLength={LIMITES.nombre}
-          value={valores.nombre}
-          onChange={(e) => cambiar({ nombre: e.target.value })}
-          onBlur={() => marcar('nombre')}
-          aria-required="true"
-          aria-invalid={errorNombre ? true : undefined}
-          aria-describedby={errorNombre ? errorId('nombre') : undefined}
-        />
-        {errorNombre && (
-          <p id={errorId('nombre')} className="field-error">
-            {errorNombre}
-          </p>
-        )}
-      </div>
+      {/* Nombre y correo en una fila (en móvil, uno debajo del otro) */}
+      <div className="pub-form-row">
+        <div className="pub-field">
+          <label htmlFor={id('nombre')}>
+            {FORMULARIO.nombre}{' '}
+            <span className="pub-required" aria-hidden="true">
+              *
+            </span>
+          </label>
+          <input
+            id={id('nombre')}
+            type="text"
+            autoComplete="name"
+            maxLength={LIMITES.nombre}
+            value={valores.nombre}
+            onChange={(e) => cambiar({ nombre: e.target.value })}
+            onBlur={() => marcar('nombre')}
+            aria-required="true"
+            aria-invalid={errorNombre ? true : undefined}
+            aria-describedby={errorNombre ? errorId('nombre') : undefined}
+          />
+          {errorNombre && (
+            <p id={errorId('nombre')} className="field-error">
+              {errorNombre}
+            </p>
+          )}
+        </div>
 
-      <div className="pub-field">
-        <label htmlFor={id('correo')}>
-          {FORMULARIO.correo}{' '}
-          <span className="pub-required" aria-hidden="true">
-            *
-          </span>
-        </label>
-        <input
-          id={id('correo')}
-          type="email"
-          autoComplete="email"
-          maxLength={LIMITES.correo}
-          value={valores.correo}
-          onChange={(e) => cambiar({ correo: e.target.value })}
-          onBlur={() => marcar('correo')}
-          aria-required="true"
-          aria-invalid={errorCorreo ? true : undefined}
-          aria-describedby={errorCorreo ? errorId('correo') : undefined}
-        />
-        {errorCorreo && (
-          <p id={errorId('correo')} className="field-error">
-            {errorCorreo}
-          </p>
-        )}
+        <div className="pub-field">
+          <label htmlFor={id('correo')}>
+            {FORMULARIO.correo}{' '}
+            <span className="pub-required" aria-hidden="true">
+              *
+            </span>
+          </label>
+          <input
+            id={id('correo')}
+            type="email"
+            autoComplete="email"
+            maxLength={LIMITES.correo}
+            value={valores.correo}
+            onChange={(e) => cambiar({ correo: e.target.value })}
+            onBlur={() => marcar('correo')}
+            aria-required="true"
+            aria-invalid={errorCorreo ? true : undefined}
+            aria-describedby={errorCorreo ? errorId('correo') : undefined}
+          />
+          {errorCorreo && (
+            <p id={errorId('correo')} className="field-error">
+              {errorCorreo}
+            </p>
+          )}
+        </div>
       </div>
 
       <div className="pub-field">
@@ -231,15 +244,14 @@ export function ConsultaForm({
         <ProductosField
           productos={productos}
           estado={estadoProductos}
-          intereses={valores.intereses}
-          onMarcar={marcarProducto}
-          onCantidad={escribirCantidad}
-          onCantidadSalida={(productoId) => setCantidadesTocadas((t) => ({ ...t, [productoId]: true }))}
+          filas={valores.filas}
+          onChange={cambiarFilas}
+          erroresFila={erroresFila}
+          onProductoSalida={(clave) => tocarFila(clave, 'producto')}
+          onCantidadSalida={(clave) => tocarFila(clave, 'cantidad')}
           onSalir={() => marcar('intereses')}
-          errorCantidad={errorCantidad}
           error={errorIntereses}
           errorId={errorId('intereses')}
-          mostrarId={mostrarId}
         />
       </fieldset>
 
@@ -267,7 +279,14 @@ export function ConsultaForm({
           </p>
         )}
         <p className="pub-privacy">{ENVIO.privacidad}</p>
-        <button type="submit" className="pub-button" disabled={enviando}>
+        <button
+          type="submit"
+          className="pub-button"
+          disabled={enviando}
+          // Al presionar con el mouse no se le quita el foco al campo: si no, los errores que aparecen al salir de él
+          // empujan el botón hacia abajo antes de soltar y el clic se pierde. "Enviar" revisa todo igualmente.
+          onMouseDown={(e) => e.preventDefault()}
+        >
           {enviando ? ENVIO.enviando : FORMULARIO.enviar}
         </button>
       </div>

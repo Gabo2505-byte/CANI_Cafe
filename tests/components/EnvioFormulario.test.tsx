@@ -31,10 +31,9 @@ const catalogo = () => buildCatalogProducts().map((p) => ({ ...p.data, id: p.id 
 const nombre = () => screen.getByRole('textbox', { name: 'Nombre completo' }) as HTMLInputElement;
 const correo = () => screen.getByRole('textbox', { name: 'Correo electrónico' }) as HTMLInputElement;
 const mensaje = () => screen.getByRole('textbox', { name: /^Mensaje/ }) as HTMLTextAreaElement;
-const casilla = (nombreProducto: string, presentacion: string) =>
-  screen.getByRole('checkbox', { name: `${nombreProducto} ${presentacion}` }) as HTMLInputElement;
-const cantidad = (nombreProducto: string, presentacion: string) =>
-  screen.getByRole('textbox', { name: `Cantidad aproximada de ${nombreProducto}, ${presentacion}` }) as HTMLInputElement;
+const variedad = (n: number) => screen.getByLabelText(`Variedad del producto ${n}`) as HTMLSelectElement;
+const presentacion = (n: number) => screen.getByLabelText(`Presentación del producto ${n}`) as HTMLSelectElement;
+const cantidad = (n: number) => screen.getByLabelText(`Cantidad aproximada del producto ${n}`) as HTMLInputElement;
 
 /** Promesa que la prueba resuelve cuando quiere (para ver el estado "Enviando..."). */
 function diferida() {
@@ -51,9 +50,10 @@ async function llenarValido(user: ReturnType<typeof userEvent.setup>) {
   };
   await pegar(nombre(), 'Ana Prueba');
   await pegar(correo(), 'ana@example.com');
-  await user.click(casilla('Geisha', 'Bolsa de 1 kg, molido'));
-  await user.clear(cantidad('Geisha', 'Bolsa de 1 kg, molido'));
-  await pegar(cantidad('Geisha', 'Bolsa de 1 kg, molido'), '25');
+  await user.selectOptions(variedad(1), 'Geisha');
+  await user.selectOptions(presentacion(1), GEISHA);
+  await user.clear(cantidad(1));
+  await pegar(cantidad(1), '25');
   await pegar(mensaje(), 'Quisiera precios.');
 }
 
@@ -118,7 +118,7 @@ describe('HU-405 criterio 3: envío correcto', () => {
     expect(document.activeElement).toBe(agradecimiento);
   });
 
-  it('"Enviar otra consulta" muestra el formulario vacío, con Costa Rica y sin productos marcados', async () => {
+  it('"Enviar otra consulta" muestra el formulario vacío, con Costa Rica y una sola fila de productos vacía', async () => {
     const { user, onOtraConsulta } = renderForm(vi.fn(async () => 'ok' as const));
     await llenarValido(user);
     await user.click(screen.getByRole('button', { name: 'Enviar' }));
@@ -128,7 +128,10 @@ describe('HU-405 criterio 3: envío correcto', () => {
     expect(correo().value).toBe('');
     expect(mensaje().value).toBe('');
     expect(screen.getByRole('button', { name: 'País del teléfono: Costa Rica (+506)' })).toBeTruthy();
-    expect(screen.getAllByRole('checkbox').filter((c) => (c as HTMLInputElement).checked)).toHaveLength(0);
+    expect(variedad(1).value).toBe('');
+    expect(presentacion(1).value).toBe('');
+    expect(cantidad(1).value).toBe('');
+    expect(screen.queryByLabelText('Variedad del producto 2')).toBeNull();
     expect(screen.queryByText('Revise los campos marcados en rojo.')).toBeNull();
     expect(screen.queryByText('Este campo es obligatorio.')).toBeNull();
     expect(screen.getByRole('button', { name: 'Enviar' })).toBeTruthy();
@@ -143,8 +146,9 @@ describe('HU-405 criterio 4: error de conexión', () => {
     expect((await screen.findByRole('alert')).textContent).toBe(ERROR);
     expect(nombre().value).toBe('Ana Prueba');
     expect(correo().value).toBe('ana@example.com');
-    expect(casilla('Geisha', 'Bolsa de 1 kg, molido').checked).toBe(true);
-    expect(cantidad('Geisha', 'Bolsa de 1 kg, molido').value).toBe('25');
+    expect(variedad(1).value).toBe('Geisha');
+    expect(presentacion(1).value).toBe(GEISHA);
+    expect(cantidad(1).value).toBe('25');
     expect(mensaje().value).toBe('Quisiera precios.');
     const boton = screen.getByRole('button', { name: 'Enviar' }) as HTMLButtonElement;
     expect(boton.disabled).toBe(false);
@@ -181,10 +185,12 @@ describe('HU-405 en la página Contáctenos (con el guardado simulado)', () => {
     vi.mocked(guardarSolicitudIn).mockResolvedValue();
     const user = userEvent.setup();
     abrir(`/contactenos?producto=${GEISHA}`);
-    await waitFor(() => expect(casilla('Geisha', 'Bolsa de 1 kg, molido').checked).toBe(true));
+    await waitFor(() => expect(presentacion(1).value).toBe(GEISHA));
     await user.type(nombre(), ' Ana Prueba ');
     await user.type(correo(), 'Ana@Example.com');
-    await user.click(casilla('Villa Sarchí', 'Bolsa de 250 g, grano entero'));
+    await user.click(screen.getByRole('button', { name: 'Agregar producto' }));
+    await user.selectOptions(variedad(2), 'Villa Sarchí');
+    await user.selectOptions(presentacion(2), 'prod-01-villa-sarchi-0250-grano');
     await user.click(screen.getByRole('button', { name: 'Enviar' }));
     expect(await screen.findByText(GRACIAS)).toBeTruthy();
     expect(guardarSolicitudIn).toHaveBeenCalledWith({}, 'sol-1', {
@@ -207,7 +213,7 @@ describe('HU-405 en la página Contáctenos (con el guardado simulado)', () => {
       .mockResolvedValueOnce();
     const user = userEvent.setup();
     abrir(`/contactenos?producto=${GEISHA}`);
-    await waitFor(() => expect(casilla('Geisha', 'Bolsa de 1 kg, molido').checked).toBe(true));
+    await waitFor(() => expect(presentacion(1).value).toBe(GEISHA));
     await user.type(nombre(), 'Ana Prueba');
     await user.type(correo(), 'ana@example.com');
     await user.click(screen.getByRole('button', { name: 'Enviar' }));
@@ -218,6 +224,7 @@ describe('HU-405 en la página Contáctenos (con el guardado simulado)', () => {
     expect(vi.mocked(guardarSolicitudIn).mock.calls.map((c) => c[1])).toEqual(['sol-1', 'sol-1']);
     await user.click(screen.getByRole('button', { name: 'Enviar otra consulta' }));
     expect(screen.getByTestId('ubicacion').textContent).toBe('/contactenos');
-    expect(screen.getAllByRole('checkbox').filter((c) => (c as HTMLInputElement).checked)).toHaveLength(0);
+    expect(variedad(1).value).toBe('');
+    expect(screen.queryByLabelText('Variedad del producto 2')).toBeNull();
   });
 });

@@ -1,7 +1,16 @@
 {
-  "lista": {
-    "totalFilas": 72,
-    "grupos": [
+  "inicio": {
+    "filas": 1,
+    "fila1": {
+      "variedad": "",
+      "presentacion": "Primero elija una variedad",
+      "presentacionDeshabilitada": true,
+      "cantidad": "",
+      "placeholderCantidad": "Cantidad",
+      "errores": []
+    },
+    "opcionesVariedad": [
+      "Seleccione una variedad",
       "Villa Sarchí",
       "Caturra",
       "Catuaí",
@@ -12,52 +21,87 @@
       "Casiopea",
       "Geisha"
     ],
-    "filasPorGrupo": [
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8
+    "textos": [
+      "Seleccione una variedad",
+      "Villa Sarchí",
+      "Caturra",
+      "Catuaí",
+      "Kenia",
+      "San Roque",
+      "Milenio",
+      "Centroamericano",
+      "Casiopea",
+      "Geisha",
+      "Primero elija una variedad",
+      "unidades",
+      "X",
+      "Agregar producto"
     ],
-    "unaFilaPorProducto": true,
-    "cadaFilaTiene": true,
-    "primeraFila": "Villa SarchíBolsa de 250 g, grano entero",
-    "ultimaFila": "GeishaBolsa de 1 kg, molido",
-    "marcadosAlInicio": 0,
-    "cantidadesDeshabilitadasYVacias": true,
-    "listaConDesplazamientoPropio": true,
-    "alturaDeLaLista": 320,
-    "alturaDelContenido": 3367,
-    "sinDesplazamientoHorizontal": true
+    "botones": [
+      "X (Quitar producto 1)",
+      "Agregar producto ()"
+    ],
+    "buscador": false
   },
-  "desplazarLaListaNoMueveLaPagina": true,
-  "antesDeMarcar": {
-    "valor": "",
-    "deshabilitado": true
+  "alElegirVariedad": {
+    "presentaciones": [
+      "Seleccione una presentación",
+      "Bolsa de 250 g, grano entero",
+      "Bolsa de 250 g, molido",
+      "Bolsa de 340 g, grano entero",
+      "Bolsa de 340 g, molido",
+      "Bolsa de 500 g, grano entero",
+      "Bolsa de 500 g, molido",
+      "Bolsa de 1 kg, grano entero",
+      "Bolsa de 1 kg, molido"
+    ],
+    "fila1": {
+      "variedad": "Caturra",
+      "presentacion": "Seleccione una presentación",
+      "presentacionDeshabilitada": false,
+      "cantidad": "",
+      "placeholderCantidad": "Cantidad",
+      "errores": []
+    }
   },
-  "alMarcarCaturra": {
-    "valor": "1",
-    "deshabilitado": false
+  "alElegirPresentacion": {
+    "variedad": "Caturra",
+    "presentacion": "Bolsa de 340 g, grano entero",
+    "presentacionDeshabilitada": false,
+    "cantidad": "1",
+    "placeholderCantidad": "Cantidad",
+    "errores": []
   },
-  "variosMarcados": {
-    "caturra": {
-      "valor": "12",
-      "deshabilitado": false
+  "agregarProducto": {
+    "filas": 2,
+    "focoEn": "Variedad del producto 2"
+  },
+  "variosProductos": [
+    {
+      "variedad": "Caturra",
+      "presentacion": "Bolsa de 340 g, grano entero",
+      "presentacionDeshabilitada": false,
+      "cantidad": "1",
+      "placeholderCantidad": "Cantidad",
+      "errores": []
     },
-    "geisha": {
-      "valor": "3",
-      "deshabilitado": false
+    {
+      "variedad": "Geisha",
+      "presentacion": "Bolsa de 1 kg, molido",
+      "presentacionDeshabilitada": false,
+      "cantidad": "12",
+      "placeholderCantidad": "Cantidad",
+      "errores": []
     },
-    "kenia": {
-      "valor": "9999",
-      "deshabilitado": false
-    },
-    "marcados": 3
-  },
+    {
+      "variedad": "Kenia",
+      "presentacion": "Bolsa de 250 g, molido",
+      "presentacionDeshabilitada": false,
+      "cantidad": "9999",
+      "placeholderCantidad": "Cantidad",
+      "errores": []
+    }
+  ],
   "cantidadesInvalidas": {
     "0": [
       "Ingrese una cantidad entre 1 y 9999."
@@ -76,31 +120,44 @@
     ]
   },
   "alCorregirLaCantidad": [],
-  "alDesmarcarGeisha": {
-    "valor": "",
-    "deshabilitado": true
-  },
-  "alVolverAMarcarGeisha": {
-    "valor": "1",
-    "deshabilitado": false
-  },
-  "otrosNoCambian": {
-    "caturra": {
-      "valor": "12",
-      "deshabilitado": false
-    },
-    "kenia": {
-      "valor": "25",
-      "deshabilitado": false
+  "alQuitarLaFila2": {
+    "filas": 2,
+    "fila2Ahora": {
+      "variedad": "Kenia",
+      "presentacion": "Bolsa de 250 g, molido",
+      "presentacionDeshabilitada": false,
+      "cantidad": "25",
+      "placeholderCantidad": "Cantidad",
+      "errores": []
     }
   },
-  "enviarSinProductos": {
-    "errores": [
-      "Este campo es obligatorio.",
-      "Este campo es obligatorio.",
-      "Seleccione al menos un producto."
-    ],
-    "avisoArriba": "Revise los campos marcados en rojo."
+  "filaRepetidaYVaciaAlEnviar": {
+    "avisoArriba": "Revise los campos marcados en rojo.",
+    "fila3": {
+      "variedad": "Caturra",
+      "presentacion": "Bolsa de 340 g, grano entero",
+      "presentacionDeshabilitada": false,
+      "cantidad": "1",
+      "placeholderCantidad": "Cantidad",
+      "errores": [
+        "Este producto ya fue agregado."
+      ]
+    },
+    "fila4": {
+      "variedad": "Milenio",
+      "presentacion": "Seleccione una presentación",
+      "presentacionDeshabilitada": false,
+      "cantidad": "",
+      "placeholderCantidad": "Cantidad",
+      "errores": [
+        "Seleccione un producto o elimine la fila."
+      ]
+    }
   },
+  "enviarSinProductos": [
+    "Este campo es obligatorio.",
+    "Este campo es obligatorio.",
+    "Seleccione al menos un producto."
+  ],
   "erroresDeConsola": []
 }

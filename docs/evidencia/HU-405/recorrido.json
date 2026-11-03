@@ -16,7 +16,7 @@
     "boton": "Enviar otra consulta",
     "formularioVisible": false,
     "guardado": {
-      "id": "qgmYsRvl1iaANbdAfDmb",
+      "id": "hyjsO0ofwSS9bpKf4vc2",
       "fullName": "Ana Prueba",
       "email": "ana.prueba@example.com",
       "phoneCountry": "CR",
@@ -33,26 +33,28 @@
       ],
       "message": "Quisiera conocer precios para cafetería.",
       "processed": false,
-      "submittedAt": "2026-11-02T22:01:25.063Z"
+      "submittedAt": "2026-11-03T00:01:57.972Z"
     },
     "enviarOtraConsulta": {
       "url": "/contactenos",
       "nombre": "",
       "correo": "",
       "telefono": "",
-      "marcados": [],
+      "filas": [
+        "="
+      ],
       "mensaje": ""
     }
   },
   "criterio4SinConexion": {
     "mensaje": "No se pudo enviar el formulario. Intente de nuevo.",
-    "msHastaElError": 84,
+    "msHastaElError": 48,
     "datosIntactos": true,
     "datos": {
       "nombre": "Bruno Prueba",
       "correo": "bruno@example.com",
       "telefono": "8888-1234",
-      "marcados": [
+      "filas": [
         "prod-01-villa-sarchi-0250-grano=12"
       ],
       "mensaje": "Sin conexión la primera vez."
@@ -68,27 +70,27 @@
     }
   },
   "reglaB": {
-    "msHastaElError": 10044,
+    "msHastaElError": 10047,
     "mensaje": "No se pudo enviar el formulario. Intente de nuevo.",
     "datosIntactos": true,
     "guardadasTrasElError": [
-      "zb8uklebvtx53R9q6Nhy"
+      "iH9S2vNx53RxlmhwMe6h"
     ],
     "reintento": {
       "mensaje": "Gracias por su interés. CANI Café se comunicará con usted pronto.",
       "guardadas": [
-        "zb8uklebvtx53R9q6Nhy"
+        "iH9S2vNx53RxlmhwMe6h"
       ]
     }
   },
   "reglaC": [
     {
-      "id": "7T2h0khBo6nTmmLtVpmx",
-      "message": "Mensaje corregido."
+      "id": "9t0CELtkWGyI6MA6xLwM",
+      "message": "Primer mensaje."
     },
     {
-      "id": "A6uovx1mUp67W6WXUuE4",
-      "message": "Primer mensaje."
+      "id": "b50OJdlnsDHx36wnvQOX",
+      "message": "Mensaje corregido."
     }
   ],
   "erroresDeConsola": []

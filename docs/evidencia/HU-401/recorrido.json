@@ -3,10 +3,10 @@
     "titulo": "CANI Café | Inicio",
     "cabecera": {
       "nombreAccesible": "CANI Café",
-      "logoDerecha": 292,
-      "menuIzquierda": 907,
+      "logoDerecha": 226,
+      "menuIzquierda": 947,
       "nombreAIzquierdaDelMenu": true,
-      "logoPegadoAlBordeIzq": 108,
+      "logoPegadoAlBordeIzq": 68,
       "links": [
         {
           "texto": "Inicio",
@@ -37,10 +37,10 @@
     "titulo": "CANI Café | Catálogo",
     "cabecera": {
       "nombreAccesible": "CANI Café",
-      "logoDerecha": 292,
-      "menuIzquierda": 907,
+      "logoDerecha": 226,
+      "menuIzquierda": 947,
       "nombreAIzquierdaDelMenu": true,
-      "logoPegadoAlBordeIzq": 108,
+      "logoPegadoAlBordeIzq": 68,
       "links": [
         {
           "texto": "Inicio",
@@ -71,10 +71,10 @@
     "titulo": "CANI Café | Contáctenos",
     "cabecera": {
       "nombreAccesible": "CANI Café",
-      "logoDerecha": 299,
-      "menuIzquierda": 915,
+      "logoDerecha": 226,
+      "menuIzquierda": 947,
       "nombreAIzquierdaDelMenu": true,
-      "logoPegadoAlBordeIzq": 115,
+      "logoPegadoAlBordeIzq": 68,
       "links": [
         {
           "texto": "Inicio",

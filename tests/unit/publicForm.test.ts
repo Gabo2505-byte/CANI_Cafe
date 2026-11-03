@@ -6,17 +6,27 @@ import {
   hayErrores,
   LIMITES,
   MENSAJES,
+  nuevaFila,
   valoresIniciales,
   type ValoresFormulario,
   validarFormulario,
 } from '../../sitio-publico/src/formulario/validacion';
+import { filasDe } from '../helpers/filasProductos';
 
 const valido = (parcial: Partial<ValoresFormulario> = {}) =>
-  valoresIniciales({ nombre: 'Ana Pérez', correo: 'ana@example.com', intereses: { 'prod-1': '1' }, ...parcial });
+  valoresIniciales({ nombre: 'Ana Pérez', correo: 'ana@example.com', filas: filasDe({ 'prod-1': '1' }), ...parcial });
 
 describe('HU-403 valores y topes', () => {
-  it('empieza vacío, con Costa Rica elegida y sin productos', () => {
-    expect(valoresIniciales()).toEqual({ nombre: '', correo: '', paisTelefono: 'CR', telefono: '', intereses: {}, mensaje: '' });
+  it('empieza vacío, con Costa Rica elegida y una sola fila de productos vacía', () => {
+    const v = valoresIniciales();
+    expect({ ...v, filas: undefined }).toEqual({ nombre: '', correo: '', paisTelefono: 'CR', telefono: '', filas: undefined, mensaje: '' });
+    expect(v.filas).toHaveLength(1);
+    expect(v.filas[0]).toMatchObject({ variedad: '', productoId: '', cantidad: '' });
+  });
+
+  it('cada fila nueva tiene su propia clave', () => {
+    const claves = new Set([nuevaFila(), nuevaFila(), nuevaFila()].map((f) => f.clave));
+    expect(claves.size).toBe(3);
   });
 
   it('los topes son 100 (nombre y correo) y 1000 (mensaje)', () => {
@@ -25,13 +35,15 @@ describe('HU-403 valores y topes', () => {
 });
 
 describe('HU-501 mensajes literales', () => {
-  it('son exactamente los de los criterios', () => {
+  it('son exactamente los de los criterios (más los dos PROVISIONALES de filas, iguales a los del sistema interno)', () => {
     expect(MENSAJES).toEqual({
       obligatorio: 'Este campo es obligatorio.',
       correoInvalido: 'Ingrese un correo electrónico válido.',
       sinProductos: 'Seleccione al menos un producto.',
       cantidad: 'Ingrese una cantidad entre 1 y 9999.',
       revisar: 'Revise los campos marcados en rojo.',
+      filaVacia: 'Seleccione un producto o elimine la fila.',
+      repetido: 'Este producto ya fue agregado.',
     });
   });
 });
@@ -53,7 +65,7 @@ describe('HU-501 criterio 2: datos obligatorios', () => {
   });
 
   it('ningún producto marcado: "Seleccione al menos un producto."', () => {
-    const errores = validarFormulario(valido({ intereses: {} }));
+    const errores = validarFormulario(valido({ filas: filasDe({}) }));
     expect(errores.intereses).toBe('Seleccione al menos un producto.');
     expect(hayErrores(errores)).toBe(true);
   });
@@ -66,7 +78,8 @@ describe('HU-501 criterio 2: datos obligatorios', () => {
 
   it('un formulario vacío marca nombre, correo y productos, pero no teléfono', () => {
     const errores = validarFormulario(valoresIniciales());
-    expect(Object.keys(errores).sort()).toEqual(['cantidades', 'correo', 'intereses', 'nombre']);
+    expect(Object.keys(errores).sort()).toEqual(['correo', 'filas', 'intereses', 'nombre']);
+    expect(errores.filas).toEqual({});
   });
 });
 
@@ -123,24 +136,55 @@ describe('HU-501 criterio 4: teléfono por país', () => {
 
 describe('HU-501 criterio 4: cantidad de 1 a 9999', () => {
   it.each(['1', '9999', '250', ' 5 '])('"%s" es válida', (cantidad) => {
-    const errores = validarFormulario(valido({ intereses: { 'prod-1': cantidad } }));
-    expect(errores.cantidades).toEqual({});
+    const errores = validarFormulario(valido({ filas: filasDe({ 'prod-1': cantidad }) }));
+    expect(errores.filas).toEqual({});
   });
 
   it.each(['', '0', '10000', '-1', '1.5', 'abc', '1e3', '12 3'])('"%s": "Ingrese una cantidad entre 1 y 9999."', (cantidad) => {
-    const errores = validarFormulario(valido({ intereses: { 'prod-1': cantidad } }));
-    expect(errores.cantidades).toEqual({ 'prod-1': 'Ingrese una cantidad entre 1 y 9999.' });
+    const filas = filasDe({ 'prod-1': cantidad });
+    const errores = validarFormulario(valido({ filas }));
+    expect(errores.filas).toEqual({ [filas[0].clave]: { cantidad: 'Ingrese una cantidad entre 1 y 9999.' } });
     expect(hayErrores(errores)).toBe(true);
   });
 
-  it('el error es por producto: solo se marca el que está mal', () => {
-    const errores = validarFormulario(valido({ intereses: { a: '3', b: '0', c: '20000' } }));
-    expect(Object.keys(errores.cantidades)).toEqual(['b', 'c']);
+  it('el error es por fila: solo se marca la que está mal', () => {
+    const filas = filasDe({ a: '3', b: '0', c: '20000' });
+    const errores = validarFormulario(valido({ filas }));
+    expect(Object.keys(errores.filas)).toEqual([filas[1].clave, filas[2].clave]);
   });
 
   it('parseQuantity devuelve el número o null', () => {
     expect(parseQuantity('12')).toBe(12);
     expect(parseQuantity('0')).toBeNull();
     expect(parseQuantity('10000')).toBeNull();
+  });
+});
+
+describe('HU-404 con filas: vacías y repetidas (mensajes PROVISIONALES)', () => {
+  it('sin ningún producto elegido (solo filas vacías, o ninguna fila): un único "Seleccione al menos un producto."', () => {
+    for (const filas of [[], [nuevaFila()], [nuevaFila(), nuevaFila({ variedad: 'Geisha' })]]) {
+      const errores = validarFormulario(valido({ filas }));
+      expect(errores.intereses).toBe('Seleccione al menos un producto.');
+      expect(errores.filas).toEqual({});
+    }
+  });
+
+  it('una fila sin producto junto a otra con producto: "Seleccione un producto o elimine la fila."', () => {
+    const vacia = nuevaFila({ variedad: 'Geisha' });
+    const errores = validarFormulario(valido({ filas: [...filasDe({ 'prod-1': '2' }), vacia] }));
+    expect(errores.intereses).toBeUndefined();
+    expect(errores.filas).toEqual({ [vacia.clave]: { producto: 'Seleccione un producto o elimine la fila.' } });
+  });
+
+  it('el mismo producto en dos filas: la segunda dice "Este producto ya fue agregado."', () => {
+    const [primera, segunda] = filasDe({ 'prod-1': '2' }).concat(filasDe({ 'prod-1': '5' }));
+    const errores = validarFormulario(valido({ filas: [primera, segunda] }));
+    expect(errores.filas).toEqual({ [segunda.clave]: { producto: 'Este producto ya fue agregado.' } });
+  });
+
+  it('una fila vacía no revisa su cantidad (el aviso es el del producto)', () => {
+    const vacia = nuevaFila({ cantidad: '0' });
+    const errores = validarFormulario(valido({ filas: [...filasDe({ 'prod-1': '2' }), vacia] }));
+    expect(errores.filas[vacia.clave]).toEqual({ producto: 'Seleccione un producto o elimine la fila.' });
   });
 });

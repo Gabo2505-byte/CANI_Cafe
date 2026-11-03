@@ -25,6 +25,7 @@ import { aSolicitud, crearEnviador, TiempoAgotado } from '../../sitio-publico/sr
 import { guardarSolicitudIn, nuevoIdSolicitudIn } from '../../sitio-publico/src/formulario/guardarSolicitud';
 import { valoresIniciales } from '../../sitio-publico/src/formulario/validacion';
 import { FORM_REQUESTS_COLLECTION as COL } from '../../src/shared/types/formRequest';
+import { filasDe } from '../helpers/filasProductos';
 
 const PROJECT_ID = 'demo-cani-crm-formrequests';
 const [host, port] = (process.env.FIRESTORE_EMULATOR_HOST ?? '127.0.0.1:8080').split(':');
@@ -186,7 +187,7 @@ describe('envío real del sitio público con Firestore Lite', () => {
         correo: ' Ana.Prueba@Example.com ',
         paisTelefono: 'CR',
         telefono: '8888-1234',
-        intereses: { 'prod-09-geisha-1000-molido': '3', [PRODUCTO]: '12' },
+        filas: filasDe({ 'prod-09-geisha-1000-molido': '3', [PRODUCTO]: '12' }),
         mensaje: '',
       }),
     );

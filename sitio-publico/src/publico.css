@@ -60,11 +60,11 @@ a:hover {
 }
 
 .logo-bar .logo-escudo {
-  height: 44px;
+  height: 38px;
 }
 
 .logo-bar .logo-nombre {
-  height: 26px;
+  height: 22px;
 }
 
 /* -----------------------------------------------------------------------------------------------------
@@ -81,9 +81,9 @@ a:hover {
   justify-content: space-between;
   gap: var(--space-5);
   box-sizing: border-box;
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: var(--space-4) var(--space-6);
+  padding: 0.6rem var(--space-6);
 }
 
 .pub-menu {
@@ -123,15 +123,15 @@ a:hover {
   flex: 1;
   box-sizing: border-box;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: var(--space-6) var(--space-6) var(--space-7);
+  padding: var(--space-5) var(--space-6) var(--space-6);
 }
 
 .pub-title {
-  margin: 0 0 var(--space-3);
+  margin: 0 0 var(--space-2);
   font-family: var(--font-serif);
-  font-size: var(--font-size-title);
+  font-size: 2.25rem;
   font-weight: 600;
   line-height: 1.15;
   text-transform: uppercase;
@@ -140,7 +140,7 @@ a:hover {
 }
 
 .pub-heading {
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-3);
   font-family: var(--font-serif);
   font-size: var(--font-size-subtitle);
   font-weight: 600;
@@ -151,7 +151,7 @@ a:hover {
 
 .pub-lead {
   max-width: 46rem;
-  margin: 0 0 var(--space-5);
+  margin: 0 0 var(--space-4);
   font-size: var(--font-size-lg);
   color: var(--color-text-secondary);
 }
@@ -204,13 +204,17 @@ a:hover {
    5. Inicio
    ----------------------------------------------------------------------------------------------------- */
 .pub-hero {
-  padding: var(--space-7) 0 var(--space-6);
+  padding: var(--space-5) 0 var(--space-5);
   border-bottom: 1px solid var(--color-border);
 }
 
 .pub-hero .pub-title {
-  max-width: 44rem;
-  font-size: 3rem;
+  max-width: none;
+  font-size: 2.4rem;
+}
+
+.pub-hero .pub-lead {
+  max-width: 60rem;
 }
 
 .pub-actions {
@@ -220,24 +224,40 @@ a:hover {
 }
 
 .pub-section {
-  padding: var(--space-6) 0 0;
+  padding: var(--space-5) 0 0;
 }
 
 .pub-prose {
   max-width: 46rem;
-  font-size: var(--font-size-lg);
-  line-height: 1.65;
+  font-size: var(--font-size-base);
+  line-height: 1.6;
 }
 
 .pub-prose p {
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-3);
+}
+
+/* "Quiénes somos" en dos columnas: el párrafo 1 y la cita a la izquierda, los párrafos 2 y 3 a la derecha. Son columnas
+   de texto (no una rejilla), así que el orden de lectura sigue siendo el del documento. */
+.pub-prose-columnas {
+  max-width: none;
+  column-count: 2;
+  column-gap: var(--space-7);
+}
+
+.pub-prose-columnas > :nth-child(3) {
+  break-before: column;
+}
+
+.pub-prose-columnas > * {
+  break-inside: avoid;
 }
 
 .pub-quote {
-  margin: var(--space-5) 0;
-  padding: var(--space-2) 0 var(--space-2) var(--space-5);
+  margin: 0 0 var(--space-3);
+  padding: var(--space-1) 0 var(--space-1) var(--space-4);
   font-family: var(--font-serif);
-  font-size: 1.6rem;
+  font-size: 1.35rem;
   font-weight: 600;
   line-height: 1.35;
   color: var(--color-accent);
@@ -245,17 +265,13 @@ a:hover {
 }
 
 /* -----------------------------------------------------------------------------------------------------
-   6. Catálogo: un grupo por variedad, tarjetas de tres por fila
+   6. Catálogo: una tarjeta por variedad (con su selector de presentación), tres por fila
    ----------------------------------------------------------------------------------------------------- */
-.pub-variety {
-  margin-top: var(--space-6);
-}
-
 .pub-cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-4);
-  margin: 0;
+  margin: var(--space-4) 0 0;
   padding: 0;
   list-style: none;
 }
@@ -263,36 +279,61 @@ a:hover {
 .pub-card {
   display: flex;
   flex-direction: column;
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
   background: var(--color-surface-raised);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 }
 
+/* Nombre de la variedad: serif dorado, como los encabezados de sección */
 .pub-card-name {
-  margin: 0;
-  font-size: var(--font-size-lg);
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
   font-weight: 600;
-}
-
-.pub-card-presentation {
-  margin: var(--space-1) 0 var(--space-3);
-  font-weight: 600;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-caps);
   color: var(--color-accent);
 }
 
 .pub-card-description {
   flex: 1;
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-3);
   font-size: var(--font-size-md);
-  line-height: 1.55;
+  line-height: 1.5;
   color: var(--color-text-secondary);
   overflow-wrap: anywhere;
 }
 
+/* Selector de presentación (a todo el ancho, para que la presentación se lea completa) y "Me interesa", al pie */
+.pub-card-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.pub-card-field {
+  align-self: stretch;
+}
+
+.pub-card-field label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.pub-card-field select {
+  background-color: var(--color-surface);
+}
+
 .pub-card-button {
-  align-self: flex-start;
+  flex: none;
+  white-space: nowrap;
 }
 
 /* -----------------------------------------------------------------------------------------------------
@@ -307,15 +348,23 @@ a:hover {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: var(--space-4) var(--space-6);
+  gap: var(--space-2) var(--space-6);
   box-sizing: border-box;
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: var(--space-5) var(--space-6);
+  padding: 0.9rem var(--space-6);
+}
+
+/* Etiqueta y dato en la misma línea */
+.pub-footer-inner > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-2);
 }
 
 .pub-footer-inner dt {
-  margin-bottom: var(--space-1);
+  margin: 0;
   font-size: var(--font-size-sm);
   font-weight: 600;
   text-transform: uppercase;
@@ -333,17 +382,21 @@ a:hover {
    ----------------------------------------------------------------------------------------------------- */
 .pub-contact {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 19rem;
   gap: var(--space-5);
   align-items: start;
 }
 
 .pub-panel {
-  padding: var(--space-5) var(--space-6);
+  padding: var(--space-4) var(--space-5);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
+}
+
+.pub-aside .pub-heading {
+  font-size: 1.3rem;
 }
 
 .pub-contact-list {
@@ -363,7 +416,7 @@ a:hover {
 
 .pub-contact-list dd {
   margin: 0;
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   overflow-wrap: anywhere;
 }
 
@@ -426,11 +479,22 @@ textarea {
 }
 
 .pub-form .pub-heading {
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.pub-form textarea {
+  height: 5.5rem;
 }
 
 .pub-field {
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+/* Nombre y correo lado a lado */
+.pub-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--space-4);
 }
 
 .pub-field label,
@@ -494,9 +558,9 @@ textarea {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: var(--space-3);
-  margin-top: var(--space-3);
-  padding-top: var(--space-4);
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding-top: var(--space-3);
   border-top: 1px solid var(--color-border);
 }
 
@@ -603,107 +667,145 @@ button.pub-button {
 }
 
 /* -----------------------------------------------------------------------------------------------------
-   9. Productos de interés (HU-404): lista con desplazamiento propio, agrupada por variedad
+   9. Productos de interés (HU-404): filas con variedad, presentación, cantidad y "X" (mismo funcionamiento que el
+      selector del sistema interno, con los estilos y la paleta del sitio público)
    ----------------------------------------------------------------------------------------------------- */
 .pub-products-status {
   margin: var(--space-2) 0 var(--space-3);
   font-size: var(--font-size-md);
 }
 
-.pub-products-head {
-  display: flex;
-  justify-content: flex-end;
+/* Selects con flecha propia (la nativa no sigue el tema oscuro) */
+select {
   box-sizing: border-box;
+  min-width: 0;
   width: 100%;
-  margin: 0 0 var(--space-1);
-  padding-right: var(--space-4);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-muted);
-}
-
-.pub-products {
-  max-height: 20rem;
-  overflow-y: auto;
-  background: var(--color-surface-raised);
+  padding: 0.55rem 2rem 0.55rem 0.65rem;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--color-text);
+  text-overflow: ellipsis;
+  background-color: var(--color-surface-raised);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23d4a762' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 0.75rem;
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-sm);
-}
-
-.pub-products-variety {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  margin: 0;
-  padding: 0.3rem var(--space-3);
-  font-size: var(--font-size-sm);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-caps);
-  color: var(--color-accent);
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.pub-products-group:first-child .pub-products-variety {
-  border-top: none;
-}
-
-.pub-product-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 5.5rem;
-  align-items: center;
-  gap: 0 var(--space-3);
-  padding: 0.35rem var(--space-3);
-}
-
-.pub-product-row:hover {
-  background: var(--color-surface-hover);
-}
-
-.pub-product-check {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin: 0;
-  font-size: var(--font-size-md);
-  font-weight: 400;
-  color: var(--color-text);
+  appearance: none;
   cursor: pointer;
 }
 
-.pub-product-check input {
-  flex: none;
-  width: 1.1rem;
-  height: 1.1rem;
-  margin: 0;
+select:hover {
+  border-color: var(--color-text-secondary);
 }
 
-.pub-product-name {
-  font-weight: 600;
+select:focus-visible {
+  outline-offset: 0;
+  border-color: var(--color-accent);
 }
 
-.pub-product-name::after {
-  content: ' · ';
-  font-weight: 400;
+/* Presentación sin variedad: atenuada, con una sola flecha apagada; el texto (la indicación) sigue legible */
+select:disabled {
   color: var(--color-text-muted);
+  background-color: var(--color-surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23856f57' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  border-color: var(--color-border);
+  cursor: not-allowed;
 }
 
-.pub-product-presentation {
+select[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+
+select option {
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+}
+
+.pub-product-rows {
+  padding: var(--space-3) var(--space-3) var(--space-2);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.pub-product-row {
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Fila en dos líneas: arriba variedad y presentación; abajo la cantidad con "unidades" y la X a la derecha */
+/* Fila en una línea: variedad, presentación, cantidad con "unidades" y la X (en móvil, en dos líneas) */
+.pub-product-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.pub-product-choice {
+  display: grid;
+  /* Variedad con el ancho justo para "Seleccione una variedad"; la presentación con el resto */
+  grid-template-columns: minmax(0, 15.5rem) minmax(0, 1fr);
+  gap: var(--space-2);
+}
+
+.pub-product-rows select {
+  background-color: var(--color-surface);
+}
+
+.pub-product-rows select:disabled {
+  background-color: var(--color-bg);
+}
+
+.pub-product-quantity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.pub-product-rows select {
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+}
+
+.pub-product-quantity input {
+  width: 6rem;
+  margin: 0;
+  padding: 0.45rem 0.55rem;
+  text-align: right;
+  background: var(--color-surface);
+}
+
+.pub-product-unit {
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
 
-.pub-quantity {
-  margin: 0;
-  padding: 0.3rem 0.5rem;
-  text-align: right;
+/* Botones secundarios del selector ("X" y "Agregar producto"), más bajos que los de acción principal */
+button.pub-button-secondary {
+  padding: 0.4rem 0.9rem;
+  font-size: var(--font-size-md);
+}
+
+.pub-product-remove {
+  min-width: 2.4rem;
+}
+
+button.pub-product-remove:hover {
+  color: var(--color-danger);
+  background: transparent;
+  border-color: var(--color-danger);
 }
 
 .pub-product-error {
-  grid-column: 1 / -1;
-  margin: 0.2rem 0 0;
-  text-align: right;
+  margin: var(--space-1) 0 0;
+}
+
+.pub-product-add {
+  margin-bottom: var(--space-1);
 }
 
 /* -----------------------------------------------------------------------------------------------------
@@ -750,4 +852,138 @@ button.pub-button:disabled {
 
 .pub-form-success p {
   margin: 0 0 var(--space-4);
+}
+
+/* -----------------------------------------------------------------------------------------------------
+   11. Acomodo por ancho de pantalla: escritorio (≥ 1366 × 768 de referencia), tabletas y móvil (corte en 720 px)
+   ----------------------------------------------------------------------------------------------------- */
+
+/* OPCIONAL: en escritorio el encabezado queda fijo arriba al desplazar. scroll-padding evita que tape el elemento con
+   el foco o el destino de un enlace. */
+@media (min-width: 721px) {
+  html {
+    scroll-padding-top: 4.5rem;
+  }
+
+  .pub-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+}
+
+/* Catálogo: 2 columnas en pantallas medianas, 1 en las chicas */
+@media (max-width: 959px) {
+  .pub-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 599px) {
+  .pub-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Contáctenos: con menos de unos 900 px el selector de productos vuelve a dos líneas por fila */
+@media (max-width: 899px) {
+  .pub-product-controls {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .pub-product-choice {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 720px) {
+  /* Encabezado: logo más chico arriba y el menú en una fila completa debajo, sin desbordarse */
+  .pub-header-inner {
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-4);
+  }
+
+  .logo-bar .logo-escudo {
+    height: 30px;
+  }
+
+  .logo-bar .logo-nombre {
+    height: 18px;
+  }
+
+  .pub-header nav {
+    width: 100%;
+  }
+
+  .pub-menu {
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .pub-menu-link {
+    padding: 0.25rem 0;
+    font-size: var(--font-size-sm);
+  }
+
+  /* Margen lateral de 16 px */
+  .pub-main {
+    padding: var(--space-4) var(--space-4) var(--space-5);
+  }
+
+  .pub-title {
+    font-size: 1.9rem;
+  }
+
+  .pub-hero {
+    padding: var(--space-3) 0 var(--space-4);
+  }
+
+  .pub-hero .pub-title {
+    font-size: 2rem;
+  }
+
+  .pub-lead {
+    font-size: var(--font-size-base);
+  }
+
+  .pub-heading {
+    font-size: 1.4rem;
+  }
+
+  .pub-section {
+    padding-top: var(--space-4);
+  }
+
+  .pub-prose-columnas {
+    column-count: 1;
+  }
+
+  .pub-prose-columnas > :nth-child(3) {
+    break-before: auto;
+  }
+
+  /* Contáctenos: una sola columna, con los datos de contacto debajo del formulario */
+  .pub-contact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pub-panel {
+    padding: var(--space-4);
+  }
+
+  .pub-form-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pub-product-choice {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Pie: los tres datos en tres líneas cortas */
+  .pub-footer-inner {
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+  }
 }

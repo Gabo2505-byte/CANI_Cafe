@@ -42,6 +42,7 @@ export const COMO_COMPRAR = {
     'Los precios de nuestros cafés dependen del tipo de cliente y de la cantidad que necesite. Elija en el catálogo los productos que le interesan, complete el formulario de Contáctenos y nos comunicaremos con usted con la información de precios.',
 } as const;
 
+// CONFIRMADOS por el cliente (2026-11-02). La empresa no tiene un correo propio: se usa este.
 export const DATOS_CONTACTO = {
   telefono: '+506 6045 7872',
   correo: 'cmarotob@gmail.com',
@@ -56,6 +57,8 @@ export const CATALOGO = {
   // Mensaje propio del sitio: la carga puede fallar y el criterio no define el texto (se confirma con el cliente).
   error: 'No se pudo cargar el catálogo. Intente de nuevo.',
   cargando: 'Cargando catálogo...',
+  // PROVISIONAL (catálogo por variedad): etiqueta del selector de presentación de cada tarjeta.
+  presentacion: 'Presentación',
 } as const;
 
 export const FORMULARIO = {
@@ -66,10 +69,22 @@ export const FORMULARIO = {
   productos: 'Productos de interés',
   mensaje: 'Mensaje',
   enviar: 'Enviar',
-  // Encabezado de la columna de cantidades (HU-404 habla de un "espacio para la cantidad aproximada").
-  cantidadAproximada: 'Cantidad aproximada',
   // Los criterios solo dicen que el teléfono y el mensaje son opcionales; esta marca sigue el sistema interno.
   opcional: '(opcional)',
+} as const;
+
+/**
+ * Selector de productos de interés (HU-404), con el mismo funcionamiento que el del sistema interno: filas con variedad,
+ * presentación, cantidad y "X". PROVISIONALES (sin literal en los criterios): los toma del sistema interno.
+ */
+export const SELECTOR_PRODUCTOS = {
+  agregar: 'Agregar producto',
+  unidades: 'unidades',
+  variedad: 'Seleccione una variedad',
+  presentacion: 'Seleccione una presentación',
+  presentacionSinVariedad: 'Primero elija una variedad',
+  cantidad: 'Cantidad',
+  quitar: 'X',
 } as const;
 
 export const CONTACTENOS = {

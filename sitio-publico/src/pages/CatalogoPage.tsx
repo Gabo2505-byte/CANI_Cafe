@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import { Link } from 'react-router';
-import { groupByVariety } from '../../../src/products/catalog';
+import { groupByVariety, type VarietyGroup } from '../../../src/products/catalog';
 import { listPublicProductsIn, publicDescription } from '../../../src/products/publicCatalog';
 import type { Product } from '../../../src/shared/types';
 import { usePageTitle } from '../components/usePageTitle';
@@ -23,6 +23,7 @@ export function CatalogoPage() {
     };
   }, []);
 
+  // Solo llegan productos activos: una variedad sin presentaciones activas no forma grupo y no tiene tarjeta.
   const grupos = useMemo(() => (estado.fase === 'listo' ? groupByVariety(estado.productos) : []), [estado]);
 
   return (
@@ -38,29 +39,56 @@ export function CatalogoPage() {
       )}
       {estado.fase === 'listo' && grupos.length === 0 && <p className="pub-status">{CATALOGO.vacio}</p>}
 
-      {grupos.map((grupo) => (
-        <section key={grupo.name} className="pub-variety" aria-labelledby={`pub-var-${grupo.products[0].id}`}>
-          <h2 id={`pub-var-${grupo.products[0].id}`} className="pub-heading">
-            {grupo.name}
-          </h2>
-          <ul className="pub-cards">
-            {grupo.products.map((producto) => (
-              <li key={producto.id} className="pub-card">
-                <h3 className="pub-card-name">{producto.name}</h3>
-                <p className="pub-card-presentation">{producto.presentation}</p>
-                <p className="pub-card-description">{publicDescription(producto.description)}</p>
-                <Link
-                  to={`/contactenos?producto=${encodeURIComponent(producto.id)}`}
-                  className="pub-button pub-card-button"
-                  aria-label={`${CATALOGO.boton}: ${producto.name}, ${producto.presentation}`}
-                >
-                  {CATALOGO.boton}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
+      {grupos.length > 0 && (
+        <ul className="pub-cards">
+          {grupos.map((grupo) => (
+            <TarjetaVariedad key={grupo.name} grupo={grupo} />
+          ))}
+        </ul>
+      )}
     </main>
+  );
+}
+
+/**
+ * HU-402 (catálogo por variedad): una tarjeta por variedad con su descripción y un selector con sus presentaciones
+ * activas, en el orden del catálogo y con la primera elegida. "Me interesa" lleva a Contáctenos la presentación elegida.
+ */
+function TarjetaVariedad({ grupo }: { grupo: VarietyGroup }) {
+  const idSelector = useId();
+  const [elegidoId, setElegidoId] = useState(grupo.products[0].id);
+  // Si la presentación elegida deja de estar (por ejemplo, al recargar el catálogo), se vuelve a la primera.
+  const elegido = grupo.products.find((p) => p.id === elegidoId) ?? grupo.products[0];
+
+  return (
+    <li className="pub-card">
+      <h2 className="pub-card-name">{grupo.name}</h2>
+      <p className="pub-card-description">{publicDescription(elegido.description)}</p>
+      {/* Selector de presentación y "Me interesa", al pie de la tarjeta */}
+      <div className="pub-card-actions">
+        <div className="pub-card-field">
+          <label htmlFor={idSelector}>{CATALOGO.presentacion}</label>
+          <select
+            id={idSelector}
+            aria-label={`${CATALOGO.presentacion} de ${grupo.name}`}
+            value={elegido.id}
+            onChange={(e) => setElegidoId(e.target.value)}
+          >
+            {grupo.products.map((producto) => (
+              <option key={producto.id} value={producto.id}>
+                {producto.presentation}
+              </option>
+            ))}
+          </select>
+        </div>
+        <Link
+          to={`/contactenos?producto=${encodeURIComponent(elegido.id)}`}
+          className="pub-button pub-card-button"
+          aria-label={`${CATALOGO.boton}: ${grupo.name}, ${elegido.presentation}`}
+        >
+          {CATALOGO.boton}
+        </Link>
+      </div>
+    </li>
   );
 }

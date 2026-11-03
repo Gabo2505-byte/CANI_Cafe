@@ -7,6 +7,8 @@
 
 ## Datos de prueba
 
+- Capturas rehechas con el acomodo visual y móvil de la fase 3: contenedor de 1280 px, encabezado y pie compactos, encabezado fijo al desplazar (escritorio). Ver la tabla de antes y después en [HU-401](../HU-401/README.md#acomodo-visual-y-móvil-fase-3).
+- Capturas actualizadas con el selector de productos por filas ([HU-404](../HU-404/README.md)); el envío no cambió.
 - Sitio público en `http://localhost:5174` contra Firebase Emulator Suite (`demo-cani-crm`) con el catálogo cargado por `npm run seed`. Las solicitudes se escriben en la colección `formRequests` y se leen por REST para comprobar lo guardado. Datos ficticios (`ana.prueba@example.com`, etc.); el recorrido borra sus solicitudes al terminar.
 - Recorrido automático en Microsoft Edge (headless) a **1366 × 768**. La red lenta y la falta de conexión se simularon con las herramientas de Edge (Network.emulateNetworkConditions). Detalle en [recorrido.json](recorrido.json).
 
@@ -16,7 +18,7 @@
 |---|---|---|---|
 | 1 | Encima del botón "Enviar" aparece "Sus datos se utilizarán únicamente para responder su consulta.". | ✅ Cumple | [01](01-privacidad-encima-de-enviar.png). Texto literal, justo encima del botón. |
 | 2 | Al dar clic en "Enviar", el botón cambia a "Enviando..." y no se puede presionar otra vez hasta que termine el envío. | ✅ Cumple | [02](02-enviando.png). Con la red lenta (3 s) el botón dice "Enviando..." y está deshabilitado; un segundo clic no hizo nada: se guardó **una** sola solicitud. |
-| 3 | Si sale bien, el formulario se reemplaza por "Gracias por su interés. CANI Café se comunicará con usted pronto." y el botón "Enviar otra consulta". | ✅ Cumple | [03](03-gracias.png), [04](04-enviar-otra-consulta.png). El formulario desaparece y el foco pasa al mensaje. "Enviar otra consulta" muestra el formulario vacío (Costa Rica, sin productos) y quita el producto elegido de la dirección (`/contactenos`). |
+| 3 | Si sale bien, el formulario se reemplaza por "Gracias por su interés. CANI Café se comunicará con usted pronto." y el botón "Enviar otra consulta". | ✅ Cumple | [03](03-gracias.png), [04](04-enviar-otra-consulta.png). El formulario desaparece y el foco pasa al mensaje. "Enviar otra consulta" muestra el formulario vacío (Costa Rica y una sola fila de productos vacía) y quita el producto elegido de la dirección (`/contactenos`). |
 | 4 | Si falla por un problema de conexión, aparece "No se pudo enviar el formulario. Intente de nuevo.". Los datos escritos no se borran. | ✅ Cumple | [05](05-sin-conexion-datos-intactos.png), [06](06-tiempo-limite.png). Sin conexión, el error aparece en **84 ms** y no se guarda nada; con la red colgada, a los **10,04 s** (tiempo límite). En los dos casos nombre, correo, teléfono, productos con su cantidad y mensaje quedan igual, y el botón vuelve a "Enviar". Al reintentar con conexión se muestra el agradecimiento. |
 
 ## Lo que se guarda (contrato v2, PROVISIONAL)
@@ -40,7 +42,7 @@ Colección `formRequests` (nombre PROVISIONAL, definido solo en `src/shared/type
 ```
 
 - El correo se escribió como `Ana.Prueba@Example.com` y se guarda en minúsculas; el teléfono `8888-1234`, solo con dígitos.
-- Los productos van en el **orden del catálogo** (variedad, peso, formato), no en el orden en que se marcaron (Geisha llegó marcado desde el catálogo y Villa Sarchí se marcó después).
+- Los productos van en el **orden del catálogo** (variedad, peso, formato), no en el orden de las filas (Geisha llegó en la primera fila desde el catálogo y Villa Sarchí se agregó en la segunda).
 - Sin teléfono o sin mensaje se guarda `null`. `submittedAt` la pone el servidor; `processed` empieza en `false`.
 
 ## Decisión 7 actualizada: reintentos
