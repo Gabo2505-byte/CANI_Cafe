@@ -437,6 +437,45 @@ button:disabled {
   border-radius: var(--radius-lg);
 }
 
+/* HU-205: buscador y, a su derecha, la lista "Clasificación"; en pantallas angostas pasan uno debajo del otro */
+.list-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.list-toolbar .list-search {
+  flex: 1 1 20rem;
+  min-width: 0;
+}
+
+.list-toolbar input,
+.list-toolbar select {
+  margin-bottom: 0;
+}
+
+.list-toolbar .list-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-secondary);
+}
+
+.list-toolbar select {
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+  padding-left: 0.65rem;
+  font-size: 1rem;
+}
+
+/* HU-205: "Se encontraron 12 contactos." */
+.list-count {
+  margin: 0.5rem 0 0.75rem;
+  color: var(--color-text-secondary);
+}
+
 /* -----------------------------------------------------------------------------------------------------
    6. Formularios (HU-201, HU-203 y otras)
    ----------------------------------------------------------------------------------------------------- */

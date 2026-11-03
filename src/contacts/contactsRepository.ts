@@ -76,6 +76,15 @@ export async function countContactsIn(db: Firestore): Promise<number> {
   return snap.data().count;
 }
 
+/**
+ * HU-205: todos los contactos (activos e inactivos) en orden alfabético, para buscar y filtrar en el navegador.
+ * Solo se pide cuando hay búsqueda o filtro activo (ver la decisión en contactSearch.ts).
+ */
+export async function listAllContactsIn(db: Firestore): Promise<Contact[]> {
+  const snap = await getDocs(query(collection(db, COLLECTIONS.contacts), orderBy('nameSortKey')));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Contact);
+}
+
 /** id del primer contacto que cumple los filtros, sin contar `excludeId` (al editar, el propio contacto). */
 async function firstMatchId(
   db: Firestore,

@@ -12,7 +12,7 @@ import { SessionProvider } from '../../src/auth/SessionContext';
 import type { AuthState } from '../../src/auth/useAuthUser';
 import type { ContactRecords } from '../../src/contacts/contactDetail';
 import { loadContactRecords } from '../../src/contacts/contactDetailApi';
-import { countContacts, getContact, listContactsPage } from '../../src/contacts/contactsApi';
+import { countContacts, getContact, listAllContacts, listContactsPage } from '../../src/contacts/contactsApi';
 import type { ContactsCursor } from '../../src/contacts/contactsRepository';
 import type { Communication, Contact, Sale } from '../../src/shared/types';
 
@@ -25,6 +25,7 @@ vi.mock('../../src/contacts/contactsApi', () => ({
   findDuplicateContacts: vi.fn(),
   countContacts: vi.fn(),
   listContactsPage: vi.fn(),
+  listAllContacts: vi.fn(),
 }));
 // Pantalla a la que se navega desde la pestaña "Oportunidades de venta".
 vi.mock('../../src/sales/saleDetailApi', () => ({ loadSaleDetail: vi.fn().mockResolvedValue(null) }));
@@ -128,6 +129,8 @@ function serveContacts(all: Contact[]) {
     const next = start + 20 < all.length ? start + 20 : null;
     return { contacts: all.slice(start, start + 20), nextCursor: next as unknown as ContactsCursor | null };
   });
+  // HU-205: con búsqueda o clasificación en la URL, la lista se filtra sobre todos los contactos.
+  vi.mocked(listAllContacts).mockResolvedValue(all);
 }
 
 const bodyRows = () => within(screen.getAllByRole('rowgroup')[1]).getAllByRole('row');
@@ -189,14 +192,15 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
 
   it('criterio 2: conserva la búsqueda y los filtros que estén en la URL de la lista', async () => {
     const user = userEvent.setup();
-    serveContacts([listContact(1)]);
-    vi.mocked(getContact).mockResolvedValue(listContact(1));
-    renderAt('/contactos?q=contacto&clasificacion=cliente');
+    const client = { ...listContact(1), classification: 'cliente' as const };
+    serveContacts([client]);
+    vi.mocked(getContact).mockResolvedValue(client);
+    renderAt('/contactos?buscar=contacto&clasificacion=cliente');
     await screen.findByRole('table');
     await user.click(screen.getByRole('link', { name: 'Contacto 01' }));
     await screen.findByRole('heading', { level: 1, name: 'Contacto 01' });
     expect(screen.getByRole('link', { name: '← Volver a contactos' }).getAttribute('href')).toBe(
-      '/contactos?q=contacto&clasificacion=cliente',
+      '/contactos?buscar=contacto&clasificacion=cliente',
     );
   });
 

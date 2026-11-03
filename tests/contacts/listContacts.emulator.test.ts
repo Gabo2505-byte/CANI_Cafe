@@ -1,9 +1,15 @@
-// HU-204 contra el emulador real de Firestore (con las reglas del repo). Corre con: npm run test:emulators
+// HU-204 y HU-205 contra el emulador real de Firestore (con las reglas del repo). Corre con: npm run test:emulators
 import { initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import { doc, setDoc, type Firestore } from 'firebase/firestore';
 import { readFileSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { countContactsIn, createContactIn, listContactsPageIn } from '../../src/contacts/contactsRepository';
+import { filterContacts } from '../../src/contacts/contactSearch';
+import {
+  countContactsIn,
+  createContactIn,
+  listAllContactsIn,
+  listContactsPageIn,
+} from '../../src/contacts/contactsRepository';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
 
 const PROJECT_ID = 'demo-cani-crm-list';
@@ -71,5 +77,39 @@ describe('HU-204 lista paginada y ordenada desde Firestore', () => {
   it('sin sesión no se puede listar', async () => {
     const anon = testEnv.unauthenticatedContext().firestore() as unknown as Firestore;
     await expect(listContactsPageIn(anon, null)).rejects.toMatchObject({ code: 'permission-denied' });
+  });
+});
+
+describe('HU-205 búsqueda y filtro sobre la lista completa', () => {
+  it('trae todos los contactos (activos e inactivos) en orden alfabético', async () => {
+    let inactiveId = '';
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      inactiveId = 'inactivo-hu205';
+      await setDoc(doc(ctx.firestore(), COLLECTIONS.contacts, inactiveId), {
+        fullName: 'Inactivo Prueba',
+        nameSortKey: 'inactivo prueba',
+        email: null,
+        phoneCountry: null,
+        phoneNumber: null,
+        address: null,
+        classification: 'cliente',
+        status: 'inactivo',
+        origin: null,
+        createdAt: null,
+      });
+    });
+    const all = await listAllContactsIn(db);
+    expect(all).toHaveLength(26);
+    expect(all.map((c) => c.fullName).slice(0, 4)).toEqual(['Álvaro Prueba', 'ana Prueba', 'Bruno Prueba', 'Inactivo Prueba']);
+    expect(all[all.length - 1].fullName).toBe('Zoe Prueba');
+    // La búsqueda y el filtro de la pantalla funcionan sobre estos datos.
+    expect(filterContacts(all, 'mario relleno 2', 'todos').map((c) => c.fullName)).toEqual(['Mario Relleno 20']);
+    expect(filterContacts(all, 'prueba', 'cliente').map((c) => c.id)).toEqual([inactiveId]);
+    expect(filterContacts(all, 'oscar', 'persona_interesada').map((c) => c.fullName)).toEqual(['Óscar Prueba']);
+  });
+
+  it('sin sesión no se pueden traer', async () => {
+    const anon = testEnv.unauthenticatedContext().firestore() as unknown as Firestore;
+    await expect(listAllContactsIn(anon)).rejects.toMatchObject({ code: 'permission-denied' });
   });
 });

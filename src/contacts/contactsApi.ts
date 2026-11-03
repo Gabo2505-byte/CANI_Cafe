@@ -7,6 +7,7 @@ import {
   createContactIn,
   findDuplicateContactsIn,
   getContactIn,
+  listAllContactsIn,
   listContactsPageIn,
   type ContactsCursor,
   type ContactsPage,
@@ -31,4 +32,8 @@ export function listContactsPage(after: ContactsCursor | null): Promise<Contacts
 
 export function countContacts(): Promise<number> {
   return countContactsIn(db);
+}
+
+export function listAllContacts(): Promise<Contact[]> {
+  return listAllContactsIn(db);
 }
