@@ -50,11 +50,11 @@ Se usa el modelo `Communication` existente:
 - `source: 'formulario_web'` y `userId: null`, que ya están previstos en HU-213; la ficha ya muestra "Registrado por: Sistema (formulario web)".
 - `medium: 'formulario_web'`: código nuevo con etiqueta 'Formulario web'. NO se agrega a la lista de RegisterCommunicationDialog, que sigue siendo la de HU-211.
 - `otherMedium: null`, `saleId: null` y `appliesToAllSales: true` ("Todas sus posibles ventas", como ya prevé `createCommunicationIn` para el formulario). Se actualiza `lastCommunicationAt` de las ventas abiertas del contacto, igual que HU-212, para que los avisos lo tomen en cuenta. No se crea oportunidad.
-- `note`: el mensaje, o "Sin mensaje" si viene null, más la línea de diferencias al final si aplica (punto 6).
-- `products: [{ productId, name, quantity }]`: campo aparte en la comunicación. Se guarda el nombre del momento del envío para que el historial no cambie si luego se edita el producto.
-- La ficha muestra la lista de productos debajo de la nota.
-- Las reglas permiten `note` hasta 1500 caracteres SOLO cuando `source == 'formulario_web'` y `medium == 'formulario_web'` (1000 de mensaje más las diferencias); el resto sigue en 1000.
-- Así no se recorta nada y las comunicaciones normales mantienen su límite.
+- **Corrección (03/11/2026, según HU-502 criterio 4: "La nota incluye el mensaje (o 'Sin mensaje') y los productos con sus cantidades"):**
+  - `note` lleva, en este orden: el mensaje (o "Sin mensaje"); "Productos:" con una línea por producto, como "- Villa Sarchí (Bolsa de 340 g, grano entero): 2"; "Productos no disponibles omitidos: N." si hubo; y al final la línea de diferencias si aplica (punto 6).
+  - Por eso las reglas permiten `note` hasta **8000** caracteres (no 1500) SOLO en las comunicaciones del formulario: alcanza para 1000 de mensaje, 72 productos y las diferencias. Si la lista no cupiera, se corta con "… y N productos más.". Las comunicaciones manuales siguen en 1000.
+- `products: [{ productId, name, presentation, quantity }]`: además, campo aparte en la comunicación, con el nombre y la presentación del momento del envío. La ficha no lo repite (ya está en la nota); queda como dato estructurado.
+- `date`: fecha y hora exactas del envío (`submittedAt`). La ficha la muestra con hora ("05/10/2026 6:20 p. m.") solo en estas comunicaciones.
 
 ## 5. Búsqueda de la persona (decidido, según HU-502.1)
 - Primero por correo, comparando email normalizado (trim y minúsculas).
@@ -109,7 +109,7 @@ Las reglas solo validan que `interests` sea una lista de 1 a 72; el procesador v
   - delete denegado.
 - `communications`: se agrega una segunda validación, `isValidFormCommunication`, con estas condiciones:
   - `source == 'formulario_web'`, `medium == 'formulario_web'` y `userId == null`.
-  - `note` de hasta 1500 y el campo `products`.
+  - `note` de hasta 8000 (ver la corrección del punto 4) y el campo `products` (lista de 1 a 72).
   - `date <= request.time`.
   - El contacto se comprueba con `existsAfter()`, no con `exists()`, porque cuando la persona es nueva el contacto se crea en el MISMO batch.
   

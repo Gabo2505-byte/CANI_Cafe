@@ -1,0 +1,57 @@
+[
+  {
+    "caso": "Reenvío con el mismo correo, otro teléfono, otros productos y sin mensaje",
+    "contactosConEseCorreo": 1,
+    "contacto": {
+      "phoneNumberGuardado": "88112233",
+      "classification": "persona_interesada",
+      "interests": [
+        {
+          "productId": "prod-09-geisha-0250-grano",
+          "quantity": "1"
+        }
+      ]
+    },
+    "comunicaciones": 2,
+    "notaNueva": "Sin mensaje\n\nProductos:\n- Geisha (Bolsa de 250 g, grano entero): 1\n\nDatos enviados distintos a los registrados: Teléfono: +506 7000-2233."
+  },
+  {
+    "caso": "Lista",
+    "conteo": "Se encontró 1 contacto."
+  },
+  {
+    "caso": "Ficha: historial",
+    "comunicaciones": [
+      {
+        "meta": "03/11/2026 7:40 p. m. · Formulario web",
+        "nota": "Sin mensaje\n\nProductos:\n- Geisha (Bolsa de 250 g, grano entero): 1\n\nDatos enviados distintos a los registrados: Teléfono: +506 7000-2233."
+      },
+      {
+        "meta": "03/11/2026 7:40 p. m. · Formulario web",
+        "nota": "Hola, quiero precios para mi cafetería en Naranjo.\n\nProductos:\n- Villa Sarchí (Bolsa de 340 g, grano entero): 2\n- Caturra (Bolsa de 1 kg, molido): 10"
+      }
+    ]
+  },
+  {
+    "caso": "Ficha: productos reemplazados",
+    "filas": [
+      [
+        "Geisha",
+        "Bolsa de 250 g, grano entero",
+        "1"
+      ]
+    ]
+  },
+  {
+    "caso": "Contacto inactivo vuelve a quedar activo y mantiene su clasificación",
+    "antes": {
+      "status": "inactivo",
+      "classification": "cliente"
+    },
+    "despues": {
+      "status": "activo",
+      "classification": "cliente",
+      "contactos": 1
+    }
+  }
+]

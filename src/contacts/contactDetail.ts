@@ -13,7 +13,7 @@ import {
   SALE_STAGE_LABELS,
   isOpenSaleStage,
 } from '../shared/types';
-import { formatDateCR, formatDateNumericCR } from '../shared/utils/dates';
+import { formatDateCR, formatDateNumericCR, formatDateNumericTimeCR } from '../shared/utils/dates';
 import { formatColones } from '../shared/utils/money';
 
 export const CONTACT_DETAIL_MESSAGES = {
@@ -176,6 +176,16 @@ export function openSaleOptions(sales: Sale[]): { id: string; title: string }[] 
 export function communicationSaleLabel(communication: Pick<Communication, 'saleId' | 'appliesToAllSales'>, sales: Sale[]): string | null {
   if (communication.saleId) return sales.find((sale) => sale.id === communication.saleId)?.title ?? '—';
   return communication.appliesToAllSales ? 'Todas sus oportunidades de venta' : null;
+}
+
+/**
+ * Fecha de una comunicación en el historial: "05/10/2026" (HU-211, solo el día). Las del formulario web llevan además
+ * la hora del envío, "05/10/2026 6:20 p. m.", porque HU-502 pide "fecha y hora del envío".
+ */
+export function communicationDateLabel(communication: Pick<Communication, 'date' | 'source'>): string {
+  return communication.source === 'formulario_web'
+    ? formatDateNumericTimeCR(communication.date)
+    : formatDateNumericCR(communication.date);
 }
 
 /** HU-213: "Registrado por: …": el usuario, o "Sistema (formulario web)" si llegó del sitio web. */

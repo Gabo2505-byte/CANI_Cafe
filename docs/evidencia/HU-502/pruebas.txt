@@ -1,0 +1,140 @@
+Evidencia de pruebas HU-502 y HU-503 (van juntas) - 2026-11-03 19:41 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Totales del proyecto ==
+npm test: 63 archivos, 858/858 pruebas, sin errores sin manejar.
+npm run test:emulators: 25 archivos, 245/245 pruebas.
+
+== npm test (procesamiento, procesador y ficha) ==
+✓ tests/unit/formRequestProcessing.test.ts > textos literales de los criterios > "Sin mensaje" (HU-502) y la línea de diferencias (HU-503) 5ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > acepta productos bien formados con cantidad entera de 1 a 9999 2ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza [{"productId":"p1","quantity":0}] 1ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza [{"productId":"p1","quantity":10000}] 1ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza [{"productId":"p1","quantity":1.5}] 0ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza [{"productId":"p1","quantity":-2}] 0ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza [{"productId":"p1","quantity":"3"}] 0ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza [{"productId":"","quantity":3}] 0ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza [{"productId":"p1"}] 0ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza [{"productId":"p1","quantity":3,"extra":true}] 0ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza ["p1"] 0ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza [null] 0ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza [{"productId":"p1","quantity":1},{"productId":"p1","quantity":2}] 0ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza [] 0ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza "no es lista" 0ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > rechaza más de 72 productos 0ms
+✓ tests/unit/formRequestProcessing.test.ts > checkInterests: cada producto de la solicitud (contrato v3, punto 9) > los motivos caben en el campo error (hasta 500) 1ms
+✓ tests/unit/formRequestProcessing.test.ts > resolveProducts: inexistentes se omiten, inactivos se aceptan > toma nombre y presentación del catálogo y respeta el orden 1ms
+✓ tests/unit/formRequestProcessing.test.ts > sentDifferences (HU-503, criterio 5) > iguales: sin diferencias (sin distinguir mayúsculas en nombre y correo) 0ms
+✓ tests/unit/formRequestProcessing.test.ts > sentDifferences (HU-503, criterio 5) > teléfono distinto, con el formato de la HU: "Teléfono: +506 8811-2233." 1ms
+✓ tests/unit/formRequestProcessing.test.ts > sentDifferences (HU-503, criterio 5) > teléfono de otro país también cuenta como distinto 0ms
+✓ tests/unit/formRequestProcessing.test.ts > sentDifferences (HU-503, criterio 5) > nombre, correo y teléfono distintos, en ese orden 0ms
+✓ tests/unit/formRequestProcessing.test.ts > sentDifferences (HU-503, criterio 5) > dato guardado vacío y enviado con valor: cuenta como distinto 0ms
+✓ tests/unit/formRequestProcessing.test.ts > sentDifferences (HU-503, criterio 5) > teléfono que no se envió: no cuenta 0ms
+✓ tests/unit/formRequestProcessing.test.ts > buildFormNote (HU-502 criterio 4; HU-503 criterios 3 y 5) > mensaje y productos con sus cantidades 1ms
+✓ tests/unit/formRequestProcessing.test.ts > buildFormNote (HU-502 criterio 4; HU-503 criterios 3 y 5) > sin mensaje (null o solo espacios): "Sin mensaje" 0ms
+✓ tests/unit/formRequestProcessing.test.ts > buildFormNote (HU-502 criterio 4; HU-503 criterios 3 y 5) > omitidos y, al final, las diferencias 0ms
+✓ tests/unit/formRequestProcessing.test.ts > buildFormNote (HU-502 criterio 4; HU-503 criterios 3 y 5) > el caso más largo posible del catálogo actual cabe completo (mensaje de 1000, 72 productos y 3 diferencias) 2ms
+✓ tests/unit/formRequestProcessing.test.ts > buildFormNote (HU-502 criterio 4; HU-503 criterios 3 y 5) > si la lista no cupiera, se corta con "… y N productos más." y las diferencias siguen al final 5ms
+✓ tests/unit/formRequestProcessing.test.ts > buildFormNote (HU-502 criterio 4; HU-503 criterios 3 y 5) > productLine 0ms
+✓ tests/unit/formRequestProcessing.test.ts > reclamo y etiqueta > se puede tomar si no se procesó y no está reclamada, o si el reclamo tiene 2 minutos o más 0ms
+✓ tests/unit/formRequestProcessing.test.ts > reclamo y etiqueta > no se toma si ya se procesó o si alguien la tomó hace menos de 2 minutos 0ms
+✓ tests/unit/formRequestProcessing.test.ts > reclamo y etiqueta > HU-504: "Nuevo" sin abrir se queda en "Nuevo"; si no, "Nuevo mensaje" 0ms
+✓ tests/components/FormRequestProcessor.test.tsx > useFormRequestProcessor > sin sesión activa no escucha ni procesa 39ms
+✓ tests/components/FormRequestProcessor.test.tsx > useFormRequestProcessor > con sesión activa procesa las pendientes una por una, en orden, con el uid del administrador 148ms
+✓ tests/components/FormRequestProcessor.test.tsx > useFormRequestProcessor > si una falla, sigue con las demás (la fallida se reintenta cuando vence su reclamo) 122ms
+✓ tests/components/FormRequestProcessor.test.tsx > useFormRequestProcessor > al salir de las pantallas internas deja de escuchar 16ms
+✓ tests/components/FormRequestProcessor.test.tsx > useFormRequestProcessor > con navigator.locks, escucha solo dentro del candado "cani-formRequests" y lo suelta al salir 91ms
+✓ tests/unit/contactDetail.test.ts > HU-502 fecha y hora de las comunicaciones del formulario > las del formulario web llevan la hora del envío en Costa Rica; las manuales solo el día 1ms
+✓ tests/unit/contactDetail.test.ts > HU-502 fecha y hora de las comunicaciones del formulario > el medio del formulario se llama "Formulario web" y no está en la lista del registro manual 2ms
+✓ tests/unit/contactDetail.test.ts > HU-502 fecha y hora de las comunicaciones del formulario > los orígenes nuevos del contrato v3 0ms
+
+== Pruebas contra emuladores (procesamiento y reglas de la comunicación del formulario) ==
+✓ tests/formRequests/processor.emulator.test.ts > HU-502 persona nueva > crea el contacto, sus productos de interés y la comunicación; cierra la solicitud; no crea ninguna venta 1814ms
+✓ tests/formRequests/processor.emulator.test.ts > HU-502 persona nueva > sin mensaje: la nota dice "Sin mensaje"; sin teléfono: el contacto queda sin teléfono 312ms
+✓ tests/formRequests/processor.emulator.test.ts > HU-503 persona ya registrada > el mismo correo otra vez: no duplica, reemplaza los productos y agrega la comunicación 649ms
+✓ tests/formRequests/processor.emulator.test.ts > HU-503 persona ya registrada > coincidencia por teléfono (mismo país y número) cuando el correo es otro; la diferencia se anota 349ms
+✓ tests/formRequests/processor.emulator.test.ts > HU-503 persona ya registrada > el mismo número en otro país NO es la misma persona 224ms
+✓ tests/formRequests/processor.emulator.test.ts > HU-503 persona ya registrada > un contacto inactivo se encuentra y se reactiva; mantiene su clasificación; nombre, correo y teléfono no cambian 259ms
+✓ tests/formRequests/processor.emulator.test.ts > HU-503 persona ya registrada > un dato guardado vacío y uno enviado con valor se anota y no se rellena 271ms
+✓ tests/formRequests/processor.emulator.test.ts > HU-503 persona ya registrada > lastCommunicationAt de una venta abierta se actualiza; una ganada no; nunca retrocede 373ms
+✓ tests/formRequests/processor.emulator.test.ts > productos de la solicitud (contrato v3, punto 9) > un producto que no existe se omite y la nota lo dice 218ms
+✓ tests/formRequests/processor.emulator.test.ts > productos de la solicitud (contrato v3, punto 9) > si ninguno existe, se rechaza sin tocar contactos 156ms
+✓ tests/formRequests/processor.emulator.test.ts > productos de la solicitud (contrato v3, punto 9) > una cantidad inválida rechaza la solicitud completa, con su motivo, sin tocar contactos 218ms
+✓ tests/formRequests/processor.emulator.test.ts > doble procesamiento > dos procesadores a la vez sobre la misma solicitud: se procesa una sola vez 1337ms
+✓ tests/formRequests/processor.emulator.test.ts > doble procesamiento > una solicitud ya procesada no se vuelve a procesar 218ms
+✓ tests/formRequests/processor.emulator.test.ts > doble procesamiento > un reclamo de menos de 2 minutos se respeta; uno vencido se retoma 249ms
+✓ tests/formRequests/processor.emulator.test.ts > doble procesamiento > si quien la reclamó la cerró, otro ya no la toma aunque su reclamo haya vencido 188ms
+✓ tests/formRequests/processor.emulator.test.ts > pendientes y envío real del sitio público > escucha las pendientes en orden de envío 326ms
+✓ tests/formRequests/processor.emulator.test.ts > pendientes y envío real del sitio público > de extremo a extremo: el sitio público envía con Firestore Lite y el procesamiento crea el contacto 217ms
+✓ tests/formRequests/processor.emulator.test.ts > pendientes y envío real del sitio público > sin sesión no se puede procesar 104ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > acepta una solicitud mínima válida (sin teléfono ni mensaje) 153ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > acepta teléfono de Costa Rica (8 dígitos), de otro país (6 a 14) y un mensaje de 1000 caracteres 172ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > acepta los 72 productos del catálogo, cada uno con cantidad de 1 a 9999 56ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > acepta 72 productos con teléfono y mensaje largos (el caso más pesado para las reglas) 65ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > límite conocido: las reglas no revisan cada producto (lo revisan el formulario y el procesamiento) 45ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > acepta nombre y correo de 100 caracteres 58ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: falta un campo 50ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: un campo de más 44ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: nombre vacío 49ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: nombre de 101 52ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: nombre que no es texto 40ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: correo con mayúsculas 63ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: correo mal escrito 53ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: correo con espacios 44ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: correo de 101 48ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: Costa Rica con 7 dígitos 49ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: otro país con 5 dígitos 45ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: otro país con 15 dígitos 45ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: teléfono con guion 60ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: país sin número 49ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: número sin país 48ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: país mal escrito 40ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: sin productos 41ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: 73 productos 60ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: productos que no son lista 48ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: mensaje vacío (debe ser null) 55ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: mensaje de 1001 47ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: fecha puesta por el navegador 60ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: crear sin sesión (HU-405) > rechaza: processed en true 46ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: sin sesión no se lee, cambia ni borra > no se puede leer una solicitud ni listar la colección 116ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: sin sesión no se lee, cambia ni borra > no se puede cambiar ni borrar 76ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: sin sesión no se lee, cambia ni borra > volver a escribir el mismo id (un reintento) se rechaza: cuenta como cambio, no como creación 58ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: sin sesión no se lee, cambia ni borra > un usuario inactivo tampoco puede leer 68ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: sin sesión no se lee, cambia ni borra > un usuario inactivo tampoco puede procesarla 53ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: procesamiento con sesión activa > se puede leer y listar las pendientes 88ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: procesamiento con sesión activa > se puede reclamar con la hora del servidor y el uid propio 52ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: procesamiento con sesión activa > no se puede reclamar a nombre de otro ni con una hora inventada 86ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: procesamiento con sesión activa > se puede cerrar como creada o actualizada con su contacto 51ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: procesamiento con sesión activa > se puede cerrar como rechazada con su motivo 55ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: procesamiento con sesión activa > no se puede cerrar sin el resultado completo 121ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: procesamiento con sesión activa > no se pueden cambiar los datos que envió la persona ni agregar otros campos 107ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: procesamiento con sesión activa > una solicitud procesada ya no cambia 109ms
+✓ tests/rules/formRequests.rules.test.ts > formRequests: procesamiento con sesión activa > nadie la puede borrar, ni con sesión activa 51ms
+✓ tests/rules/formRequests.rules.test.ts > envío real del sitio público con Firestore Lite > guarda la solicitud con el id del navegador, la fecha del servidor y processed en false 77ms
+✓ tests/rules/formRequests.rules.test.ts > envío real del sitio público con Firestore Lite > un segundo envío con el mismo id falla con permission-denied 36ms
+✓ tests/rules/formRequests.rules.test.ts > envío real del sitio público con Firestore Lite > regla a: en el primer intento, un rechazo de las reglas es error (no se da por enviado) 61ms
+✓ tests/rules/formRequests.rules.test.ts > envío real del sitio público con Firestore Lite > regla b: si el primer intento venció el tiempo pero sí se guardó, el reintento con el mismo id da éxito y no duplica 77ms
+✓ tests/rules/formRequests.rules.test.ts > envío real del sitio público con Firestore Lite > regla c: si la persona cambia un dato después del error, el envío usa un id nuevo (y se guarda lo nuevo) 78ms
+✓ tests/rules/formRequests.rules.test.ts > envío real del sitio público con Firestore Lite > el tiempo límite real corta la espera aunque la escritura siga en camino 48ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se permite para un contacto existente, con sesión activa 170ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se permite en el MISMO lote que crea el contacto nuevo (existsAfter) 64ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > sin el contacto (ni antes ni en el lote) se rechaza 73ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > una nota de hasta 8000 caracteres se permite; de 8001, no 84ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > sin sesión o con un usuario inactivo se rechaza 71ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se rechaza: otro origen 38ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se rechaza: otro medio 59ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se rechaza: con usuario 63ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se rechaza: con otro medio escrito 68ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se rechaza: para una venta 44ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se rechaza: no para todas las ventas 54ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se rechaza: fecha futura 48ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se rechaza: nota vacía 46ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se rechaza: sin productos 48ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se rechaza: productos que no son lista 49ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se rechaza: más de 72 productos 76ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se rechaza: createdAt inventado 36ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > se rechaza: un campo de más 45ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > sin el campo products se rechaza 46ms
+✓ tests/communications/formCommunication.rules.emulator.test.ts > communications: comunicación del formulario web (HU-502 y HU-503) > una comunicación manual (HU-211) no puede traer products ni usar el medio del formulario 105ms

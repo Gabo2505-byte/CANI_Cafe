@@ -3,6 +3,7 @@ import { Timestamp } from 'firebase/firestore';
 import { describe, expect, it } from 'vitest';
 import {
   backToListPath,
+  communicationDateLabel,
   registeredByLabel,
   communicationSaleLabel,
   openSaleOptions,
@@ -18,7 +19,8 @@ import {
   sortSales,
   tabLabel,
 } from '../../src/contacts/contactDetail';
-import type { Communication, Contact, Product, Sale } from '../../src/shared/types';
+import { MEDIUM_OPTIONS, mediumLabel } from '../../src/communications/communicationForm';
+import { CONTACT_ORIGIN_LABELS, type Communication, type Contact, type Product, type Sale } from '../../src/shared/types';
 
 const at = (iso: string) => Timestamp.fromDate(new Date(iso));
 
@@ -253,5 +255,23 @@ describe('HU-213 "Registrado por"', () => {
   });
   it('usuario que ya no existe: "—"', () => {
     expect(registeredByLabel({ source: 'usuario', userId: 'borrado' }, {})).toBe('Registrado por: —');
+  });
+});
+
+describe('HU-502 fecha y hora de las comunicaciones del formulario', () => {
+  it('las del formulario web llevan la hora del envío en Costa Rica; las manuales solo el día', () => {
+    const date = at('2026-10-06T00:20:00Z'); // 5 de octubre, 6:20 p. m. en Costa Rica
+    expect(communicationDateLabel({ date, source: 'formulario_web' })).toBe('05/10/2026 6:20 p. m.');
+    expect(communicationDateLabel({ date, source: 'usuario' })).toBe('05/10/2026');
+  });
+
+  it('el medio del formulario se llama "Formulario web" y no está en la lista del registro manual', () => {
+    expect(mediumLabel({ medium: 'formulario_web', otherMedium: null })).toBe('Formulario web');
+    expect(MEDIUM_OPTIONS.map((o) => o.value)).not.toContain('formulario_web');
+  });
+
+  it('los orígenes nuevos del contrato v3', () => {
+    expect(CONTACT_ORIGIN_LABELS.formulario_web).toBe('Formulario web');
+    expect(CONTACT_ORIGIN_LABELS.carga_inicial).toBe('Carga inicial');
   });
 });

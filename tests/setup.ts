@@ -21,3 +21,10 @@ vi.mock('../src/contacts/contactsApi', () => ({
   listContactsPage: vi.fn().mockResolvedValue({ contacts: [], nextCursor: null }),
   listAllContacts: vi.fn().mockResolvedValue([]),
 }));
+
+// HU-502 y HU-503: las pantallas internas procesan el formulario del sitio web (AppLayout). En las pruebas de pantalla
+// no hay solicitudes pendientes ni se consulta Firestore; las del procesador usan su propio mock.
+vi.mock('../src/formRequests/formRequestsApi', () => ({
+  listenPendingFormRequests: vi.fn(() => () => {}),
+  processFormRequest: vi.fn().mockResolvedValue({ status: 'skipped' }),
+}));

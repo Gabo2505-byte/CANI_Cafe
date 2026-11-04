@@ -1,0 +1,79 @@
+[
+  {
+    "caso": "Solicitud del sitio público",
+    "procesadaAntesDeIngresar": [
+      false
+    ],
+    "despues": {
+      "processed": true,
+      "outcome": "created",
+      "contactId": "mRTVVDHE0zvGHcbElzSM"
+    }
+  },
+  {
+    "caso": "Contacto creado (Firestore)",
+    "contacto": {
+      "fullName": "Laura Formulario Prueba",
+      "email": "laura.formulario@example.com",
+      "phoneCountry": "CR",
+      "phoneNumber": "88112233",
+      "classification": "persona_interesada",
+      "origin": "formulario_web",
+      "status": "activo",
+      "createdAtIgualAlEnvio": true,
+      "interests": [
+        {
+          "productId": "prod-01-villa-sarchi-0340-grano",
+          "quantity": "2"
+        },
+        {
+          "productId": "prod-02-caturra-1000-molido",
+          "quantity": "10"
+        }
+      ]
+    },
+    "comunicacion": {
+      "medium": "formulario_web",
+      "source": "formulario_web",
+      "fechaIgualAlEnvio": true,
+      "note": "Hola, quiero precios para mi cafetería en Naranjo.\n\nProductos:\n- Villa Sarchí (Bolsa de 340 g, grano entero): 2\n- Caturra (Bolsa de 1 kg, molido): 10"
+    },
+    "posiblesVentasCreadas": 0
+  },
+  {
+    "caso": "Ficha",
+    "clasificacion": "Persona interesada",
+    "datos": [
+      "laura.formulario@example.com",
+      "+506 8811-2233",
+      "No registrado",
+      "3 nov 2026",
+      "Formulario web"
+    ],
+    "comunicacion": {
+      "fecha": "03/11/2026 7:40 p. m. · Formulario web",
+      "nota": "Hola, quiero precios para mi cafetería en Naranjo.\n\nProductos:\n- Villa Sarchí (Bolsa de 340 g, grano entero): 2\n- Caturra (Bolsa de 1 kg, molido): 10",
+      "registradoPor": "Registrado por: Sistema (formulario web)"
+    }
+  },
+  {
+    "caso": "Pestaña Productos de interés",
+    "filas": [
+      [
+        "Villa Sarchí",
+        "Bolsa de 340 g, grano entero",
+        "2"
+      ],
+      [
+        "Caturra",
+        "Bolsa de 1 kg, molido",
+        "10"
+      ]
+    ],
+    "ultimaActualizacion": "Última actualización: 03/11/2026"
+  },
+  {
+    "caso": "Tablero de ventas",
+    "apareceLaura": false
+  }
+]

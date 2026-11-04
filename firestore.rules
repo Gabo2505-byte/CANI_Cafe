@@ -86,16 +86,47 @@ service cloud.firestore {
         && data.note is string
         && data.note.trim().size() > 0
         && data.note.size() <= 1000
-        // HU-213: desde la app siempre la registra el usuario con sesión. Las del formulario web
-        // ("formulario_web", sin usuario) las escribe el servidor con el Admin SDK, que no pasa por estas reglas.
+        // HU-213: registrada a mano, siempre por el usuario con sesión. Las del formulario web van por
+        // isValidFormCommunication.
         && data.source == 'usuario'
         && data.userId == request.auth.uid
         && data.createdAt == request.time;
     }
 
+    // HU-502 y HU-503: comunicación de un formulario del sitio web. La escribe el procesamiento del sistema interno, en
+    // el navegador del administrador con su sesión (CC-01, costo 0; no hay Admin SDK ni funciones de servidor), en el
+    // MISMO lote que crea o actualiza el contacto. Por eso el contacto se comprueba con existsAfter(): con una persona
+    // nueva todavía no existe antes del lote y exists() lo rechazaría.
+    // - Sin usuario ("Sistema (formulario web)"), medio "Formulario web" y para "Todas sus posibles ventas".
+    // - date = fecha y hora exactas del envío (no futura).
+    // - note: mensaje (o "Sin mensaje"), productos con sus cantidades (HU-502, criterio 4) y diferencias; hasta 8000.
+    // - products: de 1 a 72 (las reglas no pueden revisar cada uno; lo hace el procesamiento).
+    function isValidFormCommunication(data) {
+      return data.keys().hasOnly(['contactId', 'saleId', 'appliesToAllSales', 'date', 'medium', 'otherMedium', 'note', 'source', 'userId', 'createdAt', 'products'])
+        && data.keys().hasAll(['contactId', 'saleId', 'appliesToAllSales', 'date', 'medium', 'otherMedium', 'note', 'source', 'userId', 'createdAt', 'products'])
+        && data.contactId is string
+        && existsAfter(/databases/$(database)/documents/contacts/$(data.contactId))
+        && data.source == 'formulario_web'
+        && data.medium == 'formulario_web'
+        && data.userId == null
+        && data.otherMedium == null
+        && data.saleId == null
+        && data.appliesToAllSales == true
+        && data.date is timestamp
+        && data.date <= request.time
+        && data.note is string
+        && data.note.trim().size() > 0
+        && data.note.size() <= 8000
+        && data.products is list
+        && data.products.size() >= 1
+        && data.products.size() <= 72
+        && data.createdAt == request.time;
+    }
+
     match /communications/{communicationId} {
       allow read: if isActiveUser();
-      allow create: if isActiveUser() && isValidCommunication(request.resource.data);
+      allow create: if isActiveUser()
+        && (isValidCommunication(request.resource.data) || isValidFormCommunication(request.resource.data));
       allow update, delete: if false;
     }
 

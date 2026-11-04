@@ -14,9 +14,9 @@ import { RegisterCommunicationDialog } from '../communications/RegisterCommunica
 import { SALES_LABELS } from '../shared/constants/labels';
 import { AddButtonLabel } from '../shared/ui/AddButtonLabel';
 import { TimedNotice } from '../sales/TimedNotice';
-import { formatDateNumericCR } from '../shared/utils/dates';
 import {
   backToListPath,
+  communicationDateLabel,
   communicationSaleLabel,
   registeredByLabel,
   openSaleOptions,
@@ -328,7 +328,7 @@ function CommunicationsPanel({ contactId, records }: { contactId: string; record
           return (
             <li key={c.id} className="communication-card">
               <p className="record-meta">
-                <span className="communication-date">{formatDateNumericCR(c.date)}</span> · <span>{mediumLabel(c)}</span>
+                <span className="communication-date">{communicationDateLabel(c)}</span> · <span>{mediumLabel(c)}</span>
               </p>
               {sale && <p className="communication-sale">Oportunidad de venta: {sale}</p>}
               <p className="record-note">{c.note}</p>

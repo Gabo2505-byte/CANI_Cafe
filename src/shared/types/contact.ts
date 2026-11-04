@@ -16,7 +16,18 @@ export const CONTACT_CLASSIFICATION_LABELS: Record<ContactClassification, string
 export const CONTACT_STATUSES = ['activo', 'inactivo'] as const;
 export type ContactStatus = (typeof CONTACT_STATUSES)[number];
 
-export const CONTACT_ORIGINS = ['referido', 'redes_sociales', 'sitio_web', 'feria', 'visita', 'otro'] as const;
+// Contrato v3 (punto 2): 'formulario_web' (HU-502) y 'carga_inicial' (E5-050.1) los pone SOLO el sistema; ningún
+// formulario manual los ofrece.
+export const CONTACT_ORIGINS = [
+  'referido',
+  'redes_sociales',
+  'sitio_web',
+  'feria',
+  'visita',
+  'otro',
+  'formulario_web',
+  'carga_inicial',
+] as const;
 export type ContactOrigin = (typeof CONTACT_ORIGINS)[number];
 
 /** Texto que se muestra en pantalla para cada origen (ficha del contacto, HU-207). */
@@ -27,7 +38,16 @@ export const CONTACT_ORIGIN_LABELS: Record<ContactOrigin, string> = {
   feria: 'Feria',
   visita: 'Visita',
   otro: 'Otro',
+  formulario_web: 'Formulario web',
+  carga_inicial: 'Carga inicial',
 };
+
+/**
+ * HU-504 (contrato v3, punto 10): etiqueta mientras no se abra la ficha. 'Nuevo' = lo creó el formulario (HU-502);
+ * 'Nuevo mensaje' = ya existía y volvió a enviar (HU-503). null o sin campo = sin etiqueta.
+ */
+export const FORM_BADGES = ['Nuevo', 'Nuevo mensaje'] as const;
+export type FormBadge = (typeof FORM_BADGES)[number];
 
 /** País del teléfono elegido por defecto: Costa Rica (+506). Lista y reglas en src/shared/phone. */
 export const DEFAULT_PHONE_COUNTRY = 'CR';
@@ -64,6 +84,8 @@ export interface Contact {
   interests?: ContactInterest[];
   /** HU-209: fecha y hora del último formulario que envió (submittedAt). Sin campo o null = nunca lo envió. */
   interestsUpdatedAt?: Timestamp | null;
+  /** HU-504: etiqueta del formulario mientras no se abra la ficha. */
+  formBadge?: FormBadge | null;
 }
 
 /** HU-209: un producto de interés con su cantidad aproximada. */
