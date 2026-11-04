@@ -9,6 +9,7 @@ import {
   getContactIn,
   listAllContactsIn,
   listContactsPageIn,
+  updateContactIn,
   type ContactsCursor,
   type ContactsPage,
   type NewContactInput,
@@ -20,6 +21,10 @@ export function createContact(input: NewContactInput): Promise<string> {
 
 export function getContact(id: string): Promise<Contact | null> {
   return getContactIn(db, id);
+}
+
+export function updateContact(id: string, input: NewContactInput): Promise<void> {
+  return updateContactIn(db, id, input);
 }
 
 export function findDuplicateContacts(input: NewContactInput, excludeId?: string): Promise<ContactDuplicates> {

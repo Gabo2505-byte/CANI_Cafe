@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   CONTACT_MESSAGES,
+  contactToFormValues,
   duplicateErrors,
   EMPTY_CONTACT_FORM,
   isValidEmail,
+  isContactEditDirty,
   isContactFormDirty,
   normalizePhone,
   toNewContactInput,
@@ -122,5 +124,60 @@ describe('toNewContactInput', () => {
   it('normalizePhone deja solo dígitos', () => {
     expect(normalizePhone('+506 0000-0001')).toBe('50600000001');
     expect(normalizePhone('0000 0001')).toBe('00000001');
+  });
+});
+
+describe('HU-210 editar un contacto', () => {
+  const stored = {
+    fullName: 'Ana Prueba Mora',
+    email: 'ana.prueba@example.com',
+    phoneCountry: 'CR',
+    phoneNumber: '00000001',
+    address: 'San José',
+  };
+
+  it('textos literales de los criterios', () => {
+    expect(CONTACT_MESSAGES.edited).toBe('Cambios guardados correctamente.');
+    expect(CONTACT_MESSAGES.editLeaveConfirm).toBe('¿Desea salir sin guardar? Los cambios se perderán.');
+    expect(CONTACT_MESSAGES.duplicateEmail).toBe('Ya existe un contacto con este correo electrónico.');
+    expect(CONTACT_MESSAGES.duplicatePhone).toBe('Ya existe un contacto con este teléfono.');
+  });
+
+  it('el formulario empieza con los datos actuales; lo vacío queda vacío y el país por defecto es Costa Rica', () => {
+    expect(contactToFormValues(stored)).toEqual({
+      fullName: 'Ana Prueba Mora',
+      email: 'ana.prueba@example.com',
+      phoneCountry: 'CR',
+      phone: '00000001',
+      address: 'San José',
+    });
+    expect(contactToFormValues({ ...stored, email: null, phoneCountry: null, phoneNumber: null, address: null })).toEqual({
+      fullName: 'Ana Prueba Mora',
+      email: '',
+      phoneCountry: 'CR',
+      phone: '',
+      address: '',
+    });
+    expect(contactToFormValues({ ...stored, phoneCountry: 'US', phoneNumber: '3055550104' }).phoneCountry).toBe('US');
+  });
+
+  it('sin cambios no está modificado (aunque se agreguen espacios o mayúsculas en el correo)', () => {
+    const initial = contactToFormValues(stored);
+    expect(isContactEditDirty(initial, initial)).toBe(false);
+    expect(isContactEditDirty({ ...initial, fullName: ' Ana Prueba Mora ', email: 'ANA.PRUEBA@example.com' }, initial)).toBe(false);
+  });
+
+  it('cambiar el nombre, el correo, el teléfono, su país o la dirección sí es un cambio', () => {
+    const initial = contactToFormValues(stored);
+    expect(isContactEditDirty({ ...initial, fullName: 'Ana Mora' }, initial)).toBe(true);
+    expect(isContactEditDirty({ ...initial, email: 'otra@example.com' }, initial)).toBe(true);
+    expect(isContactEditDirty({ ...initial, phone: '00000009' }, initial)).toBe(true);
+    expect(isContactEditDirty({ ...initial, phoneCountry: 'US' }, initial)).toBe(true);
+    expect(isContactEditDirty({ ...initial, address: '' }, initial)).toBe(true);
+  });
+
+  it('cambiar el país sin teléfono no es un cambio', () => {
+    const initial = contactToFormValues({ ...stored, phoneCountry: null, phoneNumber: null });
+    expect(isContactEditDirty({ ...initial, phoneCountry: 'US' }, initial)).toBe(false);
   });
 });

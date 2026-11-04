@@ -4,6 +4,7 @@ import { LoginPage } from '../auth/LoginPage';
 import { ResetPasswordPage } from '../auth/ResetPasswordPage';
 import { ContactDetailPage } from '../contacts/ContactDetailPage';
 import { ContactsPage } from '../contacts/ContactsPage';
+import { EditContactPage } from '../contacts/EditContactPage';
 import { NewContactPage } from '../contacts/NewContactPage';
 import { AlertsPage } from '../sales/AlertsPage';
 import { NewSalePage } from '../sales/NewSalePage';
@@ -39,6 +40,7 @@ export function AppRoutes() {
         <Route path={ROUTES.contacts} element={<ContactsPage />} />
         <Route path={ROUTES.newContact} element={<NewContactPage />} />
         <Route path={ROUTES.contactDetail} element={<ContactDetailRoute />} />
+        <Route path={ROUTES.editContact} element={<EditContactPage />} />
         <Route path={ROUTES.salesBoard} element={<SalesBoardPage />} />
         <Route path={ROUTES.newSale} element={<NewSalePage />} />
         <Route path={ROUTES.saleDetail} element={<SaleDetailPage />} />

@@ -1357,6 +1357,25 @@ textarea[aria-invalid='true'] {
 /* -----------------------------------------------------------------------------------------------------
    11. Ficha del contacto (HU-207, HU-208, HU-211 a HU-213)
    ----------------------------------------------------------------------------------------------------- */
+/* HU-210: nombre a la izquierda y "Editar" arriba a la derecha, alineado con el recuadro de datos */
+.contact-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-5);
+  max-width: var(--content-width);
+}
+
+.contact-header .contact-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.contact-header > button {
+  flex: none;
+  margin-top: 0.5rem;
+}
+
 .contact-title {
   display: flex;
   flex-wrap: wrap;

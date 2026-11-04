@@ -11,6 +11,7 @@ import {
   query,
   serverTimestamp,
   startAfter,
+  updateDoc,
   where,
   type DocumentSnapshot,
   type Firestore,
@@ -33,6 +34,22 @@ export async function createContactIn(db: Firestore, input: NewContactInput): Pr
     createdAt: serverTimestamp(),
   });
   return ref.id;
+}
+
+/**
+ * HU-210: guarda los datos editados del contacto (nombre, correo, teléfono con país y dirección) y recalcula
+ * nameSortKey (HU-204). Clasificación, origen, fecha de registro, estado y los campos del formulario
+ * (interests, interestsUpdatedAt) no se tocan: updateDoc solo cambia los campos que recibe.
+ */
+export async function updateContactIn(db: Firestore, id: string, input: NewContactInput): Promise<void> {
+  await updateDoc(doc(db, COLLECTIONS.contacts, id), {
+    fullName: input.fullName,
+    nameSortKey: toSortKey(input.fullName),
+    email: input.email,
+    phoneCountry: input.phoneCountry,
+    phoneNumber: input.phoneNumber,
+    address: input.address,
+  });
 }
 
 export async function getContactIn(db: Firestore, id: string): Promise<Contact | null> {

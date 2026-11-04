@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router';
-import { newSalePath, saleDetailPath } from '../app/routes';
+import { editContactPath, newSalePath, saleDetailPath } from '../app/routes';
 import { useLocationNotice } from '../shared/hooks/useLocationNotice';
 import {
   CONTACT_CLASSIFICATION_LABELS,
@@ -30,6 +30,7 @@ import {
   tabLabel,
   type ContactRecords,
   type ContactTabId,
+  type FromListState,
 } from './contactDetail';
 import { loadContactRecords } from './contactDetailApi';
 import { getContact } from './contactsApi';
@@ -41,6 +42,7 @@ type RecordsState = { status: 'loading' } | { status: 'error' } | { status: 'rea
 export function ContactDetailPage() {
   const { contactId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const notice = useLocationNotice();
   // Se calcula una sola vez: useLocationNotice puede limpiar location.state después.
   const [backTo] = useState(() => backToListPath(location.state));
@@ -105,7 +107,14 @@ export function ContactDetailPage() {
       )}
       {state.status === 'ready' && (
         <>
-          <ContactHeader contact={state.contact} />
+          <ContactHeader
+            contact={state.contact}
+            onEdit={() => {
+              // HU-210: el formulario devuelve `from` a la ficha, para que "Volver a contactos" siga funcionando.
+              const fromList: FromListState = { from: backTo };
+              navigate(editContactPath(state.contact.id), { state: fromList });
+            }}
+          />
           <ContactData contact={state.contact} />
           <ContactTabs
             contactId={state.contact.id}
@@ -128,13 +137,19 @@ export function ContactDetailPage() {
   );
 }
 
-function ContactHeader({ contact }: { contact: Contact }) {
+/** Nombre y clasificación; arriba a la derecha, el botón "Editar" (HU-210). */
+function ContactHeader({ contact, onEdit }: { contact: Contact; onEdit: () => void }) {
   return (
-    <div className="contact-title">
-      <h1>{contact.fullName}</h1>
-      <span className={`classification-badge classification-${contact.classification}`}>
-        {CONTACT_CLASSIFICATION_LABELS[contact.classification] ?? contact.classification}
-      </span>
+    <div className="contact-header">
+      <div className="contact-title">
+        <h1>{contact.fullName}</h1>
+        <span className={`classification-badge classification-${contact.classification}`}>
+          {CONTACT_CLASSIFICATION_LABELS[contact.classification] ?? contact.classification}
+        </span>
+      </div>
+      <button type="button" onClick={onEdit}>
+        Editar
+      </button>
     </div>
   );
 }
