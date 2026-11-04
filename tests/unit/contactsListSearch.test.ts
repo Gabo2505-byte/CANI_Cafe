@@ -1,4 +1,4 @@
-// HU-205: búsqueda y filtro de la lista de contactos (sin Firebase).
+// HU-205: búsqueda y filtro de la lista de contactos. HU-504: con etiqueta, primero. (Sin Firebase.)
 import { describe, expect, it } from 'vitest';
 import {
   CLASSIFICATION_FILTER_OPTIONS,
@@ -6,7 +6,7 @@ import {
   CONTACT_SEARCH_LABEL,
   filterContacts,
   foundContactsMessage,
-  isFiltering,
+  badgedFirst,
   matchesContactSearch,
 } from '../../src/contacts/contactSearch';
 import type { Contact } from '../../src/shared/types';
@@ -117,11 +117,21 @@ describe('HU-205 búsqueda + clasificación', () => {
     expect(filterContacts(all, 'mar', 'cliente').map((c) => c.id)).toEqual(['m']);
     expect(filterContacts(all, '8812', 'cliente')).toEqual([]);
   });
+});
 
-  it('isFiltering', () => {
-    expect(isFiltering('', 'todos')).toBe(false);
-    expect(isFiltering('  ', 'todos')).toBe(false);
-    expect(isFiltering('a', 'todos')).toBe(true);
-    expect(isFiltering('', 'cliente')).toBe(true);
+describe('HU-504 con etiqueta, primero', () => {
+  it('los contactos con etiqueta van de primeros; dentro de cada grupo se mantiene el orden alfabético', () => {
+    const list = [
+      contact({ id: 'a', fullName: 'Ana' }),
+      contact({ id: 'b', fullName: 'Bruno', formBadge: 'Nuevo mensaje' }),
+      contact({ id: 'c', fullName: 'Carla', formBadge: null }),
+      contact({ id: 'd', fullName: 'Diego', formBadge: 'Nuevo' }),
+    ];
+    expect(badgedFirst(list).map((c) => c.id)).toEqual(['b', 'd', 'a', 'c']);
+  });
+
+  it('sin etiquetas, el orden no cambia', () => {
+    const list = [contact({ id: 'a' }), contact({ id: 'b' })];
+    expect(badgedFirst(list).map((c) => c.id)).toEqual(['a', 'b']);
   });
 });

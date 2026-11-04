@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 // HU-207: Consultar la ficha de un contacto. HU-209: pestaña "Productos de interés".
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { User as FirebaseUser } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
@@ -12,8 +12,7 @@ import { SessionProvider } from '../../src/auth/SessionContext';
 import type { AuthState } from '../../src/auth/useAuthUser';
 import type { ContactRecords } from '../../src/contacts/contactDetail';
 import { loadContactRecords } from '../../src/contacts/contactDetailApi';
-import { countContacts, getContact, listAllContacts, listContactsPage } from '../../src/contacts/contactsApi';
-import type { ContactsCursor } from '../../src/contacts/contactsRepository';
+import { getContact, listAllContacts } from '../../src/contacts/contactsApi';
 import type { Communication, Contact, Sale } from '../../src/shared/types';
 
 vi.mock('../../src/auth/signInWithUsername', () => ({ signInWithUsername: vi.fn() }));
@@ -23,8 +22,6 @@ vi.mock('../../src/contacts/contactsApi', () => ({
   createContact: vi.fn(),
   getContact: vi.fn(),
   findDuplicateContacts: vi.fn(),
-  countContacts: vi.fn(),
-  listContactsPage: vi.fn(),
   listAllContacts: vi.fn(),
 }));
 // Pantalla a la que se navega desde la pestaña "Oportunidades de venta".
@@ -121,15 +118,8 @@ const records = (overrides: Partial<ContactRecords> = {}): ContactRecords => ({
   ...overrides,
 });
 
-/** Simula Firestore: contactos ya ordenados, páginas de 20 con cursor = índice de inicio. */
+/** Simula Firestore: todos los contactos, ya en orden alfabético. */
 function serveContacts(all: Contact[]) {
-  vi.mocked(countContacts).mockResolvedValue(all.length);
-  vi.mocked(listContactsPage).mockImplementation(async (after) => {
-    const start = (after as unknown as number | null) ?? 0;
-    const next = start + 20 < all.length ? start + 20 : null;
-    return { contacts: all.slice(start, start + 20), nextCursor: next as unknown as ContactsCursor | null };
-  });
-  // HU-205: con búsqueda o clasificación en la URL, la lista se filtra sobre todos los contactos.
   vi.mocked(listAllContacts).mockResolvedValue(all);
 }
 
@@ -140,8 +130,7 @@ const dataValue = (label: string) => within(dataBox()).getByText(label).nextElem
 beforeEach(() => {
   vi.mocked(getContact).mockReset().mockResolvedValue(makeContact());
   vi.mocked(loadContactRecords).mockReset().mockResolvedValue(records());
-  vi.mocked(countContacts).mockReset();
-  vi.mocked(listContactsPage).mockReset();
+  vi.mocked(listAllContacts).mockReset();
 });
 afterEach(cleanup);
 
@@ -221,7 +210,7 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
     serveContacts(Array.from({ length: 25 }, (_, i) => listContact(i + 1)));
     renderAt('/contactos?pagina=9');
     expect(await screen.findByText('Página 2 de 2')).toBeTruthy();
-    expect(currentLocation.search).toBe('?pagina=2');
+    await waitFor(() => expect(currentLocation.search).toBe('?pagina=2'));
   });
 
   it('criterio 3: el nombre es el título y a su lado la clasificación "Cliente" en verde', async () => {

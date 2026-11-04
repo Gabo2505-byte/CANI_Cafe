@@ -34,6 +34,7 @@ import {
 } from './contactDetail';
 import { loadContactRecords } from './contactDetailApi';
 import { getContact } from './contactsApi';
+import { clearFormBadge } from './formBadgesApi';
 
 type LoadState = { status: 'loading' } | { status: 'notFound' } | { status: 'error' } | { status: 'ready'; contact: Contact };
 type RecordsState = { status: 'loading' } | { status: 'error' } | { status: 'ready'; records: ContactRecords };
@@ -70,6 +71,9 @@ export function ContactDetailPage() {
     let cancelled = false;
     getContact(contactId ?? '')
       .then((contact) => {
+        // HU-504: al abrir la ficha, la etiqueta del formulario desaparece. Si no se puede quitar (sin conexión), se
+        // queda y se intenta de nuevo la próxima vez que se abra.
+        if (contact?.formBadge) clearFormBadge(contact.id).catch(() => {});
         if (!cancelled) setState(contact ? { status: 'ready', contact } : { status: 'notFound' });
       })
       .catch(() => {

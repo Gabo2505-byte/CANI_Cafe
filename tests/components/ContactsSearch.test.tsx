@@ -9,8 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppRoutes } from '../../src/app/AppRoutes';
 import { AuthContext } from '../../src/auth/AuthContext';
 import { SessionProvider } from '../../src/auth/SessionContext';
-import { countContacts, getContact, listAllContacts, listContactsPage } from '../../src/contacts/contactsApi';
-import type { ContactsCursor } from '../../src/contacts/contactsRepository';
+import { getContact, listAllContacts } from '../../src/contacts/contactsApi';
 import type { AuthState } from '../../src/auth/useAuthUser';
 import type { Contact } from '../../src/shared/types';
 
@@ -23,8 +22,6 @@ vi.mock('../../src/contacts/contactsApi', () => ({
   createContact: vi.fn(),
   getContact: vi.fn(),
   findDuplicateContacts: vi.fn(),
-  countContacts: vi.fn(),
-  listContactsPage: vi.fn(),
   listAllContacts: vi.fn(),
 }));
 
@@ -78,12 +75,6 @@ const CONTACTS: Contact[] = [
 ];
 
 function serve(all: Contact[]) {
-  vi.mocked(countContacts).mockResolvedValue(all.length);
-  vi.mocked(listContactsPage).mockImplementation(async (after) => {
-    const start = (after as unknown as number | null) ?? 0;
-    const next = start + 20 < all.length ? start + 20 : null;
-    return { contacts: all.slice(start, start + 20), nextCursor: next as unknown as ContactsCursor | null };
-  });
   vi.mocked(listAllContacts).mockResolvedValue(all);
 }
 
@@ -97,8 +88,6 @@ const count = () => screen.getByRole('status').textContent;
 
 beforeEach(() => {
   vi.mocked(getContact).mockReset().mockResolvedValue(null);
-  vi.mocked(countContacts).mockReset();
-  vi.mocked(listContactsPage).mockReset();
   vi.mocked(listAllContacts).mockReset();
   serve(CONTACTS);
 });
@@ -116,8 +105,8 @@ describe('HU-205 Buscar y filtrar contactos', () => {
     // Orden en la página: buscador → clasificación → tabla.
     expect(search.compareDocumentPosition(select) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(select.compareDocumentPosition(table) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    // Sin buscar, la lista sigue paginada en Firestore (HU-204) y no se descargan todos.
-    expect(listAllContacts).not.toHaveBeenCalled();
+    // La lista completa se trae una sola vez al abrir la pantalla (ver la decisión en contactSearch.ts).
+    expect(listAllContacts).toHaveBeenCalledTimes(1);
   });
 
   it('criterio 1 y 2: la tabla cambia mientras se escribe; "mar" muestra "María Rodríguez"', async () => {
@@ -252,12 +241,11 @@ describe('HU-205 Buscar y filtrar contactos', () => {
     expect((screen.getByRole('button', { name: 'Siguiente' }) as HTMLButtonElement).disabled).toBe(true);
   });
 
-  it('si falla la carga para buscar, muestra el error', async () => {
+  it('si falla la carga, muestra el error y el buscador sigue en su lugar', async () => {
     vi.mocked(listAllContacts).mockRejectedValue(new Error('unavailable'));
-    const user = userEvent.setup();
     renderAt();
-    await screen.findByRole('table');
-    await user.type(searchBox(), 'a');
     expect((await screen.findByRole('alert')).textContent).toBe('No se pudieron cargar los contactos. Intente de nuevo.');
+    expect(searchBox()).toBeTruthy();
+    expect(screen.queryByRole('table')).toBeNull();
   });
 });

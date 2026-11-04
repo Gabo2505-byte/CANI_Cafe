@@ -91,3 +91,9 @@ Salida en [pruebas.txt](pruebas.txt).
 | 03. "8812" | 04. Solo "Cliente" |
 | ![Los dos](05-mar-y-cliente.png) | ![Sin resultados](06-sin-resultados.png) |
 | 05. "mar" + "Cliente" | 06. Sin resultados |
+
+## Cambio posterior (HU-504, 2026-11-03)
+
+- **Antes:** la lista completa se traía solo al empezar a buscar o filtrar.
+- **Ahora:** se trae siempre al abrir "Contactos". HU-504 pide los contactos con etiqueta de primeros, también al
+  buscar. Ver [HU-504](../HU-504/README.md). La búsqueda, el filtro y los mensajes no cambiaron.

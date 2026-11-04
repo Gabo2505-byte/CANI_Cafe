@@ -9,8 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppRoutes } from '../../src/app/AppRoutes';
 import { AuthContext } from '../../src/auth/AuthContext';
 import { SessionProvider } from '../../src/auth/SessionContext';
-import { countContacts, getContact, listContactsPage } from '../../src/contacts/contactsApi';
-import type { ContactsCursor } from '../../src/contacts/contactsRepository';
+import { getContact, listAllContacts } from '../../src/contacts/contactsApi';
 import type { AuthState } from '../../src/auth/useAuthUser';
 import type { Contact } from '../../src/shared/types';
 
@@ -24,8 +23,7 @@ vi.mock('../../src/contacts/contactsApi', () => ({
   createContact: vi.fn(),
   getContact: vi.fn(),
   findDuplicateContacts: vi.fn(),
-  countContacts: vi.fn(),
-  listContactsPage: vi.fn(),
+  listAllContacts: vi.fn(),
 }));
 
 const active: AuthState = {
@@ -68,23 +66,16 @@ const makeContact = (i: number, overrides: Partial<Contact> = {}): Contact => ({
   ...overrides,
 });
 
-/** Simula Firestore: 45 contactos ya ordenados, páginas de 20 con cursor = índice de inicio. */
+/** Simula Firestore: todos los contactos, ya en orden alfabético (la lista pagina de 20 en 20 en el navegador). */
 function serveContacts(all: Contact[]) {
-  vi.mocked(countContacts).mockResolvedValue(all.length);
-  vi.mocked(listContactsPage).mockImplementation(async (after) => {
-    const start = (after as unknown as number | null) ?? 0;
-    const contacts = all.slice(start, start + 20);
-    const next = start + 20 < all.length ? start + 20 : null;
-    return { contacts, nextCursor: next as unknown as ContactsCursor | null };
-  });
+  vi.mocked(listAllContacts).mockResolvedValue(all);
 }
 
 const bodyRows = () => within(screen.getAllByRole('rowgroup')[1]).getAllByRole('row');
 
 beforeEach(() => {
   vi.mocked(getContact).mockReset().mockResolvedValue(null);
-  vi.mocked(countContacts).mockReset();
-  vi.mocked(listContactsPage).mockReset();
+  vi.mocked(listAllContacts).mockReset();
 });
 afterEach(cleanup);
 
@@ -116,7 +107,7 @@ describe('HU-204 Ver la lista de contactos', () => {
     renderContacts();
     await screen.findByRole('table');
     expect(bodyRows().map((r) => r.firstElementChild?.textContent)).toEqual(['Álvaro Prueba', 'ana Prueba', 'Bruno Prueba']);
-    expect(listContactsPage).toHaveBeenCalledWith(null);
+    expect(listAllContacts).toHaveBeenCalledTimes(1);
   });
 
   it('20 contactos por página, con "Anterior", "Siguiente" y "Página X de Y"', async () => {
@@ -172,8 +163,7 @@ describe('HU-204 Ver la lista de contactos', () => {
   });
 
   it('si falla la consulta, muestra un error', async () => {
-    vi.mocked(countContacts).mockResolvedValue(3);
-    vi.mocked(listContactsPage).mockRejectedValue(new Error('unavailable'));
+    vi.mocked(listAllContacts).mockRejectedValue(new Error('unavailable'));
     renderContacts();
     expect(await screen.findByText('No se pudieron cargar los contactos. Intente de nuevo.')).toBeTruthy();
   });

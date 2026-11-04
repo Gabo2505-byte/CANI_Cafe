@@ -17,9 +17,17 @@ vi.mock('../src/contacts/contactsApi', () => ({
   getContact: vi.fn().mockResolvedValue(null),
   updateContact: vi.fn(),
   findDuplicateContacts: vi.fn().mockResolvedValue({}),
-  countContacts: vi.fn().mockResolvedValue(0),
-  listContactsPage: vi.fn().mockResolvedValue({ contacts: [], nextCursor: null }),
   listAllContacts: vi.fn().mockResolvedValue([]),
+}));
+
+// HU-504: la barra superior cuenta los contactos con etiqueta y la ficha quita la etiqueta al abrirse. Por defecto no
+// hay etiquetas y quitarla no hace nada (las pruebas de HU-504 lo reemplazan).
+vi.mock('../src/contacts/formBadgesApi', () => ({
+  listenFormBadgeCount: vi.fn((onCount: (count: number) => void) => {
+    onCount(0);
+    return () => {};
+  }),
+  clearFormBadge: vi.fn().mockResolvedValue(undefined),
 }));
 
 // HU-502 y HU-503: las pantallas internas procesan el formulario del sitio web (AppLayout). En las pruebas de pantalla

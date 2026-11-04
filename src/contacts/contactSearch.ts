@@ -1,12 +1,14 @@
-// HU-205: Buscar y filtrar contactos. Funciones puras (se prueban sin Firebase).
+// HU-205: Buscar y filtrar contactos. HU-504: con etiqueta, primero. Funciones puras (se prueban sin Firebase).
 //
-// Decisión: la búsqueda se hace en el navegador, sobre la lista completa de contactos.
-// - El criterio pide texto parcial en cualquier parte ("mar" encuentra "Ana María") y en tres campos (nombre, correo
-//   y teléfono), sin distinguir mayúsculas ni tildes. Firestore solo permite prefijos sobre un campo (por ejemplo
+// Decisión: la lista de contactos se arma en el navegador, sobre todos los contactos (se traen una vez al abrirla).
+// - HU-205 pide texto parcial en cualquier parte ("mar" encuentra "Ana María") y en tres campos (nombre, correo y
+//   teléfono), sin distinguir mayúsculas ni tildes. Firestore solo permite prefijos sobre un campo (por ejemplo
 //   sobre nameSortKey), así que no alcanza.
+// - HU-504 pide los contactos con etiqueta de primeros. Firestore no puede ordenar por "tiene etiqueta" (los contactos
+//   que nunca enviaron el formulario no tienen el campo y quedarían fuera de la consulta), así que la paginación por
+//   consultas de HU-204 ya no sirve.
 // - CANI Café tiene pocos cientos de contactos (carga inicial más los del formulario): traerlos una vez cuesta pocas
-//   lecturas y después la tabla cambia al instante mientras se escribe.
-// - Sin búsqueda ni filtro, la lista sigue paginada en Firestore como en HU-204 (no descarga todo).
+//   lecturas y después la tabla cambia al instante mientras se escribe. Se pagina de 20 en 20 aquí mismo (HU-204).
 import { formatPhone } from '../shared/phone/phone';
 import type { Contact, ContactClassification } from '../shared/types';
 import { toSortKey } from '../shared/utils/text';
@@ -66,7 +68,10 @@ export function filterContacts(contacts: Contact[], query: string, classificatio
   );
 }
 
-/** ¿Hay búsqueda o filtro activo? (Si no, la lista se pagina en Firestore como en HU-204.) */
-export function isFiltering(query: string, classification: ClassificationFilter): boolean {
-  return query.trim() !== '' || classification !== 'todos';
+/**
+ * HU-504 (criterio 3): los contactos con etiqueta ("Nuevo" o "Nuevo mensaje") de primeros. Dentro de cada grupo se
+ * mantiene el orden en que llegaron (alfabético, HU-204).
+ */
+export function badgedFirst(contacts: Contact[]): Contact[] {
+  return [...contacts.filter((c) => c.formBadge), ...contacts.filter((c) => !c.formBadge)];
 }

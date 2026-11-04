@@ -3,15 +3,11 @@ import { db } from '../shared/firebase/config';
 import type { Contact } from '../shared/types';
 import type { ContactDuplicates } from './contactForm';
 import {
-  countContactsIn,
   createContactIn,
   findDuplicateContactsIn,
   getContactIn,
   listAllContactsIn,
-  listContactsPageIn,
   updateContactIn,
-  type ContactsCursor,
-  type ContactsPage,
   type NewContactInput,
 } from './contactsRepository';
 
@@ -29,14 +25,6 @@ export function updateContact(id: string, input: NewContactInput): Promise<void>
 
 export function findDuplicateContacts(input: NewContactInput, excludeId?: string): Promise<ContactDuplicates> {
   return findDuplicateContactsIn(db, input, excludeId);
-}
-
-export function listContactsPage(after: ContactsCursor | null): Promise<ContactsPage> {
-  return listContactsPageIn(db, after);
-}
-
-export function countContacts(): Promise<number> {
-  return countContactsIn(db);
 }
 
 export function listAllContacts(): Promise<Contact[]> {

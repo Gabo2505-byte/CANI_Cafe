@@ -50,3 +50,13 @@ Salida completa en [pruebas.txt](pruebas.txt).
 | 01. Página 1 de 2 (20 contactos) | 02. Página 2 de 2 |
 | ![Ficha](03-ficha-desde-lista.png) | |
 | 03. Clic en una fila → ficha | |
+
+## Cambio posterior (HU-504, 2026-11-03)
+
+- **Antes:** la lista se pedía a Firestore de 20 en 20, con cursor.
+- **Ahora:** se traen todos los contactos una vez al abrir "Contactos" (`listAllContactsIn`, en orden alfabético por
+  `nameSortKey`) y se paginan de 20 en 20 en el navegador. Los criterios de esta HU siguen cumpliéndose.
+- **Por qué:** HU-504 pide los contactos con etiqueta de primeros, y Firestore no puede ordenar por "tiene etiqueta"
+  (los contactos que nunca enviaron el formulario no tienen ese campo). La decisión está explicada en
+  `src/contacts/contactSearch.ts`.
+- **Pruebas:** se ajustaron a la nueva forma de cargar.

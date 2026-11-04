@@ -476,6 +476,21 @@ button:disabled {
   color: var(--color-text-secondary);
 }
 
+/* HU-504: etiqueta verde "Nuevo" / "Nuevo mensaje" junto al nombre, con los colores de la franja de confirmación */
+.form-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  vertical-align: middle;
+  color: var(--color-success-text);
+  background: var(--color-success-bg);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius-pill);
+}
+
 /* -----------------------------------------------------------------------------------------------------
    6. Formularios (HU-201, HU-203 y otras)
    ----------------------------------------------------------------------------------------------------- */

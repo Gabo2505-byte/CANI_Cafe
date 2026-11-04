@@ -1,0 +1,78 @@
+[
+  {
+    "caso": "Antes de los formularios",
+    "barra": "Contactos",
+    "primeras": [
+      [
+        "Ana Prueba Mora",
+        null
+      ],
+      [
+        "Bruno Ficticio Solís",
+        null
+      ],
+      [
+        "Carla Demo Vargas",
+        null
+      ]
+    ]
+  },
+  {
+    "caso": "Llega un formulario de una persona nueva",
+    "barraSinRecargar": "Contactos (1)"
+  },
+  {
+    "caso": "Lista con los dos formularios",
+    "barra": "Contactos (2)",
+    "primeras": [
+      [
+        "Bruno Ficticio Solís",
+        "Nuevo mensaje"
+      ],
+      [
+        "Marta Nueva Prueba",
+        "Nuevo"
+      ],
+      [
+        "Ana Prueba Mora",
+        null
+      ],
+      [
+        "Carla Demo Vargas",
+        null
+      ]
+    ],
+    "colorEtiqueta": {
+      "color": "rgb(207, 232, 204)",
+      "fondo": "rgb(31, 58, 36)",
+      "borde": "rgb(141, 181, 138)"
+    }
+  },
+  {
+    "caso": "Abrir la ficha de Marta",
+    "barra": "Contactos (1)",
+    "origen": "Formulario web"
+  },
+  {
+    "caso": "De vuelta en la lista",
+    "barra": "Contactos (1)",
+    "primeras": [
+      [
+        "Bruno Ficticio Solís",
+        "Nuevo mensaje"
+      ],
+      [
+        "Ana Prueba Mora",
+        null
+      ],
+      [
+        "Carla Demo Vargas",
+        null
+      ],
+      [
+        "Diego Ejemplo Rojas",
+        null
+      ]
+    ]
+  }
+]
