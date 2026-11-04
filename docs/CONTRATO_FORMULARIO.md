@@ -39,8 +39,9 @@ Las solicitudes procesadas se CONSERVAN como evidencia y respaldo; no se borran.
 
 ## 3. Interés con cantidad (decidido): arreglo dentro del contacto
 - Campo `interests: [{ productId, quantity }]` en el documento del contacto.
-- HU-503 lo REEMPLAZA completo en una sola escritura (atómico).
-- La pestaña "Productos de interés" (HU-209) hoy se calcula SOLO desde las oportunidades (`interestProducts` en contactDetail.ts). Pasa a mostrar los productos del formulario con su cantidad, además de los de las oportunidades. El detalle se ajusta a los criterios de HU-209.
+- Campo `interestsUpdatedAt`: fecha y hora del último formulario (`submittedAt`). Lo agrega HU-209 para mostrar "Última actualización: dd/mm/aaaa".
+- HU-502 los escribe al crear el contacto y HU-503 los REEMPLAZA completos, en la misma escritura atómica.
+- **Corrección (03/11/2026, decidido por Gabriel según los criterios de HU-209):** la pestaña "Productos de interés" muestra SOLO los productos del formulario, con producto, presentación y cantidad aproximada. Ya no muestra los de las oportunidades, que se siguen viendo en la pestaña "Oportunidades de venta". Antes este punto decía que se mostraban los dos.
 - Se descarta una colección aparte: reemplazarla obligaría a borrar documentos uno por uno, sin atomicidad y con más lecturas.
 - En la ficha, el nombre del producto se resuelve contra `products` al mostrar; si un producto ya no existe, se muestra "Producto no disponible".
 

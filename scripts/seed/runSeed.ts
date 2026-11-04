@@ -1,6 +1,6 @@
 import type { App } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getFirestore, type DocumentData } from 'firebase-admin/firestore';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
 import { toSortKey } from '../../src/shared/utils/text';
 import {
@@ -62,7 +62,7 @@ export async function runSeed(app: App, options: { adminPassword: string }): Pro
   const db = getFirestore(app);
   const batch = db.batch();
   const put = <T extends { id: string }>(collection: string, docs: Seeded<T>[]) => {
-    for (const { id, data } of docs) batch.set(db.collection(collection).doc(id), data);
+    for (const { id, data } of docs) batch.set(db.collection(collection).doc(id), data as DocumentData);
   };
 
   put(COLLECTIONS.users, seedUsers);

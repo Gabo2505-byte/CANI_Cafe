@@ -1483,6 +1483,17 @@ textarea[aria-invalid='true'] {
   border-radius: var(--radius);
 }
 
+/* HU-209: "Última actualización: 05/10/2026" arriba de la tabla, y la cantidad alineada a la derecha */
+.interests-updated {
+  margin: 0 0 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.data-table .numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 .record-meta {
   margin: 0 0 0.25rem;
   font-size: 0.85rem;

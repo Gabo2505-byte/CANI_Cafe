@@ -1,4 +1,4 @@
-// HU-207: lógica pura de la ficha del contacto.
+// HU-207 y HU-209: lógica pura de la ficha del contacto.
 import { Timestamp } from 'firebase/firestore';
 import { describe, expect, it } from 'vitest';
 import {
@@ -9,7 +9,10 @@ import {
   CONTACT_SALES_COLUMNS,
   contactSaleCells,
   contactDataRows,
+  CONTACT_DETAIL_MESSAGES,
+  INTEREST_PRODUCTS_COLUMNS,
   interestProducts,
+  interestsUpdatedLabel,
   pageIndexFromParam,
   sortCommunications,
   sortSales,
@@ -106,38 +109,54 @@ describe('HU-207 pageIndexFromParam', () => {
   });
 });
 
-describe('HU-207 interestProducts', () => {
+describe('HU-209 productos de interés del formulario', () => {
   const catalog = [
     product('p1', 'Café molido', 'Bolsa de 340 g'),
     product('p2', 'Café en grano', 'Bolsa de 1 kg'),
     product('p3', 'Café en grano', 'Bolsa de 340 g'),
   ];
 
-  it('productos distintos de todas las ventas, ordenados por nombre y presentación', () => {
+  it('textos literales de los criterios', () => {
+    expect(INTEREST_PRODUCTS_COLUMNS).toEqual(['Producto', 'Presentación', 'Cantidad aproximada']);
+    expect(CONTACT_DETAIL_MESSAGES.noProducts).toBe('Este contacto no ha indicado productos de interés.');
+  });
+
+  it('cada producto con su presentación y cantidad, en el orden en que los indicó', () => {
     const result = interestProducts(
       [
-        { saleId: 's1', productId: 'p1', quantity: 2 },
-        { saleId: 's1', productId: 'p2', quantity: 1 },
-        { saleId: 's2', productId: 'p2', quantity: 5 },
-        { saleId: 's2', productId: 'p3', quantity: 5 },
+        { productId: 'p3', quantity: 5 },
+        { productId: 'p1', quantity: 2 },
+        { productId: 'p2', quantity: 120 },
       ],
       catalog,
     );
-    expect(result.map((p) => `${p.name} · ${p.presentation}`)).toEqual([
-      'Café en grano · Bolsa de 1 kg',
-      'Café en grano · Bolsa de 340 g',
-      'Café molido · Bolsa de 340 g',
+    expect(result).toEqual([
+      { productId: 'p3', name: 'Café en grano', presentation: 'Bolsa de 340 g', quantity: 5 },
+      { productId: 'p1', name: 'Café molido', presentation: 'Bolsa de 340 g', quantity: 2 },
+      { productId: 'p2', name: 'Café en grano', presentation: 'Bolsa de 1 kg', quantity: 120 },
     ]);
   });
 
   it('un producto que ya no está en el catálogo se muestra como "Producto no disponible"', () => {
-    expect(interestProducts([{ saleId: 's1', productId: 'borrado', quantity: 1 }], catalog)).toEqual([
-      { productId: 'borrado', name: 'Producto no disponible', presentation: '—' },
+    expect(interestProducts([{ productId: 'borrado', quantity: 3 }], catalog)).toEqual([
+      { productId: 'borrado', name: 'Producto no disponible', presentation: '—', quantity: 3 },
     ]);
   });
 
-  it('sin ventas o ventas sin productos → lista vacía', () => {
+  it('un producto repetido se muestra una sola vez (el primero)', () => {
+    expect(interestProducts([{ productId: 'p1', quantity: 2 }, { productId: 'p1', quantity: 9 }], catalog)).toEqual([
+      { productId: 'p1', name: 'Café molido', presentation: 'Bolsa de 340 g', quantity: 2 },
+    ]);
+  });
+
+  it('sin productos indicados → lista vacía', () => {
     expect(interestProducts([], catalog)).toEqual([]);
+  });
+
+  it('"Última actualización: dd/mm/aaaa" en hora de Costa Rica', () => {
+    expect(interestsUpdatedLabel(at('2026-10-05T15:30:00Z'))).toBe('Última actualización: 05/10/2026');
+    // 5 de octubre a las 11:30 p. m. en Costa Rica ya es 6 de octubre en UTC: cuenta el día de Costa Rica.
+    expect(interestsUpdatedLabel(at('2026-10-06T05:30:00Z'))).toBe('Última actualización: 05/10/2026');
   });
 });
 

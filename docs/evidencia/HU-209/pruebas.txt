@@ -1,0 +1,49 @@
+Evidencia de pruebas HU-209 - 2026-11-03 18:31 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Totales del proyecto ==
+npm test: 60 archivos, 800/800 pruebas.
+npm run test:emulators: 22 archivos, 204/204 pruebas.
+
+== npm test (HU-209 y la ficha de HU-207) ==
+✓ tests/unit/contactDetail.test.ts > HU-209 productos de interés del formulario > textos literales de los criterios 1ms
+✓ tests/unit/contactDetail.test.ts > HU-209 productos de interés del formulario > cada producto con su presentación y cantidad, en el orden en que los indicó 1ms
+✓ tests/unit/contactDetail.test.ts > HU-209 productos de interés del formulario > un producto que ya no está en el catálogo se muestra como "Producto no disponible" 0ms
+✓ tests/unit/contactDetail.test.ts > HU-209 productos de interés del formulario > un producto repetido se muestra una sola vez (el primero) 0ms
+✓ tests/unit/contactDetail.test.ts > HU-209 productos de interés del formulario > sin productos indicados → lista vacía 0ms
+✓ tests/unit/contactDetail.test.ts > HU-209 productos de interés del formulario > "Última actualización: dd/mm/aaaa" en hora de Costa Rica 1ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 1: la ficha se abre al dar clic sobre el contacto en la lista 667ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 2: arriba a la izquierda está "← Volver a contactos", antes del título 62ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 2: "Volver a contactos" regresa a la lista en la misma página 541ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 2: conserva la búsqueda y los filtros que estén en la URL de la lista 97ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 2: si se abre la ficha desde otro lado, vuelve a la lista desde el inicio 27ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > la lista abierta con "?pagina=3" (recarga o "Atrás") muestra esa página 33ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > si la página de la URL ya no existe, se queda en la última 38ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 3: el nombre es el título y a su lado la clasificación "Cliente" en verde 16ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 3: "Persona interesada" en azul 31ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 4: "Datos del contacto" con correo, teléfono, dirección, fecha de registro y origen, debajo del título 43ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 4: si falta un dato, dice "No registrado" 23ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 5: tres pestañas con su conteo entre paréntesis; al abrir se ve "Comunicaciones" 46ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 5: al elegir otra pestaña se ven sus registros 143ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > las pestañas se recorren con las flechas del teclado 135ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > pestañas sin registros: (0) y un mensaje 123ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > si fallan los registros, la ficha se ve igual y las pestañas avisan del error 19ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > contacto inexistente: "El contacto no existe." con el enlace para volver 18ms
+✓ tests/components/ContactDetail.test.tsx > HU-209 Ver los productos de interés de un contacto > criterio 1: tabla con producto, presentación y cantidad aproximada 83ms
+✓ tests/components/ContactDetail.test.tsx > HU-209 Ver los productos de interés de un contacto > criterio 2: arriba de la tabla, "Última actualización: 05/10/2026" (fecha del último formulario) 84ms
+✓ tests/components/ContactDetail.test.tsx > HU-209 Ver los productos de interés de un contacto > criterio 2: la fecha es la de Costa Rica (11:30 p. m. del 5 de octubre sigue siendo 05/10/2026) 93ms
+✓ tests/components/ContactDetail.test.tsx > HU-209 Ver los productos de interés de un contacto > sin fecha de formulario (por ejemplo, datos de la carga inicial) se muestra la tabla sin esa línea 64ms
+✓ tests/components/ContactDetail.test.tsx > HU-209 Ver los productos de interés de un contacto > criterio 3: sin productos, "Este contacto no ha indicado productos de interés." y sin tabla 77ms
+✓ tests/components/ContactDetail.test.tsx > HU-209 Ver los productos de interés de un contacto > un producto que ya no existe se muestra como "Producto no disponible" 81ms
+
+== Pruebas contra emuladores (registros de la ficha y seed) ==
+✓ tests/seed/seed.idempotent.test.ts > seed > se niega a correr fuera de un proyecto demo-* 3ms
+✓ tests/seed/seed.idempotent.test.ts > seed > es idempotente: correrlo dos veces no duplica datos 3473ms
+✓ tests/seed/seed.idempotent.test.ts > seed > guarda relaciones por ID válidas y fechas como Timestamp 12ms
+✓ tests/seed/seed.idempotent.test.ts > seed > productos, productos de la venta y etapas: relaciones válidas y ventas coherentes con su historial 34ms
+✓ tests/contacts/contactRecords.emulator.test.ts > HU-207 registros de la ficha desde Firestore > solo trae los registros del contacto, en orden 87ms
+✓ tests/contacts/contactRecords.emulator.test.ts > HU-207 registros de la ficha desde Firestore > HU-209: productos de interés del último formulario, con su cantidad y la fecha; no los de las ventas 27ms
+✓ tests/contacts/contactRecords.emulator.test.ts > HU-207 registros de la ficha desde Firestore > contacto sin registros: todo vacío 9ms
+✓ tests/contacts/contactRecords.emulator.test.ts > HU-207 registros de la ficha desde Firestore > sin sesión no se pueden leer 31ms

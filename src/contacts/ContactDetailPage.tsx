@@ -25,6 +25,8 @@ import {
   CONTACT_TABS,
   contactDataRows,
   contactSaleCells,
+  INTEREST_PRODUCTS_COLUMNS,
+  interestsUpdatedLabel,
   tabLabel,
   type ContactRecords,
   type ContactTabId,
@@ -381,15 +383,34 @@ function SalesPanel({ records }: { records: ContactRecords }) {
   );
 }
 
+/** HU-209: productos que el contacto indicó en su último formulario, con la fecha de ese formulario. */
 function ProductsPanel({ records }: { records: ContactRecords }) {
   if (records.products.length === 0) return <p className="empty-state">{MSG.noProducts}</p>;
   return (
-    <ul className="record-list">
-      {records.products.map((p) => (
-        <li key={p.productId}>
-          {p.name} · {p.presentation}
-        </li>
-      ))}
-    </ul>
+    <>
+      {records.productsUpdatedAt && <p className="interests-updated">{interestsUpdatedLabel(records.productsUpdatedAt)}</p>}
+      <div className="table-wrapper">
+        <table className="data-table">
+          <thead>
+            <tr>
+              {INTEREST_PRODUCTS_COLUMNS.map((column) => (
+                <th key={column} scope="col" className={column === 'Cantidad aproximada' ? 'numeric' : undefined}>
+                  {column}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {records.products.map((p) => (
+              <tr key={p.productId}>
+                <td>{p.name}</td>
+                <td>{p.presentation}</td>
+                <td className="numeric">{p.quantity}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

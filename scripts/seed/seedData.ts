@@ -8,7 +8,8 @@ import { buildCatalogProducts, catalogProductId } from './catalogData';
 
 /** Documento listo para escribir: sin `id` (va como id del doc) y con Date en lugar de Timestamp. */
 type ToDate<V> = V extends Timestamp ? Date : V;
-export type SeedDoc<T extends { id: string }> = { [K in Exclude<keyof T, 'id'>]: ToDate<T[K]> };
+// `as` conserva los campos opcionales del tipo (ej. `interests?` de HU-209): el seed no está obligado a llenarlos.
+export type SeedDoc<T extends { id: string }> = { [K in keyof T as Exclude<K, 'id'>]: ToDate<T[K]> };
 export type Seeded<T extends { id: string }> = { id: string; data: SeedDoc<T> };
 
 /** Fecha/hora local de Costa Rica (UTC-6, sin horario de verano) → Date. */
@@ -43,6 +44,15 @@ const seedContactsBase: Seeded<Omit<Contact, 'nameSortKey'>>[] = [
       status: 'activo',
       origin: 'redes_sociales',
       createdAt: cr('2026-09-01T09:00:00'),
+      // HU-209: productos que indicó en su último formulario (en orden de catálogo). El último ya no existe en el
+      // catálogo, para ver "Producto no disponible".
+      interests: [
+        { productId: catalogProductId('villa-sarchi', '0340', 'grano'), quantity: 2 },
+        { productId: catalogProductId('caturra', '1000', 'molido'), quantity: 10 },
+        { productId: catalogProductId('geisha', '0250', 'grano'), quantity: 1 },
+        { productId: 'prod-retirado-ejemplo', quantity: 3 },
+      ],
+      interestsUpdatedAt: cr('2026-10-05T18:20:00'),
     },
   },
   {

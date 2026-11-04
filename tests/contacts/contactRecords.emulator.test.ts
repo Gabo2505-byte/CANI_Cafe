@@ -1,4 +1,4 @@
-// HU-207 contra el emulador real de Firestore (con las reglas del repo). Corre con: npm run test:emulators
+// HU-207 y HU-209 contra el emulador real de Firestore (con las reglas del repo). Corre con: npm run test:emulators
 import { assertFails, initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import { doc, setDoc, Timestamp, type Firestore } from 'firebase/firestore';
 import { readFileSync } from 'node:fs';
@@ -57,7 +57,33 @@ beforeAll(async () => {
     for (const [saleId, productId] of saleProducts) {
       await setDoc(doc(fs, COLLECTIONS.saleProducts, `${saleId}_${productId}`), { saleId, productId, quantity: 1 });
     }
-    const comm = (contactId: string, date: string, note: string) => ({
+    // HU-209: lo que indicó en su último formulario (p3 está inactivo; "borrado" ya no existe).
+    const contact = (fullName: string, extra: object = {}) => ({
+      fullName,
+      nameSortKey: fullName.toLowerCase(),
+      email: null,
+      phoneCountry: 'CR',
+      phoneNumber: '88880000',
+      address: null,
+      classification: 'persona_interesada',
+      status: 'activo',
+      origin: null,
+      createdAt: at('2026-08-01T10:00:00Z'),
+      ...extra,
+    });
+    await setDoc(
+      doc(fs, COLLECTIONS.contacts, 'ana'),
+      contact('Ana', {
+        interests: [
+          { productId: 'p3', quantity: 4 },
+          { productId: 'borrado', quantity: 2 },
+          { productId: 'p1', quantity: 15 },
+        ],
+        interestsUpdatedAt: at('2026-10-05T18:20:00Z'),
+      }),
+    );
+    await setDoc(doc(fs, COLLECTIONS.contacts, 'sin-registros'), contact('Sin Registros'));
+    const comm =(contactId: string, date: string, note: string) => ({
       contactId,
       saleId: null,
       appliesToAllSales: false,
@@ -80,16 +106,21 @@ afterAll(async () => {
 });
 
 describe('HU-207 registros de la ficha desde Firestore', () => {
-  it('solo trae los registros del contacto, en orden, con los productos de interés sin repetir', async () => {
+  it('solo trae los registros del contacto, en orden', async () => {
     const records = await loadContactRecordsIn(db, 'ana');
     expect(records.communications.map((c) => c.note)).toEqual(['segunda', 'primera']);
     expect(records.sales.map((s) => s.title)).toEqual(['Venta nueva', 'Venta perdida', 'Venta vieja', 'Venta ganada antigua']);
-    // p3 está inactivo pero se muestra: aparece en una venta del contacto.
-    expect(records.products.map((p) => `${p.name} · ${p.presentation}`)).toEqual([
-      'Café en grano · Bolsa de 1 kg',
-      'Café en grano · Bolsa de 340 g',
-      'Café molido · Bolsa de 340 g',
+  });
+
+  it('HU-209: productos de interés del último formulario, con su cantidad y la fecha; no los de las ventas', async () => {
+    const records = await loadContactRecordsIn(db, 'ana');
+    // En el orden en que los indicó. p3 está inactivo pero se muestra; "borrado" ya no existe. p2 solo está en ventas.
+    expect(records.products).toEqual([
+      { productId: 'p3', name: 'Café en grano', presentation: 'Bolsa de 340 g', quantity: 4 },
+      { productId: 'borrado', name: 'Producto no disponible', presentation: '—', quantity: 2 },
+      { productId: 'p1', name: 'Café molido', presentation: 'Bolsa de 340 g', quantity: 15 },
     ]);
+    expect(records.productsUpdatedAt?.toMillis()).toBe(at('2026-10-05T18:20:00Z').toMillis());
   });
 
   it('contacto sin registros: todo vacío', async () => {
@@ -100,6 +131,7 @@ describe('HU-207 registros de la ficha desde Firestore', () => {
       userNames: {},
       sales: [],
       products: [],
+      productsUpdatedAt: null,
     });
   });
 

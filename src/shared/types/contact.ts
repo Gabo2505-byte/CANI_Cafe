@@ -57,4 +57,18 @@ export interface Contact {
   /** Cómo llegó el contacto. null hasta que una HU lo defina. */
   origin: ContactOrigin | null;
   createdAt: Timestamp;
+  /**
+   * HU-209 (contrato v3): productos que la persona indicó en su último formulario, con la cantidad aproximada,
+   * en el orden del catálogo. HU-502 y HU-503 lo reemplazan completo en cada envío. Sin campo = sin productos.
+   */
+  interests?: ContactInterest[];
+  /** HU-209: fecha y hora del último formulario que envió (submittedAt). Sin campo o null = nunca lo envió. */
+  interestsUpdatedAt?: Timestamp | null;
+}
+
+/** HU-209: un producto de interés con su cantidad aproximada. */
+export interface ContactInterest {
+  /** → products.id */
+  productId: string;
+  quantity: number;
 }

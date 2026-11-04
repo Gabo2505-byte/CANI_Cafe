@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-// HU-207: Consultar la ficha de un contacto
+// HU-207: Consultar la ficha de un contacto. HU-209: pestaña "Productos de interés".
 import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { User as FirebaseUser } from 'firebase/auth';
@@ -113,10 +113,10 @@ const records = (overrides: Partial<ContactRecords> = {}): ContactRecords => ({
   ],
   sales: [sale('sale-003', 'Pedido de temporada navideña'), sale('sale-001', 'Café en grano para cafetería'), sale('sale-005', 'Pedido antiguo')],
   products: [
-    { productId: 'product-002', name: 'Café en grano', presentation: 'Bolsa de 1 kg' },
-    { productId: 'product-001', name: 'Café en grano', presentation: 'Bolsa de 340 g' },
-    { productId: 'product-004', name: 'Café molido', presentation: 'Bolsa de 1 kg' },
-    { productId: 'product-003', name: 'Café molido', presentation: 'Bolsa de 340 g' },
+    { productId: 'product-002', name: 'Café en grano', presentation: 'Bolsa de 1 kg', quantity: 2 },
+    { productId: 'product-001', name: 'Café en grano', presentation: 'Bolsa de 340 g', quantity: 5 },
+    { productId: 'product-004', name: 'Café molido', presentation: 'Bolsa de 1 kg', quantity: 1 },
+    { productId: 'product-003', name: 'Café molido', presentation: 'Bolsa de 340 g', quantity: 12 },
   ],
   ...overrides,
 });
@@ -297,7 +297,8 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
     );
 
     await user.click(screen.getByRole('tab', { name: 'Productos de interés (4)' }));
-    expect(within(screen.getByRole('tabpanel')).getByText('Café molido · Bolsa de 340 g')).toBeTruthy();
+    const lastRow = within(screen.getByRole('tabpanel')).getAllByRole('row').at(-1)!;
+    expect([...lastRow.children].map((cell) => cell.textContent)).toEqual(['Café molido', 'Bolsa de 340 g', '12']);
   });
 
   it('las pestañas se recorren con las flechas del teclado', async () => {
@@ -320,7 +321,7 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
     await user.click(screen.getByRole('tab', { name: 'Oportunidades de venta (0)' }));
     expect(screen.getByText('Este contacto no tiene oportunidades de venta.')).toBeTruthy();
     await user.click(screen.getByRole('tab', { name: 'Productos de interés (0)' }));
-    expect(screen.getByText('Sin productos de interés.')).toBeTruthy();
+    expect(screen.getByText('Este contacto no ha indicado productos de interés.')).toBeTruthy(); // HU-209
   });
 
   it('si fallan los registros, la ficha se ve igual y las pestañas avisan del error', async () => {
@@ -337,5 +338,63 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
     expect(await screen.findByText('El contacto no existe.')).toBeTruthy();
     expect(screen.getByRole('link', { name: '← Volver a contactos' })).toBeTruthy();
     expect(screen.queryByRole('tablist')).toBeNull();
+  });
+});
+
+describe('HU-209 Ver los productos de interés de un contacto', () => {
+  async function openProducts(overrides: Partial<ContactRecords>) {
+    const user = userEvent.setup();
+    vi.mocked(loadContactRecords).mockResolvedValue(records(overrides));
+    renderAt('/contactos/contact-002');
+    await user.click(await screen.findByRole('tab', { name: /^Productos de interés/ }));
+    return screen.getByRole('tabpanel');
+  }
+
+  it('criterio 1: tabla con producto, presentación y cantidad aproximada', async () => {
+    const panel = await openProducts({ productsUpdatedAt: at('2026-10-05T18:20:00Z') });
+    const table = within(panel).getByRole('table');
+    expect(within(table).getAllByRole('columnheader').map((th) => th.textContent)).toEqual([
+      'Producto',
+      'Presentación',
+      'Cantidad aproximada',
+    ]);
+    const rows = within(table).getAllByRole('row').slice(1);
+    expect(rows.map((row) => [...row.children].map((cell) => cell.textContent))).toEqual([
+      ['Café en grano', 'Bolsa de 1 kg', '2'],
+      ['Café en grano', 'Bolsa de 340 g', '5'],
+      ['Café molido', 'Bolsa de 1 kg', '1'],
+      ['Café molido', 'Bolsa de 340 g', '12'],
+    ]);
+  });
+
+  it('criterio 2: arriba de la tabla, "Última actualización: 05/10/2026" (fecha del último formulario)', async () => {
+    const panel = await openProducts({ productsUpdatedAt: at('2026-10-05T18:20:00Z') });
+    const updated = within(panel).getByText('Última actualización: 05/10/2026');
+    expect(updated.compareDocumentPosition(within(panel).getByRole('table')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('criterio 2: la fecha es la de Costa Rica (11:30 p. m. del 5 de octubre sigue siendo 05/10/2026)', async () => {
+    const panel = await openProducts({ productsUpdatedAt: at('2026-10-06T05:30:00Z') });
+    expect(within(panel).getByText('Última actualización: 05/10/2026')).toBeTruthy();
+  });
+
+  it('sin fecha de formulario (por ejemplo, datos de la carga inicial) se muestra la tabla sin esa línea', async () => {
+    const panel = await openProducts({ productsUpdatedAt: null });
+    expect(within(panel).getByRole('table')).toBeTruthy();
+    expect(within(panel).queryByText(/^Última actualización/)).toBeNull();
+  });
+
+  it('criterio 3: sin productos, "Este contacto no ha indicado productos de interés." y sin tabla', async () => {
+    const panel = await openProducts({ products: [], productsUpdatedAt: at('2026-10-05T18:20:00Z') });
+    expect(within(panel).getByText('Este contacto no ha indicado productos de interés.')).toBeTruthy();
+    expect(within(panel).queryByRole('table')).toBeNull();
+    expect(screen.getByRole('tab', { name: 'Productos de interés (0)' })).toBeTruthy();
+  });
+
+  it('un producto que ya no existe se muestra como "Producto no disponible"', async () => {
+    const panel = await openProducts({
+      products: [{ productId: 'borrado', name: 'Producto no disponible', presentation: '—', quantity: 3 }],
+    });
+    expect(within(panel).getByRole('cell', { name: 'Producto no disponible' })).toBeTruthy();
   });
 });
