@@ -1,0 +1,114 @@
+[
+  {
+    "criterio": "1. Se revisa al pasar al siguiente campo",
+    "resultado": "Cumple",
+    "alSalirDelNombreVacio": [
+      "Este campo es obligatorio."
+    ],
+    "alSalirDelCorreo": [
+      "Este campo es obligatorio.",
+      "Ingrese un correo electrónico válido."
+    ],
+    "alSalirDelTelefono": [
+      "Este campo es obligatorio.",
+      "Ingrese un correo electrónico válido.",
+      "El teléfono debe tener 8 dígitos."
+    ],
+    "avisoArribaSinHaberEnviado": []
+  },
+  {
+    "criterio": "1, 2 y 5. \"Enviar\" con todo vacío revisa todo de nuevo",
+    "resultado": "Cumple",
+    "aviso": [
+      "Revise los campos marcados en rojo."
+    ],
+    "errores": [
+      "Este campo es obligatorio.",
+      "Este campo es obligatorio.",
+      "Seleccione al menos un producto."
+    ],
+    "solicitudesEscritas": 0
+  },
+  {
+    "criterio": "2. Nombre y correo con solo espacios cuentan como vacíos",
+    "resultado": "Cumple",
+    "errores": [
+      "Este campo es obligatorio.",
+      "Este campo es obligatorio.",
+      "Seleccione al menos un producto."
+    ]
+  },
+  {
+    "criterio": "3. Correo que no es nombre@dominio.com",
+    "resultado": "Cumple",
+    "correos": {
+      "ana@example": "inválido",
+      "ana.example.com": "inválido",
+      "ana @example.com": "inválido",
+      "ana@@example.com": "inválido",
+      "@example.com": "inválido",
+      "ana@example.": "inválido",
+      "Ana.Prueba@Example.COM": "válido",
+      " ana@example.com ": "válido"
+    }
+  },
+  {
+    "criterio": "4. Teléfono con la cantidad de números correcta según el país",
+    "resultado": "Cumple",
+    "telefonos": {
+      "CR 8812345": "El teléfono debe tener 8 dígitos.",
+      "CR 88123456": "sin error",
+      "CR 881234567": "El teléfono debe tener 8 dígitos.",
+      "US 12345": "El teléfono debe tener entre 6 y 14 dígitos.",
+      "US 123456": "sin error",
+      "US 12345678901234": "sin error",
+      "US 123456789012345": "El teléfono debe tener entre 6 y 14 dígitos.",
+      "CR abc": "El teléfono debe tener 8 dígitos."
+    }
+  },
+  {
+    "criterio": "4. Cantidad entre 1 y 9999",
+    "resultado": "Cumple",
+    "cantidades": {
+      "\"0\"": "error",
+      "\"1\"": "válida",
+      "\"9999\"": "válida",
+      "\"10000\"": "error",
+      "\"1.5\"": "error",
+      "\"-3\"": "error",
+      "\"abc\"": "error",
+      "\"\"": "error",
+      "\" 25 \"": "válida"
+    }
+  },
+  {
+    "criterio": "5. Con un error no se envía y aparece el aviso; al corregir, se envía",
+    "resultado": "Cumple",
+    "conCantidad0": {
+      "aviso": [
+        "Revise los campos marcados en rojo."
+      ],
+      "errores": [
+        "Ingrese una cantidad entre 1 y 9999."
+      ],
+      "solicitudesEscritas": 0
+    },
+    "avisoDespuesDeCorregir": [],
+    "solicitudesNuevasDespuesDeEnviar": 1,
+    "solicitudGuardada": {
+      "fullName": "Persona Verificación HU-501",
+      "email": "verificacion.hu501@example.com",
+      "phoneCountry": null,
+      "phoneNumber": null,
+      "interests": "lista de 1",
+      "message": null,
+      "processed": false,
+      "submittedAt": "fecha del servidor"
+    }
+  },
+  {
+    "limpieza": {
+      "solicitudesDePruebaQueQuedan": 0
+    }
+  }
+]
