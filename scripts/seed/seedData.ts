@@ -78,7 +78,7 @@ const seedContactsBase: Seeded<Omit<Contact, 'nameSortKey'>>[] = [
       phoneCountry: null,
       phoneNumber: null,
       address: null,
-      classification: 'distribuidor',
+      classification: 'persona_interesada',
       status: 'activo',
       origin: 'feria',
       createdAt: cr('2026-09-05T14:00:00'),

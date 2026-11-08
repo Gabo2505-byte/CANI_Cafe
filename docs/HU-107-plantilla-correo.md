@@ -26,7 +26,7 @@ también tiene que hacerlo.
     Crear nueva contraseña
   </a>
 </p>
-<p>Este enlace vence 30 minutos después de enviado y solo se puede usar una vez. Si usted no hizo esta solicitud, ignore este correo.</p>
+<p>El enlace vence 30 minutos después de enviado. Solo se puede usar una vez. Si usted no hizo esta solicitud, ignore este correo.</p>
 ```
 
 - **URL de acción personalizada** (lápiz → "Personalizar URL de acción"): `https://<dirección del sitio del administrador>/nueva-contrasena`.
@@ -38,13 +38,13 @@ también tiene que hacerlo.
 En *Authentication → Configuración → Dominios autorizados* tiene que estar el dominio del sitio del administrador.
 La dirección de vuelta del enlace (`continueUrl`) usa ese dominio; si no está autorizado, el envío falla.
 
-## 4. Diferencia con el criterio (requiere solicitud de cambio)
+## 4. Texto del vencimiento (cambio aprobado)
 
-El criterio pide: "Este enlace vence a las **[hora]** del **[fecha]** y solo se puede usar una vez…".
+El criterio original pedía: "Este enlace vence a las **[hora]** del **[fecha]** y solo se puede usar una vez…".
 La plantilla de Firebase Auth solo tiene `%DISPLAY_NAME%`, `%APP_NAME%`, `%LINK%` y `%EMAIL%`: no hay forma de poner
-la hora exacta sin un servidor de pago (choca con CC-01). Por eso el correo dice "vence 30 minutos después de
-enviado". La regla del vencimiento sí se cumple exacta: la valida la pantalla "Nueva contraseña"
-(`src/auth/passwordResetLinks.ts`).
+la hora exacta sin un servidor de pago (choca con CC-01). Danny aprobó el cambio (2026-11-08): el correo dice
+"El enlace vence 30 minutos después de enviado.". La regla del vencimiento se cumple exacta: la valida la pantalla
+"Nueva contraseña" (`src/auth/passwordResetLinks.ts`).
 
 ## 5. Cómo se cumple el resto de HU-107
 

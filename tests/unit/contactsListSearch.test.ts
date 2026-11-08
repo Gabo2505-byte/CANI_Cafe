@@ -30,7 +30,7 @@ const maria = contact({ id: 'm', fullName: 'María Rodríguez', email: 'maria.ro
 const pedro = contact({ id: 'p', fullName: 'Pedro Solano', phoneCountry: 'CR', phoneNumber: '88123456' });
 const john = contact({ id: 'j', fullName: 'John Smith', email: 'JOHN@Example.com', phoneCountry: 'US', phoneNumber: '3055550104' });
 const ana = contact({ id: 'a', fullName: 'Ana Marín', classification: 'persona_interesada' });
-const carla = contact({ id: 'c', fullName: 'Carla Mar', classification: 'distribuidor' });
+const carla = contact({ id: 'c', fullName: 'Carla Mar', classification: 'cliente' });
 
 describe('HU-205 textos', () => {
   it('buscador y opciones literales de los criterios', () => {
@@ -108,13 +108,13 @@ describe('HU-205 búsqueda + clasificación', () => {
   });
 
   it('solo la clasificación', () => {
-    expect(filterContacts(all, '', 'cliente').map((c) => c.id)).toEqual(['m']);
+    expect(filterContacts(all, '', 'cliente').map((c) => c.id)).toEqual(['c', 'm']);
     expect(filterContacts(all, '', 'persona_interesada').map((c) => c.id)).toEqual(['a', 'j', 'p']);
   });
 
   it('los dos a la vez: solo los que cumplen ambos', () => {
     expect(filterContacts(all, 'mar', 'persona_interesada').map((c) => c.id)).toEqual(['a']);
-    expect(filterContacts(all, 'mar', 'cliente').map((c) => c.id)).toEqual(['m']);
+    expect(filterContacts(all, 'mar', 'cliente').map((c) => c.id)).toEqual(['c', 'm']);
     expect(filterContacts(all, '8812', 'cliente')).toEqual([]);
   });
 });

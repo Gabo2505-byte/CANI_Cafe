@@ -86,7 +86,7 @@ export function lossReasonError(text: string): string | null {
 
 /**
  * HU-313: al ganar una posible venta, una "Persona interesada" pasa a "Cliente". Quien ya es cliente sigue
- * siéndolo. El PDF no dice nada de "Distribuidor" ni "Otro": su clasificación no se toca.
+ * siéndolo.
  */
 export function classificationAfterWin(current: ContactClassification): ContactClassification {
   return current === 'persona_interesada' ? 'cliente' : current;

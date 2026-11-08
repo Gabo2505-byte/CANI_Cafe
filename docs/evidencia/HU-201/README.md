@@ -59,3 +59,6 @@ Salida completa en [pruebas.txt](pruebas.txt).
 | 03. Guardar sin datos | 04. Cancelar después de escribir |
 | ![Ficha](05-ficha-contacto-registrado.png) | |
 | 05. Ficha con el mensaje | |
+
+> **Actualización 2026-11-08:** por decisión de Danny, "Distribuidor" y "Otro" se quitaron del sistema. `classification`
+> solo admite `persona_interesada` y `cliente`. En los datos de prueba, "Carla Demo Vargas" pasó a "Persona interesada".

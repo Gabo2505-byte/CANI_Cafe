@@ -63,8 +63,9 @@ otra cosa. Después de la corrección, el recorrido completo se repitió.
 
 ## Notas
 
-- La lista "Clasificación" tiene solo las tres opciones del criterio. Los contactos "Distribuidor" u "Otro" aparecen
-  en "Todos", pero no se pueden filtrar por separado.
+- La lista "Clasificación" tiene solo las tres opciones del criterio.
+- **Actualización 2026-11-08:** Danny decidió quitar "Distribuidor" y "Otro" del sistema. Las únicas clasificaciones
+  son "Persona interesada" y "Cliente", así que el filtro ya cubre todos los casos.
 - Si no hay ningún contacto registrado y no se está buscando, se mantiene "Aún no hay contactos registrados." de
   HU-204.
 - Mientras la pantalla está abierta y se busca, los contactos que entren en ese momento (por ejemplo, desde el

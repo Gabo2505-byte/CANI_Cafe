@@ -69,7 +69,7 @@ const contact = (id: string, fullName: string, overrides: Partial<Contact> = {})
 const CONTACTS: Contact[] = [
   contact('a', 'Ana Marín', { email: 'ana@example.com' }),
   contact('b', 'Bruno Solís', { phoneCountry: 'CR', phoneNumber: '88123456', classification: 'cliente' }),
-  contact('c', 'Carla Mora', { classification: 'distribuidor' }),
+  contact('c', 'Carla Mora', { classification: 'cliente' }),
   contact('m', 'María Rodríguez', { email: 'maria.rodriguez@example.com', classification: 'cliente' }),
   contact('p', 'Pedro Ramírez', { phoneCountry: 'CR', phoneNumber: '70001111' }),
 ];
@@ -149,8 +149,8 @@ describe('HU-205 Buscar y filtrar contactos', () => {
     renderAt();
     await screen.findByRole('table');
     await user.selectOptions(classificationSelect(), 'Cliente');
-    await screen.findByText('Se encontraron 2 contactos.');
-    expect(names()).toEqual(['Bruno Solís', 'María Rodríguez']);
+    await screen.findByText('Se encontraron 3 contactos.');
+    expect(names()).toEqual(['Bruno Solís', 'Carla Mora', 'María Rodríguez']);
     await user.selectOptions(classificationSelect(), 'Persona interesada');
     expect(names()).toEqual(['Ana Marín', 'Pedro Ramírez']);
     await user.selectOptions(classificationSelect(), 'Todos');

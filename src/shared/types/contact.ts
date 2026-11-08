@@ -2,15 +2,14 @@ import type { Timestamp } from 'firebase/firestore';
 
 // "Persona interesada" es la clasificación de todo contacto nuevo (HU-201).
 // La conversión a cliente (HU-313, Dylan) cambia persona_interesada → cliente.
-export const CONTACT_CLASSIFICATIONS = ['persona_interesada', 'cliente', 'distribuidor', 'otro'] as const;
+// Solo existen estas dos (decisión de Danny, 2026-11-08: "Distribuidor" y "Otro" se quitaron del sistema).
+export const CONTACT_CLASSIFICATIONS = ['persona_interesada', 'cliente'] as const;
 export type ContactClassification = (typeof CONTACT_CLASSIFICATIONS)[number];
 
 /** Texto que se muestra en pantalla para cada clasificación. */
 export const CONTACT_CLASSIFICATION_LABELS: Record<ContactClassification, string> = {
   persona_interesada: 'Persona interesada',
   cliente: 'Cliente',
-  distribuidor: 'Distribuidor',
-  otro: 'Otro',
 };
 
 export const CONTACT_STATUSES = ['activo', 'inactivo'] as const;
