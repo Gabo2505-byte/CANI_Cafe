@@ -1,0 +1,76 @@
+Evidencia de pruebas HU-210 - 2026-11-03 18:54 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Totales del proyecto ==
+npm test: 61 archivos, 817/817 pruebas, sin errores sin manejar.
+npm run test:emulators: 23 archivos, 207/207 pruebas.
+
+== npm test (HU-210; HU-201 a HU-203 con los campos compartidos) ==
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > el teléfono tiene dos partes: primero el país y después el número 635ms
+✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > en Contactos está el botón "Nuevo contacto", arriba a la derecha junto al título, y abre el formulario 745ms
+✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > el formulario pide cuatro datos: nombre completo, correo, teléfono y dirección 53ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > Costa Rica viene elegido; cerrado muestra las siglas y el código: "CR (+506)" 148ms
+✓ tests/components/EditContact.test.tsx > HU-210 Editar un contacto > criterio 1: en la ficha, arriba a la derecha, está "Editar"; abre el formulario con los datos actuales 879ms
+✓ tests/components/ContactValidation.test.tsx > HU-203 Revisar los datos antes de guardar > nombre y correo aceptan como máximo 100 caracteres; la dirección, 250 883ms
+✓ tests/components/EditContact.test.tsx > HU-210 Editar un contacto > criterio 2: no se pueden cambiar la clasificación, el origen ni la fecha de registro (no están en el formulario) 229ms
+✓ tests/components/ContactValidation.test.tsx > HU-203 Revisar los datos antes de guardar > el contador avisa al llegar al máximo (nombre 100, dirección 250) 438ms
+✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > el nombre completo es obligatorio 630ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > la lista muestra el nombre de cada país con su código, agrupada por letras 804ms
+✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > pide al menos correo o teléfono 516ms
+✓ tests/components/ContactValidation.test.tsx > HU-203 Revisar los datos antes de guardar > justo en el máximo (100 / 250) es válido y SÍ se guarda 646ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > el buscador encuentra "estados" 392ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > el buscador encuentra "mexico" 363ms
+✓ tests/components/ContactValidation.test.tsx > HU-203 Revisar los datos antes de guardar > correo "ana" → "Ingrese un correo electrónico válido." y no se guarda 455ms
+✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > con nombre y solo teléfono se guarda (correo y dirección quedan en null) 550ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > el buscador encuentra "+506" 271ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > el buscador encuentra "ni" 313ms
+✓ tests/components/ContactValidation.test.tsx > HU-203 Revisar los datos antes de guardar > correo "ana@dominio" → "Ingrese un correo electrónico válido." y no se guarda 518ms
+✓ tests/components/EditContact.test.tsx > HU-210 Editar un contacto > criterio 2 y 5: se cambian nombre, correo, teléfono con su país y dirección; al guardar vuelve a la ficha con el mensaje 2083ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > si no hay coincidencias, lo indica 285ms
+✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > al guardar aparece la ficha con "Contacto registrado correctamente." y clasificado como "Persona interesada" 851ms
+✓ tests/components/EditContact.test.tsx > HU-210 Editar un contacto > criterio 3: el nombre sigue siendo obligatorio y debe quedar correo o teléfono 275ms
+✓ tests/components/ContactValidation.test.tsx > HU-203 Revisar los datos antes de guardar > correo "ana @dominio.com" → "Ingrese un correo electrónico válido." y no se guarda 638ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > al elegir un país, la lista se cierra y muestra sus siglas y código: "US (+1)" 436ms
+✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > si falla el guardado, muestra un error y se queda en el formulario 500ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > con teclado: buscar, ↓ y Enter elige; Escape cierra sin cambiar 492ms
+✓ tests/components/ContactValidation.test.tsx > HU-203 Revisar los datos antes de guardar > correo "ana@dominio .com" → "Ingrese un correo electrónico válido." y no se guarda 585ms
+✓ tests/components/EditContact.test.tsx > HU-210 Editar un contacto > criterio 3: formato del correo y largo del teléfono (8 en Costa Rica) 740ms
+✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > "Cancelar" después de escribir pregunta "¿Desea salir sin guardar? Los datos ingresados se perderán." 463ms
+✓ tests/components/ContactValidation.test.tsx > HU-203 Revisar los datos antes de guardar > correo "@dominio.com" → "Ingrese un correo electrónico válido." y no se guarda 544ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > Costa Rica con 8 números se guarda y se muestra "+506 8888-8888" 658ms
+✓ tests/components/EditContact.test.tsx > HU-210 Editar un contacto > criterio 4: correo de otro contacto → "Ya existe un contacto con este correo electrónico." y no se guarda 607ms
+✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > cambiar solo el país del teléfono no cuenta como "escribir": Cancelar vuelve directo 553ms
+✓ tests/components/NewContact.test.tsx > HU-201 Registrar un nuevo contacto > "Cancelar" sin haber escrito nada vuelve directamente a la lista de contactos 91ms
+✓ tests/components/EditContact.test.tsx > HU-210 Editar un contacto > criterio 4: teléfono de otro contacto → "Ya existe un contacto con este teléfono." y no se guarda 214ms
+✓ tests/components/EditContact.test.tsx > HU-210 Editar un contacto > criterio 4: sus propios datos no cuentan como repetidos (se excluye el contacto que se edita) 180ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > Costa Rica con 8888888 → "El teléfono debe tener 8 dígitos." 573ms
+✓ tests/components/ContactValidation.test.tsx > HU-203 Revisar los datos antes de guardar > un correo válido (nombre@dominio.com) se guarda en minúsculas 729ms
+✓ tests/components/EditContact.test.tsx > HU-210 Editar un contacto > criterio 5: "Cancelar" después de cambiar algo pregunta "¿Desea salir sin guardar? Los cambios se perderán." 617ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > Costa Rica con 888888888 → "El teléfono debe tener 8 dígitos." 599ms
+✓ tests/components/EditContact.test.tsx > HU-210 Editar un contacto > criterio 5: "Cancelar" sin cambios vuelve directo a la ficha 189ms
+✓ tests/components/ContactValidation.test.tsx > HU-203 Revisar los datos antes de guardar > correo repetido → mensaje + "Ver contacto" que abre la ficha existente; no se guarda 822ms
+✓ tests/components/EditContact.test.tsx > HU-210 Editar un contacto > si falla el guardado, avisa y conserva lo escrito 464ms
+✓ tests/components/EditContact.test.tsx > HU-210 Editar un contacto > contacto inexistente: "El contacto no existe." sin formulario 54ms
+✓ tests/components/ContactValidation.test.tsx > HU-203 Revisar los datos antes de guardar > teléfono repetido (mismo país y número) → mensaje + "Ver contacto"; no se guarda 779ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > otro país entre 6 y 14 números se guarda y se muestra con su código: "+1 3055551234" 1316ms
+✓ tests/components/ContactValidation.test.tsx > HU-203 Revisar los datos antes de guardar > correo y teléfono repetidos a la vez → los dos mensajes, cada uno con su enlace 963ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > otro país con 12345 → "El teléfono debe tener entre 6 y 14 dígitos." 964ms
+✓ tests/components/ContactValidation.test.tsx > HU-203 Revisar los datos antes de guardar > al corregir el dato repetido, se vuelve a revisar y se guarda 1163ms
+✓ tests/components/PhoneCountries.test.tsx > HU-202 Teléfonos de Costa Rica y de otros países > otro país con 123456789012345 → "El teléfono debe tener entre 6 y 14 dígitos." 1044ms
+✓ tests/unit/contactForm.test.ts > HU-210 editar un contacto > textos literales de los criterios 1ms
+✓ tests/unit/contactForm.test.ts > HU-210 editar un contacto > el formulario empieza con los datos actuales; lo vacío queda vacío y el país por defecto es Costa Rica 1ms
+✓ tests/unit/contactForm.test.ts > HU-210 editar un contacto > sin cambios no está modificado (aunque se agreguen espacios o mayúsculas en el correo) 0ms
+✓ tests/unit/contactForm.test.ts > HU-210 editar un contacto > cambiar el nombre, el correo, el teléfono, su país o la dirección sí es un cambio 0ms
+✓ tests/unit/contactForm.test.ts > HU-210 editar un contacto > cambiar el país sin teléfono no es un cambio 0ms
+
+== Pruebas contra emuladores (HU-210 y repetidos de HU-203) ==
+✓ tests/contacts/editContact.emulator.test.ts > HU-210 editar un contacto en Firestore > guarda nombre, correo, teléfono con país y dirección, y recalcula nameSortKey; lo demás no cambia 63ms
+✓ tests/contacts/editContact.emulator.test.ts > HU-210 editar un contacto en Firestore > criterio 4: el correo o el teléfono de OTRO contacto cuenta como repetido; los propios no 36ms
+✓ tests/contacts/editContact.emulator.test.ts > HU-210 editar un contacto en Firestore > sin sesión no se puede editar 32ms
+✓ tests/contacts/duplicates.emulator.test.ts > HU-203 repetidos en Firestore (usuario activo, reglas reales) > detecta el correo repetido y devuelve el id del contacto existente 39ms
+✓ tests/contacts/duplicates.emulator.test.ts > HU-203 repetidos en Firestore (usuario activo, reglas reales) > detecta el teléfono repetido con el mismo país y número 7ms
+✓ tests/contacts/duplicates.emulator.test.ts > HU-203 repetidos en Firestore (usuario activo, reglas reales) > el mismo número en otro país NO es repetido 21ms
+✓ tests/contacts/duplicates.emulator.test.ts > HU-203 repetidos en Firestore (usuario activo, reglas reales) > datos nuevos no son repetidos 9ms
+✓ tests/contacts/duplicates.emulator.test.ts > HU-203 repetidos en Firestore (usuario activo, reglas reales) > al editar, el propio contacto no cuenta como repetido (excludeId) 22ms

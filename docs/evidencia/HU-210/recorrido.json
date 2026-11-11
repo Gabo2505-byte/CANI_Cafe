@@ -1,0 +1,88 @@
+[
+  {
+    "caso": "Antes de editar (Firestore)",
+    "bruno": {
+      "fullName": "Bruno Ficticio Solís",
+      "nameSortKey": "bruno ficticio solis",
+      "email": "bruno.ficticio@example.com",
+      "phoneCountry": "CR",
+      "phoneNumber": "00000002",
+      "address": "Dirección de prueba 2, Heredia",
+      "classification": "cliente",
+      "origin": "referido",
+      "createdAt": "2026-09-03T16:30:00Z"
+    }
+  },
+  {
+    "caso": "Ficha",
+    "botonEditarALaDerecha": true,
+    "botonEditarArriba": true
+  },
+  {
+    "caso": "Formulario con los datos actuales",
+    "url": "/contactos/contact-002/editar",
+    "etiquetas": [
+      "Nombre completo *",
+      "Correo electrónico",
+      "Teléfono",
+      "Dirección (opcional)"
+    ],
+    "nombre": "Bruno Ficticio Solís",
+    "correo": "bruno.ficticio@example.com",
+    "pais": "CR (+506)▾",
+    "telefono": "00000002",
+    "direccion": "Dirección de prueba 2, Heredia",
+    "hayClasificacionOrigenOFecha": false
+  },
+  {
+    "caso": "Nombre vacío, correo sin \".com\" y teléfono de 7 números",
+    "mensajes": [
+      "Ingrese el nombre completo.",
+      "Ingrese un correo electrónico válido.",
+      "El teléfono debe tener 8 dígitos."
+    ]
+  },
+  {
+    "caso": "Correo de Ana Prueba Mora",
+    "mensajes": [
+      "Ya existe un contacto con este correo electrónico. Ver contacto"
+    ]
+  },
+  {
+    "caso": "Teléfono de Ana Prueba Mora",
+    "mensajes": [
+      "Ya existe un contacto con este teléfono. Ver contacto"
+    ],
+    "firestoreSinCambios": {
+      "fullName": "Bruno Ficticio Solís",
+      "nameSortKey": "bruno ficticio solis",
+      "email": "bruno.ficticio@example.com",
+      "phoneCountry": "CR",
+      "phoneNumber": "00000002",
+      "address": "Dirección de prueba 2, Heredia",
+      "classification": "cliente",
+      "origin": "referido",
+      "createdAt": "2026-09-03T16:30:00Z"
+    }
+  },
+  {
+    "caso": "Cancelar con cambios",
+    "pregunta": "¿Desea salir sin guardar? Los cambios se perderán.Seguir editandoSalir sin guardar"
+  },
+  {
+    "caso": "Guardar",
+    "url": "/contactos/contact-002",
+    "mensaje": "Cambios guardados correctamente.",
+    "despues": {
+      "fullName": "Bruno Solís Ficticio",
+      "nameSortKey": "bruno solis ficticio",
+      "email": "bruno.solis@example.com",
+      "phoneCountry": "CR",
+      "phoneNumber": "00000002",
+      "address": "Dirección de prueba 2, Heredia, casa 3",
+      "classification": "cliente",
+      "origin": "referido",
+      "createdAt": "2026-09-03T16:30:00Z"
+    }
+  }
+]

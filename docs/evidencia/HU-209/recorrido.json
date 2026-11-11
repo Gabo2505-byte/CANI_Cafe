@@ -1,0 +1,46 @@
+[
+  {
+    "caso": "Ana Prueba Mora (indicó productos en el formulario)",
+    "pestana": "Productos de interés (4)",
+    "columnas": [
+      "Producto",
+      "Presentación",
+      "Cantidad aproximada"
+    ],
+    "filas": [
+      [
+        "Villa Sarchí",
+        "Bolsa de 340 g, grano entero",
+        "2"
+      ],
+      [
+        "Caturra",
+        "Bolsa de 1 kg, molido",
+        "10"
+      ],
+      [
+        "Geisha",
+        "Bolsa de 250 g, grano entero",
+        "1"
+      ],
+      [
+        "Producto no disponible",
+        "—",
+        "3"
+      ]
+    ],
+    "ultimaActualizacion": "Última actualización: 05/10/2026",
+    "fechaArribaDeLaTabla": true
+  },
+  {
+    "caso": "Elena Muestra Castro (no indicó productos)",
+    "pestana": "Productos de interés (0)",
+    "mensaje": "Este contacto no ha indicado productos de interés.",
+    "hayTabla": false
+  },
+  {
+    "caso": "Bruno Ficticio Solís (tiene oportunidades con productos, sin formulario)",
+    "pestana": "Productos de interés (0)",
+    "mensaje": "Este contacto no ha indicado productos de interés."
+  }
+]

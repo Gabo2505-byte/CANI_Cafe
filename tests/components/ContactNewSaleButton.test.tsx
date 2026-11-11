@@ -23,8 +23,7 @@ vi.mock('../../src/contacts/contactsApi', () => ({
   createContact: vi.fn(),
   getContact: vi.fn(),
   findDuplicateContacts: vi.fn(),
-  countContacts: vi.fn().mockResolvedValue(0),
-  listContactsPage: vi.fn().mockResolvedValue({ contacts: [], nextCursor: null }),
+  listAllContacts: vi.fn().mockResolvedValue([]),
 }));
 // Pantalla a la que se navega al dar clic en el botón (formulario de nueva posible venta).
 vi.mock('../../src/sales/contactSearchApi', () => ({

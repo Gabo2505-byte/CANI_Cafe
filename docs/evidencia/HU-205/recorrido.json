@@ -1,0 +1,112 @@
+[
+  {
+    "caso": "Al abrir Contactos",
+    "buscador": "Buscar por nombre, correo o teléfono",
+    "opcionesClasificacion": [
+      "Todos",
+      "Persona interesada",
+      "Cliente"
+    ],
+    "clasificacionInicial": "Todos",
+    "clasificacionALaDerecha": true,
+    "arribaDeLaTabla": true,
+    "conteo": "Se encontraron 9 contactos.",
+    "filas": [
+      "Ana Prueba Mora",
+      "Bruno Ficticio Solís",
+      "Carla Demo Vargas",
+      "Diego Ejemplo Rojas",
+      "Elena Muestra Castro",
+      "Marco Temporal Díaz",
+      "María Rodríguez",
+      "Mariana Temporal Soto",
+      "Pedro Temporal Mora"
+    ]
+  },
+  {
+    "caso": "Escribir \"mar\" letra por letra",
+    "pasos": [
+      {
+        "escrito": "m",
+        "conteo": "Se encontraron 9 contactos.",
+        "filas": [
+          "Ana Prueba Mora",
+          "Bruno Ficticio Solís",
+          "Carla Demo Vargas",
+          "Diego Ejemplo Rojas",
+          "Elena Muestra Castro",
+          "Marco Temporal Díaz",
+          "María Rodríguez",
+          "Mariana Temporal Soto",
+          "Pedro Temporal Mora"
+        ]
+      },
+      {
+        "escrito": "ma",
+        "conteo": "Se encontraron 3 contactos.",
+        "filas": [
+          "Marco Temporal Díaz",
+          "María Rodríguez",
+          "Mariana Temporal Soto"
+        ]
+      },
+      {
+        "escrito": "mar",
+        "conteo": "Se encontraron 3 contactos.",
+        "filas": [
+          "Marco Temporal Díaz",
+          "María Rodríguez",
+          "Mariana Temporal Soto"
+        ]
+      }
+    ]
+  },
+  {
+    "caso": "Buscar \"8812\"",
+    "conteo": "Se encontró 1 contacto.",
+    "filas": [
+      "Pedro Temporal Mora"
+    ],
+    "telefonos": [
+      "+506 8812-3456"
+    ]
+  },
+  {
+    "caso": "Clasificación \"Cliente\"",
+    "conteo": "Se encontraron 4 contactos.",
+    "filas": [
+      "Bruno Ficticio Solís",
+      "Diego Ejemplo Rojas",
+      "Marco Temporal Díaz",
+      "María Rodríguez"
+    ]
+  },
+  {
+    "caso": "\"mar\" + \"Cliente\"",
+    "conteo": "Se encontraron 2 contactos.",
+    "filas": [
+      "Marco Temporal Díaz",
+      "María Rodríguez"
+    ],
+    "url": "?clasificacion=cliente&buscar=mar"
+  },
+  {
+    "caso": "\"zzz\" + \"Persona interesada\"",
+    "conteo": "No se encontraron contactos.",
+    "hayTabla": false
+  },
+  {
+    "caso": "Abrir la ficha y volver",
+    "url": "?clasificacion=cliente&buscar=mar",
+    "buscador": "mar",
+    "clasificacion": "Cliente",
+    "filas": [
+      "Marco Temporal Díaz",
+      "María Rodríguez"
+    ]
+  },
+  {
+    "caso": "Limpieza",
+    "temporalesQueQuedan": 0
+  }
+]

@@ -1,12 +1,20 @@
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router';
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { Link, NavigationType, useLocation, useNavigate, useNavigationType, useSearchParams } from 'react-router';
 import { contactPath, ROUTES } from '../app/routes';
 import { formatPhone } from '../shared/phone/phone';
 import { CONTACT_CLASSIFICATION_LABELS, type Contact } from '../shared/types';
 import { formatDateCR } from '../shared/utils/dates';
 import { pageIndexFromParam, type FromListState } from './contactDetail';
-import { countContacts, listContactsPage } from './contactsApi';
-import { CONTACTS_PAGE_SIZE, type ContactsCursor } from './contactsRepository';
+import {
+  badgedFirst,
+  CLASSIFICATION_FILTER_OPTIONS,
+  classificationFilterFromParam,
+  CONTACT_SEARCH_LABEL,
+  filterContacts,
+  foundContactsMessage,
+} from './contactSearch';
+import { listAllContacts } from './contactsApi';
+import { CONTACTS_PAGE_SIZE } from './contactsRepository';
 
 export const CONTACTS_LIST_MESSAGES = {
   empty: 'Aún no hay contactos registrados.',
@@ -14,26 +22,53 @@ export const CONTACTS_LIST_MESSAGES = {
   error: 'No se pudieron cargar los contactos. Intente de nuevo.',
 } as const;
 
-type ListState =
-  | { status: 'loading' }
-  | { status: 'error' }
-  | { status: 'ready'; contacts: Contact[]; nextCursor: ContactsCursor | null };
+/** Marca de los cambios de URL que hace la propia lista (página, búsqueda y clasificación). */
+interface ListWriteState {
+  contactsListWrite?: boolean;
+}
+const LIST_WRITE: ListWriteState = { contactsListWrite: true };
 
 /**
- * Pantalla "Contactos". HU-201: botón "Nuevo contacto". HU-204: lista paginada en orden alfabético.
- * HU-207: la página vive en la URL ("?pagina=2"); al abrir una ficha se le pasa esa URL para que
- * "Volver a contactos" regrese a la lista tal como estaba. La búsqueda y los filtros, cuando existan,
- * deben guardarse también en la URL para conservarse de la misma forma.
+ * Pantalla "Contactos". HU-201: botón "Nuevo contacto". HU-204: lista de 20 en 20 en orden alfabético.
+ * HU-205: buscador y lista "Clasificación". HU-504: etiqueta "Nuevo"/"Nuevo mensaje" y esos contactos de primeros.
+ * Todo se arma en el navegador sobre la lista completa (ver la decisión en contactSearch.ts).
+ * HU-207: la página, la búsqueda y la clasificación viven en la URL ("?buscar=mar&clasificacion=cliente&pagina=2");
+ * al abrir una ficha se le pasa esa URL para que "Volver a contactos" regrese a la lista tal como estaba.
  */
 export function ContactsPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const navigationType = useNavigationType();
   const [searchParams, setSearchParams] = useSearchParams();
   const pageIndex = pageIndexFromParam(searchParams.get('pagina'));
-  // cursors[i] = desde dónde empieza la página i (null para la primera).
-  const cursors = useRef<(ContactsCursor | null)[]>([null]);
-  const [total, setTotal] = useState<number | null>(null);
-  const [state, setState] = useState<ListState>({ status: 'loading' });
+  const urlSearch = searchParams.get('buscar') ?? '';
+  const classification = classificationFilterFromParam(searchParams.get('clasificacion'));
+  // HU-205: lo escrito vive aquí y se copia a la URL. React Router cambia la URL como transición: si el campo tomara
+  // su valor de la URL, al escribir rápido se perderían letras ("8812" quedaba "82").
+  const [search, setSearch] = useState(urlSearch);
+  const searchRef = useRef(urlSearch);
+  const [contacts, setContacts] = useState<Contact[] | 'loading' | 'error'>('loading');
+
+  useEffect(() => {
+    let cancelled = false;
+    listAllContacts()
+      .then((all) => !cancelled && setContacts(all))
+      .catch(() => !cancelled && setContacts('error'));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Si la URL cambió por otro lado (menú "Contactos", "Atrás", "Volver a contactos"), el buscador la toma.
+  // Los cambios que hace esta pantalla (REPLACE con LIST_WRITE en el state) no se vuelven a leer. "Atrás" y
+  // "Adelante" (POP) siempre se leen, aunque el historial traiga ese mismo state.
+  useEffect(() => {
+    const ownWrite = (location.state as ListWriteState | null)?.contactsListWrite;
+    if (ownWrite && navigationType === NavigationType.Replace) return;
+    searchRef.current = urlSearch;
+    setSearch(urlSearch);
+    // Solo al cambiar de ubicación: location.state y urlSearch son de esa misma ubicación.
+  }, [location.key]);
 
   const goToPage = useCallback(
     (index: number) => {
@@ -44,54 +79,58 @@ export function ContactsPage() {
           else next.set('pagina', String(index + 1));
           return next;
         },
-        { replace: true },
+        { replace: true, state: LIST_WRITE },
       );
     },
     [setSearchParams],
   );
 
-  useEffect(() => {
-    let cancelled = false;
-    countContacts()
-      .then((count) => !cancelled && setTotal(count))
-      .catch(() => !cancelled && setState({ status: 'error' }));
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  /** HU-205: guarda la búsqueda y la clasificación en la URL y vuelve a la primera página. */
+  const writeFilters = useCallback(
+    (nextSearch: string, nextClassification: string) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (nextSearch === '') next.delete('buscar');
+          else next.set('buscar', nextSearch);
+          if (nextClassification === 'todos') next.delete('clasificacion');
+          else next.set('clasificacion', nextClassification);
+          next.delete('pagina');
+          return next;
+        },
+        { replace: true, state: LIST_WRITE },
+      );
+    },
+    [setSearchParams],
+  );
 
+  const onSearchChange = (value: string) => {
+    searchRef.current = value;
+    setSearch(value);
+    writeFilters(value, classification);
+  };
+
+  // Usa searchRef: la URL puede ir atrasada respecto de lo último que se escribió.
+  const onClassificationChange = (value: string) => writeFilters(searchRef.current, value);
+
+  // HU-205: búsqueda y clasificación; HU-504: con etiqueta, primero.
+  const found = useMemo(
+    () => (Array.isArray(contacts) ? badgedFirst(filterContacts(contacts, search, classification)) : []),
+    [contacts, search, classification],
+  );
+  const totalPages = Math.max(1, Math.ceil(found.length / CONTACTS_PAGE_SIZE));
+  const shownPage = Math.min(pageIndex, totalPages - 1);
+  const pageContacts = found.slice(shownPage * CONTACTS_PAGE_SIZE, (shownPage + 1) * CONTACTS_PAGE_SIZE);
+
+  // Si se pidió una página que ya no existe (recarga, búsqueda con menos resultados), se pasa a la última.
+  const ready = Array.isArray(contacts);
   useEffect(() => {
-    let cancelled = false;
-    setState({ status: 'loading' });
-    (async () => {
-      const known = cursors.current;
-      // Página más cercana (sin pasarse) cuyo inicio ya se conoce. Al volver a "?pagina=3" sin
-      // cursores (recarga, enlace directo) se recorren las páginas anteriores desde la primera.
-      let index = pageIndex;
-      while (index > 0 && known[index] === undefined) index -= 1;
-      let page = await listContactsPage(known[index] ?? null);
-      while (index < pageIndex && page.nextCursor) {
-        index += 1;
-        known[index] = page.nextCursor;
-        page = await listContactsPage(page.nextCursor);
-      }
-      if (cancelled) return;
-      if (page.nextCursor) known[index + 1] = page.nextCursor;
-      if (index !== pageIndex) {
-        // Se pidió una página que ya no existe: se queda en la última.
-        goToPage(index);
-        return;
-      }
-      setState({ status: 'ready', contacts: page.contacts, nextCursor: page.nextCursor });
-    })().catch(() => !cancelled && setState({ status: 'error' }));
-    return () => {
-      cancelled = true;
-    };
-  }, [pageIndex, goToPage]);
+    if (ready && pageIndex > totalPages - 1) goToPage(totalPages - 1);
+  }, [ready, pageIndex, totalPages, goToPage]);
 
   const fromList = { from: location.pathname + location.search };
-  const totalPages = Math.max(1, Math.ceil((total ?? 0) / CONTACTS_PAGE_SIZE));
-  const isEmpty = state.status === 'ready' && state.contacts.length === 0 && pageIndex === 0;
+  // HU-204: sin ningún contacto registrado se mantiene "Aún no hay contactos registrados.".
+  const isEmpty = ready && contacts.length === 0;
 
   return (
     <main className="page">
@@ -102,15 +141,46 @@ export function ContactsPage() {
         </button>
       </div>
 
-      {state.status === 'loading' && <p>{CONTACTS_LIST_MESSAGES.loading}</p>}
-      {state.status === 'error' && (
+      <div className="list-toolbar">
+        <input
+          type="search"
+          className="list-search"
+          aria-label={CONTACT_SEARCH_LABEL}
+          placeholder={CONTACT_SEARCH_LABEL}
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
+          autoComplete="off"
+        />
+        <div className="list-filter">
+          <label htmlFor="contacts-classification">Clasificación</label>
+          <select
+            id="contacts-classification"
+            value={classification}
+            onChange={(e) => onClassificationChange(e.target.value)}
+          >
+            {CLASSIFICATION_FILTER_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* HU-205: cuántos se encontraron; se anuncia al cambiar mientras se escribe. */}
+      <p className="list-count" role="status">
+        {ready && !isEmpty ? foundContactsMessage(found.length) : ''}
+      </p>
+
+      {contacts === 'loading' && <p>{CONTACTS_LIST_MESSAGES.loading}</p>}
+      {contacts === 'error' && (
         <p className="field-error" role="alert">
           {CONTACTS_LIST_MESSAGES.error}
         </p>
       )}
       {isEmpty && <p className="empty-state">{CONTACTS_LIST_MESSAGES.empty}</p>}
 
-      {state.status === 'ready' && !isEmpty && (
+      {ready && found.length > 0 && (
         <>
           <div className="table-wrapper">
             <table className="data-table">
@@ -124,7 +194,7 @@ export function ContactsPage() {
                 </tr>
               </thead>
               <tbody>
-                {state.contacts.map((contact) => (
+                {pageContacts.map((contact) => (
                   <ContactRow
                     key={contact.id}
                     contact={contact}
@@ -140,19 +210,19 @@ export function ContactsPage() {
             <button
               type="button"
               className="button-secondary"
-              onClick={() => goToPage(pageIndex - 1)}
-              disabled={pageIndex === 0}
+              onClick={() => goToPage(shownPage - 1)}
+              disabled={shownPage === 0}
             >
               Anterior
             </button>
             <span aria-live="polite">
-              Página {pageIndex + 1} de {totalPages}
+              Página {shownPage + 1} de {totalPages}
             </span>
             <button
               type="button"
               className="button-secondary"
-              onClick={() => goToPage(pageIndex + 1)}
-              disabled={!state.nextCursor}
+              onClick={() => goToPage(shownPage + 1)}
+              disabled={shownPage >= totalPages - 1}
             >
               Siguiente
             </button>
@@ -163,7 +233,10 @@ export function ContactsPage() {
   );
 }
 
-/** Fila clickeable: clic (o Enter) en cualquier parte abre la ficha. El nombre también es un enlace. */
+/**
+ * Fila clickeable: clic (o Enter) en cualquier parte abre la ficha. El nombre también es un enlace.
+ * HU-504: junto al nombre, la etiqueta verde del formulario mientras no se abra la ficha.
+ */
 function ContactRow({ contact, fromList, onOpen }: { contact: Contact; fromList: FromListState; onOpen: () => void }) {
   const phone = contact.phoneNumber ? formatPhone(contact.phoneCountry ?? 'CR', contact.phoneNumber) : null;
   const onKeyDown = (event: KeyboardEvent) => {
@@ -175,6 +248,7 @@ function ContactRow({ contact, fromList, onOpen }: { contact: Contact; fromList:
         <Link to={contactPath(contact.id)} state={fromList} onClick={(e) => e.stopPropagation()}>
           {contact.fullName}
         </Link>
+        {contact.formBadge && <span className="form-badge">{contact.formBadge}</span>}
       </td>
       <td>{contact.email ?? '—'}</td>
       <td className="nowrap">{phone ?? '—'}</td>

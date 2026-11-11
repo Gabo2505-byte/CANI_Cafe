@@ -43,6 +43,19 @@ export function formatDateNumericCR(value: DateInput): string {
   return `${day}/${month}/${year}`;
 }
 
+const timeFormat = new Intl.DateTimeFormat(CR_LOCALE, {
+  timeZone: CR_TIME_ZONE,
+  hour: 'numeric',
+  minute: '2-digit',
+  hour12: true,
+});
+
+/** HU-502: "05/10/2026 6:20 p. m." (fecha y hora en Costa Rica). Los espacios del navegador se cambian por normales. */
+export function formatDateNumericTimeCR(value: DateInput): string {
+  const time = timeFormat.format(toJsDate(value)).replace(/\s/g, ' ');
+  return `${formatDateNumericCR(value)} ${time}`;
+}
+
 /** Día calendario en Costa Rica como "YYYY-MM-DD" (útil para comparar "hoy", vencidos, etc.). */
 export function toCostaRicaDateKey(value: DateInput): string {
   const parts = dateKeyFormat.formatToParts(toJsDate(value));

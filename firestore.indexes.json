@@ -65,6 +65,14 @@
         { "fieldPath": "saleId", "order": "ASCENDING" },
         { "fieldPath": "changedAt", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "formRequests",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "processed", "order": "ASCENDING" },
+        { "fieldPath": "submittedAt", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

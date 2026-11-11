@@ -1,4 +1,5 @@
 // HU-207: lógica pura de la ficha del contacto (sin Firestore ni React; se prueba con Vitest).
+import type { Timestamp } from 'firebase/firestore';
 import { ROUTES } from '../app/routes';
 import type { CommunicationsCursor } from '../communications/communicationsRepository';
 import { formatPhone } from '../shared/phone/phone';
@@ -6,15 +7,14 @@ import {
   CONTACT_ORIGIN_LABELS,
   type Communication,
   type Contact,
+  type ContactInterest,
   type Product,
   type Sale,
-  type SaleProduct,
   SALE_STAGE_LABELS,
   isOpenSaleStage,
 } from '../shared/types';
-import { formatDateCR, formatDateNumericCR } from '../shared/utils/dates';
+import { formatDateCR, formatDateNumericCR, formatDateNumericTimeCR } from '../shared/utils/dates';
 import { formatColones } from '../shared/utils/money';
-import { toSortKey } from '../shared/utils/text';
 
 export const CONTACT_DETAIL_MESSAGES = {
   back: '← Volver a contactos',
@@ -31,8 +31,17 @@ export const CONTACT_DETAIL_MESSAGES = {
   noSales: 'Este contacto no tiene oportunidades de venta.',
   noFollowUp: 'Sin seguimiento programado',
   noCommunication: 'Sin comunicaciones',
-  noProducts: 'Sin productos de interés.',
+  /** HU-209: texto literal del criterio. */
+  noProducts: 'Este contacto no ha indicado productos de interés.',
 } as const;
+
+/** HU-209: columnas de la tabla de la pestaña "Productos de interés". */
+export const INTEREST_PRODUCTS_COLUMNS = ['Producto', 'Presentación', 'Cantidad aproximada'] as const;
+
+/** HU-209: "Última actualización: 05/10/2026" (fecha del último formulario, en Costa Rica). */
+export function interestsUpdatedLabel(updatedAt: Parameters<typeof formatDateNumericCR>[0]): string {
+  return `Última actualización: ${formatDateNumericCR(updatedAt)}`;
+}
 
 /** Las tres pestañas, en orden. La primera es la que se ve al abrir la ficha. */
 export const CONTACT_TABS = [
@@ -47,11 +56,12 @@ export function tabLabel(label: string, count: number | null): string {
   return count === null ? label : `${label} (${count})`;
 }
 
-/** Producto de interés: un producto que aparece en alguna posible venta del contacto. */
+/** HU-209: producto de interés que la persona indicó en el formulario, listo para mostrar. */
 export interface InterestProduct {
   productId: string;
   name: string;
   presentation: string;
+  quantity: number;
 }
 
 /** Lo que muestran las pestañas. */
@@ -65,7 +75,10 @@ export interface ContactRecords {
   /** HU-213: nombre de usuario de quien registró cada comunicación (users.id → username). */
   userNames?: Record<string, string>;
   sales: Sale[];
+  /** HU-209: productos del último formulario del contacto. */
   products: InterestProduct[];
+  /** HU-209: fecha del último formulario; null o sin indicar si nunca lo envió. */
+  productsUpdatedAt?: Timestamp | null;
 }
 
 /** Estado de la lista de contactos que viaja a la ficha para volver "tal como estaba". */
@@ -104,30 +117,31 @@ export function contactDataRows(contact: Contact): [string, string][] {
   return rows.map(([label, value]) => [label, value ?? CONTACT_DETAIL_MESSAGES.missing]);
 }
 
-/** Nombre que se muestra si un producto de una venta ya no está en el catálogo. */
+/** Nombre que se muestra si un producto ya no está en el catálogo. */
 const UNKNOWN_PRODUCT = { name: 'Producto no disponible', presentation: '—' } as const;
 
 /**
- * Productos de interés: los productos distintos que aparecen en las posibles ventas del contacto
- * (cualquier etapa), ordenados por nombre y presentación.
+ * HU-209: productos de interés del contacto, tal como los indicó en su último formulario (`interests`), en el mismo
+ * orden (el del catálogo al enviar) y con su cantidad aproximada. El nombre y la presentación se toman del catálogo
+ * actual; un producto inactivo se muestra igual, y uno que ya no existe aparece como "Producto no disponible".
+ * Si un producto viniera repetido, se muestra una sola vez (el procesador del formulario ya lo impide).
  */
-export function interestProducts(saleProducts: SaleProduct[], catalog: Product[]): InterestProduct[] {
+export function interestProducts(interests: readonly ContactInterest[], catalog: readonly Product[]): InterestProduct[] {
   const byId = new Map(catalog.map((product) => [product.id, product]));
-  const unique = new Map<string, InterestProduct>();
-  for (const { productId } of saleProducts) {
-    if (unique.has(productId)) continue;
+  const seen = new Set<string>();
+  const rows: InterestProduct[] = [];
+  for (const { productId, quantity } of interests) {
+    if (seen.has(productId)) continue;
+    seen.add(productId);
     const product = byId.get(productId);
-    unique.set(productId, {
+    rows.push({
       productId,
       name: product?.name ?? UNKNOWN_PRODUCT.name,
       presentation: product?.presentation ?? UNKNOWN_PRODUCT.presentation,
+      quantity,
     });
   }
-  return [...unique.values()].sort(
-    (a, b) =>
-      toSortKey(a.name).localeCompare(toSortKey(b.name), 'es') ||
-      toSortKey(a.presentation).localeCompare(toSortKey(b.presentation), 'es'),
-  );
+  return rows;
 }
 
 const millis = (value: { toMillis(): number } | null | undefined) => value?.toMillis() ?? 0;
@@ -162,6 +176,16 @@ export function openSaleOptions(sales: Sale[]): { id: string; title: string }[] 
 export function communicationSaleLabel(communication: Pick<Communication, 'saleId' | 'appliesToAllSales'>, sales: Sale[]): string | null {
   if (communication.saleId) return sales.find((sale) => sale.id === communication.saleId)?.title ?? '—';
   return communication.appliesToAllSales ? 'Todas sus oportunidades de venta' : null;
+}
+
+/**
+ * Fecha de una comunicación en el historial: "05/10/2026" (HU-211, solo el día). Las del formulario web llevan además
+ * la hora del envío, "05/10/2026 6:20 p. m.", porque HU-502 pide "fecha y hora del envío".
+ */
+export function communicationDateLabel(communication: Pick<Communication, 'date' | 'source'>): string {
+  return communication.source === 'formulario_web'
+    ? formatDateNumericTimeCR(communication.date)
+    : formatDateNumericCR(communication.date);
 }
 
 /** HU-213: "Registrado por: …": el usuario, o "Sistema (formulario web)" si llegó del sitio web. */

@@ -182,7 +182,7 @@ export class SaleReopenDuplicateTitleError extends Error {
  * Todo en una sola transacción: actualiza `sales.stage` y `sales.stageChangedAt`, agrega un registro a
  * `stageHistory` con su fecha (y el motivo si fue a "Venta perdida"; los anteriores no se tocan) y, si ganó, cambia
  * `contacts.classification`. Esa es la única escritura sobre `contacts` (acordada con Gabriel): solo ese campo y solo
- * de "Persona interesada" a "Cliente"; quien ya es cliente (o es distribuidor u otro) no se modifica.
+ * de "Persona interesada" a "Cliente"; quien ya es cliente no se modifica.
  * HU-312: una "Venta perdida" se reabre pasándola a una de las cuatro etapas abiertas; el registro nuevo no lleva
  * motivo y los registros de pérdidas anteriores quedan. Si el contacto ya tiene otra posible venta abierta con el mismo
  * título, no escribe nada y lanza SaleReopenDuplicateTitleError.

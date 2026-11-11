@@ -1,7 +1,6 @@
 import type { App } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
-import { getFirestore } from 'firebase-admin/firestore';
-import { usernameToAuthEmail } from '../../src/auth/username';
+import { getFirestore, type DocumentData } from 'firebase-admin/firestore';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
 import { toSortKey } from '../../src/shared/utils/text';
 import {
@@ -12,6 +11,7 @@ import {
   seedSaleProducts,
   seedSales,
   seedStageHistory,
+  seedUsernames,
   seedUsers,
   type Seeded,
 } from './seedData';
@@ -38,9 +38,8 @@ export function assertEmulatorTarget(projectId: string): void {
 
 async function ensureAdminAuthUser(app: App, password: string): Promise<void> {
   const auth = getAuth(app);
-  // En Auth se ingresa con el usuario; ver src/auth/username.ts
-  const email = usernameToAuthEmail(SEED_ADMIN.username);
-  const profile = { email, password, displayName: SEED_ADMIN.username, emailVerified: true };
+  // La cuenta de Auth usa el correo real; el índice `usernames` traduce el usuario (ver src/auth/username.ts).
+  const profile = { email: SEED_ADMIN.email, password, displayName: SEED_ADMIN.username, emailVerified: true };
   try {
     await auth.getUser(SEED_ADMIN.uid);
     await auth.updateUser(SEED_ADMIN.uid, profile);
@@ -63,10 +62,11 @@ export async function runSeed(app: App, options: { adminPassword: string }): Pro
   const db = getFirestore(app);
   const batch = db.batch();
   const put = <T extends { id: string }>(collection: string, docs: Seeded<T>[]) => {
-    for (const { id, data } of docs) batch.set(db.collection(collection).doc(id), data);
+    for (const { id, data } of docs) batch.set(db.collection(collection).doc(id), data as DocumentData);
   };
 
   put(COLLECTIONS.users, seedUsers);
+  put(COLLECTIONS.usernames, seedUsernames);
   put(COLLECTIONS.contacts, seedContacts);
   put(COLLECTIONS.products, seedProducts);
   put(COLLECTIONS.sales, seedSales);

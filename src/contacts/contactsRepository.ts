@@ -3,20 +3,20 @@ import {
   addDoc,
   collection,
   doc,
-  getCountFromServer,
   getDoc,
   getDocs,
   limit,
+  onSnapshot,
   orderBy,
   query,
   serverTimestamp,
-  startAfter,
+  updateDoc,
   where,
-  type DocumentSnapshot,
   type Firestore,
+  type Unsubscribe,
 } from 'firebase/firestore';
 import { COLLECTIONS } from '../shared/constants/collections';
-import type { Contact } from '../shared/types';
+import { FORM_BADGES, type Contact } from '../shared/types';
 import { toSortKey } from '../shared/utils/text';
 
 /** Datos que vienen del formulario. Clasificación, estado, origen y fecha los pone el sistema. */
@@ -35,6 +35,22 @@ export async function createContactIn(db: Firestore, input: NewContactInput): Pr
   return ref.id;
 }
 
+/**
+ * HU-210: guarda los datos editados del contacto (nombre, correo, teléfono con país y dirección) y recalcula
+ * nameSortKey (HU-204). Clasificación, origen, fecha de registro, estado y los campos del formulario
+ * (interests, interestsUpdatedAt) no se tocan: updateDoc solo cambia los campos que recibe.
+ */
+export async function updateContactIn(db: Firestore, id: string, input: NewContactInput): Promise<void> {
+  await updateDoc(doc(db, COLLECTIONS.contacts, id), {
+    fullName: input.fullName,
+    nameSortKey: toSortKey(input.fullName),
+    email: input.email,
+    phoneCountry: input.phoneCountry,
+    phoneNumber: input.phoneNumber,
+    address: input.address,
+  });
+}
+
 export async function getContactIn(db: Firestore, id: string): Promise<Contact | null> {
   const snap = await getDoc(doc(db, COLLECTIONS.contacts, id));
   return snap.exists() ? ({ id: snap.id, ...snap.data() } as Contact) : null;
@@ -43,37 +59,31 @@ export async function getContactIn(db: Firestore, id: string): Promise<Contact |
 /** HU-204: contactos por página. */
 export const CONTACTS_PAGE_SIZE = 20;
 
-/** Cursor opaco: el último contacto de la página anterior. */
-export type ContactsCursor = DocumentSnapshot;
-
-export interface ContactsPage {
-  contacts: Contact[];
-  /** Para pedir la página siguiente; null si no hay más. */
-  nextCursor: ContactsCursor | null;
+/**
+ * HU-204, HU-205 y HU-504: todos los contactos (activos e inactivos) en orden alfabético (nameSortKey). La lista los
+ * ordena (con etiqueta primero), busca, filtra y pagina en el navegador: ver la decisión en contactSearch.ts.
+ */
+export async function listAllContactsIn(db: Firestore): Promise<Contact[]> {
+  const snap = await getDocs(query(collection(db, COLLECTIONS.contacts), orderBy('nameSortKey')));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Contact);
 }
 
 /**
- * HU-204: una página de contactos en orden alfabético por nombre (nameSortKey; en empate, por id).
- * La consulta trae solo `pageSize` documentos (+1 para saber si hay otra página).
+ * HU-504: cuántos contactos tienen etiqueta ("Nuevo" o "Nuevo mensaje"), en vivo: cambia cuando el procesamiento del
+ * formulario pone una etiqueta o cuando se abre una ficha y se quita.
  */
-export async function listContactsPageIn(
+export function listenFormBadgeCountIn(
   db: Firestore,
-  after: ContactsCursor | null,
-  pageSize: number = CONTACTS_PAGE_SIZE,
-): Promise<ContactsPage> {
-  const constraints = [orderBy('nameSortKey'), ...(after ? [startAfter(after)] : []), limit(pageSize + 1)];
-  const snap = await getDocs(query(collection(db, COLLECTIONS.contacts), ...constraints));
-  const docs = snap.docs.slice(0, pageSize);
-  return {
-    contacts: docs.map((d) => ({ id: d.id, ...d.data() }) as Contact),
-    nextCursor: snap.docs.length > pageSize ? docs[docs.length - 1] : null,
-  };
+  onCount: (count: number) => void,
+  onError: (error: unknown) => void = () => {},
+): Unsubscribe {
+  const badged = query(collection(db, COLLECTIONS.contacts), where('formBadge', 'in', [...FORM_BADGES]));
+  return onSnapshot(badged, (snap) => onCount(snap.size), onError);
 }
 
-/** HU-204: total de contactos (conteo en el servidor, sin descargar los documentos). */
-export async function countContactsIn(db: Firestore): Promise<number> {
-  const snap = await getCountFromServer(collection(db, COLLECTIONS.contacts));
-  return snap.data().count;
+/** HU-504: al abrir la ficha, la etiqueta desaparece. */
+export async function clearFormBadgeIn(db: Firestore, id: string): Promise<void> {
+  await updateDoc(doc(db, COLLECTIONS.contacts, id), { formBadge: null });
 }
 
 /** id del primer contacto que cumple los filtros, sin contar `excludeId` (al editar, el propio contacto). */

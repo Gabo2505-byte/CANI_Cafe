@@ -1,5 +1,6 @@
 // HU-201 / HU-202 / HU-203: datos y reglas del formulario de contacto (funciones puras, sin Firebase).
 import { DEFAULT_PHONE_COUNTRY, normalizePhoneDigits, validatePhoneNumber } from '../shared/phone/phone';
+import type { Contact } from '../shared/types';
 import type { NewContactInput } from './contactsRepository';
 
 export { normalizePhoneDigits as normalizePhone };
@@ -23,6 +24,12 @@ export const CONTACT_MESSAGES = {
   addressTooLong: `La dirección acepta como máximo ${CONTACT_LIMITS.address} caracteres.`,
   /** Aviso informativo del contador (no es un error: el dato es válido). */
   atLimit: (max: number) => `Llegó al máximo de ${max} caracteres.`,
+  // HU-210 (textos literales de los criterios)
+  edited: 'Cambios guardados correctamente.',
+  editLeaveConfirm: '¿Desea salir sin guardar? Los cambios se perderán.',
+  // HU-210 (textos no definidos en la HU)
+  editTitle: 'Editar contacto',
+  editSaveError: 'No se pudieron guardar los cambios. Intente de nuevo.',
 } as const;
 
 export interface ContactFormValues {
@@ -116,4 +123,28 @@ export function toNewContactInput(values: ContactFormValues): NewContactInput {
     phoneNumber: phone || null,
     address: address || null,
   };
+}
+
+/** HU-210: el formulario de edición empieza con los datos actuales del contacto. */
+export function contactToFormValues(
+  contact: Pick<Contact, 'fullName' | 'email' | 'phoneCountry' | 'phoneNumber' | 'address'>,
+): ContactFormValues {
+  return {
+    fullName: contact.fullName,
+    email: contact.email ?? '',
+    phoneCountry: contact.phoneCountry ?? DEFAULT_PHONE_COUNTRY,
+    phone: contact.phoneNumber ?? '',
+    address: contact.address ?? '',
+  };
+}
+
+/**
+ * HU-210: ¿se cambió algo respecto de los datos actuales? Se compara lo que se guardaría (sin espacios alrededor,
+ * correo en minúsculas, teléfono solo con dígitos): agregar un espacio al final no cuenta como cambio. Cambiar el país
+ * cuenta solo si hay teléfono.
+ */
+export function isContactEditDirty(values: ContactFormValues, initial: ContactFormValues): boolean {
+  const now = toNewContactInput(values);
+  const before = toNewContactInput(initial);
+  return (Object.keys(now) as (keyof typeof now)[]).some((key) => now[key] !== before[key]);
 }

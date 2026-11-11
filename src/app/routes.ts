@@ -3,16 +3,25 @@ export const ROUTES = {
   contacts: '/contactos',
   newContact: '/contactos/nuevo',
   contactDetail: '/contactos/:contactId',
+  /** HU-210: formulario para editar el contacto. */
+  editContact: '/contactos/:contactId/editar',
   salesBoard: '/posibles-ventas',
   newSale: '/posibles-ventas/nueva',
   saleDetail: '/posibles-ventas/:saleId',
   alerts: '/avisos',
   forgotPassword: '/recuperar-contrasena',
+  /** HU-107 y HU-108: adonde lleva el botón del correo (acción personalizada de Firebase Auth). */
+  resetPassword: '/nueva-contrasena',
 } as const;
 
 /** Ruta de la ficha de un contacto. */
 export function contactPath(contactId: string): string {
   return `${ROUTES.contacts}/${encodeURIComponent(contactId)}`;
+}
+
+/** HU-210: formulario para editar un contacto. */
+export function editContactPath(contactId: string): string {
+  return `${contactPath(contactId)}/editar`;
 }
 
 /** Formulario de nueva posible venta; con contactId (desde la ficha) el contacto viene elegido. */

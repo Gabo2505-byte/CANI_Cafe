@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-// HU-207: Consultar la ficha de un contacto
-import { cleanup, render, screen, within } from '@testing-library/react';
+// HU-207: Consultar la ficha de un contacto. HU-209: pestaña "Productos de interés".
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { User as FirebaseUser } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
@@ -12,8 +12,7 @@ import { SessionProvider } from '../../src/auth/SessionContext';
 import type { AuthState } from '../../src/auth/useAuthUser';
 import type { ContactRecords } from '../../src/contacts/contactDetail';
 import { loadContactRecords } from '../../src/contacts/contactDetailApi';
-import { countContacts, getContact, listContactsPage } from '../../src/contacts/contactsApi';
-import type { ContactsCursor } from '../../src/contacts/contactsRepository';
+import { getContact, listAllContacts } from '../../src/contacts/contactsApi';
 import type { Communication, Contact, Sale } from '../../src/shared/types';
 
 vi.mock('../../src/auth/signInWithUsername', () => ({ signInWithUsername: vi.fn() }));
@@ -23,8 +22,7 @@ vi.mock('../../src/contacts/contactsApi', () => ({
   createContact: vi.fn(),
   getContact: vi.fn(),
   findDuplicateContacts: vi.fn(),
-  countContacts: vi.fn(),
-  listContactsPage: vi.fn(),
+  listAllContacts: vi.fn(),
 }));
 // Pantalla a la que se navega desde la pestaña "Oportunidades de venta".
 vi.mock('../../src/sales/saleDetailApi', () => ({ loadSaleDetail: vi.fn().mockResolvedValue(null) }));
@@ -112,22 +110,17 @@ const records = (overrides: Partial<ContactRecords> = {}): ContactRecords => ({
   ],
   sales: [sale('sale-003', 'Pedido de temporada navideña'), sale('sale-001', 'Café en grano para cafetería'), sale('sale-005', 'Pedido antiguo')],
   products: [
-    { productId: 'product-002', name: 'Café en grano', presentation: 'Bolsa de 1 kg' },
-    { productId: 'product-001', name: 'Café en grano', presentation: 'Bolsa de 340 g' },
-    { productId: 'product-004', name: 'Café molido', presentation: 'Bolsa de 1 kg' },
-    { productId: 'product-003', name: 'Café molido', presentation: 'Bolsa de 340 g' },
+    { productId: 'product-002', name: 'Café en grano', presentation: 'Bolsa de 1 kg', quantity: 2 },
+    { productId: 'product-001', name: 'Café en grano', presentation: 'Bolsa de 340 g', quantity: 5 },
+    { productId: 'product-004', name: 'Café molido', presentation: 'Bolsa de 1 kg', quantity: 1 },
+    { productId: 'product-003', name: 'Café molido', presentation: 'Bolsa de 340 g', quantity: 12 },
   ],
   ...overrides,
 });
 
-/** Simula Firestore: contactos ya ordenados, páginas de 20 con cursor = índice de inicio. */
+/** Simula Firestore: todos los contactos, ya en orden alfabético. */
 function serveContacts(all: Contact[]) {
-  vi.mocked(countContacts).mockResolvedValue(all.length);
-  vi.mocked(listContactsPage).mockImplementation(async (after) => {
-    const start = (after as unknown as number | null) ?? 0;
-    const next = start + 20 < all.length ? start + 20 : null;
-    return { contacts: all.slice(start, start + 20), nextCursor: next as unknown as ContactsCursor | null };
-  });
+  vi.mocked(listAllContacts).mockResolvedValue(all);
 }
 
 const bodyRows = () => within(screen.getAllByRole('rowgroup')[1]).getAllByRole('row');
@@ -137,8 +130,7 @@ const dataValue = (label: string) => within(dataBox()).getByText(label).nextElem
 beforeEach(() => {
   vi.mocked(getContact).mockReset().mockResolvedValue(makeContact());
   vi.mocked(loadContactRecords).mockReset().mockResolvedValue(records());
-  vi.mocked(countContacts).mockReset();
-  vi.mocked(listContactsPage).mockReset();
+  vi.mocked(listAllContacts).mockReset();
 });
 afterEach(cleanup);
 
@@ -189,14 +181,15 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
 
   it('criterio 2: conserva la búsqueda y los filtros que estén en la URL de la lista', async () => {
     const user = userEvent.setup();
-    serveContacts([listContact(1)]);
-    vi.mocked(getContact).mockResolvedValue(listContact(1));
-    renderAt('/contactos?q=contacto&clasificacion=cliente');
+    const client = { ...listContact(1), classification: 'cliente' as const };
+    serveContacts([client]);
+    vi.mocked(getContact).mockResolvedValue(client);
+    renderAt('/contactos?buscar=contacto&clasificacion=cliente');
     await screen.findByRole('table');
     await user.click(screen.getByRole('link', { name: 'Contacto 01' }));
     await screen.findByRole('heading', { level: 1, name: 'Contacto 01' });
     expect(screen.getByRole('link', { name: '← Volver a contactos' }).getAttribute('href')).toBe(
-      '/contactos?q=contacto&clasificacion=cliente',
+      '/contactos?buscar=contacto&clasificacion=cliente',
     );
   });
 
@@ -217,7 +210,7 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
     serveContacts(Array.from({ length: 25 }, (_, i) => listContact(i + 1)));
     renderAt('/contactos?pagina=9');
     expect(await screen.findByText('Página 2 de 2')).toBeTruthy();
-    expect(currentLocation.search).toBe('?pagina=2');
+    await waitFor(() => expect(currentLocation.search).toBe('?pagina=2'));
   });
 
   it('criterio 3: el nombre es el título y a su lado la clasificación "Cliente" en verde', async () => {
@@ -293,7 +286,8 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
     );
 
     await user.click(screen.getByRole('tab', { name: 'Productos de interés (4)' }));
-    expect(within(screen.getByRole('tabpanel')).getByText('Café molido · Bolsa de 340 g')).toBeTruthy();
+    const lastRow = within(screen.getByRole('tabpanel')).getAllByRole('row').at(-1)!;
+    expect([...lastRow.children].map((cell) => cell.textContent)).toEqual(['Café molido', 'Bolsa de 340 g', '12']);
   });
 
   it('las pestañas se recorren con las flechas del teclado', async () => {
@@ -316,7 +310,7 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
     await user.click(screen.getByRole('tab', { name: 'Oportunidades de venta (0)' }));
     expect(screen.getByText('Este contacto no tiene oportunidades de venta.')).toBeTruthy();
     await user.click(screen.getByRole('tab', { name: 'Productos de interés (0)' }));
-    expect(screen.getByText('Sin productos de interés.')).toBeTruthy();
+    expect(screen.getByText('Este contacto no ha indicado productos de interés.')).toBeTruthy(); // HU-209
   });
 
   it('si fallan los registros, la ficha se ve igual y las pestañas avisan del error', async () => {
@@ -333,5 +327,63 @@ describe('HU-207 Consultar la ficha de un contacto', () => {
     expect(await screen.findByText('El contacto no existe.')).toBeTruthy();
     expect(screen.getByRole('link', { name: '← Volver a contactos' })).toBeTruthy();
     expect(screen.queryByRole('tablist')).toBeNull();
+  });
+});
+
+describe('HU-209 Ver los productos de interés de un contacto', () => {
+  async function openProducts(overrides: Partial<ContactRecords>) {
+    const user = userEvent.setup();
+    vi.mocked(loadContactRecords).mockResolvedValue(records(overrides));
+    renderAt('/contactos/contact-002');
+    await user.click(await screen.findByRole('tab', { name: /^Productos de interés/ }));
+    return screen.getByRole('tabpanel');
+  }
+
+  it('criterio 1: tabla con producto, presentación y cantidad aproximada', async () => {
+    const panel = await openProducts({ productsUpdatedAt: at('2026-10-05T18:20:00Z') });
+    const table = within(panel).getByRole('table');
+    expect(within(table).getAllByRole('columnheader').map((th) => th.textContent)).toEqual([
+      'Producto',
+      'Presentación',
+      'Cantidad aproximada',
+    ]);
+    const rows = within(table).getAllByRole('row').slice(1);
+    expect(rows.map((row) => [...row.children].map((cell) => cell.textContent))).toEqual([
+      ['Café en grano', 'Bolsa de 1 kg', '2'],
+      ['Café en grano', 'Bolsa de 340 g', '5'],
+      ['Café molido', 'Bolsa de 1 kg', '1'],
+      ['Café molido', 'Bolsa de 340 g', '12'],
+    ]);
+  });
+
+  it('criterio 2: arriba de la tabla, "Última actualización: 05/10/2026" (fecha del último formulario)', async () => {
+    const panel = await openProducts({ productsUpdatedAt: at('2026-10-05T18:20:00Z') });
+    const updated = within(panel).getByText('Última actualización: 05/10/2026');
+    expect(updated.compareDocumentPosition(within(panel).getByRole('table')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('criterio 2: la fecha es la de Costa Rica (11:30 p. m. del 5 de octubre sigue siendo 05/10/2026)', async () => {
+    const panel = await openProducts({ productsUpdatedAt: at('2026-10-06T05:30:00Z') });
+    expect(within(panel).getByText('Última actualización: 05/10/2026')).toBeTruthy();
+  });
+
+  it('sin fecha de formulario (por ejemplo, datos de la carga inicial) se muestra la tabla sin esa línea', async () => {
+    const panel = await openProducts({ productsUpdatedAt: null });
+    expect(within(panel).getByRole('table')).toBeTruthy();
+    expect(within(panel).queryByText(/^Última actualización/)).toBeNull();
+  });
+
+  it('criterio 3: sin productos, "Este contacto no ha indicado productos de interés." y sin tabla', async () => {
+    const panel = await openProducts({ products: [], productsUpdatedAt: at('2026-10-05T18:20:00Z') });
+    expect(within(panel).getByText('Este contacto no ha indicado productos de interés.')).toBeTruthy();
+    expect(within(panel).queryByRole('table')).toBeNull();
+    expect(screen.getByRole('tab', { name: 'Productos de interés (0)' })).toBeTruthy();
+  });
+
+  it('un producto que ya no existe se muestra como "Producto no disponible"', async () => {
+    const panel = await openProducts({
+      products: [{ productId: 'borrado', name: 'Producto no disponible', presentation: '—', quantity: 3 }],
+    });
+    expect(within(panel).getByRole('cell', { name: 'Producto no disponible' })).toBeTruthy();
   });
 });

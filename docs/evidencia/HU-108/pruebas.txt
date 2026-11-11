@@ -1,0 +1,95 @@
+Evidencia de pruebas HU-108 - 2026-11-03 17:14 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Totales del proyecto ==
+npm test: 58 archivos, 763/763 pruebas.
+npm run test:emulators: 22 archivos, 201/201 pruebas.
+
+== npm test (HU-108: regla, pantalla, enlace e ingreso) ==
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > mensajes literales de los criterios 2ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > cumple: cafe2026 1ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > cumple: abcdefg1 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > cumple: 1234567a 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > cumple: Café 2026 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > cumple: ñandu123 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > cumple: una clave larga 9 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > no cumple: "" (vacía) 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > no cumple: "abc123" (corta) 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > no cumple: "abcdef1" (7 caracteres) 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > no cumple: "abcdefgh" (sin número) 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > no cumple: "12345678" (sin letra) 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > no cumple: "!!!!????" (sin letra ni número) 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > cuenta caracteres, no unidades UTF-16 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > válida e iguales → sin errores 1ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > no cumple la regla → mensaje en el primer campo 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > distintas → mensaje en la confirmación 0ms
+✓ tests/unit/newPassword.test.ts > HU-108 regla de la nueva contraseña > las dos fallas a la vez → los dos mensajes 0ms
+✓ tests/components/ResetPasswordLink.test.tsx > HU-107 enlace no válido > si el enlace ya no sirve aparece "El enlace ya no es válido. Solicite uno nuevo." 176ms
+✓ tests/components/ResetPasswordLink.test.tsx > HU-107 enlace no válido > un enlace incompleto es no válido sin consultar a Firebase 21ms
+✓ tests/components/ResetPasswordLink.test.tsx > HU-107 enlace no válido > si el enlace sirve, no muestra el mensaje y pasa a "Crear nueva contraseña" (HU-108) 66ms
+✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > al abrir el sistema sin sesión aparece la pantalla de ingreso 211ms
+✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > tiene Usuario, Contraseña, botón Ingresar y enlace ¿Olvidó su contraseña? 39ms
+✓ tests/components/NewPassword.test.tsx > HU-108 Crear una nueva contraseña > con un enlace válido aparece "Crear nueva contraseña" con "Nueva contraseña", "Confirmar contraseña" y "Guardar" 247ms
+✓ tests/components/NewPassword.test.tsx > HU-108 Crear una nueva contraseña > la regla aparece escrita debajo del primer campo y está asociada a él 59ms
+✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > la contraseña se ve como puntos y el ojo la muestra u oculta 115ms
+✓ tests/components/NewPassword.test.tsx > HU-108 Crear una nueva contraseña > si no cumple la regla aparece el mensaje literal y no se guarda 57ms
+✓ tests/components/NewPassword.test.tsx > HU-108 Crear una nueva contraseña > si las contraseñas no son iguales aparece "Las contraseñas no coinciden." y no se guarda 55ms
+✓ tests/components/NewPassword.test.tsx > HU-108 Crear una nueva contraseña > al guardar pasa al ingreso con "Contraseña actualizada correctamente. Ya puede iniciar sesión." 65ms
+✓ tests/components/NewPassword.test.tsx > HU-108 Crear una nueva contraseña > si Firebase rechaza el enlace al guardar aparece "El enlace ya no es válido. Solicite uno nuevo." 63ms
+✓ tests/components/NewPassword.test.tsx > HU-108 Crear una nueva contraseña > si falla la conexión se queda en el formulario con el aviso y con lo escrito 46ms
+✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > ingresa al dar clic en Ingresar 309ms
+✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > ingresa al presionar Enter 264ms
+✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > con credenciales correctas aparece la pantalla Contactos 361ms
+✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > si había intentado abrir otra pantalla, aparece esa pantalla 278ms
+✓ tests/components/LoginPage.test.tsx > HU-101 Iniciar sesión > con credenciales incorrectas se queda en la pantalla de ingreso 270ms
+✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > usuario vacío → "Ingrese su usuario." 228ms
+✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > contraseña vacía → "Ingrese su contraseña." 138ms
+✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > ambos vacíos → muestra los dos mensajes 63ms
+✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > usuario inexistente → "El usuario ingresado no existe." 357ms
+✓ tests/components/LoginPage.test.tsx > HU-102 Mensajes de error al ingresar > contraseña incorrecta → mensaje, se borra la contraseña y se mantiene el usuario 249ms
+Test Files  4 passed (4)
+Tests  41 passed (41)
+
+== Pruebas contra emuladores (HU-106, HU-107 y HU-108; ingreso; reglas) ==
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega lectura y escritura sin autenticación 806ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega a un usuario autenticado sin documento en users 277ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega a un usuario inactivo, incluso su propio perfil 166ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en users 173ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en usernames 137ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en contacts 124ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en products 101ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en sales 113ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en saleProducts 83ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en stageHistory 107ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > niega colecciones fuera del contrato, incluso a usuarios activos 74ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > products: lectura pública de los activos (HU-402) > sin sesión se puede leer un producto activo, pero no uno inactivo 114ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > products: lectura pública de los activos (HU-402) > sin sesión la consulta con where("active", "==", true) funciona y trae solo los activos 188ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > products: lectura pública de los activos (HU-402) > sin sesión se deniega la consulta sin el filtro de activos, o con active == false 116ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > products: lectura pública de los activos (HU-402) > sin sesión no se puede crear, cambiar ni borrar un producto, ni leer otra colección 193ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > products: lectura pública de los activos (HU-402) > con sesión activa se siguen leyendo todos los productos, también los inactivos 160ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > products: lectura pública de los activos (HU-402) > un usuario inactivo solo ve los activos, igual que cualquier visitante 134ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > usernames > sin sesión se lee un usuario por su id exacto 94ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > usernames > sin sesión no se pueden listar ni buscar usuarios 113ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > usernames > sin sesión, o con usuario inactivo, no se puede crear, cambiar ni borrar 173ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > passwordResets > sin sesión se registra un enlace nuevo para un usuario existente y se lee por id 132ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > passwordResets > no se registra para un usuario que no existe, ni con hora inventada, rid inválido, usado o campos de más 241ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > passwordResets > se marca como usado sin cambiar nada más, y uno usado no vuelve atrás 193ms
+✓ tests/rules/firestore.rules.test.ts > firestore.rules > passwordResets > no se listan ni se borran 166ms
+✓ tests/auth/passwordRecovery.emulator.test.ts > HU-106 Solicitar la recuperación de la contraseña (emuladores, sin sesión) > usuario vacío → "Ingrese su usuario." y no se envía correo 2ms
+✓ tests/auth/passwordRecovery.emulator.test.ts > HU-106 Solicitar la recuperación de la contraseña (emuladores, sin sesión) > usuario inexistente → "El usuario ingresado no existe." y no se envía correo 51ms
+✓ tests/auth/passwordRecovery.emulator.test.ts > HU-106 Solicitar la recuperación de la contraseña (emuladores, sin sesión) > índice que apunta a una cuenta inexistente en Auth → "El usuario ingresado no existe." 43ms
+✓ tests/auth/passwordRecovery.emulator.test.ts > HU-106 Solicitar la recuperación de la contraseña (emuladores, sin sesión) > usuario existente → envía el enlace al correo de la cuenta y devuelve el correo enmascarado 25ms
+✓ tests/auth/passwordRecovery.emulator.test.ts > HU-107 validez del enlace (emuladores, sin sesión) > el enlace lleva el usuario y el rid del registro, y sirve recién enviado 65ms
+✓ tests/auth/passwordRecovery.emulator.test.ts > HU-107 validez del enlace (emuladores, sin sesión) > deja de servir si se pidió un enlace nuevo 92ms
+✓ tests/auth/passwordRecovery.emulator.test.ts > HU-107 validez del enlace (emuladores, sin sesión) > deja de servir 30 minutos después de enviado 43ms
+✓ tests/auth/passwordRecovery.emulator.test.ts > HU-107 validez del enlace (emuladores, sin sesión) > deja de servir después de usarlo 46ms
+✓ tests/auth/passwordRecovery.emulator.test.ts > HU-107 validez del enlace (emuladores, sin sesión) > un código inventado no sirve aunque el rid sea el actual 51ms
+✓ tests/auth/passwordRecovery.emulator.test.ts > HU-108 Crear una nueva contraseña (emuladores, sin sesión) > guarda la nueva contraseña: la anterior deja de funcionar, la nueva sirve y el enlace ya no 141ms
+✓ tests/auth/passwordRecovery.emulator.test.ts > HU-108 Crear una nueva contraseña (emuladores, sin sesión) > un código inventado no cambia la contraseña y avisa que el enlace no es válido 59ms
+✓ tests/auth/signIn.emulator.test.ts > ingreso contra los emuladores > usuario inexistente → "El usuario ingresado no existe." 77ms
+✓ tests/auth/signIn.emulator.test.ts > ingreso contra los emuladores > contraseña incorrecta → "La contraseña es incorrecta." 17ms
+✓ tests/auth/signIn.emulator.test.ts > ingreso contra los emuladores > credenciales correctas ingresan, sin importar mayúsculas ni espacios en el usuario 15ms
+Test Files  3 passed (3)
+Tests  38 passed (38)

@@ -5,7 +5,6 @@ import { connectAuthEmulator, createUserWithEmailAndPassword, getAuth, signOut, 
 import { connectFirestoreEmulator, doc, getDoc, getFirestore, setDoc, type Firestore } from 'firebase/firestore';
 import { readFileSync } from 'node:fs';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { usernameToAuthEmail } from '../../src/auth/username';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
 
 // Proyecto propio para no tocar los datos de otras pruebas.
@@ -29,7 +28,7 @@ beforeAll(async () => {
   db = getFirestore(app);
   connectFirestoreEmulator(db, host, Number(port));
 
-  const { user } = await createUserWithEmailAndPassword(auth, usernameToAuthEmail(`prueba-hu104-${Date.now()}`), 'clave-123456');
+  const { user } = await createUserWithEmailAndPassword(auth, `prueba-hu104-${Date.now()}@example.com`, 'clave-123456');
   await testEnv.withSecurityRulesDisabled(async (ctx) => {
     const adminDb = ctx.firestore();
     await setDoc(doc(adminDb, COLLECTIONS.users, user.uid), { username: 'prueba', email: 'prueba@example.com', active: true });

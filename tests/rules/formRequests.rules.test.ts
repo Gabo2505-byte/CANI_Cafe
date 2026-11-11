@@ -172,10 +172,74 @@ describe('formRequests: sin sesión no se lee, cambia ni borra', () => {
     await assertFails(getDoc(doc(testEnv.authenticatedContext('inactive-user').firestore(), COL, 'existente')));
   });
 
-  it('con sesión activa se puede leer y marcar como procesada (lo define Gabriel en E5-020.1)', async () => {
+  it('un usuario inactivo tampoco puede procesarla', async () => {
+    const db = testEnv.authenticatedContext('inactive-user').firestore();
+    await assertFails(updateDoc(doc(db, COL, 'existente'), { claimedAt: serverTimestamp(), claimedBy: 'inactive-user' }));
+  });
+});
+
+// HU-502 y HU-503 (Gabriel, E5-020.1): lectura y procesamiento con sesión activa, contrato v3.
+describe('formRequests: procesamiento con sesión activa', () => {
+  const ref = () => doc(testEnv.authenticatedContext('active-user').firestore(), COL, 'existente');
+
+  beforeEach(async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), COL, 'existente'), { ...valida(), submittedAt: Timestamp.now() });
+    });
+  });
+
+  it('se puede leer y listar las pendientes', async () => {
     const db = testEnv.authenticatedContext('active-user').firestore();
-    await assertSucceeds(getDoc(doc(db, COL, 'existente')));
-    await assertSucceeds(updateDoc(doc(db, COL, 'existente'), { processed: true }));
+    await assertSucceeds(getDoc(ref()));
+    await assertSucceeds(getDocs(collection(db, COL)));
+  });
+
+  it('se puede reclamar con la hora del servidor y el uid propio', async () => {
+    await assertSucceeds(updateDoc(ref(), { claimedAt: serverTimestamp(), claimedBy: 'active-user' }));
+  });
+
+  it('no se puede reclamar a nombre de otro ni con una hora inventada', async () => {
+    await assertFails(updateDoc(ref(), { claimedAt: serverTimestamp(), claimedBy: 'otro-usuario' }));
+    await assertFails(updateDoc(ref(), { claimedAt: Timestamp.fromMillis(0), claimedBy: 'active-user' }));
+  });
+
+  it('se puede cerrar como creada o actualizada con su contacto', async () => {
+    await assertSucceeds(
+      updateDoc(ref(), { processed: true, processedAt: serverTimestamp(), outcome: 'created', contactId: 'contact-001' }),
+    );
+  });
+
+  it('se puede cerrar como rechazada con su motivo', async () => {
+    await assertSucceeds(
+      updateDoc(ref(), { processed: true, processedAt: serverTimestamp(), outcome: 'rejected', error: 'Cantidad inválida.' }),
+    );
+  });
+
+  it('no se puede cerrar sin el resultado completo', async () => {
+    await assertFails(updateDoc(ref(), { processed: true }));
+    await assertFails(updateDoc(ref(), { processed: true, processedAt: serverTimestamp(), outcome: 'created' }));
+    await assertFails(updateDoc(ref(), { processed: true, processedAt: serverTimestamp(), outcome: 'rejected' }));
+    await assertFails(
+      updateDoc(ref(), { processed: true, processedAt: serverTimestamp(), outcome: 'otro', contactId: 'contact-001' }),
+    );
+  });
+
+  it('no se pueden cambiar los datos que envió la persona ni agregar otros campos', async () => {
+    await assertFails(updateDoc(ref(), { fullName: 'Otro nombre' }));
+    await assertFails(updateDoc(ref(), { email: 'otro@example.com', claimedAt: serverTimestamp(), claimedBy: 'active-user' }));
+    await assertFails(updateDoc(ref(), { campoExtra: 'x' }));
+  });
+
+  it('una solicitud procesada ya no cambia', async () => {
+    await assertSucceeds(
+      updateDoc(ref(), { processed: true, processedAt: serverTimestamp(), outcome: 'updated', contactId: 'contact-001' }),
+    );
+    await assertFails(updateDoc(ref(), { processed: false }));
+    await assertFails(updateDoc(ref(), { claimedAt: serverTimestamp(), claimedBy: 'active-user' }));
+  });
+
+  it('nadie la puede borrar, ni con sesión activa', async () => {
+    await assertFails(deleteDoc(ref()));
   });
 });
 

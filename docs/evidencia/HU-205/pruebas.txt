@@ -1,0 +1,58 @@
+Evidencia de pruebas HU-205 - 2026-11-03 17:40 (America/Costa_Rica)
+
+== npm run typecheck ==
+Sin errores.
+
+== Totales del proyecto ==
+npm test: 60 archivos, 791/791 pruebas.
+npm run test:emulators: 22 archivos, 203/203 pruebas.
+
+== npm test (HU-205; HU-204 lista; HU-207 volver a la lista) ==
+✓ tests/components/ContactsSearch.test.tsx > HU-205 Buscar y filtrar contactos > criterio 1 y 3: arriba de la tabla, el buscador y a su derecha "Clasificación" (en "Todos" al abrir) 580ms
+✓ tests/components/ContactsSearch.test.tsx > HU-205 Buscar y filtrar contactos > criterio 1 y 2: la tabla cambia mientras se escribe; "mar" muestra "María Rodríguez" 871ms
+✓ tests/components/ContactsSearch.test.tsx > HU-205 Buscar y filtrar contactos > criterio 2: "8812" muestra el contacto con el teléfono 8812-3456 308ms
+✓ tests/components/ContactsSearch.test.tsx > HU-205 Buscar y filtrar contactos > busca también por correo y sin tildes ni mayúsculas 459ms
+✓ tests/components/ContactsSearch.test.tsx > HU-205 Buscar y filtrar contactos > criterio 3: la clasificación sola filtra la tabla 452ms
+✓ tests/components/ContactsSearch.test.tsx > HU-205 Buscar y filtrar contactos > criterio 4: buscador y clasificación a la vez → solo los que cumplen ambos 508ms
+✓ tests/components/ContactsSearch.test.tsx > HU-205 Buscar y filtrar contactos > criterio 5: sin buscar, indica el total: "Se encontraron 5 contactos." 118ms
+✓ tests/components/ContactsSearch.test.tsx > HU-205 Buscar y filtrar contactos > criterio 5: sin resultados, "No se encontraron contactos." y no se muestra la tabla 284ms
+✓ tests/components/ContactsSearch.test.tsx > HU-205 Buscar y filtrar contactos > la búsqueda y la clasificación quedan en la URL (para "Volver a contactos") y vuelven a la página 1 662ms
+✓ tests/components/ContactsSearch.test.tsx > HU-205 Buscar y filtrar contactos > al abrir la lista con la búsqueda en la URL, el buscador y la tabla la respetan 77ms
+✓ tests/components/ContactsSearch.test.tsx > HU-205 Buscar y filtrar contactos > "Contactos" en la barra superior vuelve a la lista sin búsqueda ni filtro 190ms
+✓ tests/components/ContactsSearch.test.tsx > HU-205 Buscar y filtrar contactos > los resultados también se paginan de 20 en 20 898ms
+✓ tests/components/ContactsSearch.test.tsx > HU-205 Buscar y filtrar contactos > si falla la carga para buscar, muestra el error 130ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 2: arriba a la izquierda está "← Volver a contactos", antes del título 118ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 2: "Volver a contactos" regresa a la lista en la misma página 893ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 2: conserva la búsqueda y los filtros que estén en la URL de la lista 213ms
+✓ tests/components/ContactDetail.test.tsx > HU-207 Consultar la ficha de un contacto > criterio 2: si se abre la ficha desde otro lado, vuelve a la lista desde el inicio 86ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 textos > buscador y opciones literales de los criterios 6ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 textos > mensajes del conteo 1ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 textos > la clasificación de la URL: solo valores conocidos, si no "Todos" 1ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 búsqueda > "mar" encuentra "María Rodríguez" (parcial, sin mayúsculas ni tildes) 1ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 búsqueda > el texto puede estar en cualquier parte del nombre 1ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 búsqueda > busca en el correo 0ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 búsqueda > "8812" encuentra el teléfono 8812-3456; también con guion, espacios o código de país 2ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 búsqueda > un número que no está no coincide; un contacto sin teléfono tampoco 1ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 búsqueda > letras con números no se buscan como teléfono 0ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 búsqueda > vacío o solo espacios: todos coinciden 0ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 búsqueda > sin coincidencias 0ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 búsqueda + clasificación > "Todos" no filtra por clasificación 1ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 búsqueda + clasificación > solo la clasificación 1ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 búsqueda + clasificación > los dos a la vez: solo los que cumplen ambos 1ms
+✓ tests/unit/contactsListSearch.test.ts > HU-205 búsqueda + clasificación > isFiltering 0ms
+✓ tests/components/ContactsList.test.tsx > HU-204 Ver la lista de contactos > muestra una tabla con: nombre completo, correo, teléfono, clasificación y fecha de registro 391ms
+✓ tests/components/ContactsList.test.tsx > HU-204 Ver la lista de contactos > los datos vacíos se muestran con "—" 50ms
+✓ tests/components/ContactsList.test.tsx > HU-204 Ver la lista de contactos > muestra los contactos en el orden en que llegan de la consulta (alfabético por nombre) 39ms
+✓ tests/components/ContactsList.test.tsx > HU-204 Ver la lista de contactos > 20 contactos por página, con "Anterior", "Siguiente" y "Página X de Y" 400ms
+✓ tests/components/ContactsList.test.tsx > HU-204 Ver la lista de contactos > sin contactos: "Aún no hay contactos registrados." (sin tabla) 26ms
+✓ tests/components/ContactsList.test.tsx > HU-204 Ver la lista de contactos > clic en cualquier parte de la fila abre la ficha del contacto 46ms
+✓ tests/components/ContactsList.test.tsx > HU-204 Ver la lista de contactos > el nombre es un enlace a la ficha (accesible con teclado) 24ms
+✓ tests/components/ContactsList.test.tsx > HU-204 Ver la lista de contactos > si falla la consulta, muestra un error 10ms
+
+== Pruebas contra emuladores (lista de contactos, HU-204 y HU-205) ==
+✓ tests/contacts/listContacts.emulator.test.ts > HU-204 lista paginada y ordenada desde Firestore > cuenta el total en el servidor 12ms
+✓ tests/contacts/listContacts.emulator.test.ts > HU-204 lista paginada y ordenada desde Firestore > página 1: 20 contactos en orden alfabético (sin importar tildes ni mayúsculas) 33ms
+✓ tests/contacts/listContacts.emulator.test.ts > HU-204 lista paginada y ordenada desde Firestore > página 2: los 5 restantes, siguiendo el orden; no hay más páginas 28ms
+✓ tests/contacts/listContacts.emulator.test.ts > HU-204 lista paginada y ordenada desde Firestore > sin sesión no se puede listar 31ms
+✓ tests/contacts/listContacts.emulator.test.ts > HU-205 búsqueda y filtro sobre la lista completa > trae todos los contactos (activos e inactivos) en orden alfabético 31ms
+✓ tests/contacts/listContacts.emulator.test.ts > HU-205 búsqueda y filtro sobre la lista completa > sin sesión no se pueden traer 30ms

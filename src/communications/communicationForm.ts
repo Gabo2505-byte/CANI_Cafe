@@ -1,5 +1,5 @@
 // HU-211: datos de una comunicación y sus reglas (funciones puras, sin Firebase; se prueban con Vitest).
-import { COMMUNICATION_MEDIUM_LABELS, COMMUNICATION_MEDIUMS, type Communication, type CommunicationMedium } from '../shared/types';
+import { COMMUNICATION_MEDIUM_LABELS, COMMUNICATION_MEDIUMS, type Communication, type ManualCommunicationMedium } from '../shared/types';
 
 export const COMMUNICATION_LIMITS = { note: 1000, otherMedium: 50 } as const;
 
@@ -43,7 +43,7 @@ export interface CommunicationFormValues {
   /** "aaaa-mm-dd" del campo de fecha. */
   date: string;
   /** "" hasta que se elija. */
-  medium: CommunicationMedium | '';
+  medium: ManualCommunicationMedium | '';
   /** Solo cuenta si medium es "otro". */
   otherMedium: string;
   /** HU-212: ALL_SALES o el id de una posible venta abierta del contacto. */
@@ -99,7 +99,7 @@ export function communicationDayToDate(day: string): Date {
 export interface NewCommunicationInput {
   contactId: string;
   date: Date;
-  medium: CommunicationMedium;
+  medium: ManualCommunicationMedium;
   otherMedium: string | null;
   /**
    * HU-212: posible venta a la que corresponde, o null/sin indicar = "Todas sus oportunidades de venta".
@@ -111,7 +111,7 @@ export interface NewCommunicationInput {
 
 /** Datos ya validados → lo que se guarda. Recorta espacios; `otherMedium` solo si el medio es "Otro". */
 export function toNewCommunication(contactId: string, values: CommunicationFormValues): NewCommunicationInput {
-  const medium = values.medium as CommunicationMedium;
+  const medium = values.medium as ManualCommunicationMedium;
   return {
     contactId,
     date: communicationDayToDate(values.date),

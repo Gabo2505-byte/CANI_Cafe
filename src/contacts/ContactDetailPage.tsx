@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router';
-import { newSalePath, saleDetailPath } from '../app/routes';
+import { editContactPath, newSalePath, saleDetailPath } from '../app/routes';
 import { useLocationNotice } from '../shared/hooks/useLocationNotice';
 import {
   CONTACT_CLASSIFICATION_LABELS,
@@ -14,9 +14,9 @@ import { RegisterCommunicationDialog } from '../communications/RegisterCommunica
 import { SALES_LABELS } from '../shared/constants/labels';
 import { AddButtonLabel } from '../shared/ui/AddButtonLabel';
 import { TimedNotice } from '../sales/TimedNotice';
-import { formatDateNumericCR } from '../shared/utils/dates';
 import {
   backToListPath,
+  communicationDateLabel,
   communicationSaleLabel,
   registeredByLabel,
   openSaleOptions,
@@ -25,12 +25,16 @@ import {
   CONTACT_TABS,
   contactDataRows,
   contactSaleCells,
+  INTEREST_PRODUCTS_COLUMNS,
+  interestsUpdatedLabel,
   tabLabel,
   type ContactRecords,
   type ContactTabId,
+  type FromListState,
 } from './contactDetail';
 import { loadContactRecords } from './contactDetailApi';
 import { getContact } from './contactsApi';
+import { clearFormBadge } from './formBadgesApi';
 
 type LoadState = { status: 'loading' } | { status: 'notFound' } | { status: 'error' } | { status: 'ready'; contact: Contact };
 type RecordsState = { status: 'loading' } | { status: 'error' } | { status: 'ready'; records: ContactRecords };
@@ -39,6 +43,7 @@ type RecordsState = { status: 'loading' } | { status: 'error' } | { status: 'rea
 export function ContactDetailPage() {
   const { contactId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const notice = useLocationNotice();
   // Se calcula una sola vez: useLocationNotice puede limpiar location.state después.
   const [backTo] = useState(() => backToListPath(location.state));
@@ -66,6 +71,9 @@ export function ContactDetailPage() {
     let cancelled = false;
     getContact(contactId ?? '')
       .then((contact) => {
+        // HU-504: al abrir la ficha, la etiqueta del formulario desaparece. Si no se puede quitar (sin conexión), se
+        // queda y se intenta de nuevo la próxima vez que se abra.
+        if (contact?.formBadge) clearFormBadge(contact.id).catch(() => {});
         if (!cancelled) setState(contact ? { status: 'ready', contact } : { status: 'notFound' });
       })
       .catch(() => {
@@ -103,7 +111,14 @@ export function ContactDetailPage() {
       )}
       {state.status === 'ready' && (
         <>
-          <ContactHeader contact={state.contact} />
+          <ContactHeader
+            contact={state.contact}
+            onEdit={() => {
+              // HU-210: el formulario devuelve `from` a la ficha, para que "Volver a contactos" siga funcionando.
+              const fromList: FromListState = { from: backTo };
+              navigate(editContactPath(state.contact.id), { state: fromList });
+            }}
+          />
           <ContactData contact={state.contact} />
           <ContactTabs
             contactId={state.contact.id}
@@ -126,13 +141,19 @@ export function ContactDetailPage() {
   );
 }
 
-function ContactHeader({ contact }: { contact: Contact }) {
+/** Nombre y clasificación; arriba a la derecha, el botón "Editar" (HU-210). */
+function ContactHeader({ contact, onEdit }: { contact: Contact; onEdit: () => void }) {
   return (
-    <div className="contact-title">
-      <h1>{contact.fullName}</h1>
-      <span className={`classification-badge classification-${contact.classification}`}>
-        {CONTACT_CLASSIFICATION_LABELS[contact.classification] ?? contact.classification}
-      </span>
+    <div className="contact-header">
+      <div className="contact-title">
+        <h1>{contact.fullName}</h1>
+        <span className={`classification-badge classification-${contact.classification}`}>
+          {CONTACT_CLASSIFICATION_LABELS[contact.classification] ?? contact.classification}
+        </span>
+      </div>
+      <button type="button" onClick={onEdit}>
+        Editar
+      </button>
     </div>
   );
 }
@@ -311,7 +332,7 @@ function CommunicationsPanel({ contactId, records }: { contactId: string; record
           return (
             <li key={c.id} className="communication-card">
               <p className="record-meta">
-                <span className="communication-date">{formatDateNumericCR(c.date)}</span> · <span>{mediumLabel(c)}</span>
+                <span className="communication-date">{communicationDateLabel(c)}</span> · <span>{mediumLabel(c)}</span>
               </p>
               {sale && <p className="communication-sale">Oportunidad de venta: {sale}</p>}
               <p className="record-note">{c.note}</p>
@@ -381,15 +402,34 @@ function SalesPanel({ records }: { records: ContactRecords }) {
   );
 }
 
+/** HU-209: productos que el contacto indicó en su último formulario, con la fecha de ese formulario. */
 function ProductsPanel({ records }: { records: ContactRecords }) {
   if (records.products.length === 0) return <p className="empty-state">{MSG.noProducts}</p>;
   return (
-    <ul className="record-list">
-      {records.products.map((p) => (
-        <li key={p.productId}>
-          {p.name} · {p.presentation}
-        </li>
-      ))}
-    </ul>
+    <>
+      {records.productsUpdatedAt && <p className="interests-updated">{interestsUpdatedLabel(records.productsUpdatedAt)}</p>}
+      <div className="table-wrapper">
+        <table className="data-table">
+          <thead>
+            <tr>
+              {INTEREST_PRODUCTS_COLUMNS.map((column) => (
+                <th key={column} scope="col" className={column === 'Cantidad aproximada' ? 'numeric' : undefined}>
+                  {column}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {records.products.map((p) => (
+              <tr key={p.productId}>
+                <td>{p.name}</td>
+                <td>{p.presentation}</td>
+                <td className="numeric">{p.quantity}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

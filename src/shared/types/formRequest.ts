@@ -1,9 +1,10 @@
-// Solicitud del formulario del sitio público (HU-405). PROVISIONAL: contrato v2 propuesto por Dylan, pendiente de
-// confirmar con Gabriel (E5-020.1), que procesa las solicitudes (HU-502 a HU-504). El nombre de la colección se define
-// SOLO aquí: si cambia, se cambia en este archivo (y en firestore.rules).
+// Solicitud del formulario del sitio público (HU-405). Contrato v3 CONFIRMADO por Gabriel y Dylan
+// (docs-local/CONTRATO_FORMULARIO.md). Dylan escribe la solicitud (FormRequestData); Gabriel la procesa (HU-502 a
+// HU-504) y solo agrega los campos de procesamiento. El nombre de la colección se define SOLO aquí: si cambia, se
+// cambia en este archivo (y en firestore.rules).
 import type { Timestamp } from 'firebase/firestore';
 
-/** Nombre PROVISIONAL de la colección (Gabriel había propuesto "solicitudesFormulario"). */
+/** Nombre de la colección (confirmado en el contrato v3). */
 export const FORM_REQUESTS_COLLECTION = 'formRequests';
 
 /** Topes que validan el formulario y las reglas de Firestore. */
@@ -38,13 +39,27 @@ export interface FormRequestData {
   message: string | null;
 }
 
+/** Resultado del procesamiento: contacto creado (HU-502), actualizado (HU-503) o solicitud rechazada por datos inválidos. */
+export const FORM_REQUEST_OUTCOMES = ['created', 'updated', 'rejected'] as const;
+export type FormRequestOutcome = (typeof FORM_REQUEST_OUTCOMES)[number];
+
 /** Documento de la colección `formRequests`. */
 export interface FormRequest extends FormRequestData {
   /** serverTimestamp() al crear. */
   submittedAt: Timestamp;
-  /** false al crear; lo cambia el procesamiento del sistema interno (Gabriel). */
+  /** false al crear; true cuando el procesamiento del sistema interno terminó (con cualquier resultado). */
   processed: boolean;
+
+  // Campos de procesamiento: los escribe SOLO el sistema interno (las reglas no permiten cambiar los demás).
+  /** Reclamo para no procesarla dos veces: hora del servidor al tomarla. Vence a los 2 minutos. */
+  claimedAt?: Timestamp;
+  /** uid de quien la tomó. */
+  claimedBy?: string;
+  /** Hora del servidor al cerrar el procesamiento. */
   processedAt?: Timestamp;
+  outcome?: FormRequestOutcome;
+  /** → contacts.id creado o actualizado (outcome 'created' o 'updated'). */
   contactId?: string;
-  outcome?: 'created' | 'updated';
+  /** Motivo, solo si outcome es 'rejected' (hasta 500 caracteres). */
+  error?: string;
 }

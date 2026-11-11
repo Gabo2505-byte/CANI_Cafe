@@ -48,3 +48,67 @@ Salida en [pruebas.txt](pruebas.txt): `tests/unit/publicForm.test.ts` (todos los
 | 01. Errores al salir de cada campo | 02. Teléfono de otro país |
 | ![Enviar vacío](03-enviar-con-todo-vacio.png) | |
 | 03. "Enviar" con todo vacío | |
+
+## Verificación de Gabriel
+
+**Fecha:** 2026-11-03 · **Resultado:** ✅ **Cumple los 5 criterios.** Se encontró **un defecto menor** (D-1) que no
+bloquea el cierre. Va descrito abajo para que lo corrija Dylan.
+
+**Cómo se verificó**
+
+1. **Criterios oficiales:** se compararon con la tabla de esta evidencia. Los textos son idénticos.
+2. **Código:** se revisaron `sitio-publico/src/formulario/validacion.ts`, `sitio-publico/src/components/ConsultaForm.tsx`
+   y `ProductosField.tsx` contra cada criterio.
+3. **Pruebas de Dylan:** `publicForm.test.ts`, `ConsultaForm.test.tsx` y `ProductosField.test.tsx`, 99/99. Salida en
+   [verificacion-pruebas.txt](verificacion-pruebas.txt).
+4. **Recorrido propio:** con Playwright (Chromium headless, 1366 × 768) sobre `npm run dev:publico`, conectado a los
+   emuladores con `npm run seed`. Incluye casos borde que no estaban en la evidencia original. Detalle en
+   [verificacion-recorrido.json](verificacion-recorrido.json).
+5. **Datos:** son ficticios. La solicitud de prueba que se envió al final se borró (`solicitudesDePruebaQueQuedan: 0`).
+
+| # | Criterio | Resultado | Qué se comprobó |
+|---|---|---|---|
+| 1 | Cada dato se revisa al pasar al siguiente campo y otra vez al dar clic en "Enviar". | ✅ Cumple | Al salir del nombre vacío, del correo `ana@example` y del teléfono `8812345`, cada mensaje aparece en ese momento y el aviso de arriba todavía no. "Enviar" revisa también los campos que no se tocaron ([verificación 01](verificacion-01-al-salir-de-cada-campo.png), [02](verificacion-02-enviar-vacio.png)). |
+| 2 | "Este campo es obligatorio." / "Seleccione al menos un producto.". | ✅ Cumple | Con todo vacío salen 2 × "Este campo es obligatorio." y "Seleccione al menos un producto.". Un nombre o un correo con solo espacios también cuenta como vacío. |
+| 3 | Correo que no es nombre@dominio.com → "Ingrese un correo electrónico válido.". | ✅ Cumple | Inválidos: `ana@example`, `ana.example.com`, `ana @example.com`, `ana@@example.com`, `@example.com`, `ana@example.`. Válidos: `Ana.Prueba@Example.COM` y ` ana@example.com ` (con espacios alrededor). |
+| 4 | Teléfono: 8 dígitos (Costa Rica) o entre 6 y 14 (otros países). Cantidad entre 1 y 9999. | ✅ Cumple | Costa Rica: 7 y 9 dígitos dan error, 8 no; `abc` da error. Estados Unidos: 5 y 15 dan error, 6 y 14 no ([verificación 03](verificacion-03-telefono-otro-pais.png)). Cantidad: `0`, `10000`, `1.5`, `-3`, `abc` y vacío dan error; `1`, `9999` y ` 25 ` no ([verificación 04](verificacion-04-cantidad-fuera-de-rango.png)). |
+| 5 | Si hay algún error, no se envía y arriba aparece "Revise los campos marcados en rojo.". | ✅ Cumple (ver D-1) | Con un solo error (cantidad `0`) aparece el aviso y no hay ninguna escritura a Firestore ([verificación 05](verificacion-05-un-error-no-se-envia.png)). Al corregir, el aviso desaparece y "Enviar" guarda una sola solicitud en `formRequests` con `processed: false` y `submittedAt` del servidor ([verificación 06](verificacion-06-envio-correcto.png)). |
+
+### Defecto D-1 (menor): sin productos elegidos, el selector no se marca en rojo
+
+- **Dónde:** `sitio-publico/src/components/ProductosField.tsx`.
+- **Pasos:**
+  1. Abrir `/contactenos` y no elegir ningún producto.
+  2. Dar clic en "Enviar" (con o sin los demás datos).
+- **Resultado esperado:**
+  - Aparece "Revise los campos marcados en rojo.".
+  - Los campos con error se ven en rojo, también los selectores de la fila de productos, igual que se marcan el nombre,
+    el correo, el teléfono y la cantidad.
+- **Resultado obtenido:**
+  - Aparece "Seleccione al menos un producto.", pero "Seleccione una variedad" queda con el borde normal
+    ([verificación 02](verificacion-02-enviar-vacio.png)).
+  - Los selectores no reciben `aria-invalid` ni se asocian con ese mensaje (`aria-describedby`). El lector de pantalla
+    tampoco los anuncia como inválidos.
+- **Causa probable:** `aria-invalid` de los selectores depende solo del error de la fila (`errores.producto`), y
+  cuando ninguna fila tiene producto, el error va en `intereses` (`error` del componente), no en las filas.
+- **Sugerencia:** con `error` presente, marcar `aria-invalid` y `aria-describedby={errorId}` en la variedad de la
+  primera fila, o en todas las filas vacías.
+
+### Observaciones (no son defectos de los criterios)
+
+- **Mensajes sin `role="alert"`:** los mensajes bajo cada campo no tienen `role="alert"`. Están ligados con
+  `aria-describedby`, así que el lector de pantalla los lee al volver al campo, pero no los anuncia en el momento de
+  salir. El aviso general de arriba sí tiene `role="alert"`.
+- **Alcance desactualizado:** la línea de "Alcance" de esta evidencia dice que "Enviar" todavía no escribe en
+  Firestore. Ya escribe (HU-405), y la verificación lo comprobó.
+
+### Capturas de la verificación
+
+| | |
+|---|---|
+| ![Al salir](verificacion-01-al-salir-de-cada-campo.png) | ![Enviar vacío](verificacion-02-enviar-vacio.png) |
+| V01. Errores al salir de cada campo | V02. "Enviar" con todo vacío (D-1: el selector no queda en rojo) |
+| ![Otro país](verificacion-03-telefono-otro-pais.png) | ![Cantidad](verificacion-04-cantidad-fuera-de-rango.png) |
+| V03. Teléfono de otro país con 5 dígitos | V04. Cantidad 10000 |
+| ![Un error](verificacion-05-un-error-no-se-envia.png) | ![Enviado](verificacion-06-envio-correcto.png) |
+| V05. Un solo error: no se envía | V06. Corregido: se envía |

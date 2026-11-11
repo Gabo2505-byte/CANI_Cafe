@@ -2,13 +2,14 @@
 // es el catálogo de productos (catalogData.ts), que es el oficial de CANI Café.
 // IDs y fechas fijos para que el seed sea idempotente y determinista.
 import type { Timestamp } from 'firebase/firestore';
-import type { Communication, Contact, Product, Sale, SaleProduct, StageHistory, User } from '../../src/shared/types';
+import type { Communication, Contact, Product, Sale, SaleProduct, StageHistory, User, UsernameEntry } from '../../src/shared/types';
 import { toSortKey } from '../../src/shared/utils/text';
 import { buildCatalogProducts, catalogProductId } from './catalogData';
 
 /** Documento listo para escribir: sin `id` (va como id del doc) y con Date en lugar de Timestamp. */
 type ToDate<V> = V extends Timestamp ? Date : V;
-export type SeedDoc<T extends { id: string }> = { [K in Exclude<keyof T, 'id'>]: ToDate<T[K]> };
+// `as` conserva los campos opcionales del tipo (ej. `interests?` de HU-209): el seed no está obligado a llenarlos.
+export type SeedDoc<T extends { id: string }> = { [K in keyof T as Exclude<K, 'id'>]: ToDate<T[K]> };
 export type Seeded<T extends { id: string }> = { id: string; data: SeedDoc<T> };
 
 /** Fecha/hora local de Costa Rica (UTC-6, sin horario de verano) → Date. */
@@ -22,6 +23,11 @@ export const SEED_ADMIN = {
 
 export const seedUsers: Seeded<User>[] = [
   { id: SEED_ADMIN.uid, data: { username: SEED_ADMIN.username, email: SEED_ADMIN.email, active: true } },
+];
+
+/** HU-101 y HU-106: índice usuario → cuenta. El id es el usuario normalizado. */
+export const seedUsernames: Seeded<UsernameEntry & { id: string }>[] = [
+  { id: SEED_ADMIN.username, data: { uid: SEED_ADMIN.uid, email: SEED_ADMIN.email } },
 ];
 
 // nameSortKey (HU-204) se calcula a partir de fullName, igual que al guardar desde la app.
@@ -38,6 +44,15 @@ const seedContactsBase: Seeded<Omit<Contact, 'nameSortKey'>>[] = [
       status: 'activo',
       origin: 'redes_sociales',
       createdAt: cr('2026-09-01T09:00:00'),
+      // HU-209: productos que indicó en su último formulario (en orden de catálogo). El último ya no existe en el
+      // catálogo, para ver "Producto no disponible".
+      interests: [
+        { productId: catalogProductId('villa-sarchi', '0340', 'grano'), quantity: 2 },
+        { productId: catalogProductId('caturra', '1000', 'molido'), quantity: 10 },
+        { productId: catalogProductId('geisha', '0250', 'grano'), quantity: 1 },
+        { productId: 'prod-retirado-ejemplo', quantity: 3 },
+      ],
+      interestsUpdatedAt: cr('2026-10-05T18:20:00'),
     },
   },
   {
@@ -63,7 +78,7 @@ const seedContactsBase: Seeded<Omit<Contact, 'nameSortKey'>>[] = [
       phoneCountry: null,
       phoneNumber: null,
       address: null,
-      classification: 'distribuidor',
+      classification: 'persona_interesada',
       status: 'activo',
       origin: 'feria',
       createdAt: cr('2026-09-05T14:00:00'),

@@ -32,8 +32,7 @@ vi.mock('../../src/contacts/contactsApi', () => ({
   getContact: vi.fn().mockResolvedValue(null),
   createContact: vi.fn(),
   findDuplicateContacts: vi.fn(),
-  countContacts: vi.fn().mockResolvedValue(0),
-  listContactsPage: vi.fn().mockResolvedValue({ contacts: [], nextCursor: null }),
+  listAllContacts: vi.fn().mockResolvedValue([]),
 }));
 
 const active: AuthState = {

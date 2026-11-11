@@ -12,6 +12,9 @@ import type { AuthState } from '../../src/auth/useAuthUser';
 
 vi.mock('../../src/auth/signInWithUsername', () => ({ signInWithUsername: vi.fn() }));
 vi.mock('../../src/auth/signOutUser', () => ({ signOutUser: vi.fn() }));
+// "Gestión de ventas" carga el tablero: sin ventas, para no consultar Firestore (los contactos los mockea tests/setup.ts).
+vi.mock('../../src/sales/salesApi', () => ({ listBoardSales: vi.fn().mockResolvedValue([]) }));
+vi.mock('../../src/sales/contactSearchApi', () => ({ getContactNames: vi.fn().mockResolvedValue(new Map()) }));
 
 const active: AuthState = {
   status: 'active',

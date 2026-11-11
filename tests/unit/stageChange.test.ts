@@ -129,11 +129,6 @@ describe('HU-313 conversión a cliente', () => {
     expect(classificationAfterWin('cliente')).toBe('cliente');
   });
 
-  it('distribuidor y otro no se tocan (el PDF no los menciona)', () => {
-    expect(classificationAfterWin('distribuidor')).toBe('distribuidor');
-    expect(classificationAfterWin('otro')).toBe('otro');
-  });
-
   it('solo "Persona interesada" cambia de clasificación', () => {
     const changed = CONTACT_CLASSIFICATIONS.filter((c) => classificationAfterWin(c) !== c);
     expect(changed).toEqual(['persona_interesada']);

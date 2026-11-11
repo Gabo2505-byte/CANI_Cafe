@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { loginPathFor, safeRedirect } from '../../src/app/routes';
-import { usernameToAuthEmail } from '../../src/auth/username';
+import { normalizeUsername } from '../../src/auth/username';
 
 describe('safeRedirect', () => {
   it('acepta rutas internas', () => {
@@ -26,8 +26,8 @@ describe('loginPathFor', () => {
   });
 });
 
-describe('usernameToAuthEmail', () => {
-  it('normaliza el usuario', () => {
-    expect(usernameToAuthEmail('  Admin ')).toBe('admin@usuarios.cani-crm.local');
+describe('normalizeUsername', () => {
+  it('quita espacios alrededor y pasa a minúsculas', () => {
+    expect(normalizeUsername('  Admin ')).toBe('admin');
   });
 });
