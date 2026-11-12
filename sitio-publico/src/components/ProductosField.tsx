@@ -89,6 +89,10 @@ export function ProductosField({
     );
   }
 
+  // D-1: con "Seleccione al menos un producto." la variedad de la primera fila sin producto queda en rojo y ligada a
+  // ese mensaje (si no, el lector de pantalla no la anuncia como inválida).
+  const claveSinProductos = error ? filas.find((f) => !f.productoId)?.clave : undefined;
+
   return (
     <div ref={contenedorRef} className="pub-product-rows" onBlur={alSalirDe(onSalir)}>
       {filas.map((fila, indice) => {
@@ -99,6 +103,8 @@ export function ProductosField({
         // Como en el sistema interno: el error del producto se marca en la variedad si falta, si no en la presentación.
         const errorEnVariedad = Boolean(errores.producto) && !fila.variedad;
         const errorEnPresentacion = Boolean(errores.producto) && Boolean(fila.variedad);
+        const sinProductos = fila.clave === claveSinProductos;
+        const describeVariedad = errorEnVariedad ? idErrorProducto : sinProductos ? errorId : undefined;
         return (
           <div key={fila.clave} className="pub-product-row" data-fila={fila.clave}>
             <div className="pub-product-controls">
@@ -108,8 +114,8 @@ export function ProductosField({
                   value={fila.variedad}
                   // Al cambiar la variedad se borra la presentación: era de otra variedad.
                   onChange={(e) => actualizar(fila.clave, { variedad: e.target.value, productoId: '' })}
-                  aria-invalid={errorEnVariedad ? true : undefined}
-                  aria-describedby={errorEnVariedad ? idErrorProducto : undefined}
+                  aria-invalid={errorEnVariedad || sinProductos ? true : undefined}
+                  aria-describedby={describeVariedad}
                 >
                   <option value="">{SELECTOR_PRODUCTOS.variedad}</option>
                   {variedades.map((variedad) => (

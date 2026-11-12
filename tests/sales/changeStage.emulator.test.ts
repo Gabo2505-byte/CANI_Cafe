@@ -38,11 +38,9 @@ beforeEach(async () => {
     await setDoc(doc(admin, COLLECTIONS.users, 'admin-activo'), { username: 'admin', email: 'a@example.com', active: true });
     await setDoc(doc(admin, COLLECTIONS.contacts, 'c-1'), { fullName: 'Ana Interesada', classification: 'persona_interesada', status: 'activo', email: 'ana@example.com' });
     await setDoc(doc(admin, COLLECTIONS.contacts, 'c-cliente'), { fullName: 'Bruno Cliente', classification: 'cliente', status: 'activo' });
-    await setDoc(doc(admin, COLLECTIONS.contacts, 'c-distribuidor'), { fullName: 'Carla Distribuidora', classification: 'distribuidor', status: 'activo' });
-    await setDoc(doc(admin, COLLECTIONS.contacts, 'c-otro'), { fullName: 'Diego Otro', classification: 'otro', status: 'activo' });
+    // Otra persona interesada: no debe convertirse cuando gana la venta de otro contacto.
+    await setDoc(doc(admin, COLLECTIONS.contacts, 'c-2'), { fullName: 'Elena Interesada', classification: 'persona_interesada', status: 'activo' });
     await setDoc(doc(admin, COLLECTIONS.sales, 's-cliente'), { ...baseSale, contactId: 'c-cliente', title: 'De un cliente' });
-    await setDoc(doc(admin, COLLECTIONS.sales, 's-distribuidor'), { ...baseSale, contactId: 'c-distribuidor', title: 'De un distribuidor' });
-    await setDoc(doc(admin, COLLECTIONS.sales, 's-otro'), { ...baseSale, contactId: 'c-otro', title: 'De un otro' });
     await setDoc(doc(admin, COLLECTIONS.sales, 's-sin-contacto'), { ...baseSale, contactId: 'no-existe', title: 'Sin contacto' });
     await setDoc(doc(admin, COLLECTIONS.sales, 's-1'), baseSale);
     // Otra venta abierta del mismo contacto: no debe verse afectada.
@@ -210,11 +208,17 @@ describe('marcar una oportunidad de venta como ganada (HU-313)', () => {
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-cliente'))).get('stage')).toBe('ganada');
   });
 
-  it('distribuidor y otro no cambian de clasificación', async () => {
-    expect(await changeSaleStageIn(db, 's-distribuidor', 'contactado', 'ganada')).toEqual({ contactBecameClient: false, contactName: null });
-    expect(await changeSaleStageIn(db, 's-otro', 'contactado', 'ganada')).toEqual({ contactBecameClient: false, contactName: null });
-    expect(await classificationOf('c-distribuidor')).toBe('distribuidor');
-    expect(await classificationOf('c-otro')).toBe('otro');
+  it('una clasificación antigua (fuera de las dos vigentes) no hace fallar la venta ni se convierte', async () => {
+    // Desde 2026-11-08 solo existen "Persona interesada" y "Cliente"; un dato viejo se tolera sin tocarlo.
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      const admin = ctx.firestore();
+      await setDoc(doc(admin, COLLECTIONS.contacts, 'c-antigua'), { fullName: 'Carla Antigua', classification: 'distribuidor', status: 'activo' });
+      await setDoc(doc(admin, COLLECTIONS.sales, 's-antigua'), { ...baseSale, contactId: 'c-antigua', title: 'De una clasificación antigua' });
+    });
+    const result = await changeSaleStageIn(db, 's-antigua', 'contactado', 'ganada');
+    expect(result).toEqual({ contactBecameClient: false, contactName: null });
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-antigua'))).get('stage')).toBe('ganada');
+    expect(await classificationOf('c-antigua')).toBe('distribuidor');
   });
 
   it('si el contacto ya no existe la venta se gana igual y no se crea ningún contacto', async () => {
@@ -229,7 +233,7 @@ describe('marcar una oportunidad de venta como ganada (HU-313)', () => {
     await changeSaleStageIn(db, 's-1', 'contactado', 'ganada');
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).data()).toEqual(hermana);
     expect(await classificationOf('c-cliente')).toBe('cliente');
-    expect(await classificationOf('c-distribuidor')).toBe('distribuidor');
+    expect(await classificationOf('c-2')).toBe('persona_interesada');
   });
 
   it('es definitiva: una venta ganada ya no cambia de etapa', async () => {

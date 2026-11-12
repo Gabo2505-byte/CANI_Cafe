@@ -255,6 +255,36 @@ describe('HU-501 en el selector: revisión al salir de cada campo y al enviar', 
     expect(screen.queryByLabelText('Variedad del producto 1')).toBeNull();
     expect(screen.getByText('Seleccione al menos un producto.')).toBeTruthy();
   });
+
+  it('D-1: "Enviar" sin productos marca en rojo la variedad de la primera fila y la liga al mensaje', async () => {
+    const user = renderForm({ valoresIniciales: { nombre: 'Ana', correo: 'ana@example.com' } });
+    expect(variedad(1).getAttribute('aria-invalid')).toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Enviar' }));
+    const error = screen.getByText('Seleccione al menos un producto.');
+    expect(error.id).not.toBe('');
+    expect(variedad(1).getAttribute('aria-invalid')).toBe('true');
+    expect(variedad(1).getAttribute('aria-describedby')).toBe(error.id);
+    expect(presentacion(1).getAttribute('aria-invalid')).toBeNull();
+  });
+
+  it('D-1: solo se marca la primera fila vacía, no las demás', async () => {
+    const user = renderForm({ valoresIniciales: { nombre: 'Ana', correo: 'ana@example.com' } });
+    await user.click(agregar());
+    await user.click(screen.getByRole('button', { name: 'Enviar' }));
+    expect(variedad(1).getAttribute('aria-invalid')).toBe('true');
+    expect(variedad(2).getAttribute('aria-invalid')).toBeNull();
+    expect(variedad(2).getAttribute('aria-describedby')).toBeNull();
+  });
+
+  it('D-1: al elegir un producto el error desaparece y la variedad deja de estar marcada', async () => {
+    const user = renderForm({ valoresIniciales: { nombre: 'Ana', correo: 'ana@example.com' } });
+    await user.click(screen.getByRole('button', { name: 'Enviar' }));
+    expect(variedad(1).getAttribute('aria-invalid')).toBe('true');
+    await elegir(user, 1, 'Geisha', GEISHA_1KG_MOLIDO);
+    expect(screen.queryByText('Seleccione al menos un producto.')).toBeNull();
+    expect(variedad(1).getAttribute('aria-invalid')).toBeNull();
+    expect(variedad(1).getAttribute('aria-describedby')).toBeNull();
+  });
 });
 
 describe('HU-404 estados del catálogo dentro del formulario', () => {

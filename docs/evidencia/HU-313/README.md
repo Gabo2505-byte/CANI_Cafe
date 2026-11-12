@@ -37,6 +37,13 @@ Es la única escritura acordada sobre su colección y se hace con su OK expreso:
 - **Con esta historia "Venta ganada" y "Venta perdida" ya son elegibles** en la ventana; se quitó el texto provisional "Marcar una posible venta como ganada estará disponible pronto.".
 - Una venta ganada sigue apareciendo en el tablero durante 30 días (HU-305).
 
+> **Actualización 2026-11-08:** por decisión de Danny, "Distribuidor" y "Otro" se quitaron del sistema. Las únicas
+> clasificaciones son "Persona interesada" y "Cliente", y el punto sobre distribuidor y "Otro" queda sin efecto. En los
+> datos de prueba, Carla pasó a "Persona interesada". El código de ventas no cambió: al ganar, solo "Persona
+> interesada" pasa a "Cliente". Si un contacto todavía tuviera una clasificación antigua, la venta se gana igual, la
+> clasificación no se toca y aparece "Venta ganada correctamente." (lo cubre una prueba contra el emulador). La
+> captura y el recorrido de Carla de esta evidencia son anteriores a ese cambio.
+
 ## Nota sobre el recorrido en navegador
 
 Cada carga completa de página deja abiertas conexiones largas del emulador (HTTP/1.1, máximo 6 por servidor en el navegador). Al recargar muchas veces seguidas, las siguientes peticiones esperaban hasta ~50 s. No ocurre al navegar dentro de la aplicación ni en producción (HTTP/2): se confirmó midiendo las peticiones pendientes y con un experimento sin navegador, donde ganar una venta tarda 126 ms. El recorrido abre una pestaña nueva por página para evitarlo.

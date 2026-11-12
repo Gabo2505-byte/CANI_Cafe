@@ -5,7 +5,7 @@
 > Como persona interesada en un producto quiero que el formulario me avise si falta un dato o si algo está mal escrito
 > para que pueda corregirlo antes de enviarlo.
 
-**Alcance de esta entrega:** revisión de nombre, correo, teléfono, productos y cantidades, y el aviso general. "Enviar" todavía no escribe en Firestore (HU-405).
+**Alcance de esta entrega:** revisión de nombre, correo, teléfono, productos y cantidades, y el aviso general. Con los datos correctos, "Enviar" guarda la solicitud en Firestore (`formRequests`, HU-405).
 
 ## Datos de prueba
 
@@ -101,6 +101,18 @@ bloquea el cierre. Va descrito abajo para que lo corrija Dylan.
   salir. El aviso general de arriba sí tiene `role="alert"`.
 - **Alcance desactualizado:** la línea de "Alcance" de esta evidencia dice que "Enviar" todavía no escribe en
   Firestore. Ya escribe (HU-405), y la verificación lo comprobó.
+
+### Decisión: sin `role="alert"` en los mensajes de cada campo
+
+- En el sitio público, los mensajes bajo cada campo **no** llevan `role="alert"`. Se mantiene el aviso general
+  "Revise los campos marcados en rojo." con `role="alert"`.
+- **Motivo:** el ruido para lectores de pantalla. Al dar clic en "Enviar" con varios errores se anunciarían el aviso
+  general y cada mensaje uno tras otro, y `alert` interrumpe lo que se esté leyendo. Al salir de un campo, el anuncio
+  cortaría la lectura del campo siguiente, donde la persona acaba de entrar.
+- Cada campo con error queda con `aria-invalid="true"` y ligado a su mensaje con `aria-describedby`, así que el
+  lector lo anuncia como inválido y lee el mensaje al volver a él.
+- El sistema interno sí usa `role="alert"` por campo. La diferencia es intencional: el sitio público lo usa cualquier
+  persona y conviene menos ruido.
 
 ### Capturas de la verificación
 
