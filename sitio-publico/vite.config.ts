@@ -7,6 +7,8 @@ export default defineConfig({
   plugins: [react()],
   root: 'sitio-publico',
   envDir: '..',
+  // Caché propia: con la de por defecto (node_modules/.vite) choca con la del sistema interno si los dos corren a la vez.
+  cacheDir: '../node_modules/.vite-publico',
   build: {
     outDir: '../dist-publico',
     emptyOutDir: true,
