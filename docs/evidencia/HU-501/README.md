@@ -5,7 +5,7 @@
 > Como persona interesada en un producto quiero que el formulario me avise si falta un dato o si algo está mal escrito
 > para que pueda corregirlo antes de enviarlo.
 
-**Alcance de esta entrega:** revisión de nombre, correo, teléfono, productos y cantidades, y el aviso general. "Enviar" todavía no escribe en Firestore (HU-405).
+**Alcance de esta entrega:** revisión de nombre, correo, teléfono, productos y cantidades, y el aviso general. Con los datos correctos, "Enviar" guarda la solicitud en Firestore (`formRequests`, HU-405).
 
 ## Datos de prueba
 
