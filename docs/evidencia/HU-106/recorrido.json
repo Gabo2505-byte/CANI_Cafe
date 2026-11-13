@@ -1,0 +1,46 @@
+[
+  {
+    "caso": "Ingreso",
+    "enlace": "¿Olvidó su contraseña?"
+  },
+  {
+    "caso": "Pantalla Recuperar contraseña",
+    "url": "/recuperar-contrasena",
+    "etiquetas": [
+      "Usuario"
+    ],
+    "boton": 1,
+    "volver": 1
+  },
+  {
+    "caso": "Usuario vacío",
+    "mensajes": [
+      "Ingrese su usuario."
+    ]
+  },
+  {
+    "caso": "Usuario que no existe",
+    "mensajes": [
+      "El usuario ingresado no existe."
+    ],
+    "correosEnviados": 0
+  },
+  {
+    "caso": "Usuario existente",
+    "mensaje": "Se envió un enlace de recuperación a a*****@cani-crm.test.",
+    "correosEnviados": 1,
+    "reenviar": "Reenviar enlace (60 s)",
+    "reenviarDeshabilitado": true
+  },
+  {
+    "caso": "Después de 60 s",
+    "reenviar": "Reenviar enlace",
+    "reenviarDeshabilitado": false
+  },
+  {
+    "caso": "Reenviar enlace",
+    "mensaje": "Se envió un enlace de recuperación a a*****@cani-crm.test.",
+    "correosEnviados": 1,
+    "reenviar": "Reenviar enlace (59 s)"
+  }
+]

@@ -1,0 +1,30 @@
+== HU-106: pantalla y unitarias (npx vitest run --reporter=verbose) ==
+ ✓ tests/unit/passwordRecovery.test.ts > HU-106 maskEmail > solo deja ver la primera letra y lo que va después de "@" 2ms
+ ✓ tests/unit/passwordRecovery.test.ts > HU-106 maskEmail > usa siempre cinco asteriscos, sin revelar el largo del nombre 0ms
+ ✓ tests/unit/passwordRecovery.test.ts > HU-106 maskEmail > un correo sin "@" no se muestra 0ms
+ ✓ tests/unit/passwordRecovery.test.ts > HU-106 mensajes > usa los textos literales del criterio 0ms
+ ✓ tests/components/ForgotPassword.test.tsx > HU-106 Solicitar la recuperación de la contraseña > "¿Olvidó su contraseña?" abre "Recuperar contraseña" con Usuario, Enviar enlace y Volver al inicio de sesión 152ms
+ ✓ tests/components/ForgotPassword.test.tsx > HU-106 Solicitar la recuperación de la contraseña > "Volver al inicio de sesión" regresa a la pantalla de ingreso 19ms
+ ✓ tests/components/ForgotPassword.test.tsx > HU-106 Solicitar la recuperación de la contraseña > usuario vacío o inexistente: muestra el mensaje que devuelve la solicitud 40ms
+ ✓ tests/components/ForgotPassword.test.tsx > HU-106 Solicitar la recuperación de la contraseña > usuario existente: pide el envío y muestra el correo enmascarado 27ms
+ ✓ tests/components/ForgotPassword.test.tsx > HU-106 Solicitar la recuperación de la contraseña > "Reenviar enlace" muestra los segundos que faltan y solo se puede usar después de 60 s 31ms
+ ✓ tests/components/ForgotPassword.test.tsx > HU-106 Solicitar la recuperación de la contraseña > con sesión activa no muestra la recuperación y pasa al sistema 16ms
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+
+== HU-106: emuladores de Auth y Firestore ==
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > permite a un usuario activo leer y escribir en usernames 109ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > usernames > sin sesión se lee un usuario por su id exacto 80ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > usernames > sin sesión no se pueden listar ni buscar usuarios 106ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > usernames > sin sesión, o con usuario inactivo, no se puede crear, cambiar ni borrar 177ms
+ ✓ tests/auth/passwordRecovery.emulator.test.ts > HU-106 Solicitar la recuperación de la contraseña (emuladores, sin sesión) > usuario vacío → "Ingrese su usuario." y no se envía correo 3ms
+ ✓ tests/auth/passwordRecovery.emulator.test.ts > HU-106 Solicitar la recuperación de la contraseña (emuladores, sin sesión) > usuario inexistente → "El usuario ingresado no existe." y no se envía correo 77ms
+ ✓ tests/auth/passwordRecovery.emulator.test.ts > HU-106 Solicitar la recuperación de la contraseña (emuladores, sin sesión) > índice que apunta a una cuenta inexistente en Auth → "El usuario ingresado no existe." 35ms
+ ✓ tests/auth/passwordRecovery.emulator.test.ts > HU-106 Solicitar la recuperación de la contraseña (emuladores, sin sesión) > usuario existente → envía el enlace al correo de la cuenta y devuelve el correo enmascarado 41ms
+ Test Files  4 passed (4)
+      Tests  41 passed (41)
+
+== Totales del 2026-11-13 (rama gabriel-entrega-5, al día con main) ==
+npm run typecheck: sin errores
+npm test:      Tests  869 passed (869)
+npm run test:emulators:      Tests  246 passed (246)

@@ -1,0 +1,35 @@
+== HU-107: unitarias y de pantalla (npx vitest run --reporter=verbose) ==
+ ✓ tests/unit/passwordResetLinks.test.ts > HU-107 enlace del correo > mensaje literal del criterio 2ms
+ ✓ tests/unit/passwordResetLinks.test.ts > HU-107 enlace del correo > el rid es aleatorio, de 32 caracteres hexadecimales 2ms
+ ✓ tests/unit/passwordResetLinks.test.ts > HU-107 enlace del correo > la continueUrl lleva a /nueva-contrasena con el usuario normalizado y el rid 0ms
+ ✓ tests/unit/passwordResetLinks.test.ts > HU-107 enlace del correo > lee el enlace de Firebase (con continueUrl) y el de la acción personalizada 1ms
+ ✓ tests/unit/passwordResetLinks.test.ts > HU-107 enlace del correo > un enlace incompleto o de otra acción no se acepta 0ms
+ ✓ tests/unit/passwordResetLinks.test.ts > HU-107 enlace del correo > sirve antes de 30 minutos y deja de servir a los 30 0ms
+ ✓ tests/unit/passwordResetLinks.test.ts > HU-107 enlace del correo > no sirve si se pidió otro (rid distinto), si ya se usó o si no hay registro 0ms
+ ✓ tests/components/ResetPasswordLink.test.tsx > HU-107 enlace no válido > si el enlace ya no sirve aparece "El enlace ya no es válido. Solicite uno nuevo." 156ms
+ ✓ tests/components/ResetPasswordLink.test.tsx > HU-107 enlace no válido > un enlace incompleto es no válido sin consultar a Firebase 20ms
+ ✓ tests/components/ResetPasswordLink.test.tsx > HU-107 enlace no válido > si el enlace sirve, no muestra el mensaje y pasa a "Crear nueva contraseña" (HU-108) 31ms
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+
+== HU-107 y HU-108: emuladores de Auth y Firestore ==
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > passwordResets > sin sesión se registra un enlace nuevo para un usuario existente y se lee por id 149ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > passwordResets > no se registra para un usuario que no existe, ni con hora inventada, rid inválido, usado o campos de más 197ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > passwordResets > se marca como usado sin cambiar nada más, y uno usado no vuelve atrás 218ms
+ ✓ tests/rules/firestore.rules.test.ts > firestore.rules > passwordResets > no se listan ni se borran 164ms
+ ✓ tests/auth/passwordRecovery.emulator.test.ts > HU-107 validez del enlace (emuladores, sin sesión) > el enlace lleva el usuario y el rid del registro, y sirve recién enviado 61ms
+ ✓ tests/auth/passwordRecovery.emulator.test.ts > HU-107 validez del enlace (emuladores, sin sesión) > deja de servir si se pidió un enlace nuevo 93ms
+ ✓ tests/auth/passwordRecovery.emulator.test.ts > HU-107 validez del enlace (emuladores, sin sesión) > deja de servir 30 minutos después de enviado 43ms
+ ✓ tests/auth/passwordRecovery.emulator.test.ts > HU-107 validez del enlace (emuladores, sin sesión) > deja de servir después de usarlo 46ms
+ ✓ tests/auth/passwordRecovery.emulator.test.ts > HU-107 validez del enlace (emuladores, sin sesión) > un código inventado no sirve aunque el rid sea el actual 50ms
+ ✓ tests/auth/passwordRecovery.emulator.test.ts > HU-108 Crear una nueva contraseña (emuladores, sin sesión) > guarda la nueva contraseña: la anterior deja de funcionar, la nueva sirve y el enlace ya no 157ms
+ ✓ tests/auth/passwordRecovery.emulator.test.ts > HU-108 Crear una nueva contraseña (emuladores, sin sesión) > si pasaron los 30 minutos con la pantalla abierta, no guarda y avisa que el enlace no es válido 88ms
+ ✓ tests/auth/passwordRecovery.emulator.test.ts > HU-108 Crear una nueva contraseña (emuladores, sin sesión) > si se pidió otro enlace mientras tenía la pantalla abierta, el viejo no guarda 68ms
+ ✓ tests/auth/passwordRecovery.emulator.test.ts > HU-108 Crear una nueva contraseña (emuladores, sin sesión) > un código inventado no cambia la contraseña y avisa que el enlace no es válido 59ms
+ Test Files  4 passed (4)
+      Tests  41 passed (41)
+
+== Totales del 2026-11-13 (rama gabriel-entrega-5, al día con main) ==
+npm run typecheck: sin errores
+npm test:      Tests  869 passed (869)
+npm run test:emulators:      Tests  246 passed (246)
