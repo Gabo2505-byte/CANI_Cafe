@@ -100,6 +100,20 @@ export function resetLinkExpiresAt(requestedAt: { toMillis(): number }): Date {
 
 export type ResetLinkCheck = { ok: true; email: string; expiresAt: Date } | { ok: false };
 
+/**
+ * HU-107: lee `passwordResets/{usuario}` y devuelve el registro si permite este enlace ahora (mismo rid, sin usar y
+ * antes de 30 minutos), o null si no. Si la lectura falla, lanza el error.
+ */
+export async function readCurrentResetRequestIn(
+  db: Firestore,
+  link: Pick<ResetLinkParams, 'username' | 'rid'>,
+  now: number = Date.now(),
+): Promise<PasswordResetRequest | null> {
+  const snap = await getDoc(doc(db, COLLECTIONS.passwordResets, normalizeUsername(link.username)));
+  const request = snap.exists() ? (snap.data() as PasswordResetRequest) : null;
+  return request && isResetRequestCurrent(request, link.rid, now) ? request : null;
+}
+
 /** HU-107: ¿el enlace sigue sirviendo? Sin sesión. Cualquier falla cuenta como "no válido". */
 export async function checkResetLinkIn(
   auth: Auth,
@@ -108,9 +122,8 @@ export async function checkResetLinkIn(
   now: number = Date.now(),
 ): Promise<ResetLinkCheck> {
   try {
-    const snap = await getDoc(doc(db, COLLECTIONS.passwordResets, normalizeUsername(link.username)));
-    const request = snap.exists() ? (snap.data() as PasswordResetRequest) : null;
-    if (!request || !isResetRequestCurrent(request, link.rid, now)) return { ok: false };
+    const request = await readCurrentResetRequestIn(db, link, now);
+    if (!request) return { ok: false };
     // Firebase revisa que el código exista, no haya vencido y no se haya usado.
     const email = await verifyPasswordResetCode(auth, link.oobCode);
     return { ok: true, email, expiresAt: resetLinkExpiresAt(request.requestedAt) };
