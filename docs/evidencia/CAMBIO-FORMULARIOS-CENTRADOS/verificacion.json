@@ -1,0 +1,280 @@
+[
+  {
+    "archivo": "01-escritorio-nueva-oportunidad.png",
+    "vista": "escritorio (1280 px)",
+    "pantalla": "nueva-oportunidad",
+    "ruta": "/posibles-ventas/nueva",
+    "h1": "Nueva oportunidad",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "formulario": {
+      "left": 333,
+      "right": 933,
+      "width": 600
+    },
+    "titulo": {
+      "left": 333,
+      "right": 933,
+      "width": 600
+    },
+    "volver": null,
+    "contacto": null,
+    "encabezado": null,
+    "panelDatos": null
+  },
+  {
+    "archivo": "02-escritorio-editar-oportunidad.png",
+    "vista": "escritorio (1280 px)",
+    "pantalla": "editar-oportunidad",
+    "ruta": "/posibles-ventas/sale-001",
+    "h1": "Café en grano para cafetería (mock)",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "formulario": {
+      "left": 333,
+      "right": 933,
+      "width": 600
+    },
+    "titulo": {
+      "left": 333,
+      "right": 933,
+      "width": 600
+    },
+    "volver": {
+      "left": 333,
+      "right": 933,
+      "width": 600
+    },
+    "contacto": {
+      "left": 333,
+      "right": 933,
+      "width": 600
+    },
+    "encabezado": {
+      "left": 333,
+      "right": 933,
+      "width": 600
+    },
+    "panelDatos": null
+  },
+  {
+    "archivo": "03-escritorio-nuevo-contacto.png",
+    "vista": "escritorio (1280 px)",
+    "pantalla": "nuevo-contacto",
+    "ruta": "/contactos/nuevo",
+    "h1": "Nuevo contacto",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "formulario": {
+      "left": 340,
+      "right": 940,
+      "width": 600
+    },
+    "titulo": {
+      "left": 340,
+      "right": 940,
+      "width": 600
+    },
+    "volver": null,
+    "contacto": null,
+    "encabezado": null,
+    "panelDatos": null
+  },
+  {
+    "archivo": "04-escritorio-editar-contacto.png",
+    "vista": "escritorio (1280 px)",
+    "pantalla": "editar-contacto",
+    "ruta": "/contactos/contact-001/editar",
+    "h1": "Editar contacto",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "formulario": {
+      "left": 340,
+      "right": 940,
+      "width": 600
+    },
+    "titulo": {
+      "left": 340,
+      "right": 940,
+      "width": 600
+    },
+    "volver": null,
+    "contacto": null,
+    "encabezado": null,
+    "panelDatos": null
+  },
+  {
+    "archivo": "05-escritorio-detalle-venta-sin-editar.png",
+    "vista": "escritorio (1280 px)",
+    "pantalla": "detalle-venta-sin-editar",
+    "ruta": "/posibles-ventas/sale-001",
+    "h1": "Café en grano para cafetería (mock)",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "formulario": null,
+    "titulo": {
+      "left": 40,
+      "right": 736,
+      "width": 696
+    },
+    "volver": {
+      "left": 40,
+      "right": 1225,
+      "width": 1185
+    },
+    "contacto": {
+      "left": 40,
+      "right": 1225,
+      "width": 1185
+    },
+    "encabezado": {
+      "left": 40,
+      "right": 1000,
+      "width": 960
+    },
+    "panelDatos": {
+      "left": 40,
+      "right": 1000,
+      "width": 960
+    }
+  },
+  {
+    "archivo": "06-movil-nueva-oportunidad.png",
+    "vista": "movil (390 px)",
+    "pantalla": "nueva-oportunidad",
+    "ruta": "/posibles-ventas/nueva",
+    "h1": "Nueva oportunidad",
+    "anchoVentana": 390,
+    "desbordaHorizontal": false,
+    "formulario": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "titulo": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "volver": null,
+    "contacto": null,
+    "encabezado": null,
+    "panelDatos": null
+  },
+  {
+    "archivo": "07-movil-editar-oportunidad.png",
+    "vista": "movil (390 px)",
+    "pantalla": "editar-oportunidad",
+    "ruta": "/posibles-ventas/sale-001",
+    "h1": "Café en grano para cafetería (mock)",
+    "anchoVentana": 390,
+    "desbordaHorizontal": false,
+    "formulario": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "titulo": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "volver": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "contacto": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "encabezado": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "panelDatos": null
+  },
+  {
+    "archivo": "08-movil-nuevo-contacto.png",
+    "vista": "movil (390 px)",
+    "pantalla": "nuevo-contacto",
+    "ruta": "/contactos/nuevo",
+    "h1": "Nuevo contacto",
+    "anchoVentana": 390,
+    "desbordaHorizontal": false,
+    "formulario": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "titulo": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "volver": null,
+    "contacto": null,
+    "encabezado": null,
+    "panelDatos": null
+  },
+  {
+    "archivo": "09-movil-editar-contacto.png",
+    "vista": "movil (390 px)",
+    "pantalla": "editar-contacto",
+    "ruta": "/contactos/contact-001/editar",
+    "h1": "Editar contacto",
+    "anchoVentana": 390,
+    "desbordaHorizontal": false,
+    "formulario": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "titulo": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "volver": null,
+    "contacto": null,
+    "encabezado": null,
+    "panelDatos": null
+  },
+  {
+    "archivo": "10-movil-detalle-venta-sin-editar.png",
+    "vista": "movil (390 px)",
+    "pantalla": "detalle-venta-sin-editar",
+    "ruta": "/posibles-ventas/sale-001",
+    "h1": "Café en grano para cafetería (mock)",
+    "anchoVentana": 390,
+    "desbordaHorizontal": false,
+    "formulario": null,
+    "titulo": {
+      "left": 40,
+      "right": 71,
+      "width": 31
+    },
+    "volver": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "contacto": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "encabezado": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    },
+    "panelDatos": {
+      "left": 40,
+      "right": 335,
+      "width": 295
+    }
+  }
+]
