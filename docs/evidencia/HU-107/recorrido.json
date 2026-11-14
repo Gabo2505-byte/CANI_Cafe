@@ -1,0 +1,36 @@
+[
+  {
+    "caso": "Enlace del emulador",
+    "enlace": "http://127.0.0.1:9099/emulator/action?mode=resetPassword&lang=en&oobCode=…&apiKey=fake-api-key&continueUrl=http%3A%2F%2Flocalhost%3A5173%2Fnueva-contrasena%3Fu%3Dadmin%26rid%3Df18bb65a6953d4e8e379022bfd35eeb1"
+  },
+  {
+    "caso": "Enlace recién enviado",
+    "pantalla": "Crear nueva contraseña"
+  },
+  {
+    "caso": "Enlace anterior (se pidió otro)",
+    "mensajes": [
+      "El enlace ya no es válido. Solicite uno nuevo."
+    ]
+  },
+  {
+    "caso": "Enlace con 31 minutos",
+    "mensajes": [
+      "El enlace ya no es válido. Solicite uno nuevo."
+    ]
+  },
+  {
+    "caso": "Enlace con 29 minutos",
+    "pantalla": "Crear nueva contraseña"
+  },
+  {
+    "caso": "Guardar después de los 30 minutos",
+    "mensajes": [
+      "El enlace ya no es válido. Solicite uno nuevo."
+    ]
+  },
+  {
+    "caso": "Ingreso con la contraseña de antes",
+    "url": "/contactos"
+  }
+]

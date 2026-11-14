@@ -174,6 +174,33 @@ describe('HU-108 Crear una nueva contraseña (emuladores, sin sesión)', () => {
     await signOut(auth);
   });
 
+  it('si pasaron los 30 minutos con la pantalla abierta, no guarda y avisa que el enlace no es válido', async () => {
+    await requestPasswordResetIn(auth, publicDb, USERNAME, ORIGIN);
+    const link = (await lastLink(EMAIL))!;
+    expect((await checkResetLinkIn(auth, publicDb, link)).ok).toBe(true);
+    const later = Date.now() + RESET_LINK_MINUTES * 60 * 1000 + 1000;
+    expect(await saveNewPasswordIn(auth, publicDb, link, 'otra2026clave', later)).toEqual({
+      ok: false,
+      message: 'El enlace ya no es válido. Solicite uno nuevo.',
+    });
+    // No cambió nada: sigue la contraseña de antes y el enlace no quedó usado.
+    await signInWithUsernameOn(auth, publicDb, USERNAME, NEW);
+    await signOut(auth);
+    expect((await getDoc(doc(publicDb, COLLECTIONS.passwordResets, USERNAME))).get('used')).toBe(false);
+  });
+
+  it('si se pidió otro enlace mientras tenía la pantalla abierta, el viejo no guarda', async () => {
+    await requestPasswordResetIn(auth, publicDb, USERNAME, ORIGIN);
+    const first = (await lastLink(EMAIL))!;
+    await requestPasswordResetIn(auth, publicDb, USERNAME, ORIGIN);
+    expect(await saveNewPasswordIn(auth, publicDb, first, 'otra2026clave')).toEqual({
+      ok: false,
+      message: 'El enlace ya no es válido. Solicite uno nuevo.',
+    });
+    await signInWithUsernameOn(auth, publicDb, USERNAME, NEW);
+    await signOut(auth);
+  });
+
   it('un código inventado no cambia la contraseña y avisa que el enlace no es válido', async () => {
     await requestPasswordResetIn(auth, publicDb, USERNAME, ORIGIN);
     const link = (await lastLink(EMAIL))!;

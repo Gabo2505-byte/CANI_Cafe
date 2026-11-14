@@ -2,7 +2,7 @@
 // saveNewPasswordIn recibe Auth y Firestore (se prueba contra los emuladores).
 import { confirmPasswordReset, type Auth } from 'firebase/auth';
 import type { Firestore } from 'firebase/firestore';
-import { markResetLinkUsedIn, RESET_LINK_MESSAGES, type ResetLinkParams } from './passwordResetLinks';
+import { markResetLinkUsedIn, readCurrentResetRequestIn, RESET_LINK_MESSAGES, type ResetLinkParams } from './passwordResetLinks';
 
 /** HU-108: al menos 8 caracteres. */
 export const NEW_PASSWORD_MIN_LENGTH = 8;
@@ -48,6 +48,8 @@ const INVALID_LINK_CODES = new Set(['auth/expired-action-code', 'auth/invalid-ac
 
 /**
  * HU-108: guarda la nueva contraseña con el código del enlace. Desde ese momento la anterior deja de funcionar.
+ * Antes vuelve a revisar el enlace (HU-107): si pasaron los 30 minutos con la pantalla abierta, si se pidió otro
+ * o si ya se usó, no guarda y avisa que el enlace no es válido.
  * Después marca el enlace como usado (HU-107: un solo uso). Si esa marca falla, la contraseña igual quedó
  * cambiada y Firebase ya no acepta el código, así que se informa como éxito.
  */
@@ -56,7 +58,13 @@ export async function saveNewPasswordIn(
   db: Firestore,
   link: ResetLinkParams,
   password: string,
+  now: number = Date.now(),
 ): Promise<SaveNewPasswordResult> {
+  try {
+    if (!(await readCurrentResetRequestIn(db, link, now))) return { ok: false, message: RESET_LINK_MESSAGES.invalid };
+  } catch {
+    return { ok: false, message: NEW_PASSWORD_MESSAGES.saveFailed };
+  }
   try {
     await confirmPasswordReset(auth, link.oobCode, password);
   } catch (error) {

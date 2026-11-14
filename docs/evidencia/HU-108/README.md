@@ -26,8 +26,9 @@
 
 **Un solo uso (HU-107):** al guardar, el enlace queda `used: true` en `passwordResets/{usuario}`, y Firebase tampoco
 vuelve a aceptar el código. Si se abre el mismo enlace otra vez, aparece "El enlace ya no es válido. Solicite uno
-nuevo." ([07](07-enlace-usado.png)). Si el enlace vence entre que se abre la pantalla y se da "Guardar", Firebase
-rechaza el código y aparece ese mismo mensaje.
+nuevo." ([07](07-enlace-usado.png)). Si el enlace vence entre que se abre la pantalla y se da "Guardar", aparece ese
+mismo mensaje y no se cambia la contraseña: desde el 2026-11-13 `saveNewPasswordIn` vuelve a revisar los 30 minutos
+y el `rid` antes de guardar ([HU-107, captura 05](../HU-107/05-vence-antes-de-guardar.png)).
 
 ## Textos no definidos en la HU
 
