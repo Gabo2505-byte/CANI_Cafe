@@ -1,0 +1,251 @@
+[
+  {
+    "archivo": "01-lista-contactos.png",
+    "ruta": "/contactos",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "pantalla": "lista-contactos",
+    "barraSuperior": "CANI Café | CONTACTOS (3) | GESTIÓN DE VENTAS | AVISOS | 4 | Cerrar sesión",
+    "filas": [
+      {
+        "celdas": [
+          "Bruno Ficticio SolísNuevo mensaje",
+          "bruno.ficticio@example.com",
+          "+506 0000-0002",
+          "Cliente",
+          "3 sept 2026"
+        ],
+        "etiqueta": "Nuevo mensaje"
+      },
+      {
+        "celdas": [
+          "Fabián Solo TeléfonoNuevo",
+          "—",
+          "+506 6000-1234",
+          "Persona interesada",
+          "15 nov 2026"
+        ],
+        "etiqueta": "Nuevo"
+      },
+      {
+        "celdas": [
+          "Gloria Solo CorreoNuevo",
+          "gloria.solo.correo@example.com",
+          "—",
+          "Persona interesada",
+          "15 nov 2026"
+        ],
+        "etiqueta": "Nuevo"
+      },
+      {
+        "celdas": [
+          "Ana Prueba Mora",
+          "ana.prueba@example.com",
+          "+506 0000-0001",
+          "Persona interesada",
+          "1 sept 2026"
+        ],
+        "etiqueta": null
+      },
+      {
+        "celdas": [
+          "Carla Demo Vargas",
+          "carla.demo@example.com",
+          "—",
+          "Persona interesada",
+          "5 sept 2026"
+        ],
+        "etiqueta": null
+      },
+      {
+        "celdas": [
+          "Diego Ejemplo Rojas",
+          "diego.ejemplo@example.com",
+          "+1 3055550104",
+          "Cliente",
+          "8 sept 2026"
+        ],
+        "etiqueta": null
+      },
+      {
+        "celdas": [
+          "Elena Muestra Castro",
+          "—",
+          "+506 0000-0005",
+          "Persona interesada",
+          "10 sept 2026"
+        ],
+        "etiqueta": null
+      }
+    ]
+  },
+  {
+    "archivo": "02-busqueda-telefono-sin-correo.png",
+    "ruta": "/contactos",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "pantalla": "busqueda",
+    "texto": "60001234",
+    "filas": [
+      {
+        "celdas": [
+          "Fabián Solo TeléfonoNuevo",
+          "—",
+          "+506 6000-1234",
+          "Persona interesada",
+          "15 nov 2026"
+        ],
+        "etiqueta": "Nuevo"
+      }
+    ]
+  },
+  {
+    "archivo": "03-ficha-contacto-sin-correo.png",
+    "ruta": "/contactos/x4lfErCmsOKjE5wHyoou",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "pantalla": "ficha",
+    "contacto": "x4lfErCmsOKjE5wHyoou",
+    "titulo": "FABIÁN SOLO TELÉFONO | Persona interesada",
+    "datos": {
+      "Correo electrónico": "No registrado",
+      "Teléfono": "+506 6000-1234",
+      "Dirección": "No registrado",
+      "Fecha de registro": "15 nov 2026",
+      "Origen": "Formulario web"
+    },
+    "comunicaciones": [
+      {
+        "meta": "15/11/2026 5:35 p. m. · Formulario web",
+        "nota": "Quiero precios, prefiero que me llamen.\n\nProductos:\n- Villa Sarchí (Bolsa de 250 g, grano entero): 2",
+        "por": "Registrado por: Sistema (formulario web)"
+      }
+    ]
+  },
+  {
+    "archivo": "04-editar-contacto-sin-correo.png",
+    "ruta": "/contactos/x4lfErCmsOKjE5wHyoou/editar",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "pantalla": "editar",
+    "contacto": "x4lfErCmsOKjE5wHyoou",
+    "valores": {
+      "correo": "",
+      "telefono": "60001234",
+      "nombre": "Fabián Solo Teléfono"
+    }
+  },
+  {
+    "archivo": "05-ficha-existente-conserva-correo.png",
+    "ruta": "/contactos/contact-002",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "pantalla": "ficha",
+    "contacto": "contact-002",
+    "titulo": "BRUNO FICTICIO SOLÍS | Cliente",
+    "datos": {
+      "Correo electrónico": "bruno.ficticio@example.com",
+      "Teléfono": "+506 0000-0002",
+      "Dirección": "Dirección de prueba 2, Heredia",
+      "Fecha de registro": "3 sept 2026",
+      "Origen": "Referido"
+    },
+    "comunicaciones": [
+      {
+        "meta": "15/11/2026 5:35 p. m. · Formulario web",
+        "nota": "Sin mensaje\n\nProductos:\n- Geisha (Bolsa de 1 kg, molido): 5",
+        "por": "Registrado por: Sistema (formulario web)"
+      },
+      {
+        "meta": "02/10/2026 · Correo electrónico",
+        "nota": "Actualización de condiciones de pago para todos sus pedidos.",
+        "por": "Registrado por: admin"
+      },
+      {
+        "meta": "30/09/2026 · Visita presencial",
+        "nota": "Revisión de volúmenes para la cafetería.",
+        "por": "Registrado por: admin"
+      }
+    ]
+  },
+  {
+    "archivo": "06-lista-tras-abrir-fichas.png",
+    "ruta": "/contactos",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "pantalla": "lista-contactos",
+    "barraSuperior": "CANI Café | CONTACTOS (1) | GESTIÓN DE VENTAS | AVISOS | 4 | Cerrar sesión",
+    "filas": [
+      {
+        "celdas": [
+          "Gloria Solo CorreoNuevo",
+          "gloria.solo.correo@example.com",
+          "—",
+          "Persona interesada",
+          "15 nov 2026"
+        ],
+        "etiqueta": "Nuevo"
+      },
+      {
+        "celdas": [
+          "Ana Prueba Mora",
+          "ana.prueba@example.com",
+          "+506 0000-0001",
+          "Persona interesada",
+          "1 sept 2026"
+        ],
+        "etiqueta": null
+      },
+      {
+        "celdas": [
+          "Bruno Ficticio Solís",
+          "bruno.ficticio@example.com",
+          "+506 0000-0002",
+          "Cliente",
+          "3 sept 2026"
+        ],
+        "etiqueta": null
+      },
+      {
+        "celdas": [
+          "Carla Demo Vargas",
+          "carla.demo@example.com",
+          "—",
+          "Persona interesada",
+          "5 sept 2026"
+        ],
+        "etiqueta": null
+      },
+      {
+        "celdas": [
+          "Diego Ejemplo Rojas",
+          "diego.ejemplo@example.com",
+          "+1 3055550104",
+          "Cliente",
+          "8 sept 2026"
+        ],
+        "etiqueta": null
+      },
+      {
+        "celdas": [
+          "Elena Muestra Castro",
+          "—",
+          "+506 0000-0005",
+          "Persona interesada",
+          "10 sept 2026"
+        ],
+        "etiqueta": null
+      },
+      {
+        "celdas": [
+          "Fabián Solo Teléfono",
+          "—",
+          "+506 6000-1234",
+          "Persona interesada",
+          "15 nov 2026"
+        ],
+        "etiqueta": null
+      }
+    ]
+  }
+]

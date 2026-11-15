@@ -1,0 +1,140 @@
+[
+  {
+    "paso": 1,
+    "texto": "Hay 3 solicitudes pendientes escritas sin sesión con Firestore Lite (A, B, C); la D sin correo ni teléfono no se guardó",
+    "resultado": "OK",
+    "detalle": "Bruno Ficticio Solís: email=null, tel=CR 00000002 | Fabián Solo Teléfono: email=null, tel=CR 60001234 | Gloria Solo Correo: email=gloria.solo.correo@example.com, tel=null null"
+  },
+  {
+    "paso": 2,
+    "texto": "Con la sesión del admin, las 3 solicitudes quedan procesadas",
+    "resultado": "OK",
+    "detalle": "Bruno Ficticio Solís: updated → contact-002 | Fabián Solo Teléfono: created → x4lfErCmsOKjE5wHyoou | Gloria Solo Correo: created → klObjeumZ8tAFI3TcbwC"
+  },
+  {
+    "paso": 3,
+    "texto": "A (solo teléfono, nueva): outcome \"created\"",
+    "resultado": "OK",
+    "detalle": "x4lfErCmsOKjE5wHyoou"
+  },
+  {
+    "paso": 4,
+    "texto": "B (solo teléfono, coincide con contact-002): outcome \"updated\" sobre contact-002",
+    "resultado": "OK",
+    "detalle": "contact-002"
+  },
+  {
+    "paso": 5,
+    "texto": "C (solo correo, nueva): outcome \"created\"",
+    "resultado": "OK",
+    "detalle": "klObjeumZ8tAFI3TcbwC"
+  },
+  {
+    "paso": 6,
+    "texto": "A en Firestore: email null, teléfono CR 60001234, \"Persona interesada\", origen \"formulario_web\", etiqueta \"Nuevo\"",
+    "resultado": "OK",
+    "detalle": "{\"email\":null,\"phoneCountry\":\"CR\",\"phoneNumber\":\"60001234\",\"classification\":\"persona_interesada\",\"origin\":\"formulario_web\",\"formBadge\":\"Nuevo\"}"
+  },
+  {
+    "paso": 7,
+    "texto": "B en Firestore: conserva su correo y su teléfono, etiqueta \"Nuevo mensaje\", productos reemplazados",
+    "resultado": "OK",
+    "detalle": "{\"email\":\"bruno.ficticio@example.com\",\"phoneCountry\":\"CR\",\"phoneNumber\":\"00000002\",\"formBadge\":\"Nuevo mensaje\",\"interests\":[{\"productId\":\"prod-09-geisha-1000-molido\",\"quantity\":5}]}"
+  },
+  {
+    "paso": 8,
+    "texto": "C en Firestore: correo en minúsculas, teléfono null, etiqueta \"Nuevo\"",
+    "resultado": "OK",
+    "detalle": "{\"email\":\"gloria.solo.correo@example.com\",\"phoneCountry\":null,\"phoneNumber\":null,\"formBadge\":\"Nuevo\"}"
+  },
+  {
+    "paso": 9,
+    "texto": "Lista: \"Fabián Solo Teléfono\" con la etiqueta \"Nuevo\" y correo \"—\"",
+    "resultado": "OK",
+    "detalle": "{\"celdas\":[\"Fabián Solo TeléfonoNuevo\",\"—\",\"+506 6000-1234\",\"Persona interesada\",\"15 nov 2026\"],\"etiqueta\":\"Nuevo\"}"
+  },
+  {
+    "paso": 10,
+    "texto": "Lista: \"Bruno Ficticio Solís\" con la etiqueta \"Nuevo mensaje\" y su correo",
+    "resultado": "OK",
+    "detalle": "{\"celdas\":[\"Bruno Ficticio SolísNuevo mensaje\",\"bruno.ficticio@example.com\",\"+506 0000-0002\",\"Cliente\",\"3 sept 2026\"],\"etiqueta\":\"Nuevo mensaje\"}"
+  },
+  {
+    "paso": 11,
+    "texto": "Lista: \"Gloria Solo Correo\" con la etiqueta \"Nuevo\" y teléfono \"—\"",
+    "resultado": "OK",
+    "detalle": "{\"celdas\":[\"Gloria Solo CorreoNuevo\",\"gloria.solo.correo@example.com\",\"—\",\"Persona interesada\",\"15 nov 2026\"],\"etiqueta\":\"Nuevo\"}"
+  },
+  {
+    "paso": 12,
+    "texto": "Lista: los tres con etiqueta aparecen primero",
+    "resultado": "OK",
+    "detalle": "Bruno Ficticio SolísNuevo mensaje | Fabián Solo TeléfonoNuevo | Gloria Solo CorreoNuevo"
+  },
+  {
+    "paso": 13,
+    "texto": "Lista: también aparece \"Elena Muestra Castro\" (carga del seed, sin correo)",
+    "resultado": "OK",
+    "detalle": "{\"celdas\":[\"Elena Muestra Castro\",\"—\",\"+506 0000-0005\",\"Persona interesada\",\"10 sept 2026\"],\"etiqueta\":null}"
+  },
+  {
+    "paso": 14,
+    "texto": "Barra de arriba: \"Contactos (3)\"",
+    "resultado": "OK",
+    "detalle": "CANI Café | CONTACTOS (3) | GESTIÓN DE VENTAS | AVISOS | 4 | Cerrar sesión"
+  },
+  {
+    "paso": 15,
+    "texto": "Buscar \"60001234\" encuentra solo a Fabián (sin correo)",
+    "resultado": "OK",
+    "detalle": "[\"Fabián Solo TeléfonoNuevo\"]"
+  },
+  {
+    "paso": 16,
+    "texto": "Buscar \"solo\" encuentra a Fabián y a Gloria",
+    "resultado": "OK",
+    "detalle": "[\"Fabián Solo TeléfonoNuevo\",\"Gloria Solo CorreoNuevo\"]"
+  },
+  {
+    "paso": 17,
+    "texto": "Ficha de Fabián: carga sin errores, \"Persona interesada\", correo sin dato y su teléfono",
+    "resultado": "OK",
+    "detalle": "{\"Correo electrónico\":\"No registrado\",\"Teléfono\":\"+506 6000-1234\",\"Dirección\":\"No registrado\",\"Fecha de registro\":\"15 nov 2026\",\"Origen\":\"Formulario web\"}"
+  },
+  {
+    "paso": 18,
+    "texto": "Ficha de Fabián: comunicación \"Formulario web\" con el mensaje y el producto",
+    "resultado": "OK",
+    "detalle": "[{\"meta\":\"15/11/2026 5:35 p. m. · Formulario web\",\"nota\":\"Quiero precios, prefiero que me llamen.\\n\\nProductos:\\n- Villa Sarchí (Bolsa de 250 g, grano entero): 2\",\"por\":\"Registrado por: Sistema (formulario web)\"}]"
+  },
+  {
+    "paso": 19,
+    "texto": "Al abrir la ficha, la etiqueta \"Nuevo\" se quita (HU-504)",
+    "resultado": "OK",
+    "detalle": "null"
+  },
+  {
+    "paso": 20,
+    "texto": "Editar a Fabián: el formulario abre con el correo vacío y el teléfono cargado",
+    "resultado": "OK",
+    "detalle": "{\"correo\":\"\",\"telefono\":\"60001234\",\"nombre\":\"Fabián Solo Teléfono\"}"
+  },
+  {
+    "paso": 21,
+    "texto": "Ficha de Bruno: conserva su correo bruno.ficticio@example.com",
+    "resultado": "OK",
+    "detalle": "{\"Correo electrónico\":\"bruno.ficticio@example.com\",\"Teléfono\":\"+506 0000-0002\",\"Dirección\":\"Dirección de prueba 2, Heredia\",\"Fecha de registro\":\"3 sept 2026\",\"Origen\":\"Referido\"}"
+  },
+  {
+    "paso": 22,
+    "texto": "Ficha de Bruno: nueva comunicación \"Formulario web\" sin \"Correo:\" ni \"Datos enviados distintos\"",
+    "resultado": "OK",
+    "detalle": "{\"meta\":\"15/11/2026 5:35 p. m. · Formulario web\",\"nota\":\"Sin mensaje\\n\\nProductos:\\n- Geisha (Bolsa de 1 kg, molido): 5\",\"por\":\"Registrado por: Sistema (formulario web)\"}"
+  },
+  {
+    "paso": 23,
+    "texto": "Tras abrir las dos fichas, solo Gloria conserva la etiqueta \"Nuevo\"",
+    "resultado": "OK",
+    "detalle": "[{\"celdas\":[\"Gloria Solo CorreoNuevo\",\"gloria.solo.correo@example.com\",\"—\",\"Persona interesada\",\"15 nov 2026\"],\"etiqueta\":\"Nuevo\"}]"
+  }
+]
