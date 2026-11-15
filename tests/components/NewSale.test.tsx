@@ -143,7 +143,10 @@ describe('HU-301 Crear una oportunidad de venta', () => {
       products: [{ productId: 'product-001', quantity: 20 }],
     });
     await waitFor(() => expect(currentLocation.pathname).toBe('/posibles-ventas'));
-    expect((await screen.findByRole('status')).textContent).toBe('Oportunidad de venta registrada correctamente.');
+    // El tablero también tiene la región en vivo (role="status") de los anuncios del arrastre: se busca la franja.
+    const notice = await screen.findByText('Oportunidad de venta registrada correctamente.');
+    expect(notice.getAttribute('role')).toBe('status');
+    expect(notice.className).toBe('notice-success');
   });
 
   it('se puede guardar sin productos, sin seguimiento y sin notas', async () => {

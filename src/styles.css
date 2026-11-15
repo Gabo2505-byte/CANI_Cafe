@@ -1292,6 +1292,74 @@ textarea[aria-invalid='true'] {
   color: var(--color-lost);
 }
 
+/* Arrastre de tarjetas entre columnas */
+.sale-card.is-draggable .sale-card-link {
+  cursor: grab;
+  /* El enlace no se arrastra como enlace del navegador; en táctil se conserva el desplazamiento del tablero. */
+  -webkit-user-drag: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* La tarjeta original se queda en su columna, en tenue, mientras su copia sigue al puntero. */
+.sale-card.is-dragging {
+  opacity: 0.35;
+  border-style: dashed;
+}
+
+.sale-card.is-saving {
+  opacity: 0.6;
+}
+
+.sale-card.is-saving .sale-card-link {
+  cursor: progress;
+}
+
+.sale-card-overlay {
+  cursor: grabbing;
+  border-color: var(--color-accent);
+  box-shadow: 0 10px 24px rgb(0 0 0 / 0.45);
+}
+
+.sale-card-overlay .sale-card-link {
+  background: var(--color-surface-raised);
+}
+
+.board-column {
+  transition:
+    opacity 120ms ease,
+    outline-color 120ms ease,
+    background-color 120ms ease;
+}
+
+/* Columnas a las que el mapa de transiciones deja pasar la tarjeta: borde dorado punteado. */
+.board-column.is-drop-permitida {
+  outline: 2px dashed var(--color-accent);
+  outline-offset: -2px;
+}
+
+/* La columna permitida bajo el puntero: borde continuo y fondo más claro. */
+.board-column.is-drop-over {
+  outline-style: solid;
+  background: var(--color-surface-hover);
+}
+
+/* Columnas no permitidas: atenuadas mientras dura el arrastre (no aceptan la tarjeta). */
+.board-column.is-drop-bloqueada {
+  opacity: 0.4;
+  filter: saturate(0.4);
+}
+
+.board-drop-error {
+  margin: 0 0 var(--space-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board-column {
+    transition: none;
+  }
+}
+
 /* -----------------------------------------------------------------------------------------------------
    10. Detalle de una posible venta (HU-308)
    ----------------------------------------------------------------------------------------------------- */

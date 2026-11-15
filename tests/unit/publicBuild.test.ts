@@ -17,6 +17,8 @@ const FORBIDDEN_MODULES = [
   // El canal en tiempo real del SDK completo. (Lite también usa @firebase/webchannel-wrapper/bloom-blob, que son solo
   // utilidades de hash: ese no se prohíbe.)
   /@firebase[\\/]webchannel-wrapper[\\/](dist[\\/])?webchannel-blob/,
+  // El arrastre de tarjetas es solo del tablero del sistema interno.
+  /@dnd-kit[\\/]/,
 ];
 
 const FORBIDDEN_TEXT = [
