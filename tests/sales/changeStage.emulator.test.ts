@@ -5,6 +5,8 @@ import { readFileSync } from 'node:fs';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { changeSaleStageIn, SaleReopenDuplicateTitleError, SaleStageConflictError } from '../../src/sales/salesRepository';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
+import { SALE_STAGES, type SaleStage } from '../../src/shared/types';
+import { isValidStageChange } from '../../src/sales/stageChange';
 
 const PROJECT_ID = 'demo-cani-crm-change-stage';
 const [host, port] = (process.env.FIRESTORE_EMULATOR_HOST ?? '127.0.0.1:8080').split(':');
@@ -58,13 +60,15 @@ const historyOf = async (saleId: string) => {
   const snap = await getDocs(query(collection(db, COLLECTIONS.stageHistory), where('saleId', '==', saleId)));
   return snap.docs.map((d) => d.data()).sort((a, b) => a.changedAt.toMillis() - b.changedAt.toMillis());
 };
+/** Paso válido previo a ganar: de "Contactado" a "Precio o cotización enviada" (desde Contactado no se gana directo). */
+const toQuote = (saleId: string) => changeSaleStageIn(db, saleId, 'contactado', 'cotizacion_enviada');
 
 describe('cambiar la etapa de una oportunidad de venta (HU-310)', () => {
   it('actualiza la etapa y su fecha y agrega un registro al historial sin borrar los anteriores', async () => {
-    await changeSaleStageIn(db, 's-1', 'contactado', 'en_negociacion');
+    await changeSaleStageIn(db, 's-1', 'contactado', 'cotizacion_enviada');
 
     const sale = (await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).data()!;
-    expect(sale.stage).toBe('en_negociacion');
+    expect(sale.stage).toBe('cotizacion_enviada');
     expect(sale.stageChangedAt.toMillis()).toBeGreaterThan(baseSale.stageChangedAt.toMillis());
     // Lo demás queda igual.
     expect(sale).toMatchObject({ title: 'Venta', estimatedAmount: 1000, notes: 'Notas', contactId: 'c-1' });
@@ -72,34 +76,42 @@ describe('cambiar la etapa de una oportunidad de venta (HU-310)', () => {
     expect(sale.lastCommunicationAt.toMillis()).toBe(baseSale.lastCommunicationAt.toMillis());
 
     const history = await historyOf('s-1');
-    expect(history.map((h) => `${h.previousStage ?? '-'}>${h.newStage}`)).toEqual(['-', 'contactado>en_negociacion'].map((x, i) => (i === 0 ? '->contactado' : x)));
+    expect(history.map((h) => `${h.previousStage ?? '-'}>${h.newStage}`)).toEqual(['->contactado', 'contactado>cotizacion_enviada']);
     // La fecha del nuevo registro coincide con la de la venta.
     expect(history[1].changedAt.toMillis()).toBe(sale.stageChangedAt.toMillis());
     expect(history[1].lossReason).toBeNull();
   });
 
-  it('se puede ir hacia atrás y varias veces: cada cambio suma un registro', async () => {
+  it('se puede ir a la etapa anterior y a la siguiente varias veces: cada cambio suma un registro', async () => {
     await changeSaleStageIn(db, 's-1', 'contactado', 'nuevo_interesado');
-    await changeSaleStageIn(db, 's-1', 'nuevo_interesado', 'cotizacion_enviada');
+    await changeSaleStageIn(db, 's-1', 'nuevo_interesado', 'contactado');
+    await changeSaleStageIn(db, 's-1', 'contactado', 'cotizacion_enviada');
+    await changeSaleStageIn(db, 's-1', 'cotizacion_enviada', 'en_negociacion');
+    await changeSaleStageIn(db, 's-1', 'en_negociacion', 'cotizacion_enviada');
     await changeSaleStageIn(db, 's-1', 'cotizacion_enviada', 'contactado');
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
-    expect((await historyOf('s-1')).map((h) => h.newStage)).toEqual([
-      'contactado',
-      'nuevo_interesado',
-      'cotizacion_enviada',
-      'contactado',
+    expect((await historyOf('s-1')).map((h) => `${h.previousStage ?? '-'}>${h.newStage}`)).toEqual([
+      '->contactado',
+      'contactado>nuevo_interesado',
+      'nuevo_interesado>contactado',
+      'contactado>cotizacion_enviada',
+      'cotizacion_enviada>en_negociacion',
+      'en_negociacion>cotizacion_enviada',
+      'cotizacion_enviada>contactado',
     ]);
   });
 
   it('no afecta a las demás oportunidades de venta del mismo contacto', async () => {
     const before = (await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).data();
-    await changeSaleStageIn(db, 's-1', 'contactado', 'en_negociacion');
+    await changeSaleStageIn(db, 's-1', 'contactado', 'cotizacion_enviada');
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).data()).toEqual(before);
     expect(await historyOf('s-hermana')).toEqual([]);
   });
 
   it('si la etapa guardada ya no es la esperada no escribe nada y avisa', async () => {
-    await expect(changeSaleStageIn(db, 's-1', 'nuevo_interesado', 'en_negociacion')).rejects.toBeInstanceOf(SaleStageConflictError);
+    // Las dos transiciones son válidas en el mapa: el rechazo es por conflicto (está en "Contactado").
+    await expect(changeSaleStageIn(db, 's-1', 'nuevo_interesado', 'contactado')).rejects.toBeInstanceOf(SaleStageConflictError);
+    await expect(changeSaleStageIn(db, 's-1', 'cotizacion_enviada', 'en_negociacion')).rejects.toBeInstanceOf(SaleStageConflictError);
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
     expect(await historyOf('s-1')).toHaveLength(1);
   });
@@ -113,13 +125,60 @@ describe('cambiar la etapa de una oportunidad de venta (HU-310)', () => {
   });
 
   it('una venta que no existe da error y no crea nada', async () => {
-    await expect(changeSaleStageIn(db, 'no-existe', 'contactado', 'en_negociacion')).rejects.toThrow(/no existe/);
+    await expect(changeSaleStageIn(db, 'no-existe', 'contactado', 'cotizacion_enviada')).rejects.toThrow(/no existe/);
     expect(await historyOf('no-existe')).toEqual([]);
   });
 
   it('sin sesión no se puede y no cambia nada', async () => {
     const anon = testEnv.unauthenticatedContext().firestore() as unknown as Firestore;
-    await assertFails(changeSaleStageIn(anon, 's-1', 'contactado', 'en_negociacion'));
+    await assertFails(changeSaleStageIn(anon, 's-1', 'contactado', 'cotizacion_enviada'));
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
+    expect(await historyOf('s-1')).toHaveLength(1);
+  });
+});
+
+describe('mapa de transiciones: el servicio rechaza los cambios no permitidos (HU-310)', () => {
+  const OPEN: readonly SaleStage[] = ['nuevo_interesado', 'contactado', 'cotizacion_enviada', 'en_negociacion'];
+  const FORBIDDEN = OPEN.flatMap((from) => SALE_STAGES.filter((to) => to !== from && !isValidStageChange(from, to)).map((to) => [from, to] as const));
+
+  it('hay 8 saltos prohibidos entre etapas abiertas o hacia ganada', () => {
+    expect(FORBIDDEN.map(([from, to]) => `${from}>${to}`)).toEqual([
+      'nuevo_interesado>cotizacion_enviada',
+      'nuevo_interesado>en_negociacion',
+      'nuevo_interesado>ganada',
+      'contactado>en_negociacion',
+      'contactado>ganada',
+      'cotizacion_enviada>nuevo_interesado',
+      'en_negociacion>nuevo_interesado',
+      'en_negociacion>contactado',
+    ]);
+  });
+
+  it.each(FORBIDDEN)('%s → %s: lanza "no permitido" y no escribe nada (ni la venta, ni el historial, ni el contacto)', async (from, to) => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), COLLECTIONS.sales, 's-salto'), { ...baseSale, title: 'Salto', stage: from });
+    });
+    const before = (await getDoc(doc(db, COLLECTIONS.sales, 's-salto'))).data();
+
+    const attempt = changeSaleStageIn(db, 's-salto', from, to);
+    await expect(attempt).rejects.toThrow(/no permitido/);
+    await expect(attempt).rejects.not.toBeInstanceOf(SaleStageConflictError);
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-salto'))).data()).toEqual(before);
+    expect(await historyOf('s-salto')).toEqual([]);
+    expect((await getDoc(doc(db, COLLECTIONS.contacts, 'c-1'))).get('classification')).toBe('persona_interesada');
+  });
+
+  it('el error dice la etapa de origen y la de destino', async () => {
+    await expect(changeSaleStageIn(db, 's-1', 'contactado', 'ganada')).rejects.toThrow(
+      'Cambio de etapa no permitido: de "Contactado" (contactado) a "Venta ganada" (ganada).',
+    );
+  });
+
+  it('se revisa antes que el conflicto: un salto prohibido se rechaza aunque la etapa esperada no coincida', async () => {
+    // s-1 está en "Contactado"; se dice que está en "Nuevo interesado" y se pide un salto prohibido.
+    const attempt = changeSaleStageIn(db, 's-1', 'nuevo_interesado', 'ganada');
+    await expect(attempt).rejects.toThrow(/no permitido/);
+    await expect(attempt).rejects.not.toBeInstanceOf(SaleStageConflictError);
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
     expect(await historyOf('s-1')).toHaveLength(1);
   });
@@ -156,7 +215,7 @@ describe('marcar una oportunidad de venta como perdida (HU-311)', () => {
   });
 
   it('un motivo que llega con una etapa abierta no se guarda', async () => {
-    await changeSaleStageIn(db, 's-1', 'contactado', 'en_negociacion', 'Esto no es una pérdida');
+    await changeSaleStageIn(db, 's-1', 'contactado', 'cotizacion_enviada', 'Esto no es una pérdida');
     expect((await historyOf('s-1'))[1].lossReason).toBeNull();
   });
 
@@ -168,6 +227,7 @@ describe('marcar una oportunidad de venta como perdida (HU-311)', () => {
   });
 
   it('si la etapa guardada ya no es la esperada no escribe nada', async () => {
+    // "Nuevo interesado" → "Venta perdida" es válida: el rechazo es por conflicto (está en "Contactado").
     await expect(changeSaleStageIn(db, 's-1', 'nuevo_interesado', 'perdida', 'Motivo')).rejects.toBeInstanceOf(SaleStageConflictError);
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
     expect(await historyOf('s-1')).toHaveLength(1);
@@ -178,7 +238,8 @@ describe('marcar una oportunidad de venta como ganada (HU-313)', () => {
   const classificationOf = async (id: string) => (await getDoc(doc(db, COLLECTIONS.contacts, id))).get('classification');
 
   it('una persona interesada pasa a cliente y la venta a "Venta ganada", con su registro en el historial', async () => {
-    const result = await changeSaleStageIn(db, 's-1', 'contactado', 'ganada');
+    await toQuote('s-1');
+    const result = await changeSaleStageIn(db, 's-1', 'cotizacion_enviada', 'ganada');
 
     expect(result).toEqual({ contactBecameClient: true, contactName: 'Ana Interesada' });
     expect(await classificationOf('c-1')).toBe('cliente');
@@ -186,13 +247,18 @@ describe('marcar una oportunidad de venta como ganada (HU-313)', () => {
     expect(sale.stage).toBe('ganada');
     expect(sale.stageChangedAt.toMillis()).toBeGreaterThan(baseSale.stageChangedAt.toMillis());
     const history = await historyOf('s-1');
-    expect(history).toHaveLength(2);
-    expect(history[1]).toMatchObject({ previousStage: 'contactado', newStage: 'ganada', lossReason: null });
-    expect(history[1].changedAt.toMillis()).toBe(sale.stageChangedAt.toMillis());
+    expect(history.map((h) => `${h.previousStage ?? '-'}>${h.newStage}`)).toEqual([
+      '->contactado',
+      'contactado>cotizacion_enviada',
+      'cotizacion_enviada>ganada',
+    ]);
+    expect(history[2]).toMatchObject({ previousStage: 'cotizacion_enviada', newStage: 'ganada', lossReason: null });
+    expect(history[2].changedAt.toMillis()).toBe(sale.stageChangedAt.toMillis());
   });
 
   it('solo se cambia la clasificación: el resto del contacto queda igual', async () => {
-    await changeSaleStageIn(db, 's-1', 'contactado', 'ganada');
+    await toQuote('s-1');
+    await changeSaleStageIn(db, 's-1', 'cotizacion_enviada', 'ganada');
     expect((await getDoc(doc(db, COLLECTIONS.contacts, 'c-1'))).data()).toEqual({
       fullName: 'Ana Interesada',
       classification: 'cliente',
@@ -202,7 +268,8 @@ describe('marcar una oportunidad de venta como ganada (HU-313)', () => {
   });
 
   it('si el contacto ya era cliente sigue siéndolo y no hay conversión', async () => {
-    const result = await changeSaleStageIn(db, 's-cliente', 'contactado', 'ganada');
+    await toQuote('s-cliente');
+    const result = await changeSaleStageIn(db, 's-cliente', 'cotizacion_enviada', 'ganada');
     expect(result).toEqual({ contactBecameClient: false, contactName: null });
     expect(await classificationOf('c-cliente')).toBe('cliente');
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-cliente'))).get('stage')).toBe('ganada');
@@ -215,14 +282,16 @@ describe('marcar una oportunidad de venta como ganada (HU-313)', () => {
       await setDoc(doc(admin, COLLECTIONS.contacts, 'c-antigua'), { fullName: 'Carla Antigua', classification: 'distribuidor', status: 'activo' });
       await setDoc(doc(admin, COLLECTIONS.sales, 's-antigua'), { ...baseSale, contactId: 'c-antigua', title: 'De una clasificación antigua' });
     });
-    const result = await changeSaleStageIn(db, 's-antigua', 'contactado', 'ganada');
+    await toQuote('s-antigua');
+    const result = await changeSaleStageIn(db, 's-antigua', 'cotizacion_enviada', 'ganada');
     expect(result).toEqual({ contactBecameClient: false, contactName: null });
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-antigua'))).get('stage')).toBe('ganada');
     expect(await classificationOf('c-antigua')).toBe('distribuidor');
   });
 
   it('si el contacto ya no existe la venta se gana igual y no se crea ningún contacto', async () => {
-    const result = await changeSaleStageIn(db, 's-sin-contacto', 'contactado', 'ganada');
+    await toQuote('s-sin-contacto');
+    const result = await changeSaleStageIn(db, 's-sin-contacto', 'cotizacion_enviada', 'ganada');
     expect(result).toEqual({ contactBecameClient: false, contactName: null });
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-sin-contacto'))).get('stage')).toBe('ganada');
     expect((await getDoc(doc(db, COLLECTIONS.contacts, 'no-existe'))).exists()).toBe(false);
@@ -230,37 +299,50 @@ describe('marcar una oportunidad de venta como ganada (HU-313)', () => {
 
   it('no afecta a las demás ventas ni a los demás contactos', async () => {
     const hermana = (await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).data();
-    await changeSaleStageIn(db, 's-1', 'contactado', 'ganada');
+    await toQuote('s-1');
+    await changeSaleStageIn(db, 's-1', 'cotizacion_enviada', 'ganada');
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).data()).toEqual(hermana);
     expect(await classificationOf('c-cliente')).toBe('cliente');
     expect(await classificationOf('c-2')).toBe('persona_interesada');
   });
 
   it('es definitiva: una venta ganada ya no cambia de etapa', async () => {
-    await changeSaleStageIn(db, 's-1', 'contactado', 'ganada');
-    for (const to of ['nuevo_interesado', 'contactado', 'en_negociacion', 'perdida'] as const) {
+    await toQuote('s-1');
+    await changeSaleStageIn(db, 's-1', 'cotizacion_enviada', 'ganada');
+    for (const to of ['nuevo_interesado', 'contactado', 'cotizacion_enviada', 'en_negociacion', 'perdida'] as const) {
       await expect(changeSaleStageIn(db, 's-1', 'ganada', to)).rejects.toThrow(/no permitido/);
     }
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('ganada');
   });
 
   it('es atómico: si la etapa ya cambió no se toca ni la venta ni el contacto', async () => {
-    await expect(changeSaleStageIn(db, 's-1', 'nuevo_interesado', 'ganada')).rejects.toBeInstanceOf(SaleStageConflictError);
+    // "En negociación" → "Venta ganada" es válida: el rechazo es por conflicto (está en "Contactado").
+    await expect(changeSaleStageIn(db, 's-1', 'en_negociacion', 'ganada')).rejects.toBeInstanceOf(SaleStageConflictError);
+    await expect(changeSaleStageIn(db, 's-1', 'cotizacion_enviada', 'ganada')).rejects.toBeInstanceOf(SaleStageConflictError);
     expect(await classificationOf('c-1')).toBe('persona_interesada');
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
     expect(await historyOf('s-1')).toHaveLength(1);
   });
 
-  it('ganar desde cualquier etapa abierta funciona (aunque se haya saltado alguna)', async () => {
+  it('ganar desde "En negociación" también funciona', async () => {
     await changeSaleStageIn(db, 's-hermana', 'en_negociacion', 'ganada');
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-hermana'))).get('stage')).toBe('ganada');
     expect(await classificationOf('c-1')).toBe('cliente');
+  });
+
+  it('desde "Contactado" no se gana directo: no escribe nada ni convierte al contacto', async () => {
+    await expect(changeSaleStageIn(db, 's-1', 'contactado', 'ganada')).rejects.toThrow(/no permitido/);
+    expect(await classificationOf('c-1')).toBe('persona_interesada');
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
+    expect(await historyOf('s-1')).toHaveLength(1);
   });
 
   it('sin sesión no cambia nada: ni la venta ni el contacto', async () => {
     const anon = testEnv.unauthenticatedContext().firestore() as unknown as Firestore;
-    await assertFails(changeSaleStageIn(anon, 's-1', 'contactado', 'ganada'));
+    await toQuote('s-1');
+    await assertFails(changeSaleStageIn(anon, 's-1', 'cotizacion_enviada', 'ganada'));
     expect(await classificationOf('c-1')).toBe('persona_interesada');
-    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('cotizacion_enviada');
   });
 });
 
@@ -332,6 +414,7 @@ describe('reabrir una oportunidad de venta perdida (HU-312)', () => {
   });
 
   it('si la etapa guardada ya no es perdida, lo avisa y no escribe nada', async () => {
+    // "Venta perdida" → "En negociación" es válida (reabrir): el rechazo es por conflicto (está en "Contactado").
     await expect(changeSaleStageIn(db, 's-1', 'perdida', 'en_negociacion')).rejects.toBeInstanceOf(SaleStageConflictError);
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-1'))).get('stage')).toBe('contactado');
     expect(await historyOf('s-1')).toHaveLength(1);

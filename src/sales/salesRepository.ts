@@ -15,6 +15,7 @@ import { closedSalesCutoff } from './board';
 import { isDuplicateTitle } from './saleForm';
 import {
   classificationAfterWin,
+  invalidStageChangeMessage,
   isValidStageChange,
   lossReasonError,
   normalizeLossReason,
@@ -176,7 +177,8 @@ export class SaleReopenDuplicateTitleError extends Error {
 }
 
 /**
- * HU-310: mueve una posible venta abierta a otra etapa. HU-311: o la marca como perdida, con un motivo opcional
+ * HU-310: mueve una posible venta abierta a otra etapa permitida por el mapa de transiciones
+ * (ALLOWED_STAGE_TRANSITIONS); si no está permitida, no escribe nada y lanza un error con la etapa de origen y destino. HU-311: o la marca como perdida, con un motivo opcional
  * (hasta 250 caracteres). HU-313: o la marca como ganada, y entonces una "Persona interesada" pasa a "Cliente".
  *
  * Todo en una sola transacción: actualiza `sales.stage` y `sales.stageChangedAt`, agrega un registro a
@@ -196,7 +198,7 @@ export async function changeSaleStageIn(
   newStage: SaleStage,
   lossReason: string = '',
 ): Promise<StageChangeResult> {
-  if (!isValidStageChange(expectedStage, newStage)) throw new Error(`Cambio de etapa no permitido: ${expectedStage} → ${newStage}.`);
+  if (!isValidStageChange(expectedStage, newStage)) throw new Error(invalidStageChangeMessage(expectedStage, newStage));
   if (newStage === 'perdida' && lossReasonError(lossReason)) throw new Error('El motivo de la pérdida es demasiado largo.');
   const saleRef = doc(db, COLLECTIONS.sales, saleId);
 
