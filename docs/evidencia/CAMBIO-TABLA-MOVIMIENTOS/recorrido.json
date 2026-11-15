@@ -1,0 +1,104 @@
+[
+  {
+    "paso": 1,
+    "texto": "Ingresar con el usuario admin",
+    "resultado": "OK",
+    "detalle": "Llega a /contactos"
+  },
+  {
+    "paso": 2,
+    "texto": "Escritorio 1280: Gestión de ventas muestra \"Movimientos\" junto a \"+ Nueva oportunidad\"",
+    "resultado": "OK",
+    "detalle": "Botones: Movimientos | +Nueva oportunidad; misma fila: true"
+  },
+  {
+    "paso": 3,
+    "texto": "El botón \"Movimientos\" abre /posibles-ventas/movimientos",
+    "resultado": "OK",
+    "detalle": "/posibles-ventas/movimientos · Movimientos"
+  },
+  {
+    "paso": 4,
+    "texto": "Escritorio: 20 registros del seed, el más reciente arriba, sin \"Cargar más\"",
+    "resultado": "OK",
+    "detalle": "20 filas; primera 10/10/2026; última 01/08/2026; ordenadas: true"
+  },
+  {
+    "paso": 5,
+    "texto": "Entradas iniciales con \"—\" y motivo solo en la pérdida",
+    "resultado": "OK",
+    "detalle": "Iniciales: 6; motivos: Venta perdida | El cliente eligió otro proveedor."
+  },
+  {
+    "paso": 6,
+    "texto": "El enlace de la primera fila abre el detalle de su venta",
+    "resultado": "OK",
+    "detalle": "Fila: \"Elena Muestra CastroPrimer contacto con Elena (mock)\" → /posibles-ventas/sale-006 (Primer contacto con Elena (mock), Elena Muestra Castro, etapa Nuevo interesado)"
+  },
+  {
+    "paso": 7,
+    "texto": "Móvil 390: Movimientos como tarjetas, sin desplazamiento horizontal",
+    "resultado": "OK",
+    "detalle": "Tarjetas: true; desborde página 0, tabla 0"
+  },
+  {
+    "paso": 8,
+    "texto": "Móvil 390: Gestión de ventas con el botón \"Movimientos\"",
+    "resultado": "OK",
+    "detalle": "Botones: Movimientos | +Nueva oportunidad; misma fila: true; desborde página 0"
+  },
+  {
+    "paso": 9,
+    "texto": "sale-006 → Contactado desde la ventana \"Cambiar etapa\"",
+    "resultado": "OK",
+    "detalle": "Etapa en el detalle: Contactado"
+  },
+  {
+    "paso": 10,
+    "texto": "sale-006 → Precio o cotización enviada desde la ventana \"Cambiar etapa\"",
+    "resultado": "OK",
+    "detalle": "Etapa en el detalle: Precio o cotización enviada"
+  },
+  {
+    "paso": 11,
+    "texto": "sale-006 → En negociación desde la ventana \"Cambiar etapa\"",
+    "resultado": "OK",
+    "detalle": "Etapa en el detalle: En negociación"
+  },
+  {
+    "paso": 12,
+    "texto": "sale-002 → En negociación desde la ventana \"Cambiar etapa\"",
+    "resultado": "OK",
+    "detalle": "Etapa en el detalle: En negociación"
+  },
+  {
+    "paso": 13,
+    "texto": "sale-002 → Precio o cotización enviada desde la ventana \"Cambiar etapa\"",
+    "resultado": "OK",
+    "detalle": "Etapa en el detalle: Precio o cotización enviada"
+  },
+  {
+    "paso": 14,
+    "texto": "sale-001 → Precio o cotización enviada desde la ventana \"Cambiar etapa\"",
+    "resultado": "OK",
+    "detalle": "Etapa en el detalle: Precio o cotización enviada"
+  },
+  {
+    "paso": 15,
+    "texto": "sale-001 → Contactado desde la ventana \"Cambiar etapa\"",
+    "resultado": "OK",
+    "detalle": "Etapa en el detalle: Contactado"
+  },
+  {
+    "paso": 16,
+    "texto": "Con 27 movimientos, la primera página muestra 25 y el botón \"Cargar más\"",
+    "resultado": "OK",
+    "detalle": "25 filas; botón: true; ordenadas: true; primera: 14/11/2026 | Bruno Ficticio SolísCafé en grano para cafetería (mock) | Precio o cotización enviada | Contactado | "
+  },
+  {
+    "paso": 17,
+    "texto": "\"Cargar más\" agrega las filas restantes al final y el botón desaparece",
+    "resultado": "OK",
+    "detalle": "27 filas; botón: false; ordenadas: true; primeras 25 sin cambio: true; última: 01/08/2026 | Bruno Ficticio SolísPedido antiguo de temporada (mock) | — | Nuevo interesado | "
+  }
+]

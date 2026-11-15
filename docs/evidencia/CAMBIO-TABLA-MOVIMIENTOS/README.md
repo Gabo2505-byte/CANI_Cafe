@@ -62,6 +62,48 @@ Firestore cobra una lectura por cada documento que devuelve y una lectura mínim
 
 Ninguno cambia. Es una pantalla nueva, de solo lectura, que no reemplaza al "Historial de etapas" del detalle (HU-308). Ese historial sigue igual.
 
+## Capturas (datos del seed, usuario `admin`, Microsoft Edge)
+
+Edge headless contra los emuladores con `npm run seed`. Escritorio a 1280 × 800 (las capturas de la tabla miden 1265 px de ancho porque la barra de desplazamiento ocupa 15 px) y móvil a 390 × 844. Las capturas son de **página completa**. Las medidas tomadas en el navegador están en [verificacion.json](verificacion.json) y los 17 pasos con su resultado en [recorrido.json](recorrido.json).
+
+| Captura | Qué se ve |
+|---|---|
+| [01](01-tablero-boton-movimientos.png) | Escritorio: Gestión de ventas con el botón "Movimientos" a la izquierda de "+ Nueva oportunidad", en la misma fila |
+| [02](02-movimientos-escritorio.png) | Escritorio: Movimientos con los 20 registros del seed, del 10/10/2026 (arriba) al 01/08/2026 (abajo). Las seis entradas iniciales llevan "—" y solo la pérdida del 08/10/2026 trae motivo |
+| [03](03-detalle-desde-fila.png) | Escritorio: el enlace de la primera fila ("Elena Muestra Castro") abre el detalle de `sale-006`, "Primer contacto con Elena (mock)" |
+| [04](04-movimientos-movil.png) | Móvil 390: cada movimiento como tarjeta de pares "columna: valor"; el motivo vacío no deja línea suelta |
+| [05](05-tablero-movil.png) | Móvil 390: Gestión de ventas con "Movimientos" y "+ Nueva oportunidad" en la misma fila |
+| [06](06-cargar-mas-boton.png) | Escritorio, con 27 movimientos (20 del seed + 7 hechos desde la interfaz): primera página con 25 filas y el botón "Cargar más" al final |
+| [07](07-cargar-mas-cargado.png) | Escritorio, tras pulsar "Cargar más": 27 filas, las 25 primeras sin cambio, y el botón desaparece |
+
+**Tres detalles de las capturas:**
+
+- La insignia amarilla "Emuladores locales" es del entorno de desarrollo y está fija en la pantalla. En las capturas de página completa aparece a media altura, encima del contenido (por ejemplo en la [02](02-movimientos-escritorio.png) y la [04](04-movimientos-movil.png)). No es parte de la aplicación en producción.
+- En la [05](05-tablero-movil.png) el tablero de seis columnas se desplaza hacia los lados **dentro de su propio contenedor**. Eso ya era así: la aplicación interna es solo de escritorio (≥ 1366 × 768) y esta tarea no toca el tablero. La página en sí no se desborda (desborde medido: 0 px). Lo que sí se comprobó en móvil es el botón "Movimientos", no la usabilidad del tablero.
+- En móvil la barra superior queda apilada en varias líneas. Tampoco se modificó.
+
+## Recorrido en el navegador
+
+Contra emuladores con datos limpios (`npm run seed`: 20 registros en `stageHistory`) y una sesión nueva como `admin`. Los cambios de etapa del paso 9 solo existen en el emulador, que se apagó al terminar. No se modificó código de la aplicación ni pruebas.
+
+| # | Paso | Resultado |
+|---|---|---|
+| 1 | Ingresar con `admin` | ✅ Llega a `/contactos` |
+| 2 | Escritorio 1280: abrir Gestión de ventas | ✅ El encabezado tiene "Movimientos" y "+ Nueva oportunidad" en la misma fila, sin desborde ([01](01-tablero-boton-movimientos.png)) |
+| 3 | Pulsar "Movimientos" | ✅ Abre `/posibles-ventas/movimientos` con el título "Movimientos" |
+| 4 | Contar y ordenar los registros | ✅ 20 filas, fechas de mayor a menor (10/10/2026 → 01/08/2026), sin "Cargar más" y sin desborde horizontal ([02](02-movimientos-escritorio.png)) |
+| 5 | Entradas iniciales y motivos | ✅ 6 entradas con "—" y un solo motivo: "Venta perdida" con "El cliente eligió otro proveedor." |
+| 6 | Pulsar el enlace de la primera fila | ✅ Abre `/posibles-ventas/sale-006`, que es la venta de esa fila (Elena Muestra Castro, "Primer contacto con Elena (mock)", etapa Nuevo interesado; [03](03-detalle-desde-fila.png)) |
+| 7 | Móvil 390: abrir Movimientos | ✅ Tarjetas, 20 filas, sin desplazamiento horizontal en la página ni en el contenedor de la tabla ([04](04-movimientos-movil.png)) |
+| 8 | Móvil 390: abrir Gestión de ventas | ✅ "Movimientos" y "+ Nueva oportunidad" en la misma fila ([05](05-tablero-movil.png)) |
+| 9 | Siete cambios de etapa desde la ventana "Cambiar etapa" | ✅ Los siete quedaron en la etapa elegida (detalle): `sale-006` Nuevo interesado → Contactado → Precio o cotización enviada → En negociación; `sale-002` Precio o cotización enviada → En negociación → Precio o cotización enviada; `sale-001` En negociación → Precio o cotización enviada → Contactado |
+| 10 | Volver a Movimientos con 27 registros | ✅ La primera página tiene 25 filas, ordenadas, con el botón "Cargar más"; arriba, el cambio de `sale-001` a Contactado del 14/11/2026 ([06](06-cargar-mas-boton.png)) |
+| 11 | Pulsar "Cargar más" | ✅ 27 filas, ordenadas, las 25 primeras idénticas a antes, la última es la entrada inicial de `sale-005` (01/08/2026) y el botón desaparece ([07](07-cargar-mas-cargado.png)) |
+
+Con esto, "Cargar más" se comprobó también en el navegador. Además sigue cubierto por las pruebas de componente (cursor, botón deshabilitado mientras carga, error con reintento) y por las de emuladores (paginación 8 + 8 + 4 y 10 + 10 con el seed).
+
+**Datos usados:** solo los del seed. Los siete cambios de etapa evitan "Venta ganada" y "Venta perdida" para no modificar contactos.
+
 ## Pruebas
 
 - `npm run typecheck`: sin errores.
@@ -74,7 +116,7 @@ Ninguno cambia. Es una pantalla nueva, de solo lectura, que no reemplaza al "His
   - el enlace abre el detalle de la venta;
   - no hay desplazamiento horizontal ni a 1366 × 768 ni a 375, 390 y 600 px de ancho.
 
-  Sin capturas por ahora.
+  Las capturas y el recorrido paso por paso están arriba.
 
 | Archivo | Pruebas | Qué prueba |
 |---|---|---|

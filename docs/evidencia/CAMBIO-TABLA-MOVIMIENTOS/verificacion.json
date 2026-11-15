@@ -1,0 +1,169 @@
+[
+  {
+    "archivo": "01-tablero-boton-movimientos.png",
+    "pantalla": "gestion-de-ventas-escritorio",
+    "ruta": "/posibles-ventas",
+    "h1": "Gestión de ventas",
+    "anchoVentana": 1280,
+    "botonesEncabezado": [
+      "Movimientos",
+      "+Nueva oportunidad"
+    ],
+    "botonesEnLaMismaFila": true,
+    "columnas": 6,
+    "desbordePagina": 0
+  },
+  {
+    "archivo": "02-movimientos-escritorio.png",
+    "pantalla": "movimientos-escritorio-seed",
+    "ruta": "/posibles-ventas/movimientos",
+    "h1": "Movimientos",
+    "anchoVentana": 1265,
+    "filas": 20,
+    "primera": [
+      "10/10/2026",
+      "Elena Muestra CastroPrimer contacto con Elena (mock)",
+      "—",
+      "Nuevo interesado",
+      ""
+    ],
+    "ultima": [
+      "01/08/2026",
+      "Bruno Ficticio SolísPedido antiguo de temporada (mock)",
+      "—",
+      "Nuevo interesado",
+      ""
+    ],
+    "fechasDescendentes": true,
+    "enlaces": 20,
+    "botonCargarMas": false,
+    "motivos": [
+      "Venta perdida | El cliente eligió otro proveedor."
+    ],
+    "entradasIniciales": 6,
+    "desbordePagina": 0,
+    "desbordeTabla": 0,
+    "vistaTarjetas": false
+  },
+  {
+    "archivo": "03-detalle-desde-fila.png",
+    "pantalla": "detalle-de-venta-desde-movimientos",
+    "filaClicada": "Elena Muestra CastroPrimer contacto con Elena (mock)",
+    "ruta": "/posibles-ventas/sale-006",
+    "h1": "Primer contacto con Elena (mock)",
+    "contacto": "Elena Muestra Castro",
+    "etapa": "Nuevo interesado",
+    "filasHistorial": 1
+  },
+  {
+    "archivo": "04-movimientos-movil.png",
+    "pantalla": "movimientos-movil-seed",
+    "ruta": "/posibles-ventas/movimientos",
+    "h1": "Movimientos",
+    "anchoVentana": 390,
+    "filas": 20,
+    "primera": [
+      "10/10/2026",
+      "Elena Muestra CastroPrimer contacto con Elena (mock)",
+      "—",
+      "Nuevo interesado",
+      ""
+    ],
+    "ultima": [
+      "01/08/2026",
+      "Bruno Ficticio SolísPedido antiguo de temporada (mock)",
+      "—",
+      "Nuevo interesado",
+      ""
+    ],
+    "fechasDescendentes": true,
+    "enlaces": 20,
+    "botonCargarMas": false,
+    "motivos": [
+      "Venta perdida | El cliente eligió otro proveedor."
+    ],
+    "entradasIniciales": 6,
+    "desbordePagina": 0,
+    "desbordeTabla": 0,
+    "vistaTarjetas": true
+  },
+  {
+    "archivo": "05-tablero-movil.png",
+    "pantalla": "gestion-de-ventas-movil",
+    "ruta": "/posibles-ventas",
+    "h1": "Gestión de ventas",
+    "anchoVentana": 390,
+    "botonesEncabezado": [
+      "Movimientos",
+      "+Nueva oportunidad"
+    ],
+    "botonesEnLaMismaFila": true,
+    "columnas": 6,
+    "desbordePagina": 0
+  },
+  {
+    "archivo": "06-cargar-mas-boton.png",
+    "pantalla": "movimientos-primera-pagina-con-27",
+    "ruta": "/posibles-ventas/movimientos",
+    "h1": "Movimientos",
+    "anchoVentana": 1265,
+    "filas": 25,
+    "primera": [
+      "14/11/2026",
+      "Bruno Ficticio SolísCafé en grano para cafetería (mock)",
+      "Precio o cotización enviada",
+      "Contactado",
+      ""
+    ],
+    "ultima": [
+      "12/08/2026",
+      "Bruno Ficticio SolísPedido antiguo de temporada (mock)",
+      "Contactado",
+      "Precio o cotización enviada",
+      ""
+    ],
+    "fechasDescendentes": true,
+    "enlaces": 25,
+    "botonCargarMas": true,
+    "motivos": [
+      "Venta perdida | El cliente eligió otro proveedor."
+    ],
+    "entradasIniciales": 5,
+    "desbordePagina": 0,
+    "desbordeTabla": 0,
+    "vistaTarjetas": false
+  },
+  {
+    "archivo": "07-cargar-mas-cargado.png",
+    "pantalla": "movimientos-tras-cargar-mas",
+    "ruta": "/posibles-ventas/movimientos",
+    "h1": "Movimientos",
+    "anchoVentana": 1265,
+    "filas": 27,
+    "primera": [
+      "14/11/2026",
+      "Bruno Ficticio SolísCafé en grano para cafetería (mock)",
+      "Precio o cotización enviada",
+      "Contactado",
+      ""
+    ],
+    "ultima": [
+      "01/08/2026",
+      "Bruno Ficticio SolísPedido antiguo de temporada (mock)",
+      "—",
+      "Nuevo interesado",
+      ""
+    ],
+    "fechasDescendentes": true,
+    "enlaces": 27,
+    "botonCargarMas": false,
+    "motivos": [
+      "Venta perdida | El cliente eligió otro proveedor."
+    ],
+    "entradasIniciales": 6,
+    "desbordePagina": 0,
+    "desbordeTabla": 0,
+    "vistaTarjetas": false,
+    "primerasFilasSinCambio": true
+  }
+]
