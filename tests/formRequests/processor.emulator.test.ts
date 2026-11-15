@@ -271,6 +271,127 @@ describe('HU-503 persona ya registrada', () => {
   });
 });
 
+// Contrato v4: correo o teléfono, al menos uno.
+describe('contrato v4: correo o teléfono', () => {
+  const soloTelefono = { email: null, phoneCountry: 'CR', phoneNumber: '88112233' };
+
+  it('HU-503: sin correo, coincide por teléfono; actualiza el contacto y NO le borra el correo', async () => {
+    await seedContact('ana', { email: 'ana@example.com', phoneCountry: 'CR', phoneNumber: '88112233', formBadge: null });
+    await submit('s1', { ...soloTelefono, fullName: 'Ana Prueba Mora' });
+    expect(await processRequestIn(admin(), 's1', 'admin-1')).toMatchObject({ outcome: 'updated', contactId: 'ana' });
+    const contact = await read(COLLECTIONS.contacts, 'ana');
+    expect(contact).toMatchObject({
+      email: 'ana@example.com',
+      phoneCountry: 'CR',
+      phoneNumber: '88112233',
+      formBadge: 'Nuevo mensaje',
+      interests: [
+        { productId: 'p1', quantity: 2 },
+        { productId: 'p2', quantity: 10 },
+      ],
+    });
+    expect((await getDocs(collection(admin(), COLLECTIONS.contacts))).size).toBe(1);
+    // No envió correo: no es una diferencia, así que la nota no la anota.
+    const [communication] = await communicationsOf('ana');
+    expect(communication.note).not.toContain('Correo:');
+    expect(communication.note).not.toContain('Datos enviados distintos');
+  });
+
+  it('HU-502: sin correo y sin coincidencia crea el contacto con email null', async () => {
+    await seedContact('otro', { email: 'otro@example.com', phoneCountry: 'CR', phoneNumber: '70001111' });
+    await submit('s1', soloTelefono);
+    const result = await processRequestIn(admin(), 's1', 'admin-1');
+    expect(result).toMatchObject({ status: 'processed', outcome: 'created' });
+    const contact = await read(COLLECTIONS.contacts, (result as { contactId: string }).contactId);
+    expect(contact).toMatchObject({
+      fullName: 'Persona Nueva',
+      email: null,
+      phoneCountry: 'CR',
+      phoneNumber: '88112233',
+      classification: 'persona_interesada',
+      origin: 'formulario_web',
+      formBadge: 'Nuevo',
+    });
+  });
+
+  it('sin correo no coincide con un contacto que tampoco tiene correo (no busca por email null)', async () => {
+    await seedContact('sin-correo', { email: null, phoneCountry: 'CR', phoneNumber: '70001111' });
+    await submit('s1', soloTelefono);
+    expect(await processRequestIn(admin(), 's1', 'admin-1')).toMatchObject({ outcome: 'created' });
+    expect((await getDocs(collection(admin(), COLLECTIONS.contacts))).size).toBe(2);
+  });
+
+  it('sin correo coincide por teléfono con un contacto de la carga inicial que no tiene correo', async () => {
+    await seedContact('carga', { email: null, phoneCountry: 'CR', phoneNumber: '88112233', origin: 'carga_inicial' });
+    await submit('s1', soloTelefono);
+    expect(await processRequestIn(admin(), 's1', 'admin-1')).toMatchObject({ outcome: 'updated', contactId: 'carga' });
+    expect(await read(COLLECTIONS.contacts, 'carga')).toMatchObject({ email: null, origin: 'carga_inicial' });
+  });
+
+  it('solo con correo (teléfono null): coincide por correo como hoy y no borra el teléfono guardado', async () => {
+    await seedContact('ana', { email: 'ana@example.com', phoneCountry: 'CR', phoneNumber: '70001111' });
+    await submit('s1', { fullName: 'Ana Prueba Mora', email: 'ana@example.com', phoneCountry: null, phoneNumber: null });
+    expect(await processRequestIn(admin(), 's1', 'admin-1')).toMatchObject({ outcome: 'updated', contactId: 'ana' });
+    expect(await read(COLLECTIONS.contacts, 'ana')).toMatchObject({ phoneCountry: 'CR', phoneNumber: '70001111' });
+    expect((await communicationsOf('ana'))[0].note).not.toContain('Datos enviados distintos');
+  });
+
+  it('solo con correo y sin coincidencia: crea el contacto sin teléfono, como hoy', async () => {
+    await submit('s1', { phoneCountry: null, phoneNumber: null });
+    const { contactId } = (await processRequestIn(admin(), 's1', 'admin-1')) as { contactId: string };
+    expect(await read(COLLECTIONS.contacts, contactId)).toMatchObject({
+      email: 'persona.nueva@example.com',
+      phoneCountry: null,
+      phoneNumber: null,
+    });
+  });
+
+  it('sin correo ni teléfono (las reglas no lo dejan crear): se rechaza con su motivo sin tocar contactos', async () => {
+    await expect(submit('s0', { email: null, phoneCountry: null, phoneNumber: null })).rejects.toMatchObject({
+      code: 'permission-denied',
+    });
+    // Escrita sin reglas, como si hubiera llegado de otra forma.
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), REQUESTS, 's1'), {
+        fullName: 'Sin Datos',
+        email: null,
+        phoneCountry: null,
+        phoneNumber: null,
+        interests: [{ productId: 'p1', quantity: 1 }],
+        message: null,
+        submittedAt: Timestamp.now(),
+        processed: false,
+      });
+    });
+    expect(await processRequestIn(admin(), 's1', 'admin-1')).toEqual({
+      status: 'processed',
+      outcome: 'rejected',
+      error: REJECT_REASONS.noEmailOrPhone,
+    });
+    expect(await read(REQUESTS, 's1')).toMatchObject({ processed: true, outcome: 'rejected', error: REJECT_REASONS.noEmailOrPhone });
+    expect((await getDocs(collection(admin(), COLLECTIONS.contacts))).size).toBe(0);
+    expect((await getDocs(collection(admin(), COLLECTIONS.communications))).size).toBe(0);
+  });
+
+  it('de extremo a extremo: Firestore Lite sin correo y el procesamiento crea el contacto sin correo', async () => {
+    const id = nuevoIdSolicitudIn(lite);
+    await guardarSolicitudIn(lite, id, {
+      fullName: 'Solo Teléfono',
+      email: null,
+      phoneCountry: 'CR',
+      phoneNumber: '60001234',
+      interests: [{ productId: 'p1', quantity: 1 }],
+      message: null,
+    });
+    const result = await processRequestIn(admin(), id, 'admin-1');
+    expect(result).toMatchObject({ outcome: 'created' });
+    expect(await read(COLLECTIONS.contacts, (result as { contactId: string }).contactId)).toMatchObject({
+      email: null,
+      phoneNumber: '60001234',
+    });
+  });
+});
+
 describe('productos de la solicitud (contrato v3, punto 9)', () => {
   it('un producto que no existe se omite y la nota lo dice', async () => {
     await submit('s1', { interests: [{ productId: 'p1', quantity: 2 }, { productId: 'borrado', quantity: 4 }] });

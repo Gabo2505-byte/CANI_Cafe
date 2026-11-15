@@ -26,6 +26,7 @@ import {
   buildFormNote,
   checkInterests,
   contactInterests,
+  hasEmailOrPhone,
   isClaimable,
   nextFormBadge,
   REJECT_REASONS,
@@ -68,16 +69,23 @@ export async function claimRequestIn(
   });
 }
 
-/** Contacto (también inactivo) con ese correo o, si no hay, con ese país y número de teléfono. */
+/**
+ * Contacto (también inactivo) con ese correo o, si no hay coincidencia o la solicitud no trae correo, con ese país y
+ * número de teléfono (contrato v4: correo o teléfono, al menos uno).
+ */
 export async function findPersonIn(
   db: Firestore,
   sent: Pick<FormRequest, 'email' | 'phoneCountry' | 'phoneNumber'>,
 ): Promise<Contact | null> {
   const contacts = collection(db, COLLECTIONS.contacts);
   const toContact = (snap: { id: string; data(): unknown }) => ({ ...(snap.data() as Omit<Contact, 'id'>), id: snap.id });
-  // HU-502 (criterio 1): primero por correo. El contacto guarda el correo en minúsculas (HU-203), igual que la solicitud.
-  const byEmail = await getDocs(query(contacts, where('email', '==', sent.email.trim().toLowerCase()), limit(1)));
-  if (!byEmail.empty) return toContact(byEmail.docs[0]);
+  // HU-502 (criterio 1): primero por correo, si vino. El contacto guarda el correo en minúsculas (HU-203), igual que la
+  // solicitud.
+  const email = sent.email?.trim().toLowerCase();
+  if (email) {
+    const byEmail = await getDocs(query(contacts, where('email', '==', email), limit(1)));
+    if (!byEmail.empty) return toContact(byEmail.docs[0]);
+  }
   // Después por teléfono: mismo país y mismo número (los dos se guardan igual: ISO y solo dígitos).
   if (!sent.phoneCountry || !sent.phoneNumber) return null;
   const byPhone = await getDocs(
@@ -93,8 +101,8 @@ export type ProcessResult =
 /**
  * HU-502 y HU-503: procesa UNA solicitud.
  * 1. La reclama (si no se puede, se salta).
- * 2. Revisa cada producto: si alguno está mal, la cierra como 'rejected' sin tocar contactos.
- * 3. Busca a la persona por correo y después por teléfono, también entre los inactivos.
+ * 2. Si no trae correo ni teléfono, o si algún producto está mal, la cierra como 'rejected' sin tocar contactos.
+ * 3. Busca a la persona por correo (si vino) y después por teléfono, también entre los inactivos.
  * 4. En un solo lote (todo o nada):
  *    - crea el contacto (HU-502) o actualiza el existente (HU-503);
  *    - agrega la comunicación;
@@ -112,6 +120,9 @@ export async function processRequestIn(
   const request = await claimRequestIn(db, requestId, uid, nowMs);
   if (!request) return { status: 'skipped' };
   const requestRef = doc(db, FORM_REQUESTS_COLLECTION, requestId);
+
+  // Contrato v4: correo o teléfono, al menos uno. Las reglas ya lo exigen; si aun así llega sin ninguno, se rechaza.
+  if (!hasEmailOrPhone(request)) return reject(db, requestRef, REJECT_REASONS.noEmailOrPhone);
 
   const check = checkInterests(request.interests);
   if (!check.ok) return reject(db, requestRef, check.error);
@@ -145,7 +156,7 @@ export async function processRequestIn(
     batch.set(contactRef, {
       fullName,
       nameSortKey: toSortKey(fullName),
-      email: request.email.trim().toLowerCase(),
+      email: request.email?.trim() ? request.email.trim().toLowerCase() : null,
       phoneCountry: request.phoneNumber ? request.phoneCountry : null,
       phoneNumber: request.phoneNumber ?? null,
       address: null,

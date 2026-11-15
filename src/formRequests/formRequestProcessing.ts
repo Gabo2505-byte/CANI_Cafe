@@ -31,7 +31,17 @@ export const REJECT_REASONS = {
   repeated: 'Un producto viene repetido en la solicitud.',
   tooMany: `La solicitud trae más de ${FORM_REQUEST_LIMITS.maxInterests} productos.`,
   noneAvailable: 'Ninguno de los productos enviados existe en el catálogo.',
+  /** Contrato v4. Las reglas no lo dejan pasar; es una defensa por si llega así. */
+  noEmailOrPhone: 'La solicitud no trae correo ni teléfono.',
 } as const;
+
+/** Contrato v4: la solicitud trae correo o teléfono (al menos uno, con texto). */
+export function hasEmailOrPhone(sent: Pick<FormRequest, 'email' | 'phoneCountry' | 'phoneNumber'>): boolean {
+  const hasEmail = typeof sent.email === 'string' && sent.email.trim() !== '';
+  const hasPhone = typeof sent.phoneCountry === 'string' && sent.phoneCountry !== ''
+    && typeof sent.phoneNumber === 'string' && sent.phoneNumber !== '';
+  return hasEmail || hasPhone;
+}
 
 export interface ValidInterest {
   productId: string;
@@ -97,12 +107,12 @@ const sameText = (a: string | null, b: string) => (a ?? '').trim().toLowerCase()
 /**
  * HU-503 (criterio 5): datos enviados distintos a los guardados, con etiquetas fijas: "Nombre: X.", "Correo: Y.",
  * "Teléfono: +506 8811-2233.". Nombre y correo no distinguen mayúsculas. Un dato guardado vacío y uno enviado con valor
- * cuenta como distinto; un dato que no se envió (teléfono opcional), no.
+ * cuenta como distinto; un dato que no se envió (correo o teléfono, contrato v4), no: no se anota ni borra lo guardado.
  */
 export function sentDifferences(stored: ContactData, sent: SentData): string[] {
   const parts: string[] = [];
   if (!sameText(stored.fullName, sent.fullName)) parts.push(`Nombre: ${sent.fullName.trim()}.`);
-  if (!sameText(stored.email, sent.email)) parts.push(`Correo: ${sent.email.trim()}.`);
+  if (sent.email?.trim() && !sameText(stored.email, sent.email)) parts.push(`Correo: ${sent.email.trim()}.`);
   if (sent.phoneCountry && sent.phoneNumber) {
     const same = stored.phoneCountry === sent.phoneCountry && stored.phoneNumber === sent.phoneNumber;
     if (!same) parts.push(`Teléfono: ${formatPhone(sent.phoneCountry, sent.phoneNumber)}.`);

@@ -147,7 +147,7 @@ service cloud.firestore {
       allow read, write: if isActiveUser();
     }
 
-    // Formulario del sitio público. Contrato v3 confirmado (docs-local/CONTRATO_FORMULARIO.md).
+    // Formulario del sitio público. Contrato v4 (docs/CONTRATO_FORMULARIO.md): correo o teléfono, al menos uno.
     // Creación (HU-405, Dylan): validación de Dylan sin cambios.
     // Lectura y procesamiento (HU-502 a HU-504, Gabriel, E5-020.1): solo con sesión activa.
     // Formulario del sitio público (HU-405): cualquiera puede CREAR una solicitud válida; sin sesión nadie la lee, la
@@ -164,12 +164,15 @@ service cloud.firestore {
         && data.fullName is string
         && data.fullName.trim().size() > 0
         && data.fullName.size() <= 100
-        && data.email is string
-        && data.email.size() <= 100
-        && data.email == data.email.lower()
-        // nombre@dominio.com, igual que el formulario (en el texto de las reglas la barra va doble: \\s = espacio en blanco).
-        && data.email.matches('^[^\\s@]+@[^\\s@]+[.][^\\s@]+$')
-        // Teléfono opcional: los dos null, o país (ISO de 2 letras) y número solo con dígitos (8 en Costa Rica, 6 a 14 en otros).
+        // Contrato v4: correo y teléfono opcionales cada uno, pero al menos uno de los dos (igual que el sistema interno).
+        // Correo: null, o hasta 100, en minúsculas y como nombre@dominio.com, igual que el formulario (en el texto de las
+        // reglas la barra va doble: \\s = espacio en blanco).
+        && (data.email == null
+            || (data.email is string
+                && data.email.size() <= 100
+                && data.email == data.email.lower()
+                && data.email.matches('^[^\\s@]+@[^\\s@]+[.][^\\s@]+$')))
+        // Teléfono: los dos null, o país (ISO de 2 letras) y número solo con dígitos (8 en Costa Rica, 6 a 14 en otros).
         && ((data.phoneCountry == null && data.phoneNumber == null)
             || (data.phoneCountry is string
                 && data.phoneCountry.matches('^[A-Z]{2}$')
@@ -177,6 +180,8 @@ service cloud.firestore {
                 && (data.phoneCountry == 'CR'
                       ? data.phoneNumber.matches('^[0-9]{8}$')
                       : data.phoneNumber.matches('^[0-9]{6,14}$'))))
+        // Al menos uno. Con el bloque de arriba, phoneNumber == null quiere decir que no dejó teléfono.
+        && !(data.email == null && data.phoneNumber == null)
         && data.interests is list
         && data.interests.size() >= 1
         && data.interests.size() <= 72
