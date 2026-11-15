@@ -18,4 +18,6 @@ export const SALES_LABELS = {
   newOpportunityTitle: 'Nueva oportunidad',
   /** Enlace de regreso al tablero desde el detalle (HU-308) y desde el formulario. */
   backToBoard: '← Volver a gestión de ventas',
+  /** Botón del encabezado del tablero y título de la tabla de movimientos (cambio pedido por el profesor, 2026-11-14). */
+  movements: 'Movimientos',
 } as const;

@@ -59,9 +59,15 @@ export function SalesBoardPage() {
       <TimedNotice message={notice} />
       <div className="page-header">
         <h1>{SALES_LABELS.boardTitle}</h1>
-        <button type="button" onClick={() => navigate(ROUTES.newSale)}>
-          <AddButtonLabel>{SALES_LABELS.newOpportunity}</AddButtonLabel>
-        </button>
+        <div className="page-header-actions">
+          {/* Tabla de movimientos: historial de cambios de etapa de todas las oportunidades. */}
+          <button type="button" className="button-secondary" onClick={() => navigate(ROUTES.movements)}>
+            {SALES_LABELS.movements}
+          </button>
+          <button type="button" onClick={() => navigate(ROUTES.newSale)}>
+            <AddButtonLabel>{SALES_LABELS.newOpportunity}</AddButtonLabel>
+          </button>
+        </div>
       </div>
 
       {state.status === 'loading' && <p>{BOARD_MESSAGES.loading}</p>}

@@ -7,6 +7,8 @@ export const ROUTES = {
   editContact: '/contactos/:contactId/editar',
   salesBoard: '/posibles-ventas',
   newSale: '/posibles-ventas/nueva',
+  /** Historial de cambios de etapa de todas las oportunidades. Como "nueva", tiene prioridad sobre :saleId. */
+  movements: '/posibles-ventas/movimientos',
   saleDetail: '/posibles-ventas/:saleId',
   alerts: '/avisos',
   forgotPassword: '/recuperar-contrasena',

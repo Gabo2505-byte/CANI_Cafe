@@ -1789,3 +1789,101 @@ textarea[aria-invalid='true'] {
 .alerts-table td:last-child {
   white-space: nowrap;
 }
+
+/* -----------------------------------------------------------------------------------------------------
+   Tabla de movimientos: cambios de etapa de todas las oportunidades (misma tabla que "Historial de etapas")
+   ----------------------------------------------------------------------------------------------------- */
+.movements-page {
+  max-width: var(--content-width);
+}
+
+.movements-table td:first-child {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.movements-table td:nth-child(2) {
+  max-width: 18rem;
+}
+
+.movements-table td:nth-child(2) a {
+  color: var(--color-accent);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.movements-table td:nth-child(2) a:hover {
+  text-decoration: underline;
+}
+
+/* Título de la oportunidad, debajo del nombre del contacto (un contacto puede tener varias). */
+.movements-sale-title {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+/* En pantallas angostas cada movimiento es una tarjeta con "columna: valor"; no hay desplazamiento horizontal. */
+@media (max-width: 600px) {
+  .movements-page {
+    padding-inline: var(--space-4);
+  }
+
+  .movements-page .table-wrapper {
+    overflow-x: visible;
+  }
+
+  .movements-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .movements-table,
+  .movements-table tbody,
+  .movements-table tr,
+  .movements-table td {
+    display: block;
+  }
+
+  .movements-table tr {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .movements-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .movements-table td,
+  .movements-table tbody tr:last-child td {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 0.5rem;
+    padding: 0.25rem 0.9rem;
+    border-bottom: none;
+  }
+
+  .movements-table td:first-child,
+  .movements-table td:nth-child(2) {
+    max-width: none;
+    white-space: normal;
+  }
+
+  .movements-table td::before {
+    content: attr(data-label);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-secondary);
+  }
+
+  /* El motivo vacío (cambios que no son pérdidas) no deja una línea suelta. */
+  .movements-table td:empty {
+    display: none;
+  }
+}

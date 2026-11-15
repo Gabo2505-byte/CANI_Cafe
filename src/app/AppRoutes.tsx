@@ -7,6 +7,7 @@ import { ContactsPage } from '../contacts/ContactsPage';
 import { EditContactPage } from '../contacts/EditContactPage';
 import { NewContactPage } from '../contacts/NewContactPage';
 import { AlertsPage } from '../sales/AlertsPage';
+import { MovementsPage } from '../sales/MovementsPage';
 import { NewSalePage } from '../sales/NewSalePage';
 import { SaleDetailPage } from '../sales/SaleDetailPage';
 import { SalesBoardPage } from '../sales/SalesBoardPage';
@@ -43,6 +44,7 @@ export function AppRoutes() {
         <Route path={ROUTES.editContact} element={<EditContactPage />} />
         <Route path={ROUTES.salesBoard} element={<SalesBoardPage />} />
         <Route path={ROUTES.newSale} element={<NewSalePage />} />
+        <Route path={ROUTES.movements} element={<MovementsPage />} />
         <Route path={ROUTES.saleDetail} element={<SaleDetailPage />} />
         <Route path={ROUTES.alerts} element={<AlertsPage />} />
         <Route path="*" element={<Navigate to={DEFAULT_ROUTE} replace />} />
