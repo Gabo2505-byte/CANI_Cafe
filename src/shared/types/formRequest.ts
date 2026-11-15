@@ -1,5 +1,5 @@
-// Solicitud del formulario del sitio público (HU-405). Contrato v3 CONFIRMADO por Gabriel y Dylan
-// (docs-local/CONTRATO_FORMULARIO.md). Dylan escribe la solicitud (FormRequestData); Gabriel la procesa (HU-502 a
+// Solicitud del formulario del sitio público (HU-405). Contrato v4 (docs/CONTRATO_FORMULARIO.md): correo o teléfono,
+// al menos uno, igual que el sistema interno. Dylan escribe la solicitud (FormRequestData); Gabriel la procesa (HU-502 a
 // HU-504) y solo agrega los campos de procesamiento. El nombre de la colección se define SOLO aquí: si cambia, se
 // cambia en este archivo (y en firestore.rules).
 import type { Timestamp } from 'firebase/firestore';
@@ -27,9 +27,9 @@ export interface FormRequestInterest {
 /** Lo que escribe el sitio público, sin los campos que pone el servidor. */
 export interface FormRequestData {
   fullName: string;
-  /** En minúsculas y sin espacios alrededor. */
-  email: string;
-  /** Código ISO del país ("CR"), o null si no dejó teléfono. */
+  /** En minúsculas y sin espacios alrededor, o null si no dejó correo. Correo o teléfono: al menos uno de los dos. */
+  email: string | null;
+  /** Código ISO del país ("CR"), o null si no dejó teléfono (phoneCountry y phoneNumber van los dos null o los dos con valor). */
   phoneCountry: string | null;
   /** Solo dígitos, sin el código del país, o null. */
   phoneNumber: string | null;

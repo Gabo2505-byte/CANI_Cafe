@@ -1,8 +1,10 @@
-# Contrato del formulario (v3, 02/11/2026) - CONFIRMADO por Gabriel
+# Contrato del formulario (v4, 15/11/2026)
+
+**v4 (15/11/2026):** correo o teléfono, al menos uno, igual que el sistema interno (HU-201). El correo deja de ser obligatorio. Cambia `email` (puede ser null), las reglas de `formRequests` y la búsqueda de la persona (punto 5). Detalle y criterios afectados en `docs/evidencia/CAMBIO-CORREO-O-TELEFONO/README.md`. El resto de la v3, CONFIRMADA por Gabriel el 02/11/2026, no cambia.
 
 Revisado contra la rama catalogo-variedades: se usan los tipos y códigos que ya existen en `src/shared/types`.
 
-Reemplaza la v2. Si algo de este archivo contradice los criterios de aceptación de las HU, mandan las HU. Si contradice el documento "Tickets de la Entrega 5: Dylan y Gabriel" (Danny), manda ese documento.
+La v3 reemplazó a la v2; la v4 cambia solo lo marcado como v4. Si algo de este archivo contradice los criterios de aceptación de las HU, mandan las HU. Si contradice el documento "Tickets de la Entrega 5: Dylan y Gabriel" (Danny), manda ese documento.
 
 ## Quién hace qué
 - Dylan (E5-010.1): HU-401 a HU-405. Sitio público en `sitio-publico/` (build aparte), catálogo, pantalla del formulario con la validación y los mensajes de HU-501, y envío de la solicitud. Lectura pública de productos activos en `firestore.rules`. Hosting de los dos sitios en `firebase.json`.
@@ -14,9 +16,10 @@ Se queda el nombre que Dylan ya implementó.
 
 Payload (`src/shared/types/formRequest.ts`):
 - fullName: string, 1..100
-- email: string, minúsculas, 1..100
+- email: string en minúsculas, 1..100, o null (v4: null si no dejó correo)
 - phoneCountry: string | null
-- phoneNumber: string (solo dígitos) | null
+- phoneNumber: string (solo dígitos) | null (phoneCountry y phoneNumber van los dos null o los dos con valor)
+- **Al menos uno de los dos (correo o teléfono)** (v4). Si se escribe alguno, debe ser válido: correo como nombre@dominio.com en minúsculas; teléfono con 8 dígitos en Costa Rica o de 6 a 14 en otros países.
 - interests: [{ productId, quantity }], 1..72, en orden de catálogo
 - message: string 1..1000 | null
 - submittedAt: serverTimestamp
@@ -57,8 +60,8 @@ Se usa el modelo `Communication` existente:
 - `date`: fecha y hora exactas del envío (`submittedAt`). La ficha la muestra con hora ("05/10/2026 6:20 p. m.") solo en estas comunicaciones.
 
 ## 5. Búsqueda de la persona (decidido, según HU-502.1)
-- Primero por correo, comparando email normalizado (trim y minúsculas).
-- Si no hay coincidencia, por teléfono: `phoneCountry` y `phoneNumber` iguales. El contacto y la solicitud ya guardan ambos con el mismo formato (ISO y dígitos), así que la comparación es exacta, igual que en `findDuplicateContactsIn`.
+- Primero por correo, si viene, comparando email normalizado (trim y minúsculas) (v4).
+- Si no hay coincidencia o no viene correo, por teléfono: `phoneCountry` y `phoneNumber` iguales. El contacto y la solicitud ya guardan ambos con el mismo formato (ISO y dígitos), así que la comparación es exacta, igual que en `findDuplicateContactsIn`.
 - Se incluyen los contactos inactivos.
 - NO se usa ID = correo, porque los contactos de la carga inicial pueden no tener correo.
 
@@ -71,6 +74,8 @@ Se usa el modelo `Communication` existente:
   "Datos enviados distintos a los registrados: Nombre: X. Correo: Y. Teléfono: +506 8811-2233."
 - Un dato guardado vacío y uno enviado con valor SÍ cuenta como distinto: se anota y no se rellena, porque la HU dice que no se cambian.
 - Las comparaciones ignoran mayúsculas en el correo y el formato en el teléfono.
+- Un dato que no se envió (correo o teléfono null) no cuenta como distinto: no se anota y no borra lo guardado (v4).
+- Contacto nuevo sin correo: se crea con `email: null` (v4), como los de la carga inicial.
 
 ## 7. Fechas (decidido)
 - Contacto nuevo: `createdAt = submittedAt`, que es la hora del envío, no la del procesamiento.
@@ -87,6 +92,7 @@ Se usa el modelo `Communication` existente:
 
 ## 9. Solicitudes inválidas (decidido)
 Las reglas solo validan que `interests` sea una lista de 1 a 72; el procesador valida cada elemento.
+- Sin correo ni teléfono (las reglas no lo dejan crear) → se rechaza: `error` "La solicitud no trae correo ni teléfono." (v4).
 - `quantity` no entera o fuera de 1..9999 → la solicitud se rechaza completa: `outcome: 'rejected'`, `error` con el motivo y `processed: true`. No toca contactos.
 - `productId` inexistente → se descarta ese producto.
   - Si quedan productos válidos, se procesa con ellos y la nota agrega "Productos no disponibles omitidos: N."
@@ -103,7 +109,7 @@ Las reglas solo validan que `interests` sea una lista de 1 a 72; el procesador v
 
 ## 11. Reglas (bloques de Gabriel)
 - `formRequests`:
-  - create público: se conserva `isValidFormRequest` de Dylan, solo si `processed == false`, los campos son exactamente los del payload, se cumplen los tipos y largos, `interests` es una lista de 1 a 72 y `submittedAt == request.time`.
+  - create público: se conserva `isValidFormRequest` de Dylan, solo si `processed == false`, los campos son exactamente los del payload, se cumplen los tipos y largos, trae correo o teléfono (al menos uno, v4), `interests` es una lista de 1 a 72 y `submittedAt == request.time`.
   - read con auth.
   - update con auth, solo sobre los campos de procesamiento.
   - delete denegado.

@@ -147,6 +147,105 @@ describe('formRequests: crear sin sesión (HU-405)', () => {
   });
 });
 
+// Contrato v4: correo y teléfono opcionales cada uno, pero al menos uno de los dos.
+describe('formRequests: correo o teléfono, al menos uno (contrato v4)', () => {
+  const telefonoCR = { phoneCountry: 'CR', phoneNumber: '88881234' };
+  const setentaYDos = () => Array.from({ length: 72 }, (_, i) => ({ productId: `prod-${i}`, quantity: 9999 }));
+
+  it('acepta solo correo (teléfono null)', async () => {
+    await assertSucceeds(crear(valida()));
+  });
+
+  it('acepta solo teléfono (email null), de Costa Rica y de otro país', async () => {
+    await assertSucceeds(crear(valida({ email: null, ...telefonoCR }), 'solo-cr'));
+    await assertSucceeds(crear(valida({ email: null, phoneCountry: 'US', phoneNumber: '3055550104' }), 'solo-us'));
+  });
+
+  it('acepta los dos', async () => {
+    await assertSucceeds(crear(valida(telefonoCR)));
+  });
+
+  it('rechaza sin correo ni teléfono', async () => {
+    await assertFails(crear(valida({ email: null })));
+    await assertFails(crear(valida({ email: null, message: 'Hola' }), 'con-mensaje'));
+  });
+
+  it('sin correo, sigue rechazando un teléfono inválido o a medias', async () => {
+    await assertFails(crear(valida({ email: null, phoneCountry: 'CR', phoneNumber: '8888123' }), 'cr7'));
+    await assertFails(crear(valida({ email: null, phoneCountry: 'US', phoneNumber: '12345' }), 'us5'));
+    await assertFails(crear(valida({ email: null, phoneCountry: 'CR', phoneNumber: '8888-1234' }), 'guion'));
+    await assertFails(crear(valida({ email: null, phoneCountry: 'CR' }), 'pais-solo'));
+    await assertFails(crear(valida({ email: null, phoneNumber: '88881234' }), 'numero-solo'));
+  });
+
+  it.each([
+    ['correo vacío (debe ser null)', ''],
+    ['correo con mayúsculas', 'Ana@example.com'],
+    ['correo mal escrito', 'ana@example'],
+    ['correo con espacios', 'ana prueba@example.com'],
+    ['correo de 101', `${'a'.repeat(89)}@example.com`],
+    ['correo que no es texto', 12],
+  ])('con teléfono válido, sigue rechazando: %s', async (_caso, email) => {
+    await assertFails(crear(valida({ email, ...telefonoCR })));
+  });
+
+  it('tope de expresiones: 72 productos con los dos datos, nombre y mensaje al máximo', async () => {
+    await assertSucceeds(
+      crear(
+        valida({
+          interests: setentaYDos(),
+          fullName: 'N'.repeat(100),
+          email: `${'a'.repeat(88)}@example.com`,
+          phoneCountry: 'US',
+          phoneNumber: '30555501041234',
+          message: 'm'.repeat(1000),
+        }),
+      ),
+    );
+  });
+
+  it('tope de expresiones: 72 productos solo con teléfono y mensaje largo', async () => {
+    await assertSucceeds(
+      crear(valida({ interests: setentaYDos(), email: null, ...telefonoCR, message: 'm'.repeat(1000), fullName: 'N'.repeat(100) })),
+    );
+  });
+
+  it('tope de expresiones: 72 productos sin correo ni teléfono se rechaza por la regla, no por el tope', async () => {
+    // Misma solicitud que la anterior sin teléfono: lo único distinto es "al menos uno".
+    await assertFails(
+      crear(valida({ interests: setentaYDos(), email: null, message: 'm'.repeat(1000), fullName: 'N'.repeat(100) })),
+    );
+  });
+
+  it('el SDK de cliente del sitio público (Firestore Lite, sin sesión) guarda una solicitud sin correo', async () => {
+    const id = nuevoIdSolicitudIn(lite);
+    await guardarSolicitudIn(lite, id, {
+      fullName: 'Solo Teléfono',
+      email: null,
+      ...telefonoCR,
+      interests: [{ productId: PRODUCTO, quantity: 1 }],
+      message: null,
+    });
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      expect((await getDoc(doc(ctx.firestore(), COL, id))).data()).toMatchObject({ email: null, phoneNumber: '88881234' });
+    });
+  });
+
+  it('Firestore Lite sin correo ni teléfono: permission-denied', async () => {
+    const id = nuevoIdSolicitudIn(lite);
+    await expect(
+      guardarSolicitudIn(lite, id, {
+        fullName: 'Sin Datos',
+        email: null,
+        phoneCountry: null,
+        phoneNumber: null,
+        interests: [{ productId: PRODUCTO, quantity: 1 }],
+        message: null,
+      }),
+    ).rejects.toMatchObject({ code: 'permission-denied' });
+  });
+});
+
 describe('formRequests: sin sesión no se lee, cambia ni borra', () => {
   beforeEach(async () => {
     await testEnv.withSecurityRulesDisabled(async (ctx) => {

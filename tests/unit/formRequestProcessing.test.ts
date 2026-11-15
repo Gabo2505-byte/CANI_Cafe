@@ -7,6 +7,7 @@ import {
   contactInterests,
   FORM_NOTE_MAX,
   FORM_PROCESSING_TEXTS,
+  hasEmailOrPhone,
   isClaimable,
   nextFormBadge,
   productLine,
@@ -136,6 +137,41 @@ describe('sentDifferences (HU-503, criterio 5)', () => {
 
   it('teléfono que no se envió: no cuenta', () => {
     expect(sentDifferences(stored, { ...sent, phoneCountry: null, phoneNumber: null })).toEqual([]);
+  });
+
+  // Contrato v4: el correo también es opcional.
+  it('correo que no se envió (null): no cuenta, aunque el contacto tenga correo', () => {
+    expect(sentDifferences(stored, { ...sent, email: null })).toEqual([]);
+  });
+
+  it('correo que no se envió y contacto sin correo: no cuenta', () => {
+    expect(sentDifferences({ ...stored, email: null }, { ...sent, email: null })).toEqual([]);
+  });
+
+  it('sin correo, el teléfono distinto se sigue anotando', () => {
+    expect(sentDifferences(stored, { ...sent, email: null, phoneNumber: '70001111' })).toEqual(['Teléfono: +506 7000-1111.']);
+  });
+});
+
+describe('hasEmailOrPhone (contrato v4: al menos uno)', () => {
+  const base = { email: null, phoneCountry: null, phoneNumber: null };
+
+  it('solo correo, solo teléfono o los dos: sí', () => {
+    expect(hasEmailOrPhone({ ...base, email: 'ana@example.com' })).toBe(true);
+    expect(hasEmailOrPhone({ ...base, phoneCountry: 'CR', phoneNumber: '88112233' })).toBe(true);
+    expect(hasEmailOrPhone({ email: 'ana@example.com', phoneCountry: 'CR', phoneNumber: '88112233' })).toBe(true);
+  });
+
+  it('ninguno, correo vacío o teléfono a medias: no', () => {
+    expect(hasEmailOrPhone(base)).toBe(false);
+    expect(hasEmailOrPhone({ ...base, email: '   ' })).toBe(false);
+    expect(hasEmailOrPhone({ ...base, phoneCountry: 'CR' })).toBe(false);
+    expect(hasEmailOrPhone({ ...base, phoneNumber: '88112233' })).toBe(false);
+  });
+
+  it('el motivo de rechazo cabe en el campo error (hasta 500)', () => {
+    expect(REJECT_REASONS.noEmailOrPhone).toBe('La solicitud no trae correo ni teléfono.');
+    expect(REJECT_REASONS.noEmailOrPhone.length).toBeLessThanOrEqual(500);
   });
 });
 
