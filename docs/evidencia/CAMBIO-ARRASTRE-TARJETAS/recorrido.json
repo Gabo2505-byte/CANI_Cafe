@@ -70,5 +70,17 @@
     "texto": "Tablero a 390 px: la página no se desborda y las columnas se desplazan en horizontal",
     "resultado": "OK",
     "detalle": "tablero 1140/295 px; scrollLeft 0 → 600 (rueda con Mayús)"
+  },
+  {
+    "paso": "l",
+    "texto": "HU-312 por arrastre: reabrir sale-001 con otra abierta del mismo contacto y mismo título no la reabre y muestra el mensaje",
+    "resultado": "OK",
+    "detalle": "mensaje: \"Este contacto ya tiene una oportunidad de venta abierta con este título. Cambie el título antes de reabrirla.\"; Firestore: perdida; historial 5 → 5 registros; duplicada en Contactado"
+  },
+  {
+    "paso": "m",
+    "texto": "Conflicto: sale-002 cambia a En negociación en otra pestaña mientras se arrastra; al soltar en Contactado aparece el mensaje del tablero, no cambia y el tablero se actualiza",
+    "resultado": "OK",
+    "detalle": "mensaje: \"Esta oportunidad cambió de etapa mientras la movía. El tablero se actualizó; vuelva a intentarlo.\"; arrastre activo al soltar: true; Firestore: en_negociacion; tarjeta en En negociación; historial: contactado → cotizacion_enviada | cotizacion_enviada → en_negociacion"
   }
 ]
