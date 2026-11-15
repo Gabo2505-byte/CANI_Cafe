@@ -14,7 +14,8 @@ interface ChangeStageDialogProps {
 }
 
 /**
- * HU-310: ventana "Cambiar etapa" con las seis etapas y la actual marcada. Al guardar, la posible venta pasa
+ * HU-310: ventana "Cambiar etapa" con las seis etapas y la actual marcada; solo se pueden elegir las que permite el
+ * mapa de transiciones (ALLOWED_STAGE_TRANSITIONS). Al guardar, la posible venta pasa
  * a la nueva etapa y el cambio queda en el historial.
  * HU-311: al elegir "Venta perdida" la misma ventana pregunta si está seguro y deja escribir el motivo
  * (opcional, hasta 250 caracteres).

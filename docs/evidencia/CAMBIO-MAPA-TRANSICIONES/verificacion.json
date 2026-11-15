@@ -1,0 +1,562 @@
+[
+  {
+    "archivo": "01-dialogo-nuevo-interesado.png",
+    "pantalla": "ventana-cambiar-etapa",
+    "ruta": "/posibles-ventas/sale-006",
+    "venta": "sale-006",
+    "h1": "Primer contacto con Elena (mock)",
+    "etapaEnDetalle": "Nuevo interesado",
+    "opciones": [
+      {
+        "etapa": "Nuevo interesado",
+        "esActual": true,
+        "deshabilitada": false,
+        "marcada": true
+      },
+      {
+        "etapa": "Contactado",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "esActual": false,
+        "deshabilitada": true,
+        "marcada": false
+      },
+      {
+        "etapa": "En negociación",
+        "esActual": false,
+        "deshabilitada": true,
+        "marcada": false
+      },
+      {
+        "etapa": "Venta ganada",
+        "esActual": false,
+        "deshabilitada": true,
+        "marcada": false
+      },
+      {
+        "etapa": "Venta perdida",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      }
+    ],
+    "destinosHabilitados": [
+      "Contactado",
+      "Venta perdida"
+    ],
+    "destinosEsperadosPorElMapa": [
+      "Contactado",
+      "Venta perdida"
+    ],
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "02-dialogo-cotizacion-enviada.png",
+    "pantalla": "ventana-cambiar-etapa",
+    "ruta": "/posibles-ventas/sale-002",
+    "venta": "sale-002",
+    "h1": "Distribución mensual de café molido (mock)",
+    "etapaEnDetalle": "Precio o cotización enviada",
+    "opciones": [
+      {
+        "etapa": "Nuevo interesado",
+        "esActual": false,
+        "deshabilitada": true,
+        "marcada": false
+      },
+      {
+        "etapa": "Contactado",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "esActual": true,
+        "deshabilitada": false,
+        "marcada": true
+      },
+      {
+        "etapa": "En negociación",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Venta ganada",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Venta perdida",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      }
+    ],
+    "destinosHabilitados": [
+      "Contactado",
+      "En negociación",
+      "Venta ganada",
+      "Venta perdida"
+    ],
+    "destinosEsperadosPorElMapa": [
+      "Contactado",
+      "En negociación",
+      "Venta ganada",
+      "Venta perdida"
+    ],
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "03-dialogo-en-negociacion.png",
+    "pantalla": "ventana-cambiar-etapa",
+    "ruta": "/posibles-ventas/sale-001",
+    "venta": "sale-001",
+    "h1": "Café en grano para cafetería (mock)",
+    "etapaEnDetalle": "En negociación",
+    "opciones": [
+      {
+        "etapa": "Nuevo interesado",
+        "esActual": false,
+        "deshabilitada": true,
+        "marcada": false
+      },
+      {
+        "etapa": "Contactado",
+        "esActual": false,
+        "deshabilitada": true,
+        "marcada": false
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "En negociación",
+        "esActual": true,
+        "deshabilitada": false,
+        "marcada": true
+      },
+      {
+        "etapa": "Venta ganada",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Venta perdida",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      }
+    ],
+    "destinosHabilitados": [
+      "Precio o cotización enviada",
+      "Venta ganada",
+      "Venta perdida"
+    ],
+    "destinosEsperadosPorElMapa": [
+      "Precio o cotización enviada",
+      "Venta ganada",
+      "Venta perdida"
+    ],
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "04-dialogo-venta-perdida.png",
+    "pantalla": "ventana-cambiar-etapa",
+    "ruta": "/posibles-ventas/sale-004",
+    "venta": "sale-004",
+    "h1": "Muestras para eventos (mock)",
+    "etapaEnDetalle": "Venta perdida",
+    "opciones": [
+      {
+        "etapa": "Nuevo interesado",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Contactado",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "En negociación",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Venta ganada",
+        "esActual": false,
+        "deshabilitada": true,
+        "marcada": false
+      },
+      {
+        "etapa": "Venta perdida",
+        "esActual": true,
+        "deshabilitada": false,
+        "marcada": true
+      }
+    ],
+    "destinosHabilitados": [
+      "Nuevo interesado",
+      "Contactado",
+      "Precio o cotización enviada",
+      "En negociación"
+    ],
+    "destinosEsperadosPorElMapa": [
+      "Nuevo interesado",
+      "Contactado",
+      "Precio o cotización enviada",
+      "En negociación"
+    ],
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "05-detalle-venta-ganada-sin-boton.png",
+    "pantalla": "detalle-venta-ganada",
+    "ruta": "/posibles-ventas/sale-003",
+    "venta": "sale-003",
+    "etapaEnDetalle": "Venta ganada",
+    "botonCambiarEtapa": false,
+    "botonesVisibles": [
+      "Editar"
+    ],
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "06-historial-sale-005.png",
+    "pantalla": "historial-de-etapas",
+    "ruta": "/posibles-ventas/sale-005",
+    "venta": "sale-005",
+    "filas": [
+      [
+        "20/08/2026",
+        "Precio o cotización enviada",
+        "Venta ganada",
+        ""
+      ],
+      [
+        "12/08/2026",
+        "Contactado",
+        "Precio o cotización enviada",
+        ""
+      ],
+      [
+        "05/08/2026",
+        "Nuevo interesado",
+        "Contactado",
+        ""
+      ],
+      [
+        "01/08/2026",
+        "—",
+        "Nuevo interesado",
+        ""
+      ]
+    ],
+    "registros": 4,
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "07-historial-sale-003.png",
+    "pantalla": "historial-de-etapas",
+    "ruta": "/posibles-ventas/sale-003",
+    "venta": "sale-003",
+    "filas": [
+      [
+        "02/10/2026",
+        "En negociación",
+        "Venta ganada",
+        ""
+      ],
+      [
+        "29/09/2026",
+        "Precio o cotización enviada",
+        "En negociación",
+        ""
+      ],
+      [
+        "27/09/2026",
+        "Contactado",
+        "Precio o cotización enviada",
+        ""
+      ],
+      [
+        "26/09/2026",
+        "Nuevo interesado",
+        "Contactado",
+        ""
+      ],
+      [
+        "25/09/2026",
+        "—",
+        "Nuevo interesado",
+        ""
+      ]
+    ],
+    "registros": 5,
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "08-dialogo-contactado-ganada-deshabilitada.png",
+    "pantalla": "ventana-cambiar-etapa",
+    "ruta": "/posibles-ventas/sale-006",
+    "venta": "sale-006",
+    "etapaEnDetalle": "Contactado",
+    "opciones": [
+      {
+        "etapa": "Nuevo interesado",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Contactado",
+        "esActual": true,
+        "deshabilitada": false,
+        "marcada": true
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "En negociación",
+        "esActual": false,
+        "deshabilitada": true,
+        "marcada": false
+      },
+      {
+        "etapa": "Venta ganada",
+        "esActual": false,
+        "deshabilitada": true,
+        "marcada": false
+      },
+      {
+        "etapa": "Venta perdida",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      }
+    ],
+    "destinosHabilitados": [
+      "Nuevo interesado",
+      "Precio o cotización enviada",
+      "Venta perdida"
+    ],
+    "etapaMarcadaTrasHacerClicEnVentaGanada": "Contactado",
+    "botonGuardarDeshabilitado": true,
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "09-dialogo-cotizacion-ganada-habilitada.png",
+    "pantalla": "ventana-cambiar-etapa",
+    "ruta": "/posibles-ventas/sale-006",
+    "venta": "sale-006",
+    "etapaEnDetalle": "Precio o cotización enviada",
+    "opciones": [
+      {
+        "etapa": "Nuevo interesado",
+        "esActual": false,
+        "deshabilitada": true,
+        "marcada": false
+      },
+      {
+        "etapa": "Contactado",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "esActual": true,
+        "deshabilitada": false,
+        "marcada": true
+      },
+      {
+        "etapa": "En negociación",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Venta ganada",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Venta perdida",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      }
+    ],
+    "destinosHabilitados": [
+      "Contactado",
+      "En negociación",
+      "Venta ganada",
+      "Venta perdida"
+    ],
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "10-confirmacion-venta-ganada.png",
+    "pantalla": "confirmacion-venta-ganada",
+    "venta": "sale-006",
+    "pregunta": "¿Confirma que esta venta fue ganada? El contacto pasará a ser cliente y la venta ya no podrá cambiar de etapa.",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "11-detalle-ganada-contacto-cliente.png",
+    "pantalla": "detalle-venta-ganada",
+    "ruta": "/posibles-ventas/sale-006",
+    "venta": "sale-006",
+    "etapaEnDetalle": "Venta ganada",
+    "franja": "Venta ganada. Elena Muestra Castro ahora es cliente.",
+    "botonCambiarEtapa": false,
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "12-ficha-contacto-cliente.png",
+    "pantalla": "ficha-contacto",
+    "ruta": "/contactos/contact-005",
+    "clasificacionAntes": "Persona interesada",
+    "clasificacionDespues": "Cliente",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "13-historial-sale-006-tras-el-recorrido.png",
+    "pantalla": "historial-de-etapas",
+    "ruta": "/posibles-ventas/sale-006",
+    "venta": "sale-006",
+    "filas": [
+      [
+        "14/11/2026",
+        "Precio o cotización enviada",
+        "Venta ganada",
+        ""
+      ],
+      [
+        "14/11/2026",
+        "Contactado",
+        "Precio o cotización enviada",
+        ""
+      ],
+      [
+        "14/11/2026",
+        "Nuevo interesado",
+        "Contactado",
+        ""
+      ],
+      [
+        "10/10/2026",
+        "—",
+        "Nuevo interesado",
+        ""
+      ]
+    ],
+    "registros": 4,
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "14-confirmacion-venta-perdida.png",
+    "pantalla": "confirmacion-venta-perdida",
+    "venta": "sale-001",
+    "pregunta": "¿Está seguro de que desea marcar esta venta como perdida?",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "15-detalle-venta-perdida.png",
+    "pantalla": "detalle-venta-perdida",
+    "ruta": "/posibles-ventas/sale-001",
+    "venta": "sale-001",
+    "etapaEnDetalle": "Venta perdida",
+    "franja": "Oportunidad de venta marcada como perdida.",
+    "botonCambiarEtapa": true,
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "16-detalle-venta-reabierta.png",
+    "pantalla": "detalle-venta-reabierta",
+    "ruta": "/posibles-ventas/sale-001",
+    "venta": "sale-001",
+    "etapaEnDetalle": "Contactado",
+    "franja": "Oportunidad de venta reabierta correctamente.",
+    "opcionesAntesDeReabrir": [
+      {
+        "etapa": "Nuevo interesado",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Contactado",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "En negociación",
+        "esActual": false,
+        "deshabilitada": false,
+        "marcada": false
+      },
+      {
+        "etapa": "Venta ganada",
+        "esActual": false,
+        "deshabilitada": true,
+        "marcada": false
+      },
+      {
+        "etapa": "Venta perdida",
+        "esActual": true,
+        "deshabilitada": false,
+        "marcada": true
+      }
+    ],
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false
+  }
+]

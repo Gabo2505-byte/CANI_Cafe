@@ -236,6 +236,8 @@ export const seedSaleProducts: Seeded<SeedSaleProduct>[] = [
 /**
  * `stageHistory` no tiene `id` en el contrato: el id es `${saleId}_${número de cambio}`.
  * El último cambio de cada venta coincide con su `stage` y su `stageChangedAt`.
+ * Cada cambio respeta el mapa de transiciones (ALLOWED_STAGE_TRANSITIONS en src/sales/stageChange.ts): sin saltos de
+ * etapa y "Venta ganada" solo desde "Precio o cotización enviada" o "En negociación".
  */
 type SeedStageHistory = StageHistory & { id: string };
 export const seedStageHistory: Seeded<SeedStageHistory>[] = [
@@ -261,7 +263,11 @@ export const seedStageHistory: Seeded<SeedStageHistory>[] = [
   },
   {
     id: 'sale-002_02',
-    data: { saleId: 'sale-002', previousStage: 'nuevo_interesado', newStage: 'cotizacion_enviada', changedAt: cr('2026-09-28T09:00:00'), lossReason: null },
+    data: { saleId: 'sale-002', previousStage: 'nuevo_interesado', newStage: 'contactado', changedAt: cr('2026-09-24T10:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-002_03',
+    data: { saleId: 'sale-002', previousStage: 'contactado', newStage: 'cotizacion_enviada', changedAt: cr('2026-09-28T09:00:00'), lossReason: null },
   },
   {
     id: 'sale-003_01',
@@ -269,10 +275,18 @@ export const seedStageHistory: Seeded<SeedStageHistory>[] = [
   },
   {
     id: 'sale-003_02',
-    data: { saleId: 'sale-003', previousStage: 'nuevo_interesado', newStage: 'en_negociacion', changedAt: cr('2026-09-29T16:00:00'), lossReason: null },
+    data: { saleId: 'sale-003', previousStage: 'nuevo_interesado', newStage: 'contactado', changedAt: cr('2026-09-26T11:00:00'), lossReason: null },
   },
   {
     id: 'sale-003_03',
+    data: { saleId: 'sale-003', previousStage: 'contactado', newStage: 'cotizacion_enviada', changedAt: cr('2026-09-27T15:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-003_04',
+    data: { saleId: 'sale-003', previousStage: 'cotizacion_enviada', newStage: 'en_negociacion', changedAt: cr('2026-09-29T16:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-003_05',
     data: { saleId: 'sale-003', previousStage: 'en_negociacion', newStage: 'ganada', changedAt: cr('2026-10-02T12:00:00'), lossReason: null },
   },
   {
@@ -293,7 +307,15 @@ export const seedStageHistory: Seeded<SeedStageHistory>[] = [
   },
   {
     id: 'sale-005_02',
-    data: { saleId: 'sale-005', previousStage: 'nuevo_interesado', newStage: 'ganada', changedAt: cr('2026-08-20T12:00:00'), lossReason: null },
+    data: { saleId: 'sale-005', previousStage: 'nuevo_interesado', newStage: 'contactado', changedAt: cr('2026-08-05T10:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-005_03',
+    data: { saleId: 'sale-005', previousStage: 'contactado', newStage: 'cotizacion_enviada', changedAt: cr('2026-08-12T14:00:00'), lossReason: null },
+  },
+  {
+    id: 'sale-005_04',
+    data: { saleId: 'sale-005', previousStage: 'cotizacion_enviada', newStage: 'ganada', changedAt: cr('2026-08-20T12:00:00'), lossReason: null },
   },
   {
     id: 'sale-006_01',

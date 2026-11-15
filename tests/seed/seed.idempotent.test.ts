@@ -5,6 +5,7 @@ import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { assertEmulatorTarget, runSeed } from '../../scripts/seed/runSeed';
 import { COLLECTIONS } from '../../src/shared/constants/collections';
+import { isValidStageChange } from '../../src/sales/stageChange';
 import { SALE_STAGES } from '../../src/shared/types';
 
 const projectId = process.env.VITE_FIREBASE_PROJECT_ID!;
@@ -47,7 +48,7 @@ describe('seed', () => {
     expect(await count(COLLECTIONS.sales)).toBe(6);
     expect(await count(COLLECTIONS.products)).toBe(72); // catálogo oficial: 9 variedades × 4 pesos × 2 formatos
     expect(await count(COLLECTIONS.saleProducts)).toBe(6);
-    expect(await count(COLLECTIONS.stageHistory)).toBe(15);
+    expect(await count(COLLECTIONS.stageHistory)).toBe(20); // mapa de transiciones: sale-002, sale-003 y sale-005 sin saltos
 
     const { users } = await getAuth(app).listUsers();
     expect(users).toHaveLength(1);
@@ -116,6 +117,8 @@ describe('seed', () => {
       expect(changes[0].previousStage).toBeNull();
       changes.forEach((change, i) => {
         if (i > 0) expect(change.previousStage).toBe(changes[i - 1].newStage);
+        // Cada cambio respeta el mapa de transiciones (sin saltos de etapa).
+        if (i > 0) expect(isValidStageChange(change.previousStage, change.newStage), `${sale.id}: ${change.previousStage} → ${change.newStage}`).toBe(true);
       });
       const last = changes[changes.length - 1];
       expect(last.newStage).toBe(sale.get('stage'));

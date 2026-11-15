@@ -1,5 +1,5 @@
 // HU-310, HU-311, HU-312 y HU-313: cambiar la etapa de una posible venta (funciones puras, sin Firebase).
-import { isOpenSaleStage, SALE_STAGES, SALE_STAGE_LABELS, type ContactClassification, type SaleStage } from '../shared/types';
+import { SALE_STAGES, SALE_STAGE_LABELS, type ContactClassification, type SaleStage } from '../shared/types';
 
 /** HU-311: el motivo de la pérdida es opcional y acepta como máximo 250 caracteres. */
 export const LOSS_REASON_MAX = 250;
@@ -50,10 +50,27 @@ export function canChangeStage(sale: { stage: SaleStage }): boolean {
 }
 
 /**
- * Las seis etapas en el orden del tablero, con la actual marcada. Desde una etapa abierta se puede ir a
- * cualquier otra, hacia adelante o hacia atrás. "Venta perdida" (HU-311) y "Venta ganada" (HU-313) piden
- * confirmación en la misma ventana. Desde "Venta perdida" solo se pueden elegir las cuatro abiertas (HU-312):
- * "Venta ganada" aparece pero no se puede elegir.
+ * HU-310 (mapa de transiciones): a qué etapas se puede pasar desde cada una. Es el único lugar donde se declara.
+ * - Las abiertas avanzan a la siguiente, retroceden a la anterior o se marcan como perdidas (HU-311).
+ * - "Venta ganada" (HU-313) solo se alcanza desde "Precio o cotización enviada" o "En negociación".
+ * - "Venta ganada" es definitiva: no sale a ninguna (HU-313).
+ * - "Venta perdida" se reabre a cualquiera de las cuatro abiertas (HU-312).
+ * Una etapa nunca pasa a sí misma.
+ */
+export const ALLOWED_STAGE_TRANSITIONS: Readonly<Record<SaleStage, readonly SaleStage[]>> = {
+  nuevo_interesado: ['contactado', 'perdida'],
+  contactado: ['cotizacion_enviada', 'nuevo_interesado', 'perdida'],
+  cotizacion_enviada: ['en_negociacion', 'ganada', 'contactado', 'perdida'],
+  en_negociacion: ['ganada', 'cotizacion_enviada', 'perdida'],
+  ganada: [],
+  perdida: ['nuevo_interesado', 'contactado', 'cotizacion_enviada', 'en_negociacion'],
+};
+
+/**
+ * Las seis etapas en el orden del tablero, con la actual marcada. Solo se pueden elegir las que permite el mapa
+ * de transiciones (ALLOWED_STAGE_TRANSITIONS); las demás aparecen pero no se pueden elegir. "Venta perdida"
+ * (HU-311) y "Venta ganada" (HU-313) piden confirmación en la misma ventana. Desde "Venta perdida" solo se pueden
+ * elegir las cuatro abiertas (HU-312).
  */
 export function stageOptions(current: SaleStage): StageOption[] {
   return SALE_STAGES.map((stage) => ({
@@ -64,14 +81,16 @@ export function stageOptions(current: SaleStage): StageOption[] {
   }));
 }
 
-/**
- * ¿Es un cambio válido? Desde una etapa abierta a cualquier otra etapa distinta. Desde "Venta perdida" solo a una
- * de las cuatro abiertas (HU-312). Desde "Venta ganada" nunca.
- */
+/** ¿Es un cambio válido? Solo si el mapa de transiciones (ALLOWED_STAGE_TRANSITIONS) lo permite. */
 export function isValidStageChange(from: SaleStage, to: SaleStage): boolean {
-  if (!SALE_STAGES.includes(to) || from === to) return false;
-  if (isOpenSaleStage(from)) return true;
-  return from === 'perdida' && isOpenSaleStage(to);
+  if (from === to) return false;
+  return ALLOWED_STAGE_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+/** Texto del error cuando se intenta un cambio que el mapa no permite (no se muestra en pantalla). */
+export function invalidStageChangeMessage(from: SaleStage, to: SaleStage): string {
+  const label = (stage: SaleStage) => SALE_STAGE_LABELS[stage] ?? String(stage);
+  return `Cambio de etapa no permitido: de "${label(from)}" (${from}) a "${label(to)}" (${to}).`;
 }
 
 /** Motivo de la pérdida tal como se guarda: sin espacios a los lados, o null si no se escribió nada. */

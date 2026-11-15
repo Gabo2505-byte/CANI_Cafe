@@ -88,7 +88,8 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-async function openDialog() {
+async function openDialog(stage?: SaleStage) {
+  if (stage) vi.mocked(loadSaleDetail).mockResolvedValue(detailOf(stage));
   const user = userEvent.setup();
   renderDetail();
   await user.click(await screen.findByRole('button', { name: 'Cambiar etapa' }));
@@ -134,30 +135,61 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
   it('"Guardar" está apagado mientras no se elija una etapa distinta', async () => {
     const { user } = await openDialog();
     expect(save().disabled).toBe(true);
-    await user.click(radio('En negociación'));
+    await user.click(radio('Precio o cotización enviada'));
     expect(save().disabled).toBe(false);
     await user.click(radio('Contactado Etapa actual'));
     expect(save().disabled).toBe(true);
   });
 
-  it('"Venta perdida" y "Venta ganada" se pueden elegir', async () => {
+  it('desde "Contactado" solo se pueden elegir las etapas del mapa: la anterior, la siguiente y "Venta perdida"', async () => {
     await openDialog();
-    expect(radio('Venta perdida').disabled).toBe(false);
-    expect(radio('Venta ganada').disabled).toBe(false);
     expect(radio('Nuevo interesado').disabled).toBe(false);
+    expect(radio('Precio o cotización enviada').disabled).toBe(false);
+    expect(radio('Venta perdida').disabled).toBe(false);
+    // Aparecen pero no se pueden elegir: saltarían etapas.
+    expect(radio('En negociación').disabled).toBe(true);
+    expect(radio('Venta ganada').disabled).toBe(true);
+  });
+
+  it('una etapa no permitida no se puede elegir: al hacer clic no cambia la selección ni se enciende "Guardar"', async () => {
+    const { user } = await openDialog();
+    await user.click(radio('En negociación'));
+    await user.click(radio('Venta ganada'));
+    expect(radio('Contactado Etapa actual').checked).toBe(true);
+    expect(save().disabled).toBe(true);
+    expect(changeSaleStage).not.toHaveBeenCalled();
+  });
+
+  it.each<[SaleStage, string, string[]]>([
+    ['nuevo_interesado', 'Nuevo interesado', ['Contactado', 'Venta perdida']],
+    ['contactado', 'Contactado', ['Nuevo interesado', 'Precio o cotización enviada', 'Venta perdida']],
+    ['cotizacion_enviada', 'Precio o cotización enviada', ['Contactado', 'En negociación', 'Venta ganada', 'Venta perdida']],
+    ['en_negociacion', 'En negociación', ['Precio o cotización enviada', 'Venta ganada', 'Venta perdida']],
+    ['perdida', 'Venta perdida', ['Nuevo interesado', 'Contactado', 'Precio o cotización enviada', 'En negociación']],
+  ])('desde "%s" la ventana solo ofrece los destinos permitidos', async (stage, label, allowed) => {
+    const { dialog } = await openDialog(stage);
+    const enabled = within(dialog)
+      .getAllByRole('radio')
+      .filter((r) => !(r as HTMLInputElement).disabled)
+      .map((r) => r.closest('label')?.textContent);
+    expect(enabled).toEqual(
+      ['Nuevo interesado', 'Contactado', 'Precio o cotización enviada', 'En negociación', 'Venta ganada', 'Venta perdida']
+        .map((name) => (name === label ? `${name} Etapa actual` : name))
+        .filter((name) => allowed.includes(name) || name === `${label} Etapa actual`),
+    );
   });
 
   it('hacia adelante: guarda el cambio, cierra la ventana y el detalle muestra la nueva etapa', async () => {
     const { user } = await openDialog();
-    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('en_negociacion'));
-    await user.click(radio('En negociación'));
+    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('cotizacion_enviada'));
+    await user.click(radio('Precio o cotización enviada'));
     await user.click(save());
 
     await waitFor(() => expect(changeSaleStage).toHaveBeenCalledOnce());
-    expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'contactado', 'en_negociacion', undefined);
+    expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'contactado', 'cotizacion_enviada', undefined);
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     const stageRow = screen.getByText('Etapa', { selector: 'dt' }).parentElement as HTMLElement;
-    expect(within(stageRow).getByText('En negociación')).toBeTruthy();
+    expect(within(stageRow).getByText('Precio o cotización enviada')).toBeTruthy();
     expect(loadSaleDetail).toHaveBeenCalledTimes(2);
     // Franja verde con la confirmación.
     expect((await screen.findByRole('status')).textContent).toBe('Etapa actualizada correctamente.');
@@ -172,7 +204,7 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
 
   it('"Cancelar" y Escape cierran la ventana sin guardar', async () => {
     const { user } = await openDialog();
-    await user.click(radio('En negociación'));
+    await user.click(radio('Precio o cotización enviada'));
     await user.click(screen.getByRole('button', { name: 'Cancelar' }));
     expect(screen.queryByRole('dialog')).toBeNull();
 
@@ -187,8 +219,8 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
 
   it('la confirmación vuelve a mostrarse en un segundo cambio', async () => {
     const { user } = await openDialog();
-    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('en_negociacion'));
-    await user.click(radio('En negociación'));
+    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('cotizacion_enviada'));
+    await user.click(radio('Precio o cotización enviada'));
     await user.click(save());
     await screen.findByRole('status');
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
@@ -204,7 +236,7 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
   it('si no se guarda (falla) no aparece la confirmación', async () => {
     vi.mocked(changeSaleStage).mockRejectedValue(new Error('sin red'));
     const { user } = await openDialog();
-    await user.click(radio('En negociación'));
+    await user.click(radio('Precio o cotización enviada'));
     await user.click(save());
     await screen.findByRole('alert');
     expect(screen.queryByRole('status')).toBeNull();
@@ -213,7 +245,7 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
   it('si falla el guardado lo avisa y la ventana sigue abierta', async () => {
     vi.mocked(changeSaleStage).mockRejectedValue(new Error('sin red'));
     const { user } = await openDialog();
-    await user.click(radio('En negociación'));
+    await user.click(radio('Precio o cotización enviada'));
     await user.click(save());
     expect((await screen.findByRole('alert')).textContent).toBe('No se pudo cambiar la etapa. Intente de nuevo.');
     expect(screen.getByRole('dialog')).toBeTruthy();
@@ -224,7 +256,7 @@ describe('HU-310 ventana "Cambiar etapa"', () => {
     const { SaleStageConflictError } = await import('../../src/sales/salesRepository');
     vi.mocked(changeSaleStage).mockRejectedValue(new SaleStageConflictError());
     const { user } = await openDialog();
-    await user.click(radio('En negociación'));
+    await user.click(radio('Precio o cotización enviada'));
     await user.click(save());
     expect((await screen.findByRole('alert')).textContent).toBe(
       'La etapa de esta oportunidad de venta cambió. Cierre esta ventana y vuelva a intentarlo.',
@@ -249,7 +281,7 @@ describe('HU-311 marcar como perdida desde la ventana "Cambiar etapa"', () => {
     expect(screen.queryByRole('button', { name: 'Guardar' })).toBeNull();
     expect((screen.getByRole('button', { name: 'Aceptar' }) as HTMLButtonElement).disabled).toBe(false);
 
-    await user.click(radio('En negociación'));
+    await user.click(radio('Precio o cotización enviada'));
     expect(screen.queryByText(QUESTION)).toBeNull();
     expect(screen.getByRole('button', { name: 'Guardar' })).toBeTruthy();
   });
@@ -324,8 +356,32 @@ describe('HU-313 marcar como ganada desde la ventana "Cambiar etapa"', () => {
   const QUESTION =
     '¿Confirma que esta venta fue ganada? El contacto pasará a ser cliente y la venta ya no podrá cambiar de etapa.';
 
+  it('desde "Contactado" no se puede ganar directamente: hay que pasar por "Precio o cotización enviada"', async () => {
+    vi.mocked(changeSaleStage).mockResolvedValue({ contactBecameClient: false, contactName: null });
+    const { user } = await openDialog('contactado');
+    expect(radio('Venta ganada').disabled).toBe(true);
+    await user.click(radio('Venta ganada'));
+    expect(screen.queryByText(QUESTION)).toBeNull();
+
+    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('cotizacion_enviada'));
+    await user.click(radio('Precio o cotización enviada'));
+    await user.click(save());
+    await waitFor(() => expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'contactado', 'cotizacion_enviada', undefined));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+
+    vi.mocked(changeSaleStage).mockResolvedValue({ contactBecameClient: true, contactName: 'Bruno Ficticio Solís' });
+    vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('ganada'));
+    await user.click(screen.getByRole('button', { name: 'Cambiar etapa' }));
+    await screen.findByRole('dialog');
+    expect(radio('Venta ganada').disabled).toBe(false);
+    await user.click(radio('Venta ganada'));
+    await user.click(screen.getByRole('button', { name: 'Aceptar' }));
+    await waitFor(() => expect(changeSaleStage).toHaveBeenLastCalledWith('sale-001', 'cotizacion_enviada', 'ganada', undefined));
+    expect((await screen.findByRole('status')).textContent).toBe('Venta ganada. Bruno Ficticio Solís ahora es cliente.');
+  });
+
   it('al elegir "Venta ganada" pregunta si confirma; con otras etapas no', async () => {
-    const { user } = await openDialog();
+    const { user } = await openDialog('cotizacion_enviada');
     expect(screen.queryByText(QUESTION)).toBeNull();
 
     await user.click(radio('Venta ganada'));
@@ -342,12 +398,12 @@ describe('HU-313 marcar como ganada desde la ventana "Cambiar etapa"', () => {
 
   it('persona interesada: al aceptar pasa a ganada y aparece "Venta ganada. [Nombre] ahora es cliente."', async () => {
     vi.mocked(changeSaleStage).mockResolvedValue({ contactBecameClient: true, contactName: 'Bruno Ficticio Solís' });
-    const { user } = await openDialog();
+    const { user } = await openDialog('cotizacion_enviada');
     vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('ganada'));
     await user.click(radio('Venta ganada'));
     await user.click(screen.getByRole('button', { name: 'Aceptar' }));
 
-    await waitFor(() => expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'contactado', 'ganada', undefined));
+    await waitFor(() => expect(changeSaleStage).toHaveBeenCalledWith('sale-001', 'cotizacion_enviada', 'ganada', undefined));
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     expect((await screen.findByRole('status')).textContent).toBe('Venta ganada. Bruno Ficticio Solís ahora es cliente.');
     const stageRow = screen.getByText('Etapa', { selector: 'dt' }).parentElement as HTMLElement;
@@ -356,7 +412,7 @@ describe('HU-313 marcar como ganada desde la ventana "Cambiar etapa"', () => {
 
   it('si el contacto ya era cliente: "Venta ganada correctamente."', async () => {
     vi.mocked(changeSaleStage).mockResolvedValue({ contactBecameClient: false, contactName: null });
-    const { user } = await openDialog();
+    const { user } = await openDialog('cotizacion_enviada');
     vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('ganada'));
     await user.click(radio('Venta ganada'));
     await user.click(screen.getByRole('button', { name: 'Aceptar' }));
@@ -364,7 +420,7 @@ describe('HU-313 marcar como ganada desde la ventana "Cambiar etapa"', () => {
   });
 
   it('una venta ganada ya no puede cambiar de etapa: el botón "Cambiar etapa" desaparece', async () => {
-    const { user } = await openDialog();
+    const { user } = await openDialog('cotizacion_enviada');
     vi.mocked(loadSaleDetail).mockResolvedValue(detailOf('ganada'));
     await user.click(radio('Venta ganada'));
     await user.click(screen.getByRole('button', { name: 'Aceptar' }));
@@ -376,7 +432,7 @@ describe('HU-313 marcar como ganada desde la ventana "Cambiar etapa"', () => {
   });
 
   it('"Cancelar" no cambia nada', async () => {
-    const { user } = await openDialog();
+    const { user } = await openDialog('cotizacion_enviada');
     await user.click(radio('Venta ganada'));
     await user.click(screen.getByRole('button', { name: 'Cancelar' }));
 
@@ -385,7 +441,7 @@ describe('HU-313 marcar como ganada desde la ventana "Cambiar etapa"', () => {
     expect(loadSaleDetail).toHaveBeenCalledTimes(1);
     expect(screen.queryByRole('status')).toBeNull();
     const stageRow = screen.getByText('Etapa', { selector: 'dt' }).parentElement as HTMLElement;
-    expect(within(stageRow).getByText('Contactado')).toBeTruthy();
+    expect(within(stageRow).getByText('Precio o cotización enviada')).toBeTruthy();
     // Al abrirla otra vez parte de la etapa actual, sin la pregunta.
     await user.click(screen.getByRole('button', { name: 'Cambiar etapa' }));
     await screen.findByRole('dialog');
@@ -394,7 +450,7 @@ describe('HU-313 marcar como ganada desde la ventana "Cambiar etapa"', () => {
 
   it('si falla el guardado lo avisa y no muestra la confirmación', async () => {
     vi.mocked(changeSaleStage).mockRejectedValue(new Error('sin red'));
-    const { user } = await openDialog();
+    const { user } = await openDialog('en_negociacion');
     await user.click(radio('Venta ganada'));
     await user.click(screen.getByRole('button', { name: 'Aceptar' }));
     expect((await screen.findByRole('alert')).textContent).toBe('No se pudo cambiar la etapa. Intente de nuevo.');
