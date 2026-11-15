@@ -8,6 +8,8 @@ export const BOARD_MESSAGES = {
   noFollowUp: 'Sin seguimiento programado',
   loading: 'Cargando oportunidades de venta…',
   loadError: 'No se pudieron cargar las oportunidades de venta. Intente de nuevo.',
+  /** Al soltar una tarjeta cuya etapa ya había cambiado en otra pantalla (la ventana "Cambiar etapa" usa su propio texto). */
+  dropConflict: 'Esta oportunidad cambió de etapa mientras la movía. El tablero se actualizó; vuelva a intentarlo.',
 } as const;
 
 /** Las ganadas y perdidas solo se muestran si llegaron a esa etapa en los últimos 30 días. */

@@ -320,10 +320,24 @@ describe('Errores al guardar', () => {
     await keyboardDrag(user, 'Venta s1', 1);
     await press(user, '[Space]');
     expect((await screen.findByRole('alert')).textContent).toBe(
-      'La etapa de esta oportunidad de venta cambió. Cierre esta ventana y vuelva a intentarlo.',
+      'Esta oportunidad cambió de etapa mientras la movía. El tablero se actualizó; vuelva a intentarlo.',
     );
+    expect(screen.queryByText(/Cierre esta ventana/)).toBeNull();
     expect(listBoardSales).toHaveBeenCalledTimes(2);
     await waitFor(() => expect(columnOf('Venta s1')).toBe('Nuevo interesado'));
+  });
+
+  it('un conflicto dentro de la ventana "Cambiar etapa" sigue mostrando el mensaje de la ventana', async () => {
+    vi.mocked(changeSaleStage).mockRejectedValue(new SaleStageConflictError());
+    const user = await setup([sale('s1', 'en_negociacion')]);
+    await keyboardDrag(user, 'Venta s1', 2);
+    await press(user, '[Space]');
+    const dialog = await screen.findByRole('dialog', { name: 'Cambiar etapa' });
+    await user.click(within(dialog).getByRole('button', { name: 'Aceptar' }));
+    expect((await within(dialog).findByRole('alert')).textContent).toBe(
+      'La etapa de esta oportunidad de venta cambió. Cierre esta ventana y vuelva a intentarlo.',
+    );
+    expect(screen.queryByText(/mientras la movía/)).toBeNull();
   });
 
   it('al reabrir con un título repetido, muestra el mensaje de HU-312 y la tarjeta vuelve a "Venta perdida"', async () => {
@@ -354,8 +368,9 @@ describe('Errores al guardar', () => {
 });
 
 describe('Arrastre con ratón (con posiciones simuladas)', () => {
-  async function mouseDrag(title: string, to: SaleStage) {
-    const link = card(title);
+  /** `who`: el título de la tarjeta, o su id si empieza por "#". */
+  async function mouseDrag(who: string, to: SaleStage) {
+    const link = who.startsWith("#") ? document.querySelector<HTMLElement>(`[data-sale-id="${who.slice(1)}"]`)! : card(who);
     const startX = link.getBoundingClientRect().left + 20;
     fireEvent.mouseDown(link, { button: 0, clientX: startX, clientY: 120 });
     fireEvent.mouseMove(document, { clientX: startX + 10, clientY: 120 });
@@ -394,6 +409,31 @@ describe('Arrastre con ratón (con posiciones simuladas)', () => {
     await tick();
     expect(changeSaleStage).not.toHaveBeenCalled();
     expect(columnOf('Venta s1')).toBe('Contactado');
+  });
+
+  it('HU-312: reabrir con otra abierta del mismo contacto y mismo título no cambia la etapa y muestra el mensaje', async () => {
+    vi.mocked(changeSaleStage).mockRejectedValue(new SaleReopenDuplicateTitleError());
+    await setup([sale('s1', 'perdida', { title: 'Pedido mensual' }), sale('s2', 'contactado', { title: 'Pedido mensual' })]);
+    await mouseDrag('#s1', 'nuevo_interesado');
+    fireEvent.mouseUp(document, { clientX: columnCenter('nuevo_interesado'), clientY: 300 });
+    expect((await screen.findByRole('alert')).textContent).toBe(
+      'Este contacto ya tiene una oportunidad de venta abierta con este título. Cambie el título antes de reabrirla.',
+    );
+    expect(changeSaleStage).toHaveBeenCalledWith('s1', 'perdida', 'nuevo_interesado');
+    expect(within(column('Venta perdida')).getAllByRole('link')).toHaveLength(1);
+    expect(screen.getByRole('heading', { name: 'Nuevo interesado · 0 · ₡ 0' })).toBeTruthy();
+    expect(screen.queryByText('Oportunidad de venta reabierta correctamente.')).toBeNull();
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('HU-312: sin duplicado, reabrir arrastrando funciona normalmente', async () => {
+    await setup([sale('s1', 'perdida')]);
+    await mouseDrag('Venta s1', 'contactado');
+    fireEvent.mouseUp(document, { clientX: columnCenter('contactado'), clientY: 300 });
+    expect(await screen.findByText('Oportunidad de venta reabierta correctamente.')).toBeTruthy();
+    expect(changeSaleStage).toHaveBeenCalledWith('s1', 'perdida', 'contactado');
+    expect(columnOf('Venta s1')).toBe('Contactado');
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 
   it('soltar en "Venta perdida" abre la ventana con esa etapa elegida', async () => {

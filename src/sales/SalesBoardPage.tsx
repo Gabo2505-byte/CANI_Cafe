@@ -78,7 +78,7 @@ const columnCollision: CollisionDetection = (args) => (args.pointerCoordinates ?
 
 function stageChangeErrorMessage(error: unknown): string {
   if (error instanceof SaleReopenDuplicateTitleError) return STAGE_CHANGE_MESSAGES.reopenDuplicateTitle;
-  if (error instanceof SaleStageConflictError) return STAGE_CHANGE_MESSAGES.conflict;
+  if (error instanceof SaleStageConflictError) return BOARD_MESSAGES.dropConflict;
   return STAGE_CHANGE_MESSAGES.saveError;
 }
 
