@@ -426,3 +426,29 @@ describe('reabrir una oportunidad de venta perdida (HU-312)', () => {
     expect((await getDoc(doc(db, COLLECTIONS.sales, 's-perdida'))).get('stage')).toBe('perdida');
   });
 });
+
+describe('reabrir arrastrando la tarjeta en el tablero (HU-312)', () => {
+  // El tablero llama a changeSaleStage(id, 'perdida', destino) sin motivo: es la misma llamada que se prueba aquí.
+  const OPEN_STAGES = ['nuevo_interesado', 'contactado', 'cotizacion_enviada', 'en_negociacion'] as const;
+
+  it.each(OPEN_STAGES)('con otra abierta del mismo contacto y mismo título, soltar en %s no reabre ni escribe nada', async (to) => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), COLLECTIONS.sales, 's-igual'), { ...baseSale, title: 'Perdida', stage: 'en_negociacion' });
+    });
+    const before = (await getDoc(doc(db, COLLECTIONS.sales, 's-perdida'))).data();
+
+    await expect(changeSaleStageIn(db, 's-perdida', 'perdida', to)).rejects.toBeInstanceOf(SaleReopenDuplicateTitleError);
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-perdida'))).data()).toEqual(before);
+    expect(await historyOf('s-perdida')).toEqual([]);
+    // La otra oportunidad abierta tampoco cambia.
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-igual'))).get('stage')).toBe('en_negociacion');
+  });
+
+  it.each(OPEN_STAGES)('sin duplicado, soltar en %s la reabre y agrega el registro al historial', async (to) => {
+    await changeSaleStageIn(db, 's-perdida', 'perdida', to);
+    expect((await getDoc(doc(db, COLLECTIONS.sales, 's-perdida'))).get('stage')).toBe(to);
+    const history = await historyOf('s-perdida');
+    expect(history).toHaveLength(1);
+    expect(history[0]).toMatchObject({ saleId: 's-perdida', previousStage: 'perdida', newStage: to, lossReason: null });
+  });
+});

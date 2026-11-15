@@ -1,0 +1,1569 @@
+[
+  {
+    "archivo": "01-tablero-en-reposo.png",
+    "paso": "a",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 1 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": null,
+    "copiaSigueAlPuntero": false,
+    "franja": [],
+    "error": null,
+    "ventana": null,
+    "anuncio": "",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "02-arrastre-columnas-permitidas.png",
+    "paso": "b",
+    "venta": "sale-006",
+    "botonDelRatonSostenido": true,
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 1 · ₡ 0",
+        "zona": "origen",
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 0 · ₡ 0",
+        "zona": "permitida",
+        "bajoElPuntero": true,
+        "opacidad": "1",
+        "contorno": "solid",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": "bloqueada",
+        "bajoElPuntero": false,
+        "opacidad": "0.4",
+        "contorno": "none",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 1 · ₡ 450 000",
+        "zona": "bloqueada",
+        "bajoElPuntero": false,
+        "opacidad": "0.4",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 0 · ₡ 0",
+        "zona": "bloqueada",
+        "bajoElPuntero": false,
+        "opacidad": "0.4",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": "permitida",
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "dashed",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": "Primer contacto con Elena (mock)",
+    "copiaSigueAlPuntero": true,
+    "franja": [],
+    "error": null,
+    "ventana": null,
+    "anuncio": "Sobre la columna Contactado. Se puede soltar aquí.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "03-soltar-en-contactado-franja.png",
+    "paso": "c",
+    "venta": "sale-006",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 1 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": null,
+    "copiaSigueAlPuntero": false,
+    "franja": [
+      "Etapa actualizada correctamente."
+    ],
+    "error": null,
+    "ventana": null,
+    "anuncio": "Se soltó la oportunidad de venta \"Primer contacto con Elena (mock)\" en la columna Contactado.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "04-sobre-columna-no-permitida.png",
+    "paso": "d",
+    "venta": "sale-006",
+    "botonDelRatonSostenido": true,
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": "permitida",
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "dashed",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 1 · ₡ 0",
+        "zona": "origen",
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": "permitida",
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "dashed",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 1 · ₡ 450 000",
+        "zona": "bloqueada",
+        "bajoElPuntero": false,
+        "opacidad": "0.4",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 0 · ₡ 0",
+        "zona": "bloqueada",
+        "bajoElPuntero": false,
+        "opacidad": "0.4",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": "permitida",
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "dashed",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": "Primer contacto con Elena (mock)",
+    "copiaSigueAlPuntero": true,
+    "franja": [],
+    "error": null,
+    "ventana": null,
+    "anuncio": "Sobre la columna En negociación. No se puede pasar a esta etapa.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "05-no-permitida-vuelve.png",
+    "paso": "d",
+    "venta": "sale-006",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 1 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": null,
+    "copiaSigueAlPuntero": false,
+    "franja": [],
+    "error": null,
+    "ventana": null,
+    "anuncio": "La oportunidad de venta \"Primer contacto con Elena (mock)\" volvió a la columna Contactado.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "06-teclado-sobre-cotizacion.png",
+    "paso": "i",
+    "venta": "sale-006",
+    "teclado": "Espacio, flecha derecha",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": "permitida",
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "dashed",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 1 · ₡ 0",
+        "zona": "origen",
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": "permitida",
+        "bajoElPuntero": true,
+        "opacidad": "1",
+        "contorno": "solid",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 1 · ₡ 450 000",
+        "zona": "bloqueada",
+        "bajoElPuntero": false,
+        "opacidad": "0.4",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 0 · ₡ 0",
+        "zona": "bloqueada",
+        "bajoElPuntero": false,
+        "opacidad": "0.4",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": "permitida",
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "dashed",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": "Primer contacto con Elena (mock)",
+    "copiaSigueAlPuntero": true,
+    "franja": [],
+    "error": null,
+    "ventana": null,
+    "anuncio": "Sobre la columna Precio o cotización enviada. Se puede soltar aquí.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "07-teclado-soltado-franja.png",
+    "paso": "i",
+    "venta": "sale-006",
+    "teclado": "Espacio",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 2 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)",
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": null,
+    "copiaSigueAlPuntero": false,
+    "franja": [
+      "Etapa actualizada correctamente."
+    ],
+    "error": null,
+    "ventana": null,
+    "anuncio": "Se soltó la oportunidad de venta \"Primer contacto con Elena (mock)\" en la columna Precio o cotización enviada.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "08-ventana-venta-ganada.png",
+    "paso": "e",
+    "venta": "sale-006",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 2 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)",
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": null,
+    "copiaSigueAlPuntero": false,
+    "franja": [],
+    "error": null,
+    "ventana": {
+      "titulo": "Cambiar etapa",
+      "elegida": "Venta ganada",
+      "pregunta": "¿Confirma que esta venta fue ganada? El contacto pasará a ser cliente y la venta ya no podrá cambiar de etapa.",
+      "motivo": false
+    },
+    "anuncio": "Se soltó la oportunidad de venta \"Primer contacto con Elena (mock)\" en la columna Venta ganada.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "09-ganada-franja-cliente.png",
+    "paso": "e",
+    "venta": "sale-006",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 1 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": null,
+    "copiaSigueAlPuntero": false,
+    "franja": [
+      "Venta ganada. Elena Muestra Castro ahora es cliente."
+    ],
+    "error": null,
+    "ventana": null,
+    "anuncio": "Se soltó la oportunidad de venta \"Primer contacto con Elena (mock)\" en la columna Venta ganada.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "10-ficha-elena-cliente.png",
+    "paso": "e",
+    "ruta": "/contactos/contact-005",
+    "ficha": "← Volver a contactos |  | ELENA MUESTRA CASTRO | Cliente | Editar | Datos del contacto"
+  },
+  {
+    "archivo": "11-ventana-venta-perdida.png",
+    "paso": "f",
+    "venta": "sale-001",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 1 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": null,
+    "copiaSigueAlPuntero": false,
+    "franja": [],
+    "error": null,
+    "ventana": {
+      "titulo": "Cambiar etapa",
+      "elegida": "Venta perdida",
+      "pregunta": "¿Está seguro de que desea marcar esta venta como perdida?",
+      "motivo": true
+    },
+    "anuncio": "Se soltó la oportunidad de venta \"Café en grano para cafetería (mock)\" en la columna Venta perdida.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "12-perdida-franja.png",
+    "paso": "f",
+    "venta": "sale-001",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 1 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      }
+    ],
+    "arrastrando": null,
+    "copiaSigueAlPuntero": false,
+    "franja": [
+      "Oportunidad de venta marcada como perdida."
+    ],
+    "error": null,
+    "ventana": null,
+    "anuncio": "Se soltó la oportunidad de venta \"Café en grano para cafetería (mock)\" en la columna Venta perdida.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "13-arrastre-desde-perdida.png",
+    "paso": "g",
+    "venta": "sale-001",
+    "botonDelRatonSostenido": true,
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": "permitida",
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "dashed",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 0 · ₡ 0",
+        "zona": "permitida",
+        "bajoElPuntero": true,
+        "opacidad": "1",
+        "contorno": "solid",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": "permitida",
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "dashed",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 0 · ₡ 0",
+        "zona": "permitida",
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "dashed",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 1 · ₡ 0",
+        "zona": "bloqueada",
+        "bajoElPuntero": false,
+        "opacidad": "0.4",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 1 · ₡ 450 000",
+        "zona": "origen",
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      }
+    ],
+    "arrastrando": "Café en grano para cafetería (mock)",
+    "copiaSigueAlPuntero": true,
+    "franja": [],
+    "error": null,
+    "ventana": null,
+    "anuncio": "Sobre la columna Contactado. Se puede soltar aquí.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "14-reabierta-franja.png",
+    "paso": "g",
+    "venta": "sale-001",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 1 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": null,
+    "copiaSigueAlPuntero": false,
+    "franja": [
+      "Oportunidad de venta reabierta correctamente."
+    ],
+    "error": null,
+    "ventana": null,
+    "anuncio": "Se soltó la oportunidad de venta \"Café en grano para cafetería (mock)\" en la columna Contactado.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "15-ganada-no-se-arrastra.png",
+    "paso": "h",
+    "venta": "sale-006",
+    "botonDelRatonSostenido": true,
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 1 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": null,
+    "copiaSigueAlPuntero": false,
+    "franja": [],
+    "error": null,
+    "ventana": null,
+    "anuncio": "",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": null,
+    "paso": "h",
+    "tarjetaGanada": {
+      "clase": "sale-card",
+      "cursor": "pointer",
+      "describedBy": null
+    }
+  },
+  {
+    "archivo": "16-clic-abre-detalle.png",
+    "paso": "j",
+    "ruta": "/posibles-ventas/sale-002",
+    "h1": "Distribución mensual de café molido (mock)"
+  },
+  {
+    "archivo": "17-movil-390-inicio.png",
+    "paso": "k",
+    "tablero": {
+      "scrollWidth": 1140,
+      "clientWidth": 295,
+      "scrollLeft": 0
+    },
+    "anchoVentana": 390,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 1 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": null,
+    "copiaSigueAlPuntero": false,
+    "franja": [],
+    "error": null,
+    "ventana": null,
+    "anuncio": "",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "18-movil-390-desplazado.png",
+    "paso": "k",
+    "tablero": {
+      "scrollWidth": 1140,
+      "clientWidth": 295,
+      "scrollLeft": 600
+    },
+    "metodo": "rueda con Mayús",
+    "anchoVentana": 390,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Café en grano para cafetería (mock)"
+        ]
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Distribución mensual de café molido (mock)"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 1 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": [
+          "Primer contacto con Elena (mock)"
+        ]
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "opacidad": "1",
+        "contorno": "none",
+        "tarjetas": []
+      }
+    ],
+    "arrastrando": null,
+    "copiaSigueAlPuntero": false,
+    "franja": [],
+    "error": null,
+    "ventana": null,
+    "anuncio": "",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": null,
+    "paso": "final",
+    "historialSale006": [
+      "— → nuevo_interesado",
+      "nuevo_interesado → contactado",
+      "contactado → cotizacion_enviada",
+      "cotizacion_enviada → ganada"
+    ],
+    "historialSale001": [
+      "— → nuevo_interesado",
+      "nuevo_interesado → contactado",
+      "contactado → cotizacion_enviada",
+      "cotizacion_enviada → en_negociacion",
+      "en_negociacion → perdida (motivo: Eligió otro proveedor (prueba))",
+      "perdida → contactado"
+    ]
+  },
+  {
+    "archivo": "19-duplicado-antes.png",
+    "paso": "l",
+    "preparacion": {
+      "sale-001": {
+        "stage": "perdida",
+        "title": "Café en grano para cafetería (mock)",
+        "contactId": "contact-002"
+      },
+      "sale-e2e-duplicada": {
+        "stage": "contactado",
+        "title": "Café en grano para cafetería (mock)",
+        "contactId": "contact-002"
+      }
+    },
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 1 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-006"
+        ]
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-e2e-duplicada"
+        ]
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-002"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-001"
+        ]
+      }
+    ],
+    "arrastrando": false,
+    "franja": [],
+    "error": null,
+    "ventana": false,
+    "anuncio": "",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "20-duplicado-mensaje.png",
+    "paso": "l",
+    "venta": "sale-001",
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 1 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-006"
+        ]
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-e2e-duplicada"
+        ]
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-002"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-001"
+        ]
+      }
+    ],
+    "arrastrando": false,
+    "franja": [],
+    "error": "Este contacto ya tiene una oportunidad de venta abierta con este título. Cambie el título antes de reabrirla.",
+    "ventana": false,
+    "anuncio": "Se soltó la oportunidad de venta \"Café en grano para cafetería (mock)\" en la columna Contactado.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "21-conflicto-arrastre-en-curso.png",
+    "paso": "m",
+    "venta": "sale-002",
+    "botonDelRatonSostenido": true,
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 1 · ₡ 0",
+        "zona": "bloqueada",
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-006"
+        ]
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 1 · ₡ 450 000",
+        "zona": "permitida",
+        "bajoElPuntero": true,
+        "tarjetas": [
+          "sale-e2e-duplicada"
+        ]
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 1 · ₡ 1 200 000",
+        "zona": "origen",
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-002"
+        ]
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 0 · ₡ 0",
+        "zona": "permitida",
+        "bajoElPuntero": false,
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 0 · ₡ 0",
+        "zona": "permitida",
+        "bajoElPuntero": false,
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 1 · ₡ 450 000",
+        "zona": "permitida",
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-001"
+        ]
+      }
+    ],
+    "arrastrando": true,
+    "franja": [],
+    "error": null,
+    "ventana": false,
+    "anuncio": "Sobre la columna Contactado. Se puede soltar aquí.",
+    "ruta": "/posibles-ventas"
+  },
+  {
+    "archivo": "22-conflicto-otra-pestana.png",
+    "paso": "m",
+    "ruta": "/posibles-ventas/sale-002",
+    "franja": "Etapa actualizada correctamente.",
+    "etapaEnFirestore": "en_negociacion"
+  },
+  {
+    "archivo": "23-conflicto-mensaje-tablero.png",
+    "paso": "m",
+    "venta": "sale-002",
+    "seguiaArrastrandoAlSoltar": true,
+    "anchoVentana": 1280,
+    "desbordaHorizontal": false,
+    "columnas": [
+      {
+        "etapa": "Nuevo interesado",
+        "encabezado": "Nuevo interesado · 1 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-006"
+        ]
+      },
+      {
+        "etapa": "Contactado",
+        "encabezado": "Contactado · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-e2e-duplicada"
+        ]
+      },
+      {
+        "etapa": "Precio o cotización enviada",
+        "encabezado": "Precio o cotización enviada · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": []
+      },
+      {
+        "etapa": "En negociación",
+        "encabezado": "En negociación · 1 · ₡ 1 200 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-002"
+        ]
+      },
+      {
+        "etapa": "Venta ganada",
+        "encabezado": "Venta ganada · 0 · ₡ 0",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": []
+      },
+      {
+        "etapa": "Venta perdida",
+        "encabezado": "Venta perdida · 1 · ₡ 450 000",
+        "zona": null,
+        "bajoElPuntero": false,
+        "tarjetas": [
+          "sale-001"
+        ]
+      }
+    ],
+    "arrastrando": false,
+    "franja": [],
+    "error": "Esta oportunidad cambió de etapa mientras la movía. El tablero se actualizó; vuelva a intentarlo.",
+    "ventana": false,
+    "anuncio": "Se soltó la oportunidad de venta \"Distribución mensual de café molido (mock)\" en la columna Contactado.",
+    "ruta": "/posibles-ventas"
+  }
+]

@@ -8,6 +8,8 @@ interface ChangeStageDialogProps {
   saleId: string;
   /** Etapa en la que está hoy (la que se marca como actual). */
   currentStage: SaleStage;
+  /** Etapa ya elegida al abrir (al soltar una tarjeta en "Venta ganada" o "Venta perdida" en el tablero). */
+  initialStage?: SaleStage;
   /** La etapa ya se cambió y quedó en el historial. Recibe la nueva etapa y lo que pasó con el contacto. */
   onSaved: (newStage: SaleStage, result: StageChangeResult, previousStage: SaleStage) => void;
   onCancel: () => void;
@@ -23,12 +25,12 @@ interface ChangeStageDialogProps {
  * no podrá cambiar de etapa).
  * HU-312: desde "Venta perdida" solo se pueden elegir las cuatro etapas abiertas (reabrir).
  */
-export function ChangeStageDialog({ saleId, currentStage, onSaved, onCancel }: ChangeStageDialogProps) {
+export function ChangeStageDialog({ saleId, currentStage, initialStage, onSaved, onCancel }: ChangeStageDialogProps) {
   const titleId = useId();
   const questionId = useId();
   const firstRef = useRef<HTMLInputElement>(null);
   const reasonRef = useRef<HTMLTextAreaElement>(null);
-  const [selected, setSelected] = useState<SaleStage>(currentStage);
+  const [selected, setSelected] = useState<SaleStage>(initialStage ?? currentStage);
   const [reason, setReason] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);

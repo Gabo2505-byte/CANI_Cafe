@@ -1,0 +1,86 @@
+[
+  {
+    "paso": "a",
+    "texto": "Tablero en reposo a 1280 px: seis columnas, ninguna resaltada ni atenuada",
+    "resultado": "OK",
+    "detalle": "Nuevo interesado: 1 | Contactado: 0 | Precio o cotización enviada: 1 | En negociación: 1 | Venta ganada: 0 | Venta perdida: 0"
+  },
+  {
+    "paso": "b",
+    "texto": "En pleno arrastre: Contactado y Venta perdida resaltadas, las otras tres atenuadas",
+    "resultado": "OK",
+    "detalle": "{\"Nuevo interesado\":\"origen\",\"Contactado\":\"permitida\",\"Precio o cotización enviada\":\"bloqueada\",\"En negociación\":\"bloqueada\",\"Venta ganada\":\"bloqueada\",\"Venta perdida\":\"permitida\"}; opacidad bloqueadas 0.4,0.4,0.4; bajo el puntero: Contactado"
+  },
+  {
+    "paso": "c",
+    "texto": "Soltar en Contactado: la tarjeta queda en Contactado y aparece la franja verde",
+    "resultado": "OK",
+    "detalle": "franja: Etapa actualizada correctamente.; Firestore: contactado; ruta: /posibles-ventas"
+  },
+  {
+    "paso": "d",
+    "texto": "Soltar en En negociación (no permitida): no cambia nada y la tarjeta vuelve a Contactado",
+    "resultado": "OK",
+    "detalle": "zona: bloqueada; Firestore: contactado; anuncio: La oportunidad de venta \"Primer contacto con Elena (mock)\" volvió a la columna Contactado."
+  },
+  {
+    "paso": "i",
+    "texto": "Teclado: Espacio, flecha derecha y Espacio mueven la tarjeta de Contactado a Precio o cotización enviada",
+    "resultado": "OK",
+    "detalle": "anuncio sobre la columna: \"Sobre la columna Precio o cotización enviada. Se puede soltar aquí.\"; anuncio al soltar: \"Se soltó la oportunidad de venta \"Primer contacto con Elena (mock)\" en la columna Precio o cotización enviada.\"; foco final: sale-006"
+  },
+  {
+    "paso": "e",
+    "texto": "Soltar en Venta ganada: ventana con la etapa elegida; al aceptar, Elena pasa a Cliente",
+    "resultado": "OK",
+    "detalle": "ventana: true; contacto-005: persona_interesada → cliente; franja: Venta ganada. Elena Muestra Castro ahora es cliente."
+  },
+  {
+    "paso": "e",
+    "texto": "Ficha de Elena Muestra Castro muestra \"Cliente\"",
+    "resultado": "OK",
+    "detalle": "← Volver a contactos |  | ELENA MUESTRA CASTRO | Cliente | Editar | Datos del contacto"
+  },
+  {
+    "paso": "f",
+    "texto": "Soltar en Venta perdida: ventana con la pregunta y el motivo; al aceptar queda perdida con su motivo",
+    "resultado": "OK",
+    "detalle": "último registro: en_negociacion → perdida (motivo: Eligió otro proveedor (prueba))"
+  },
+  {
+    "paso": "g",
+    "texto": "Arrastrar de Venta perdida a Contactado la reabre (Venta ganada bloqueada, las cuatro abiertas permitidas)",
+    "resultado": "OK",
+    "detalle": "{\"Nuevo interesado\":\"permitida\",\"Contactado\":\"permitida\",\"Precio o cotización enviada\":\"permitida\",\"En negociación\":\"permitida\",\"Venta ganada\":\"bloqueada\",\"Venta perdida\":\"origen\"}; historial: en_negociacion → perdida (motivo: Eligió otro proveedor (prueba)) | perdida → contactado"
+  },
+  {
+    "paso": "h",
+    "texto": "La tarjeta en Venta ganada no se arrastra: sin columnas marcadas, sin copia, sigue ganada",
+    "resultado": "OK",
+    "detalle": "{\"clase\":\"sale-card\",\"cursor\":\"pointer\",\"describedBy\":null}; ruta tras soltar: /posibles-ventas"
+  },
+  {
+    "paso": "j",
+    "texto": "Un clic normal en la tarjeta de sale-002 abre su detalle",
+    "resultado": "OK",
+    "detalle": "/posibles-ventas/sale-002 — Distribución mensual de café molido (mock)"
+  },
+  {
+    "paso": "k",
+    "texto": "Tablero a 390 px: la página no se desborda y las columnas se desplazan en horizontal",
+    "resultado": "OK",
+    "detalle": "tablero 1140/295 px; scrollLeft 0 → 600 (rueda con Mayús)"
+  },
+  {
+    "paso": "l",
+    "texto": "HU-312 por arrastre: reabrir sale-001 con otra abierta del mismo contacto y mismo título no la reabre y muestra el mensaje",
+    "resultado": "OK",
+    "detalle": "mensaje: \"Este contacto ya tiene una oportunidad de venta abierta con este título. Cambie el título antes de reabrirla.\"; Firestore: perdida; historial 5 → 5 registros; duplicada en Contactado"
+  },
+  {
+    "paso": "m",
+    "texto": "Conflicto: sale-002 cambia a En negociación en otra pestaña mientras se arrastra; al soltar en Contactado aparece el mensaje del tablero, no cambia y el tablero se actualiza",
+    "resultado": "OK",
+    "detalle": "mensaje: \"Esta oportunidad cambió de etapa mientras la movía. El tablero se actualizó; vuelva a intentarlo.\"; arrastre activo al soltar: true; Firestore: en_negociacion; tarjeta en En negociación; historial: contactado → cotizacion_enviada | cotizacion_enviada → en_negociacion"
+  }
+]
