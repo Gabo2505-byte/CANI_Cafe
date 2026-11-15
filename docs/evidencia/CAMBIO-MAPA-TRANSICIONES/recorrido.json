@@ -1,0 +1,116 @@
+[
+  {
+    "paso": "01-dialogo-nuevo-interesado.png",
+    "texto": "sale-006 (Nuevo interesado): destinos habilitados = Contactado, Venta perdida",
+    "resultado": "OK",
+    "detalle": ""
+  },
+  {
+    "paso": "02-dialogo-cotizacion-enviada.png",
+    "texto": "sale-002 (Precio o cotización enviada): destinos habilitados = Contactado, En negociación, Venta ganada, Venta perdida",
+    "resultado": "OK",
+    "detalle": ""
+  },
+  {
+    "paso": "03-dialogo-en-negociacion.png",
+    "texto": "sale-001 (En negociación): destinos habilitados = Precio o cotización enviada, Venta ganada, Venta perdida",
+    "resultado": "OK",
+    "detalle": ""
+  },
+  {
+    "paso": "04-dialogo-venta-perdida.png",
+    "texto": "sale-004 (Venta perdida): destinos habilitados = Nuevo interesado, Contactado, Precio o cotización enviada, En negociación",
+    "resultado": "OK",
+    "detalle": ""
+  },
+  {
+    "paso": "05",
+    "texto": "sale-003 (Venta ganada): no hay botón \"Cambiar etapa\"",
+    "resultado": "OK",
+    "detalle": "botones: Editar"
+  },
+  {
+    "paso": "06-historial-sale-005.png",
+    "texto": "sale-005: historial de 4 registros",
+    "resultado": "OK",
+    "detalle": "Precio o cotización enviada → Venta ganada | Contactado → Precio o cotización enviada | Nuevo interesado → Contactado | — → Nuevo interesado"
+  },
+  {
+    "paso": "07-historial-sale-003.png",
+    "texto": "sale-003: historial de 5 registros",
+    "resultado": "OK",
+    "detalle": "En negociación → Venta ganada | Precio o cotización enviada → En negociación | Contactado → Precio o cotización enviada | Nuevo interesado → Contactado | — → Nuevo interesado"
+  },
+  {
+    "paso": "R1.1",
+    "texto": "sale-006: Nuevo interesado → Contactado",
+    "resultado": "OK",
+    "detalle": "franja: \"Etapa actualizada correctamente.\""
+  },
+  {
+    "paso": "R1.2",
+    "texto": "Contactado: \"Venta ganada\" y \"En negociación\" deshabilitadas; el clic no cambia la selección",
+    "resultado": "OK",
+    "detalle": "marcada tras el clic: Contactado"
+  },
+  {
+    "paso": "R1.3",
+    "texto": "sale-006: Contactado → Precio o cotización enviada",
+    "resultado": "OK",
+    "detalle": "franja: \"Etapa actualizada correctamente.\""
+  },
+  {
+    "paso": "R1.4",
+    "texto": "Precio o cotización enviada: \"Venta ganada\" ya se puede elegir",
+    "resultado": "OK",
+    "detalle": ""
+  },
+  {
+    "paso": "R1.5",
+    "texto": "Al elegir \"Venta ganada\" aparece la pregunta de confirmación",
+    "resultado": "OK",
+    "detalle": "\"¿Confirma que esta venta fue ganada? El contacto pasará a ser cliente y la venta ya no podrá cambiar de etapa.\""
+  },
+  {
+    "paso": "R1.6",
+    "texto": "Venta ganada: franja con el nombre del contacto, etapa \"Venta ganada\" y sin botón \"Cambiar etapa\"",
+    "resultado": "OK",
+    "detalle": "franja: \"Venta ganada. Elena Muestra Castro ahora es cliente.\""
+  },
+  {
+    "paso": "R1.7",
+    "texto": "La ficha del contacto (Elena) ahora dice \"Cliente\"",
+    "resultado": "OK",
+    "detalle": "antes era Persona interesada: true"
+  },
+  {
+    "paso": "13-historial-sale-006-tras-el-recorrido.png",
+    "texto": "sale-006: historial de 4 registros",
+    "resultado": "OK",
+    "detalle": "Precio o cotización enviada → Venta ganada | Contactado → Precio o cotización enviada | Nuevo interesado → Contactado | — → Nuevo interesado"
+  },
+  {
+    "paso": "R2.1",
+    "texto": "En negociación → Venta perdida: pregunta y motivo",
+    "resultado": "OK",
+    "detalle": "\"¿Está seguro de que desea marcar esta venta como perdida?\""
+  },
+  {
+    "paso": "R2.2",
+    "texto": "sale-001 queda en \"Venta perdida\" y el botón \"Cambiar etapa\" sigue (para reabrir)",
+    "resultado": "OK",
+    "detalle": "franja: \"Oportunidad de venta marcada como perdida.\""
+  },
+  {
+    "paso": "R2.3",
+    "texto": "Venta perdida → Contactado (reabrir); desde perdida \"Venta ganada\" estaba deshabilitada",
+    "resultado": "OK",
+    "detalle": "franja: \"Oportunidad de venta reabierta correctamente.\""
+  },
+  {
+    "paso": "R2.4",
+    "texto": "Historial de sale-001 con la pérdida y la reapertura",
+    "resultado": "OK",
+    "detalle": "Venta perdida → Contactado | En negociación → Venta perdida"
+  }
+]
