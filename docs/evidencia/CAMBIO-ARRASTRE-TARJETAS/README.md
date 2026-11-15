@@ -1,6 +1,6 @@
 # Evidencia: arrastrar tarjetas en el tablero de Gestión de ventas
 
-**Responsable:** Dylan · **Revisa:** Gabriel · **Fecha:** 2026-11-14 · **Rama:** `dylan-arrastrar-tarjetas`
+**Responsable:** Dylan · **Revisa:** Gabriel · **Fecha:** 2026-11-14 · **Rama:** `dylan-arrastrar-tarjetas` (commits `ea4371f` y `66f91da`)
 
 ## Decisión
 
@@ -73,6 +73,55 @@ Las tarjetas en "Venta ganada" no se pueden arrastrar: es definitiva y no tiene 
 | HU-313 | 1, 2, 3 y 5 | Pregunta, conversión a cliente, mensajes y "Cancelar" | Sin cambios: al soltar en "Venta ganada" se abre la misma ventana con la etapa elegida |
 | HU-313 | 4 | Una posible venta ganada ya no puede cambiar de etapa (…) | **Además**, su tarjeta no se puede arrastrar |
 | HU-305 | — | Al dar clic en una tarjeta se abre su detalle | Sin cambios: el clic normal sigue abriendo el detalle |
+
+## Capturas (datos del seed, usuario `admin`, Microsoft Edge)
+
+Escritorio a 1280 × 800 y móvil a 390 × 844, contra los emuladores con datos limpios (`npm run seed`, 20 registros en `stageHistory`). El arrastre es real: el script mueve el ratón con el botón sostenido (`mouse.down`, varios `mouse.move` y `mouse.up`) o pulsa las teclas, igual que una persona. Las capturas "en pleno arrastre" se tomaron con el botón todavía sostenido. Lo que se midió en cada captura (zona y opacidad de cada columna, tarjetas por columna, franja, ventana, anuncio para lector de pantalla, desborde) está en [verificacion.json](verificacion.json). Los 12 pasos con su resultado están en [recorrido.json](recorrido.json).
+
+| Captura | Paso | Qué se ve |
+|---|---|---|
+| [01](01-tablero-en-reposo.png) | a | Tablero en reposo: seis columnas, ninguna marcada |
+| [02](02-arrastre-columnas-permitidas.png) | b | `sale-006` (Nuevo interesado) en pleno arrastre sobre Contactado. Contactado tiene borde continuo (bajo el puntero), Venta perdida tiene borde punteado (permitida) y Precio o cotización enviada, En negociación y Venta ganada están atenuadas (opacidad 0,4). La tarjeta original queda tenue en su columna |
+| [03](03-soltar-en-contactado-franja.png) | c | Tras soltar: la tarjeta está en Contactado y aparece la franja "Etapa actualizada correctamente." |
+| [04](04-sobre-columna-no-permitida.png) | d | La tarjeta encima de En negociación, que está atenuada y sin borde: no la acepta |
+| [05](05-no-permitida-vuelve.png) | d | Tras soltar ahí: la tarjeta sigue en Contactado, sin franja y sin ventana |
+| [06](06-teclado-sobre-cotizacion.png) | i | Con teclado (Espacio y flecha derecha): la tarjeta sobre Precio o cotización enviada, con borde continuo |
+| [07](07-teclado-soltado-franja.png) | i | Tras Espacio: la tarjeta está en Precio o cotización enviada, con la franja verde y el foco de vuelta en la tarjeta |
+| [08](08-ventana-venta-ganada.png) | e | Al soltar en Venta ganada se abre "Cambiar etapa" con "Venta ganada" elegida y la pregunta de HU-313 |
+| [09](09-ganada-franja-cliente.png) | e | Tras "Aceptar": franja "Venta ganada. Elena Muestra Castro ahora es cliente." y la tarjeta en Venta ganada |
+| [10](10-ficha-elena-cliente.png) | e | La ficha de Elena Muestra Castro dice "Cliente" |
+| [11](11-ventana-venta-perdida.png) | f | Al soltar `sale-001` en Venta perdida: ventana con "Venta perdida" elegida, la pregunta y el motivo escrito |
+| [12](12-perdida-franja.png) | f | Tras "Aceptar": franja "Oportunidad de venta marcada como perdida." y la tarjeta en Venta perdida |
+| [13](13-arrastre-desde-perdida.png) | g | Arrastre desde Venta perdida: las cuatro columnas abiertas se pueden elegir; Venta ganada está atenuada |
+| [14](14-reabierta-franja.png) | g | Tras soltar en Contactado: franja "Oportunidad de venta reabierta correctamente." y la tarjeta en Contactado, sin ventana |
+| [15](15-ganada-no-se-arrastra.png) | h | Intento de arrastrar la tarjeta ganada con el botón sostenido: ninguna columna marcada y no hay copia que siga al puntero |
+| [16](16-clic-abre-detalle.png) | j | Un clic normal en la tarjeta de `sale-002` abrió su detalle |
+| [17](17-movil-390-inicio.png) | k | Móvil a 390 px: la página no se desborda; el tablero (1140 px) se desplaza dentro de su ancho (295 px) |
+| [18](18-movil-390-desplazado.png) | k | El mismo tablero desplazado 600 px a la derecha |
+
+**Detalles de las capturas:**
+
+- En Edge headless, una captura tarda unos 5 s, lo mismo que dura la franja verde. Como en CAMBIO-MAPA-TRANSICIONES, solo en el navegador de prueba se anuló el temporizador de 5000 ms de la franja (`evaluateOnNewDocument`). El código de la aplicación no se modificó.
+- Las ventas ganadas y perdidas del seed tienen más de 30 días, así que no aparecen en el tablero. Por eso el recorrido va en este orden: `sale-006` pasa por Contactado (c), Precio o cotización enviada (i) y Venta ganada (e), y `sale-001` se pierde (f) y se reabre (g). La tarjeta ganada de `sale-006` es la que se usa en el paso h.
+- En el paso k, el desplazamiento se hizo con la rueda del ratón y Mayús sobre el tablero. No se probó el arrastre táctil real.
+
+## Recorrido en el navegador
+
+| # | Paso | Resultado |
+|---|---|---|
+| a | Tablero en reposo a 1280 px | ✅ Seis columnas sin marcas; la página no se desborda ([01](01-tablero-en-reposo.png)) |
+| b | Arrastrar `sale-006` (Nuevo interesado) con el ratón y sostenerla sobre Contactado | ✅ Origen: Nuevo interesado. Permitidas: Contactado y Venta perdida. Bloqueadas (opacidad 0,4): las otras tres. Bajo el puntero: Contactado ([02](02-arrastre-columnas-permitidas.png)) |
+| c | Soltar en Contactado | ✅ La tarjeta queda en Contactado, aparece la franja "Etapa actualizada correctamente." y en Firestore `stage = contactado` ([03](03-soltar-en-contactado-franja.png)) |
+| d | Arrastrarla a En negociación (no permitida) y soltar | ✅ La columna estaba bloqueada y no se marcó. Al soltar no cambió nada (Firestore sigue en `contactado`, sin franja ni ventana) y se anunció "La oportunidad de venta "Primer contacto con Elena (mock)" volvió a la columna Contactado." ([04](04-sobre-columna-no-permitida.png), [05](05-no-permitida-vuelve.png)) |
+| i | Teclado: foco en la tarjeta, Espacio, flecha derecha, Espacio | ✅ Sobre la columna se anunció "Sobre la columna Precio o cotización enviada. Se puede soltar aquí.". Al soltar, la tarjeta pasó a Precio o cotización enviada, apareció la franja verde, Firestore quedó en `cotizacion_enviada` y el foco volvió a la tarjeta ([06](06-teclado-sobre-cotizacion.png), [07](07-teclado-soltado-franja.png)) |
+| e | Arrastrar `sale-006` (Precio o cotización enviada) a Venta ganada, aceptar | ✅ Se abrió la ventana con "Venta ganada" elegida y la pregunta. Al aceptar: franja "Venta ganada. Elena Muestra Castro ahora es cliente.", `contact-005` pasó de `persona_interesada` a `cliente` y la ficha dice "Cliente" ([08](08-ventana-venta-ganada.png) a [10](10-ficha-elena-cliente.png)) |
+| f | Arrastrar `sale-001` (En negociación) a Venta perdida, escribir el motivo y aceptar | ✅ Ventana con "Venta perdida" elegida, la pregunta y el campo del motivo. Al aceptar: franja "Oportunidad de venta marcada como perdida." y en el historial "en_negociacion → perdida (motivo: Eligió otro proveedor (prueba))" ([11](11-ventana-venta-perdida.png), [12](12-perdida-franja.png)) |
+| g | Arrastrar `sale-001` de Venta perdida a Contactado | ✅ Durante el arrastre, las cuatro abiertas estaban permitidas y Venta ganada bloqueada. Al soltar, la venta se reabrió sin ventana: franja "Oportunidad de venta reabierta correctamente." y en el historial "perdida → contactado" ([13](13-arrastre-desde-perdida.png), [14](14-reabierta-franja.png)) |
+| h | Intentar arrastrar la tarjeta de `sale-006` (Venta ganada) | ✅ Con el botón sostenido y el puntero sobre otra columna, ninguna columna se marcó y no apareció la copia. Sigue ganada. La tarjeta no tiene la clase `is-draggable` ni `aria-describedby`, y su cursor es el de enlace (`pointer`) ([15](15-ganada-no-se-arrastra.png)) |
+| j | Clic normal en la tarjeta de `sale-002` | ✅ Abrió `/posibles-ventas/sale-002` ("Distribución mensual de café molido (mock)") ([16](16-clic-abre-detalle.png)) |
+| k | Tablero a 390 px | ✅ La página no se desborda en horizontal. El tablero mide 1140 px dentro de 295 px y su `scrollLeft` pasó de 0 a 600 ([17](17-movil-390-inicio.png), [18](18-movil-390-desplazado.png)) |
+
+**Datos usados:** los cambios del recorrido solo existen en el emulador, que se apagó al terminar. Historial final: `sale-006` Nuevo interesado → Contactado → Precio o cotización enviada → Venta ganada; `sale-001` En negociación → Venta perdida (con motivo) → Contactado.
 
 ## Pruebas automáticas
 
