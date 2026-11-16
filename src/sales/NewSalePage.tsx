@@ -1,8 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router';
-import { ROUTES } from '../app/routes';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router';
+import { contactPath, ROUTES } from '../app/routes';
+import type { FromListState } from '../contacts/contactDetail';
 import { listActiveProducts } from '../products/productsApi';
 import { SALES_LABELS } from '../shared/constants/labels';
+import { useFocusFirstError } from '../shared/hooks/useFocusFirstError';
 import type { NoticeState } from '../shared/hooks/useLocationNotice';
 import type { Contact, Product } from '../shared/types';
 import { toCostaRicaDateKey } from '../shared/utils/dates';
@@ -36,6 +38,7 @@ type FixedContactState = { status: 'none' } | { status: 'loading' } | { status: 
  */
 export function NewSalePage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [params] = useSearchParams();
   const fixedContactId = params.get('contactId');
 
@@ -49,6 +52,7 @@ export function NewSalePage() {
   const [productErrors, setProductErrors] = useState<SaleProductErrors>({});
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const { formRef, focusFirstError } = useFocusFirstError();
 
   useEffect(() => {
     if (!fixedContactId) return;
@@ -118,6 +122,7 @@ export function NewSalePage() {
       setProductErrors(rowErrors);
       if (Object.keys(formErrors).length > 0 || Object.keys(rowErrors).length > 0 || !contact) {
         setSaving(false);
+        focusFirstError();
         return;
       }
 
@@ -139,6 +144,21 @@ export function NewSalePage() {
     }
   }
 
+  /**
+   * "Cancelar": si se abrió desde la ficha de un contacto (`?contactId=`), vuelve a esa ficha, con la lista de la que
+   * venía ("Volver a contactos"); si se abrió desde el tablero, vuelve al tablero. Después de guardar sigue yendo al tablero.
+   */
+  function handleCancel() {
+    if (!fixedContactId) {
+      navigate(ROUTES.salesBoard);
+      return;
+    }
+    const from = (location.state as FromListState | null)?.from;
+    const state: FromListState = from ? { from } : {};
+    // replace: "Atrás" desde la ficha no vuelve al formulario cancelado.
+    navigate(contactPath(fixedContactId), { replace: true, state });
+  }
+
   if (fixed.status === 'notFound') {
     return (
       <main className="page">
@@ -157,7 +177,7 @@ export function NewSalePage() {
       {fixed.status === 'loading' ? (
         <p>Cargando contacto…</p>
       ) : (
-        <form className="form" onSubmit={handleSubmit} noValidate>
+        <form ref={formRef} className="form" onSubmit={handleSubmit} noValidate>
           <label htmlFor="sale-contact">
             Contacto <span className="required" aria-hidden="true">*</span>
           </label>
@@ -197,7 +217,7 @@ export function NewSalePage() {
             </p>
           )}
           <div className="form-actions">
-            <button type="button" className="button-secondary" onClick={() => navigate(ROUTES.salesBoard)}>
+            <button type="button" className="button-secondary" onClick={handleCancel}>
               Cancelar
             </button>
             <button type="submit" disabled={saving}>

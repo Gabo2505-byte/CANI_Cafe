@@ -19,7 +19,8 @@ function FieldError({ id, message, duplicateOf }: { id: string; message?: string
       {duplicateOf && (
         <>
           {' '}
-          <Link to={contactPath(duplicateOf)} className="field-error-link">
+          {/* Otra pestaña: así no se pierde lo escrito en el formulario. */}
+          <Link to={contactPath(duplicateOf)} className="field-error-link" target="_blank" rel="noopener noreferrer">
             {CONTACT_MESSAGES.viewContact}
           </Link>
         </>

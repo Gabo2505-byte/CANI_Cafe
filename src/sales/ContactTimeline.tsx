@@ -4,8 +4,8 @@ import { contactPath, saleDetailPath } from '../app/routes';
 import { badgedFirst, CONTACT_SEARCH_LABEL, filterContacts, foundContactsMessage } from '../contacts/contactSearch';
 import { CONTACTS_LIST_MESSAGES } from '../contacts/ContactsPage';
 import { CONTACTS_PAGE_SIZE } from '../contacts/contactsRepository';
-import { formatPhone } from '../shared/phone/phone';
 import { SALE_STAGE_LABELS, type Contact } from '../shared/types';
+import { contactSecondaryLine } from './contactSearch';
 import {
   filterTimeline,
   isCreationEvent,
@@ -31,16 +31,16 @@ interface ContactTimelineProps {
   onFilterChange: (filter: TimelineFilter) => void;
 }
 
+/** Teléfono primero y correo después, separados por " · "; con un solo dato, solo ese. */
 function contactSummary(contact: Contact): string {
-  const phone = contact.phoneNumber ? formatPhone(contact.phoneCountry ?? 'CR', contact.phoneNumber) : null;
-  return [contact.email, phone].filter(Boolean).join(' · ');
+  return contactSecondaryLine(contact) ?? '';
 }
 
 /**
  * Bitácora del contacto (pestaña de la pantalla "Avisos"). Sin contacto elegido muestra la lista de contactos con
- * los mismos datos y orden de la lista de contactos (HU-204, HU-205 y HU-504: todos, activos e inactivos, en orden
- * alfabético y con etiqueta primero, de 20 en 20) y un buscador por nombre, correo o teléfono (la misma búsqueda de
- * HU-205). Al elegir uno se ve su línea de tiempo, del evento más reciente al más antiguo, con "Cambiar contacto"
+ * el mismo orden de la lista de contactos (HU-204 y HU-504: todos, activos e inactivos, en orden alfabético y con
+ * etiqueta primero, de 20 en 20), con el teléfono antes del correo en cada fila, y un buscador por nombre, correo o
+ * teléfono (la misma búsqueda de HU-205). Al elegir uno se ve su línea de tiempo, del evento más reciente al más antiguo, con "Cambiar contacto"
  * para volver a la lista. Solo lectura; no se muestra quién hizo cada acción.
  */
 export function ContactTimeline({ contactId, filter, onSelectContact, onClearContact, onFilterChange }: ContactTimelineProps) {

@@ -20,6 +20,7 @@ export function LoginPage() {
   const [errors, setErrors] = useState<LoginErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const { acknowledgeSignOut } = useSession();
 
@@ -42,7 +43,11 @@ export function LoginPage() {
     event.preventDefault();
     const inputErrors = validateLoginInput(username, password);
     setErrors(inputErrors);
-    if (Object.keys(inputErrors).length > 0) return;
+    if (Object.keys(inputErrors).length > 0) {
+      // El foco va al primer campo con error (el usuario va antes que la contraseña).
+      (inputErrors.username ? usernameRef : passwordRef).current?.focus();
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -50,6 +55,8 @@ export function LoginPage() {
     } catch (error) {
       const authErrors = loginErrorFromAuth(error);
       if (authErrors) setErrors(authErrors);
+      // Usuario inexistente: el foco vuelve al campo de usuario. El mensaje es un role="alert" y se anuncia solo.
+      if (authErrors?.username) usernameRef.current?.focus();
       if (authErrors?.password) {
         // Contraseña incorrecta: se borra la contraseña y se mantiene el usuario.
         setPassword('');
@@ -71,6 +78,7 @@ export function LoginPage() {
         )}
         <label htmlFor="username">Usuario</label>
         <input
+          ref={usernameRef}
           id="username"
           type="text"
           value={username}

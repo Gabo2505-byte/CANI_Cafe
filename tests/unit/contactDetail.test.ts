@@ -10,6 +10,7 @@ import {
   CONTACT_SALES_COLUMNS,
   contactSaleCells,
   contactDataRows,
+  contactPhoneHref,
   CONTACT_DETAIL_MESSAGES,
   INTEREST_PRODUCTS_COLUMNS,
   interestProducts,
@@ -273,5 +274,17 @@ describe('HU-502 fecha y hora de las comunicaciones del formulario', () => {
   it('los orígenes nuevos del contrato v3', () => {
     expect(CONTACT_ORIGIN_LABELS.formulario_web).toBe('Formulario web');
     expect(CONTACT_ORIGIN_LABELS.carga_inicial).toBe('Carga inicial');
+  });
+});
+
+describe('CAMBIO-UX-DETALLES contactPhoneHref', () => {
+  it('"tel:" con el código del país y solo dígitos', () => {
+    expect(contactPhoneHref({ phoneCountry: 'CR', phoneNumber: '88888888' })).toBe('tel:+50688888888');
+    expect(contactPhoneHref({ phoneCountry: 'US', phoneNumber: '3055550104' })).toBe('tel:+13055550104');
+  });
+
+  it('sin teléfono no hay enlace; sin país se toma Costa Rica', () => {
+    expect(contactPhoneHref({ phoneCountry: null, phoneNumber: null })).toBeNull();
+    expect(contactPhoneHref({ phoneCountry: null, phoneNumber: '88888888' })).toBe('tel:+50688888888');
   });
 });

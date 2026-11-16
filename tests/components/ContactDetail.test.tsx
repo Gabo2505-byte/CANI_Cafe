@@ -387,3 +387,36 @@ describe('HU-209 Ver los productos de interés de un contacto', () => {
     expect(within(panel).getByRole('cell', { name: 'Producto no disponible' })).toBeTruthy();
   });
 });
+
+describe('CAMBIO-UX-DETALLES: teléfono como enlace para llamar', () => {
+  it('el teléfono es un enlace tel: con el código del país; el texto y el orden no cambian', async () => {
+    vi.mocked(getContact).mockResolvedValue(makeContact({ phoneCountry: 'CR', phoneNumber: '88888888' }));
+    renderAt('/contactos/contact-002');
+    await screen.findByRole('heading', { level: 1 });
+    const link = within(dataBox()).getByRole('link', { name: '+506 8888-8888' });
+    expect(link.getAttribute('href')).toBe('tel:+50688888888');
+    expect(dataValue('Teléfono')).toBe('+506 8888-8888');
+    expect(within(dataBox()).getAllByRole('term').map((t) => t.textContent)).toEqual([
+      'Correo electrónico',
+      'Teléfono',
+      'Dirección',
+      'Fecha de registro',
+      'Origen',
+    ]);
+  });
+
+  it('un teléfono de otro país lleva su código: tel:+13055550104', async () => {
+    vi.mocked(getContact).mockResolvedValue(makeContact({ phoneCountry: 'US', phoneNumber: '3055550104' }));
+    renderAt('/contactos/contact-002');
+    await screen.findByRole('heading', { level: 1 });
+    expect(within(dataBox()).getByRole('link', { name: '+1 3055550104' }).getAttribute('href')).toBe('tel:+13055550104');
+  });
+
+  it('sin teléfono dice "No registrado" y no hay enlace; el correo no es un enlace', async () => {
+    vi.mocked(getContact).mockResolvedValue(makeContact({ phoneCountry: null, phoneNumber: null }));
+    renderAt('/contactos/contact-002');
+    await screen.findByRole('heading', { level: 1 });
+    expect(dataValue('Teléfono')).toBe('No registrado');
+    expect(within(dataBox()).queryAllByRole('link')).toHaveLength(0);
+  });
+});

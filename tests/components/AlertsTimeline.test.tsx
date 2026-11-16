@@ -193,7 +193,9 @@ describe('lista de contactos al abrir la pestaña', () => {
       'Bruno Ficticio Solís',
       'Diego Ejemplo Rojas',
     ]);
-    expect(rows[0].textContent).toContain('ana.prueba@example.com · +506 8812-3456');
+    // CAMBIO-UX-DETALLES: el teléfono primero y el correo después.
+    expect(rows[0].textContent).toContain('+506 8812-3456 · ana.prueba@example.com');
+    expect(rows[0].textContent).not.toContain('ana.prueba@example.com · +506');
     expect(screen.getByRole('status').textContent).toBe('Se encontraron 3 contactos.');
     expect(listTimelineContacts).toHaveBeenCalledTimes(1);
   });
@@ -491,5 +493,30 @@ describe('navegación de la pestaña "Bitácora"', () => {
     await back();
     expect(await listButtons()).toHaveLength(3);
     expect(currentLocation).toBe('/avisos?vista=bitacora');
+  });
+});
+
+describe('CAMBIO-UX-DETALLES: teléfono primero en las filas de la bitácora', () => {
+  const data = (row: HTMLElement) => row.querySelector('.timeline-result-data')?.textContent;
+
+  it('con los dos datos: teléfono · correo; con un solo dato, solo ese, sin separadores', async () => {
+    const soloTelefono = contact('contact-005', 'Elena Solo Teléfono', null, '60001234');
+    const sinDatos = contact('contact-006', 'Fabio Sin Datos', null, null);
+    vi.mocked(listTimelineContacts).mockResolvedValue([ana, diego, soloTelefono, sinDatos]);
+    renderAlerts('/avisos?vista=bitacora');
+    const rows = await listButtons();
+    const byName = (name: string) => rows.find((r) => r.querySelector('.timeline-result-name')?.textContent === name)!;
+    expect(data(byName('Ana Prueba Mora'))).toBe('+506 8812-3456 · ana.prueba@example.com');
+    expect(data(byName('Diego Ejemplo Rojas'))).toBe('diego@example.com');
+    expect(data(byName('Elena Solo Teléfono'))).toBe('+506 6000-1234');
+    expect(data(byName('Fabio Sin Datos'))).toBe('');
+  });
+
+  it('el contacto elegido muestra también primero el teléfono', async () => {
+    const user = userEvent.setup();
+    renderAlerts('/avisos?vista=bitacora');
+    await user.click((await listButtons())[0]);
+    await screen.findByRole('heading', { level: 2, name: 'Ana Prueba Mora' });
+    expect(document.querySelector('.timeline-contact-data')?.textContent).toBe('+506 8812-3456 · ana.prueba@example.com');
   });
 });

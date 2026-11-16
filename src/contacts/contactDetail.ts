@@ -2,7 +2,7 @@
 import type { Timestamp } from 'firebase/firestore';
 import { ROUTES } from '../app/routes';
 import type { CommunicationsCursor } from '../communications/communicationsRepository';
-import { formatPhone } from '../shared/phone/phone';
+import { formatPhone, phoneKey } from '../shared/phone/phone';
 import {
   CONTACT_ORIGIN_LABELS,
   type Communication,
@@ -101,6 +101,11 @@ export function backToListPath(state: unknown): string {
 export function pageIndexFromParam(value: string | null): number {
   const n = Number(value);
   return Number.isInteger(n) && n >= 1 ? n - 1 : 0;
+}
+
+/** Enlace para llamar: "tel:" con el código del país y solo dígitos ("tel:+50688888888"). null si no hay teléfono. */
+export function contactPhoneHref(contact: Pick<Contact, 'phoneCountry' | 'phoneNumber'>): string | null {
+  return contact.phoneNumber ? `tel:${phoneKey(contact.phoneCountry ?? 'CR', contact.phoneNumber)}` : null;
 }
 
 /** Filas del recuadro "Datos del contacto". Un dato vacío dice "No registrado". */

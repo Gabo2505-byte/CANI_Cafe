@@ -48,14 +48,23 @@ export function ContactPicker({ id, selected, onSelect, fixedContact, error }: C
   const results = useMemo(() => searchContacts(contacts, text), [contacts, text]);
 
   if (fixedContact) {
+    const fixedDetail = contactSecondaryLine(fixedContact);
     return (
-      <input
-        id={id}
-        value={fixedContact.fullName}
-        readOnly
-        aria-readonly="true"
-        className="contact-picker-fixed"
-      />
+      <>
+        <input
+          id={id}
+          value={fixedContact.fullName}
+          readOnly
+          aria-readonly="true"
+          aria-describedby={fixedDetail ? `${id}-selected` : undefined}
+          className="contact-picker-fixed"
+        />
+        {fixedDetail && (
+          <p id={`${id}-selected`} className="contact-picker-selected">
+            {fixedDetail}
+          </p>
+        )}
+      </>
     );
   }
 
@@ -93,6 +102,9 @@ export function ContactPicker({ id, selected, onSelect, fixedContact, error }: C
 
   const listId = `${id}-list`;
   const errorId = `${id}-error`;
+  const helpId = `${id}-help`;
+  const selectedId = `${id}-selected`;
+  const selectedDetail = selected ? contactSecondaryLine(selected) : null;
   return (
     <div className="contact-picker">
       <input
@@ -103,7 +115,7 @@ export function ContactPicker({ id, selected, onSelect, fixedContact, error }: C
         aria-autocomplete="list"
         aria-activedescendant={showList && results.length > 0 ? `${id}-option-${activeIndex}` : undefined}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? errorId : undefined}
+        aria-describedby={[selectedDetail && selectedId, helpId, error && errorId].filter(Boolean).join(' ')}
         value={text}
         onChange={(e) => handleChange(e.target.value)}
         onFocus={() => setOpen(true)}
@@ -136,6 +148,16 @@ export function ContactPicker({ id, selected, onSelect, fixedContact, error }: C
           )}
         </ul>
       )}
+      {/* El contacto ya elegido: su teléfono y su correo, para distinguir a quien comparte nombre. */}
+      {selectedDetail && (
+        <p id={selectedId} className="contact-picker-selected">
+          {selectedDetail}
+        </p>
+      )}
+      {/* La ayuda también queda a la vista debajo del campo: el placeholder desaparece al escribir. */}
+      <p id={helpId} className="field-help">
+        {CONTACT_SEARCH_MESSAGES.placeholder}
+      </p>
       {loadFailed && (
         <p className="field-error" role="alert">
           {CONTACT_SEARCH_MESSAGES.loadError}

@@ -189,3 +189,40 @@ describe('HU-102 Mensajes de error al ingresar', () => {
     expect(document.activeElement).toBe(password);
   });
 });
+
+describe('CAMBIO-UX-DETALLES: foco al fallar el ingreso', () => {
+  it('usuario inexistente → el foco va al campo de usuario y el mensaje se anuncia como alerta', async () => {
+    const user = userEvent.setup();
+    vi.mocked(signInWithUsername).mockRejectedValue(authError('auth/user-not-found'));
+    renderApp('/ingreso', signedOut);
+    await user.type(screen.getByLabelText('Usuario'), 'noexiste');
+    await user.type(screen.getByLabelText('Contraseña'), 'secreta');
+    // El foco se mueve al botón al darle clic: la comprobación es que vuelve al usuario.
+    await user.click(screen.getByRole('button', { name: 'Ingresar' }));
+
+    const message = await screen.findByText('El usuario ingresado no existe.');
+    expect(message.getAttribute('role')).toBe('alert');
+    expect(document.activeElement).toBe(screen.getByLabelText('Usuario'));
+  });
+
+  it('usuario vacío → el foco va al campo de usuario', async () => {
+    const user = userEvent.setup();
+    renderApp('/ingreso', signedOut);
+    await user.type(screen.getByLabelText('Contraseña'), 'secreta');
+    await user.click(screen.getByRole('button', { name: 'Ingresar' }));
+    expect(screen.getByText('Ingrese su usuario.').getAttribute('role')).toBe('alert');
+    expect(document.activeElement).toBe(screen.getByLabelText('Usuario'));
+  });
+
+  it('contraseña vacía → el foco va a la contraseña; si faltan los dos, al usuario', async () => {
+    const user = userEvent.setup();
+    renderApp('/ingreso', signedOut);
+    await user.type(screen.getByLabelText('Usuario'), 'admin');
+    await user.click(screen.getByRole('button', { name: 'Ingresar' }));
+    expect(document.activeElement).toBe(screen.getByLabelText('Contraseña'));
+
+    await user.clear(screen.getByLabelText('Usuario'));
+    await user.click(screen.getByRole('button', { name: 'Ingresar' }));
+    expect(document.activeElement).toBe(screen.getByLabelText('Usuario'));
+  });
+});

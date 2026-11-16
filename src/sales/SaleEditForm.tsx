@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { listProducts } from '../products/productsApi';
 import type { Product } from '../shared/types';
+import { useFocusFirstError } from '../shared/hooks/useFocusFirstError';
 import { toCostaRicaDateKey } from '../shared/utils/dates';
 import { SaleDataFields } from './SaleDataFields';
 import type { SaleDetailData } from './saleDetail';
@@ -60,6 +61,8 @@ export function SaleEditForm({ detail, onSaved, onCancel }: SaleEditFormProps) {
   const inSale = new Set(detail.products.map((p) => p.productId));
   const options = catalog.filter((product) => product.active || inSale.has(product.id));
 
+  const { formRef, focusFirstError } = useFocusFirstError();
+
   /** El mensaje de un dato desaparece cuando se vuelve a editar ese dato. */
   function clearError(field: keyof SaleFormErrors) {
     setErrors((prev) => {
@@ -94,6 +97,7 @@ export function SaleEditForm({ detail, onSaved, onCancel }: SaleEditFormProps) {
       setProductErrors(rowErrors);
       if (Object.keys(formErrors).length > 0 || Object.keys(rowErrors).length > 0) {
         setSaving(false);
+        focusFirstError();
         return;
       }
 
@@ -114,7 +118,7 @@ export function SaleEditForm({ detail, onSaved, onCancel }: SaleEditFormProps) {
   }
 
   return (
-    <form className="form" onSubmit={handleSubmit} noValidate>
+    <form ref={formRef} className="form" onSubmit={handleSubmit} noValidate>
       <SaleDataFields
         values={values}
         onChange={(patch: Partial<SaleFormValues>) => {

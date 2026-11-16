@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 import { contactPath, ROUTES } from '../app/routes';
 import type { NoticeState } from '../shared/hooks/useLocationNotice';
+import { useFocusFirstError } from '../shared/hooks/useFocusFirstError';
 import { ConfirmDialog } from '../shared/ui/ConfirmDialog';
 import { ContactFormFields } from './ContactFormFields';
 import { createContact, findDuplicateContacts } from './contactsApi';
@@ -26,6 +27,7 @@ export function NewContactPage() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [confirmLeave, setConfirmLeave] = useState(false);
+  const { formRef, focusFirstError } = useFocusFirstError();
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -33,7 +35,10 @@ export function NewContactPage() {
     setErrors(formErrors);
     setDuplicates({});
     setSaveError(null);
-    if (Object.keys(formErrors).length > 0) return;
+    if (Object.keys(formErrors).length > 0) {
+      focusFirstError();
+      return;
+    }
 
     setSaving(true);
     try {
@@ -44,6 +49,7 @@ export function NewContactPage() {
         setDuplicates(found);
         setErrors(duplicateErrors(found));
         setSaving(false);
+        focusFirstError();
         return;
       }
       const id = await createContact(input);
@@ -64,7 +70,7 @@ export function NewContactPage() {
   return (
     <main className="page">
       <h1>Nuevo contacto</h1>
-      <form className="form" onSubmit={handleSubmit} noValidate>
+      <form ref={formRef} className="form" onSubmit={handleSubmit} noValidate>
         <ContactFormFields values={values} onChange={setValues} errors={errors} duplicates={duplicates} />
 
         {saveError && (

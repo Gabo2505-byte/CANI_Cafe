@@ -1055,6 +1055,17 @@ textarea[aria-invalid='true'] {
   box-shadow: inset 3px 0 0 var(--color-accent);
 }
 
+/* Teléfono y correo del contacto ya elegido, debajo del campo. */
+.contact-picker-selected {
+  margin: 0.3rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.contact-picker .field-help {
+  margin: 0.3rem 0 0;
+}
+
 /* Teléfono y correo debajo del nombre (primero el teléfono). */
 .contact-picker-detail {
   font-size: 0.85rem;
