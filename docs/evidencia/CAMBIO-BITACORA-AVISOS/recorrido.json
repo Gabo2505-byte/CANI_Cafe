@@ -6,52 +6,52 @@
     "detalle": "5 avisos; círculo 5"
   },
   {
-    "paso": "02-pestana-bitacora.png",
-    "texto": "La pestaña \"Bitácora\" muestra el buscador \"Buscar por nombre, correo o teléfono\"",
+    "paso": "02-pestana-bitacora-lista.png",
+    "texto": "Al abrir \"Bitácora\" se ve el buscador y la lista de los 5 contactos (activos e inactivos) en orden alfabético, \"Se encontraron 5 contactos.\"",
     "resultado": "OK",
-    "detalle": "/avisos?vista=bitacora"
+    "detalle": "Ana Prueba Mora, Bruno Ficticio Solís, Carla Demo Vargas, Diego Ejemplo Rojas, Elena Muestra Castro"
   },
   {
-    "paso": "03-buscar-por-nombre.png",
-    "texto": "Buscar \"ANA prueba\" encuentra a Ana Prueba Mora",
+    "paso": "03-lista-filtrada-por-nombre.png",
+    "texto": "Escribir \"ANA prueba\" deja solo a Ana Prueba Mora",
     "resultado": "OK",
-    "detalle": "Ana Prueba Mora | ana.prueba@example.com · +506 0000-0001"
+    "detalle": "Se encontró 1 contacto."
   },
   {
-    "paso": "04-linea-de-tiempo-ana.png",
-    "texto": "Ana: 5 eventos del más reciente al más antiguo, con la comunicación del formulario web y sin quién la registró",
+    "paso": "04-lista-filtrada-por-telefono.png",
+    "texto": "Escribir \"0000-0002\" deja solo a Bruno Ficticio Solís",
+    "resultado": "OK",
+    "detalle": "Se encontró 1 contacto."
+  },
+  {
+    "paso": "05-lista-sin-resultados.png",
+    "texto": "Sin coincidencias dice \"No se encontraron contactos.\" y no hay filas",
+    "resultado": "OK",
+    "detalle": "No se encontraron contactos."
+  },
+  {
+    "paso": "06-contacto-elegido-ana.png",
+    "texto": "Al tocar la fila de Ana se ve su línea de tiempo (5 eventos, formulario web y pérdida con motivo), con \"Cambiar contacto\" y sin la lista",
     "resultado": "OK",
     "detalle": "/avisos?vista=bitacora&contacto=contact-001"
   },
   {
-    "paso": "05-buscar-por-telefono.png",
-    "texto": "Buscar \"0000-0002\" encuentra a Bruno Ficticio Solís por su teléfono",
-    "resultado": "OK",
-    "detalle": "Bruno Ficticio Solís | bruno.ficticio@example.com · +506 0000-0002"
-  },
-  {
-    "paso": "06-linea-de-tiempo-bruno.png",
-    "texto": "Bruno: 15 eventos (2 comunicaciones y 13 cambios de etapa, 3 creaciones)",
-    "resultado": "OK",
-    "detalle": "15 eventos"
-  },
-  {
     "paso": "07-filtro-comunicaciones.png",
-    "texto": "Filtro \"Comunicaciones\": solo las 2 comunicaciones",
+    "texto": "Filtro \"Comunicaciones\" en Ana: solo 2 comunicaciones",
     "resultado": "OK",
-    "detalle": "/avisos?vista=bitacora&contacto=contact-002&tipo=comunicaciones"
+    "detalle": "/avisos?vista=bitacora&contacto=contact-001&tipo=comunicaciones"
   },
   {
-    "paso": "08-filtro-cambios-de-etapa.png",
-    "texto": "Filtro \"Cambios de etapa\": solo los 13 cambios de etapa",
+    "paso": "08-volver-a-la-lista.png",
+    "texto": "\"Cambiar contacto\" vuelve a la lista completa y quita el contacto y el filtro de la URL",
     "resultado": "OK",
-    "detalle": "/avisos?vista=bitacora&contacto=contact-002&tipo=etapas"
+    "detalle": "/avisos?vista=bitacora"
   },
   {
-    "paso": "09-contacto-sin-eventos.png",
-    "texto": "Diego (sin comunicaciones ni oportunidades): estado vacío",
+    "paso": "09-foco-visible-en-una-fila.png",
+    "texto": "Con teclado (Tab): la fila enfocada muestra un contorno y Enter elige a Diego (inactivo, sin eventos)",
     "resultado": "OK",
-    "detalle": "Este contacto no tiene comunicaciones ni cambios de etapa registrados."
+    "detalle": "solid 2px Este contacto no tiene comunicaciones ni cambios de etapa registrados."
   },
   {
     "paso": "—",
@@ -60,21 +60,27 @@
     "detalle": "/posibles-ventas/sale-004 → /avisos?vista=bitacora&contacto=contact-001"
   },
   {
-    "paso": "10-movil-390-bitacora.png",
-    "texto": "A 390 px la bitácora no desborda horizontalmente",
+    "paso": "10-movil-390-lista.png",
+    "texto": "A 390 px la lista de contactos no desborda y cada fila mide al menos 44 px de alto",
     "resultado": "OK",
-    "detalle": "documento 375 px / ventana 390 px"
+    "detalle": "documento 375 px / ventana 390 px; fila 75 px"
   },
   {
-    "paso": "11-movil-390-buscador.png",
-    "texto": "A 390 px el buscador y sus resultados no desbordan",
+    "paso": "11-movil-390-lista-filtrada.png",
+    "texto": "A 390 px la lista filtrada no desborda",
     "resultado": "OK",
     "detalle": "documento 390 px / ventana 390 px"
   },
   {
-    "paso": "12-movil-390-avisos-pendientes.png",
-    "texto": "A 390 px la pestaña de avisos no desborda la página (la tabla se desplaza dentro de su recuadro, como antes)",
+    "paso": "12-movil-390-contacto-elegido.png",
+    "texto": "A 390 px el contacto elegido (con \"Cambiar contacto\") no desborda",
     "resultado": "OK",
-    "detalle": "documento 375 px; tabla con desplazamiento propio: true"
+    "detalle": "documento 375 px / ventana 390 px"
+  },
+  {
+    "paso": "13-movil-390-avisos-pendientes.png",
+    "texto": "A 390 px la pestaña de avisos no desborda la página (como antes)",
+    "resultado": "OK",
+    "detalle": "documento 375 px"
   }
 ]

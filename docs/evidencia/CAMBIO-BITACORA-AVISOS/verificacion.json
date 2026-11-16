@@ -69,7 +69,7 @@
     "desbordaHorizontal": false
   },
   {
-    "archivo": "02-pestana-bitacora.png",
+    "archivo": "02-pestana-bitacora-lista.png",
     "pestañas": [
       {
         "texto": "Avisos pendientes",
@@ -80,26 +80,65 @@
         "seleccionada": true
       }
     ],
-    "intro": "Busque un contacto para ver su bitácora: sus comunicaciones y los cambios de etapa de sus oportunidades de venta.",
     "buscador": "Buscar por nombre, correo o teléfono",
-    "ruta": "/avisos?vista=bitacora",
-    "anchoVentana": 1366,
-    "anchoDocumento": 1366,
-    "desbordaHorizontal": false
-  },
-  {
-    "archivo": "03-buscar-por-nombre.png",
-    "busqueda": "ANA prueba",
-    "resultados": [
-      "Ana Prueba Mora | ana.prueba@example.com · +506 0000-0001"
+    "contactos": [
+      "Ana Prueba Mora",
+      "Bruno Ficticio Solís",
+      "Carla Demo Vargas",
+      "Diego Ejemplo Rojas",
+      "Elena Muestra Castro"
     ],
+    "conteo": "Se encontraron 5 contactos.",
+    "filas": [
+      "Ana Prueba Mora | ana.prueba@example.com · +506 0000-0001",
+      "Bruno Ficticio Solís | bruno.ficticio@example.com · +506 0000-0002",
+      "Carla Demo Vargas | carla.demo@example.com",
+      "Diego Ejemplo Rojas | diego.ejemplo@example.com · +1 3055550104",
+      "Elena Muestra Castro | +506 0000-0005"
+    ],
+    "alturaMinimaFila": 59,
+    "paginacion": "Página 1 de 1",
     "ruta": "/avisos?vista=bitacora",
     "anchoVentana": 1366,
     "anchoDocumento": 1366,
     "desbordaHorizontal": false
   },
   {
-    "archivo": "04-linea-de-tiempo-ana.png",
+    "archivo": "03-lista-filtrada-por-nombre.png",
+    "busqueda": "ANA prueba",
+    "contactos": [
+      "Ana Prueba Mora"
+    ],
+    "conteo": "Se encontró 1 contacto.",
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 1366,
+    "anchoDocumento": 1366,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "04-lista-filtrada-por-telefono.png",
+    "busqueda": "0000-0002",
+    "contactos": [
+      "Bruno Ficticio Solís"
+    ],
+    "conteo": "Se encontró 1 contacto.",
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 1366,
+    "anchoDocumento": 1366,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "05-lista-sin-resultados.png",
+    "busqueda": "zzzz",
+    "mensaje": "No se encontraron contactos.",
+    "filas": 0,
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 1366,
+    "anchoDocumento": 1366,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "06-contacto-elegido-ana.png",
     "contacto": "contact-001",
     "eventos": [
       {
@@ -123,194 +162,70 @@
         "texto": "10/09/2026 · Oportunidad creada |  | Oportunidad de venta: Muestras para eventos (mock) |  | Etapa inicial: Nuevo interesado"
       }
     ],
+    "cambiarContacto": "Cambiar contacto",
+    "listaVisible": false,
     "ruta": "/avisos?vista=bitacora&contacto=contact-001",
-    "anchoVentana": 1366,
-    "anchoDocumento": 1351,
-    "desbordaHorizontal": false
-  },
-  {
-    "archivo": "05-buscar-por-telefono.png",
-    "busqueda": "0000-0002",
-    "resultados": [
-      "Bruno Ficticio Solís | bruno.ficticio@example.com · +506 0000-0002"
-    ],
-    "ruta": "/avisos?vista=bitacora&contacto=contact-001",
-    "anchoVentana": 1366,
-    "anchoDocumento": 1366,
-    "desbordaHorizontal": false
-  },
-  {
-    "archivo": "06-linea-de-tiempo-bruno.png",
-    "contacto": "contact-002",
-    "eventos": [
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "02/10/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido de temporada navideña (mock) |  | Etapa: En negociación → Venta ganada"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-communication",
-        "texto": "02/10/2026 · Comunicación · Correo electrónico Origen: registro manual |  | Oportunidad de venta: Todas sus oportunidades de venta |  | Actualización de condiciones de pago para todos sus pedidos."
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "01/10/2026 · Cambio de etapa |  | Oportunidad de venta: Café en grano para cafetería (mock) |  | Etapa: Precio o cotización enviada → En negociación"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-communication",
-        "texto": "30/09/2026 · Comunicación · Visita presencial Origen: registro manual |  | Oportunidad de venta: Café en grano para cafetería (mock) |  | Revisión de volúmenes para la cafetería."
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "29/09/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido de temporada navideña (mock) |  | Etapa: Precio o cotización enviada → En negociación"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "27/09/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido de temporada navideña (mock) |  | Etapa: Contactado → Precio o cotización enviada"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "26/09/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido de temporada navideña (mock) |  | Etapa: Nuevo interesado → Contactado"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage timeline-event-creation",
-        "texto": "25/09/2026 · Oportunidad creada |  | Oportunidad de venta: Pedido de temporada navideña (mock) |  | Etapa inicial: Nuevo interesado"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "24/09/2026 · Cambio de etapa |  | Oportunidad de venta: Café en grano para cafetería (mock) |  | Etapa: Contactado → Precio o cotización enviada"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "18/09/2026 · Cambio de etapa |  | Oportunidad de venta: Café en grano para cafetería (mock) |  | Etapa: Nuevo interesado → Contactado"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage timeline-event-creation",
-        "texto": "15/09/2026 · Oportunidad creada |  | Oportunidad de venta: Café en grano para cafetería (mock) |  | Etapa inicial: Nuevo interesado"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "20/08/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido antiguo de temporada (mock) |  | Etapa: Precio o cotización enviada → Venta ganada"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "12/08/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido antiguo de temporada (mock) |  | Etapa: Contactado → Precio o cotización enviada"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "05/08/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido antiguo de temporada (mock) |  | Etapa: Nuevo interesado → Contactado"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage timeline-event-creation",
-        "texto": "01/08/2026 · Oportunidad creada |  | Oportunidad de venta: Pedido antiguo de temporada (mock) |  | Etapa inicial: Nuevo interesado"
-      }
-    ],
-    "ruta": "/avisos?vista=bitacora&contacto=contact-002",
     "anchoVentana": 1366,
     "anchoDocumento": 1351,
     "desbordaHorizontal": false
   },
   {
     "archivo": "07-filtro-comunicaciones.png",
-    "filtro": "comunicaciones",
     "eventos": [
       {
         "clase": "communication-card timeline-event timeline-event-communication",
-        "texto": "02/10/2026 · Comunicación · Correo electrónico Origen: registro manual |  | Oportunidad de venta: Todas sus oportunidades de venta |  | Actualización de condiciones de pago para todos sus pedidos."
+        "texto": "12/10/2026 12:00 a. m. · Comunicación · Otro: Formulario del sitio web Origen: formulario web |  | Oportunidad de venta: Todas sus oportunidades de venta |  | Mensaje desde el sitio: quiere saber si hacen entregas en Alajuela."
       },
       {
         "clase": "communication-card timeline-event timeline-event-communication",
-        "texto": "30/09/2026 · Comunicación · Visita presencial Origen: registro manual |  | Oportunidad de venta: Café en grano para cafetería (mock) |  | Revisión de volúmenes para la cafetería."
+        "texto": "28/09/2026 · Comunicación · Llamada telefónica Origen: registro manual |  | Oportunidad de venta: Todas sus oportunidades de venta |  | Primer contacto, interesada en conocer los productos."
       }
     ],
-    "ruta": "/avisos?vista=bitacora&contacto=contact-002&tipo=comunicaciones",
+    "ruta": "/avisos?vista=bitacora&contacto=contact-001&tipo=comunicaciones",
     "anchoVentana": 1366,
     "anchoDocumento": 1366,
     "desbordaHorizontal": false
   },
   {
-    "archivo": "08-filtro-cambios-de-etapa.png",
-    "filtro": "etapas",
-    "eventos": [
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "02/10/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido de temporada navideña (mock) |  | Etapa: En negociación → Venta ganada"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "01/10/2026 · Cambio de etapa |  | Oportunidad de venta: Café en grano para cafetería (mock) |  | Etapa: Precio o cotización enviada → En negociación"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "29/09/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido de temporada navideña (mock) |  | Etapa: Precio o cotización enviada → En negociación"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "27/09/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido de temporada navideña (mock) |  | Etapa: Contactado → Precio o cotización enviada"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "26/09/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido de temporada navideña (mock) |  | Etapa: Nuevo interesado → Contactado"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage timeline-event-creation",
-        "texto": "25/09/2026 · Oportunidad creada |  | Oportunidad de venta: Pedido de temporada navideña (mock) |  | Etapa inicial: Nuevo interesado"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "24/09/2026 · Cambio de etapa |  | Oportunidad de venta: Café en grano para cafetería (mock) |  | Etapa: Contactado → Precio o cotización enviada"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "18/09/2026 · Cambio de etapa |  | Oportunidad de venta: Café en grano para cafetería (mock) |  | Etapa: Nuevo interesado → Contactado"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage timeline-event-creation",
-        "texto": "15/09/2026 · Oportunidad creada |  | Oportunidad de venta: Café en grano para cafetería (mock) |  | Etapa inicial: Nuevo interesado"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "20/08/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido antiguo de temporada (mock) |  | Etapa: Precio o cotización enviada → Venta ganada"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "12/08/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido antiguo de temporada (mock) |  | Etapa: Contactado → Precio o cotización enviada"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage",
-        "texto": "05/08/2026 · Cambio de etapa |  | Oportunidad de venta: Pedido antiguo de temporada (mock) |  | Etapa: Nuevo interesado → Contactado"
-      },
-      {
-        "clase": "communication-card timeline-event timeline-event-stage timeline-event-creation",
-        "texto": "01/08/2026 · Oportunidad creada |  | Oportunidad de venta: Pedido antiguo de temporada (mock) |  | Etapa inicial: Nuevo interesado"
-      }
+    "archivo": "08-volver-a-la-lista.png",
+    "contactos": [
+      "Ana Prueba Mora",
+      "Bruno Ficticio Solís",
+      "Carla Demo Vargas",
+      "Diego Ejemplo Rojas",
+      "Elena Muestra Castro"
     ],
-    "ruta": "/avisos?vista=bitacora&contacto=contact-002&tipo=etapas",
-    "anchoVentana": 1366,
-    "anchoDocumento": 1351,
-    "desbordaHorizontal": false
-  },
-  {
-    "archivo": "09-contacto-sin-eventos.png",
-    "contacto": "contact-004",
-    "mensaje": "Este contacto no tiene comunicaciones ni cambios de etapa registrados.",
-    "eventos": [],
-    "ruta": "/avisos?vista=bitacora&contacto=contact-004",
+    "conteo": "Se encontraron 5 contactos.",
+    "ruta": "/avisos?vista=bitacora",
     "anchoVentana": 1366,
     "anchoDocumento": 1366,
     "desbordaHorizontal": false
   },
   {
-    "archivo": "10-movil-390-bitacora.png",
-    "eventos": 5,
-    "ruta": "/avisos?vista=bitacora&contacto=contact-001",
+    "archivo": "09-foco-visible-en-una-fila.png",
+    "foco": {
+      "elemento": "Diego Ejemplo Rojas",
+      "outline": "solid 2px",
+      "color": "rgb(212, 167, 98)"
+    },
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 1366,
+    "anchoDocumento": 1366,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "10-movil-390-lista.png",
+    "contactos": 5,
+    "alturaMinimaFila": 75,
+    "ruta": "/avisos?vista=bitacora",
     "anchoVentana": 390,
     "anchoDocumento": 375,
     "desbordaHorizontal": false
   },
   {
-    "archivo": "11-movil-390-buscador.png",
-    "resultados": [
-      "Ana Prueba Mora | ana.prueba@example.com · +506 0000-0001"
+    "archivo": "11-movil-390-lista-filtrada.png",
+    "contactos": [
+      "Ana Prueba Mora"
     ],
     "ruta": "/avisos?vista=bitacora",
     "anchoVentana": 390,
@@ -318,11 +233,18 @@
     "desbordaHorizontal": false
   },
   {
-    "archivo": "12-movil-390-avisos-pendientes.png",
+    "archivo": "12-movil-390-contacto-elegido.png",
+    "eventos": 5,
+    "ruta": "/avisos?vista=bitacora&contacto=contact-001",
+    "anchoVentana": 390,
+    "anchoDocumento": 375,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "13-movil-390-avisos-pendientes.png",
     "ruta": "/avisos",
     "anchoVentana": 390,
     "anchoDocumento": 375,
-    "desbordaHorizontal": false,
-    "tablaConDesplazamientoPropio": true
+    "desbordaHorizontal": false
   }
 ]

@@ -16,6 +16,31 @@ La pantalla queda con dos pestañas. "Avisos pendientes" es la que se ve al abri
 
 No cambia ningún criterio de aceptación: HU-314, HU-315 y HU-316 se cumplen igual que antes. Se registrará como mejora en la próxima entrega.
 
+## Cambio 2: lista de contactos al abrir la pestaña (2026-11-15)
+
+Antes la pestaña "Bitácora" solo mostraba el buscador y había que escribir para ver contactos. Ahora, **al abrirla, se ve la lista de contactos** y se puede tocar uno o escribir para filtrarla.
+
+**Cómo carga hoy la lista de contactos (HU-204, HU-205 y HU-504) y qué se reutiliza:**
+
+- Una sola consulta, `listAllContactsIn`: toda la colección `contacts` ordenada por `nameSortKey`, **sin límite de lectura** y **con activos e inactivos**. No pagina en la consulta: lee todo una vez.
+- En el navegador se filtra con `filterContacts` (HU-205), se ponen primero los que tienen etiqueta del formulario con `badgedFirst` (HU-504) y se pagina **de 20 en 20** (`CONTACTS_PAGE_SIZE`) con "Anterior", "Página X de Y" y "Siguiente".
+- El selector anterior de la bitácora usaba esa misma consulta y la misma búsqueda, pero solo mostraba resultados al escribir (hasta 10, sin paginar ni etiqueta).
+
+**Ahora la bitácora usa exactamente esa lógica:** `listAllContactsIn` (sin consultas nuevas), `filterContacts`, `badgedFirst`, `foundContactsMessage` y `CONTACTS_LIST_MESSAGES`, con la misma paginación de 20.
+
+**Comportamiento:**
+
+- Al abrir la pestaña, sin contacto elegido: el buscador, "Se encontraron N contactos." y la lista (nombre con su etiqueta del formulario si la tiene, correo y teléfono). Los contactos inactivos se incluyen.
+- Cada fila es un botón: se elige con clic, toque, Enter o Espacio, tiene contorno visible al enfocarla con el teclado y mide al menos 3 rem de alto (75 px en 390 px de ancho).
+- Escribir filtra la lista (nombre, correo o teléfono, sin distinguir mayúsculas ni tildes) y vuelve a la página 1. Sin resultados: "No se encontraron contactos.". Sin contactos en el sistema: "Aún no hay contactos registrados.".
+- Al elegir un contacto se ve su línea de tiempo como antes, con el botón **"Cambiar contacto"**, que vuelve a la lista y quita de la URL el contacto y el filtro. El contacto y el filtro siguen en la URL (`?vista=bitacora&contacto=<id>&tipo=...`), así que "atrás" desde el detalle de una oportunidad vuelve a la misma bitácora con el mismo contacto.
+
+**Textos nuevos de este cambio:** solo **"Cambiar contacto"**. Todo lo demás ya existía: "Se encontraron N contactos.", "No se encontraron contactos.", "Aún no hay contactos registrados.", "Anterior", "Siguiente" y "Página X de Y". La lista ya no se limita a 10 resultados; "Contactos encontrados" sigue siendo su nombre para lectores de pantalla.
+
+**Lecturas al abrir la pestaña:** es la misma lectura de la lista de contactos, **un documento por contacto, una sola vez**. Con el seed: **5 lecturas**. Con 500 contactos: **500 lecturas** (igual que abrir la lista de contactos; la paginación de 20 es solo de pantalla, no de la consulta). Al elegir un contacto no se vuelven a leer los contactos. La línea de tiempo de cada contacto lee lo mismo que antes (tabla de "Datos y lecturas").
+
+**Archivos de este cambio:** `src/sales/ContactTimeline.tsx`, `src/sales/AlertsPage.tsx` (nueva función para volver a la lista), `src/sales/timeline.ts` (el texto "Cambiar contacto"), `src/styles.css` (foco visible y altura mínima de la fila) y `tests/components/AlertsTimeline.test.tsx`. No se tocó la pestaña "Avisos pendientes", reglas, índices, el cambio de etapa, el tablero, `formRequests`, `sitio-publico/`, `src/contacts`, `src/communications` ni `src/auth`.
+
 ## Qué cambió
 
 | Archivo | Cambio |
@@ -32,7 +57,7 @@ No cambia ningún criterio de aceptación: HU-314, HU-315 y HU-316 se cumplen ig
 
 ## Contenido de la bitácora
 
-- **Buscador:** "Buscar por nombre, correo o teléfono". Busca en todos los contactos, activos e inactivos, con la misma lógica de la lista de contactos (HU-205): texto parcial, sin distinguir mayúsculas ni tildes, y teléfono con o sin guion o código de país. Muestra hasta 10 resultados con el nombre, el correo y el teléfono.
+- **Lista y buscador:** al abrir la pestaña se ve la lista de contactos (ver "Cambio 2"). El buscador "Buscar por nombre, correo o teléfono" la filtra con la misma lógica de HU-205: texto parcial, sin distinguir mayúsculas ni tildes, y teléfono con o sin guion o código de país.
 - **Línea de tiempo:** del evento más reciente al más antiguo.
   - **Comunicación:** fecha (las del formulario web llevan además la hora del envío, como en la ficha), medio ("Otro: …" si aplica), origen ("Origen: formulario web" o "Origen: registro manual"), la oportunidad a la que corresponde (con enlace a su detalle) o "Todas sus oportunidades de venta", y la nota.
   - **Cambio de etapa:** fecha, la oportunidad (con enlace), "Etapa: anterior → nueva" y, si pasó a "Venta perdida", "Motivo de pérdida: …" (o "Sin motivo registrado"). La entrada inicial, que no tiene etapa anterior, se muestra como "Oportunidad creada" con "Etapa inicial: …".
@@ -58,9 +83,10 @@ Se muestran como máximo los **100 eventos más recientes** por contacto. Si hay
 | Pestañas | "Avisos pendientes", "Bitácora" |
 | Introducción | "Busque un contacto para ver su bitácora: sus comunicaciones y los cambios de etapa de sus oportunidades de venta." |
 | Buscador (reutilizado de HU-205) | "Buscar por nombre, correo o teléfono" |
+| Volver a la lista (cambio 2) | "Cambiar contacto" |
 | Mientras carga | "Cargando contactos…", "Cargando bitácora…" |
 | Errores (en rojo) | "No se pudieron cargar los contactos. Intente de nuevo." (el mismo de HU-302), "No se pudo cargar la bitácora. Intente de nuevo." |
-| Sin resultados (reutilizado de HU-302) | "No se encontraron contactos." |
+| Sin resultados y conteo (reutilizados de HU-205) | "No se encontraron contactos.", "Se encontraron N contactos.", "Aún no hay contactos registrados." |
 | Encabezado del contacto | "Ver ficha del contacto" |
 | Filtro | "Tipo de evento": "Todos", "Comunicaciones", "Cambios de etapa" |
 | Eventos | "Comunicación", "Cambio de etapa", "Oportunidad creada", "Origen: formulario web", "Origen: registro manual", "Oportunidad de venta: …", "Etapa inicial: …", "Etapa: … → …", "Motivo de pérdida: …" |
@@ -86,14 +112,14 @@ Todas las consultas son de solo lectura y usan las reglas actuales.
 
 | Consulta | Cuándo | Índice |
 |---|---|---|
-| `contacts` ordenado por `nameSortKey` (la misma de la lista de contactos) | Una vez, al abrir la pestaña "Bitácora" | Un solo campo (automático) |
+| `contacts` ordenado por `nameSortKey` (la misma de la lista de contactos, sin límite) | Una vez, al abrir la pestaña "Bitácora" (5 lecturas con el seed, 500 con 500 contactos) | Un solo campo (automático) |
 | `communications` con `contactId ==`, ordenado por `date` desc y `createdAt` desc, `limit(101)` | Al elegir un contacto | **Ya existe:** `contactId` + `date` desc + `createdAt` desc (el del historial de la ficha, HU-213) |
 | `sales` con `contactId ==`, sin orden | Al elegir un contacto, en paralelo con la anterior | No necesita índice compuesto (la ficha usa la misma consulta) |
 | `stageHistory` con `saleId in [hasta 30]`, ordenado por `changedAt` desc, `limit(101)`, un lote por cada 30 oportunidades | Después de leer las oportunidades | **Ya existe:** `saleId` + `changedAt` desc (el del detalle de la venta, HU-308) |
 
 **No hace falta ningún índice nuevo** y no se cambió `firestore.indexes.json`. Una prueba de emulador comprueba que los dos índices compuestos siguen declarados.
 
-Lecturas por contacto del seed (documentos leídos; una consulta vacía cuenta como 1 lectura). Abrir la pestaña lee además los 5 contactos una vez.
+Lecturas por contacto del seed (documentos leídos; una consulta vacía cuenta como 1 lectura). Abrir la pestaña lee además los contactos una sola vez (5 con el seed, 500 con 500 contactos).
 
 | Contacto | Comunicaciones | Oportunidades | Cambios de etapa | Lecturas | Eventos |
 |---|---|---|---|---|---|
@@ -107,24 +133,25 @@ Con el tope de 100, el máximo por contacto es de 101 comunicaciones, más las o
 
 ## Capturas (datos del seed, usuario `admin`, Microsoft Edge)
 
-Escritorio a 1366 × 768 y móvil a 390 × 844, contra los emuladores después de `npm run seed`. Los datos medidos en el navegador están en [verificacion.json](verificacion.json): encabezados y filas de la tabla, pestañas, resultados de cada búsqueda, texto de cada evento, ruta, ancho de la ventana y del documento, y si hay desborde. Los 13 pasos con su resultado están en [recorrido.json](recorrido.json).
+Escritorio a 1366 × 768 y móvil a 390 × 844, contra los emuladores después de `npm run seed`. Las capturas se rehicieron con el cambio 2 (las anteriores se reemplazaron). Los datos medidos en el navegador están en [verificacion.json](verificacion.json): encabezados y filas de la tabla, pestañas, contactos de la lista, conteo, texto de cada evento, contorno de foco, altura de las filas, ruta, ancho de la ventana y del documento, y si hay desborde. Los 14 pasos con su resultado están en [recorrido.json](recorrido.json).
 
 | Captura | Qué se ve |
 |---|---|
-| [01](01-avisos-como-estaba.png) | "Avisos" al abrir: pestaña "Avisos pendientes" seleccionada y la tabla de siempre, con 5 avisos y el círculo en 5 |
-| [02](02-pestana-bitacora.png) | Pestaña "Bitácora": introducción y buscador |
-| [03](03-buscar-por-nombre.png) | "ANA prueba" encuentra a Ana Prueba Mora (sin distinguir mayúsculas) |
-| [04](04-linea-de-tiempo-ana.png) | Línea de tiempo de Ana: comunicación del formulario web ("Origen: formulario web"), cambio a "Venta perdida" con su motivo y llamada "Origen: registro manual"; más abajo, el cambio a Contactado y la creación de la oportunidad |
-| [05](05-buscar-por-telefono.png) | "0000-0002" encuentra a Bruno Ficticio Solís por su teléfono |
-| [06](06-linea-de-tiempo-bruno.png) | Bruno: 15 eventos de sus tres oportunidades y dos comunicaciones (se ve el principio de la lista) |
-| [07](07-filtro-comunicaciones.png) | Filtro "Comunicaciones": solo sus 2 comunicaciones |
-| [08](08-filtro-cambios-de-etapa.png) | Filtro "Cambios de etapa": solo los 13 cambios, de sus tres oportunidades |
-| [09](09-contacto-sin-eventos.png) | Diego Ejemplo Rojas: "Este contacto no tiene comunicaciones ni cambios de etapa registrados." |
-| [10](10-movil-390-bitacora.png) | 390 px: bitácora de Ana sin desborde horizontal |
-| [11](11-movil-390-buscador.png) | 390 px: buscador con resultados sin desborde |
-| [12](12-movil-390-avisos-pendientes.png) | 390 px: la pestaña de avisos no desborda la página; la tabla se desplaza dentro de su recuadro, como antes |
+| [01](01-avisos-como-estaba.png) | "Avisos" al abrir: pestaña "Avisos pendientes" y la tabla de siempre, con 5 avisos y el círculo en 5 |
+| [02](02-pestana-bitacora-lista.png) | Pestaña "Bitácora" al abrir: buscador, "Se encontraron 5 contactos." y la lista (incluye a Diego, inactivo) con paginación |
+| [03](03-lista-filtrada-por-nombre.png) | "ANA prueba": "Se encontró 1 contacto." y solo Ana Prueba Mora |
+| [04](04-lista-filtrada-por-telefono.png) | "0000-0002": solo Bruno Ficticio Solís |
+| [05](05-lista-sin-resultados.png) | "zzzz": "No se encontraron contactos." |
+| [06](06-contacto-elegido-ana.png) | Contacto elegido (Ana): su línea de tiempo con el botón "Cambiar contacto" y sin la lista |
+| [07](07-filtro-comunicaciones.png) | Filtro "Comunicaciones" en Ana: solo sus 2 comunicaciones |
+| [08](08-volver-a-la-lista.png) | Después de "Cambiar contacto": la lista completa otra vez |
+| [09](09-foco-visible-en-una-fila.png) | Con la tecla Tab, la fila enfocada (Diego) tiene contorno dorado visible |
+| [10](10-movil-390-lista.png) | 390 px: la lista de contactos, sin desborde; las filas miden 75 px de alto |
+| [11](11-movil-390-lista-filtrada.png) | 390 px: lista filtrada por "ana" |
+| [12](12-movil-390-contacto-elegido.png) | 390 px: contacto elegido con "Cambiar contacto" |
+| [13](13-movil-390-avisos-pendientes.png) | 390 px: la pestaña de avisos no desborda la página; la tabla se desplaza dentro de su recuadro, como antes |
 
-**Detalle de los datos del seed:** la comunicación de formulario web de Ana (`comm-006`) es anterior a HU-502. Tiene medio "Otro: Formulario del sitio web" y hora 00:00, así que se ve "12/10/2026 12:00 a. m. · Otro: Formulario del sitio web". Las que crea el procesador del formulario tienen medio "Formulario web" y la hora real del envío; ese caso lo cubren las pruebas unitarias y de componente. La ficha del contacto muestra esa comunicación igual.
+**Detalle de los datos del seed:** la comunicación de formulario web de Ana (`comm-006`) es anterior a HU-502. Tiene medio "Otro: Formulario del sitio web" y hora 00:00, así que se ve "12/10/2026 12:00 a. m. · Otro: Formulario del sitio web". Las que crea el procesador del formulario tienen medio "Formulario web" y la hora real del envío; ese caso lo cubren las pruebas unitarias y de componente.
 
 ## Recorrido en el navegador
 
@@ -132,36 +159,38 @@ Contra emuladores con `npm run seed` y sesión como `admin`. El recorrido no mod
 
 | # | Paso | Resultado |
 |---|---|---|
-| 1 | Abrir "Avisos" | ✅ Abre en "Avisos pendientes" con la tabla de siempre: columnas Tipo, Contacto, Oportunidad de venta, Etapa, Detalle y Fecha del aviso; 5 avisos y el círculo en 5 ([01](01-avisos-como-estaba.png)) |
-| 2 | Abrir la pestaña "Bitácora" | ✅ Buscador "Buscar por nombre, correo o teléfono"; la URL es `/avisos?vista=bitacora` ([02](02-pestana-bitacora.png)) |
-| 3 | Buscar "ANA prueba" | ✅ Un resultado: Ana Prueba Mora · ana.prueba@example.com · +506 0000-0001 ([03](03-buscar-por-nombre.png)) |
-| 4 | Elegir a Ana | ✅ 5 eventos del más reciente al más antiguo; no aparece "Registrado por" ([04](04-linea-de-tiempo-ana.png)) |
-| 5 | Buscar "0000-0002" | ✅ Un resultado: Bruno Ficticio Solís ([05](05-buscar-por-telefono.png)) |
-| 6 | Elegir a Bruno | ✅ 15 eventos: 2 comunicaciones y 13 cambios de etapa, con 3 creaciones ([06](06-linea-de-tiempo-bruno.png)) |
-| 7 | Filtro "Comunicaciones" | ✅ Solo 2 eventos, los dos comunicaciones; la URL lleva `&tipo=comunicaciones` ([07](07-filtro-comunicaciones.png)) |
-| 8 | Filtro "Cambios de etapa" | ✅ Solo 13 eventos, todos cambios de etapa ([08](08-filtro-cambios-de-etapa.png)) |
-| 9 | Buscar y elegir a Diego | ✅ Estado vacío con el mensaje de contacto sin eventos ([09](09-contacto-sin-eventos.png)) |
-| 10 | En la bitácora de Ana, clic en una oportunidad y luego "atrás" | ✅ Abre `/posibles-ventas/sale-004`; "atrás" vuelve a `/avisos?vista=bitacora&contacto=contact-001` |
-| 11 | 390 px, bitácora de Ana | ✅ Sin desborde horizontal: documento de 375 px en una ventana de 390 px ([10](10-movil-390-bitacora.png)) |
-| 12 | 390 px, buscador con resultados | ✅ Sin desborde horizontal ([11](11-movil-390-buscador.png)) |
-| 13 | 390 px, pestaña "Avisos pendientes" | ✅ La página no desborda; la tabla se desplaza dentro de su recuadro ([12](12-movil-390-avisos-pendientes.png)) |
+| 1 | Abrir "Avisos" | ✅ Abre en "Avisos pendientes" con la tabla de siempre: mismas columnas, 5 avisos y círculo en 5 ([01](01-avisos-como-estaba.png)) |
+| 2 | Abrir la pestaña "Bitácora" | ✅ Se ve el buscador y la lista de los 5 contactos en orden alfabético, con Diego (inactivo) y "Se encontraron 5 contactos."; URL `/avisos?vista=bitacora` ([02](02-pestana-bitacora-lista.png)) |
+| 3 | Escribir "ANA prueba" | ✅ Solo Ana Prueba Mora, "Se encontró 1 contacto." ([03](03-lista-filtrada-por-nombre.png)) |
+| 4 | Escribir "0000-0002" | ✅ Solo Bruno Ficticio Solís ([04](04-lista-filtrada-por-telefono.png)) |
+| 5 | Escribir "zzzz" | ✅ "No se encontraron contactos." y ninguna fila ([05](05-lista-sin-resultados.png)) |
+| 6 | Limpiar el buscador y tocar la fila de Ana | ✅ 5 eventos (formulario web, pérdida con motivo…), botón "Cambiar contacto", la lista ya no se ve; URL `...&contacto=contact-001` ([06](06-contacto-elegido-ana.png)) |
+| 7 | Filtro "Comunicaciones" | ✅ Solo 2 comunicaciones; la URL lleva `&tipo=comunicaciones` ([07](07-filtro-comunicaciones.png)) |
+| 8 | "Cambiar contacto" | ✅ Vuelve la lista completa; la URL queda `/avisos?vista=bitacora` ([08](08-volver-a-la-lista.png)) |
+| 9 | Con Tab llegar a la fila de Diego y Enter | ✅ La fila enfocada tiene contorno sólido de 2 px ([09](09-foco-visible-en-una-fila.png)); Enter abre su bitácora vacía: "Este contacto no tiene comunicaciones ni cambios de etapa registrados." |
+| 10 | En la bitácora de Ana, clic en una oportunidad y "atrás" | ✅ Abre `/posibles-ventas/sale-004`; "atrás" vuelve a `/avisos?vista=bitacora&contacto=contact-001` |
+| 11 | 390 px, lista de contactos | ✅ Sin desborde (documento 375 px en ventana de 390 px); filas de 75 px de alto ([10](10-movil-390-lista.png)) |
+| 12 | 390 px, lista filtrada | ✅ Sin desborde ([11](11-movil-390-lista-filtrada.png)) |
+| 13 | 390 px, contacto elegido | ✅ Sin desborde ([12](12-movil-390-contacto-elegido.png)) |
+| 14 | 390 px, pestaña "Avisos pendientes" | ✅ La página no desborda; la tabla se desplaza dentro de su recuadro ([13](13-movil-390-avisos-pendientes.png)) |
 
 ## Pruebas
 
 - `npm run typecheck`: sin errores.
-- `npm test`: 1103/1103 (1071 anteriores + 32 nuevas). `tests/components/Alerts.test.tsx` y `tests/unit/alerts.test.ts` pasan **sin cambios**.
+- `npm test`: 1111/1111 (1071 anteriores + 40 nuevas: 32 de la bitácora y 8 del cambio 2). `tests/components/Alerts.test.tsx` y `tests/unit/alerts.test.ts` pasan **sin cambios**.
 - `npm run test:emulators`: 313/313 (303 anteriores + 10 nuevas). `tests/sales/alerts.emulator.test.ts` pasa sin cambios.
 - `npm run build:todo`: correcto. El JS y el CSS del sitio público tienen el mismo SHA-256 que los de `main` compilado en ese momento (`index-CSHMWcP8.js` e `index-DjGTDoei.css`).
-- Recorrido en el navegador: 13/13 pasos correctos.
+- Recorrido en el navegador: 14/14 pasos correctos.
 
 | Archivo | Pruebas | Qué prueba |
 |---|---|---|
 | `tests/unit/timeline.test.ts` (nuevo) | 18 | Orden combinado; comunicación del mismo día frente a un cambio de etapa (hora de registro); comunicación registrada días después (día indicado); hora exacta del formulario web; empates y que el resultado no depende del orden de entrada; la entrada inicial como creación; motivo de pérdida, también vacío ("Sin motivo registrado"); oportunidad desconocida ("—"); comunicación con oportunidad, para todas o sin ninguna; medio "Otro: …"; origen del formulario web con hora; que no aparece el usuario; tope y aviso de que hay más; sin datos; filtro; filtro leído de la URL. |
-| `tests/components/AlertsTimeline.test.tsx` (nuevo) | 14 | Al abrir se ve "Avisos pendientes" y no se cargan contactos; cambiar de pestaña con clic y con flechas; URL; buscar por nombre sin tildes, por correo y por teléfono con guion; sin coincidencias; error al cargar contactos; elegir un contacto y ver su línea de tiempo en orden, sin "Registrado por"; enlaces al detalle y a la ficha; filtro con sus tres opciones y la URL; contacto sin eventos; filtro sin resultados; aviso de tope; error al cargar la bitácora. |
+| `tests/components/AlertsTimeline.test.tsx` (nuevo) | 22 | Al abrir se ve "Avisos pendientes" y no se cargan contactos; cambiar de pestaña con clic y con flechas; URL. **Cambio 2:** la lista de contactos (activos e inactivos, con correo y teléfono) al abrir, etiqueta del formulario primero, paginación de 20 en 20, lista vacía, tocar una fila, Enter y Espacio, "Cambiar contacto" y abrir con la URL guardada. Buscar por nombre sin tildes, por correo y por teléfono con guion; sin coincidencias y volver a la lista al borrar; error al cargar contactos; elegir un contacto y ver su línea de tiempo en orden, sin "Registrado por"; enlaces al detalle y a la ficha; filtro con sus tres opciones y la URL; contacto sin eventos; filtro sin resultados; aviso de tope; error al cargar la bitácora. |
 | `tests/sales/timeline.emulator.test.ts` (nuevo) | 10 | Con los datos del seed y las reglas del repo: contactos para el buscador, la línea de tiempo exacta de Ana (formulario web, pérdida con motivo, creación), Bruno con tres oportunidades, Carla, Elena, Diego sin eventos, un id que no existe, el tope, que sin sesión las reglas niegan la lectura, y que los dos índices compuestos que usan las consultas están en `firestore.indexes.json`. |
 
 ## Lo que no se probó
 
 - **Las lecturas contra producción.** Los números de "Datos y lecturas" son los documentos que devuelve cada consulta. El emulador no exige índices; que los índices existentes sirven se comprueba porque están declarados y porque las consultas tienen la misma forma que las de la ficha (HU-213) y el detalle (HU-308), que ya funcionan en producción.
 - **El tope de 100 con datos reales.** El seed no tiene contactos con más de 100 eventos. Se probó con un tope menor (3) contra el emulador y con datos simulados.
+- **La paginación de la lista con muchos contactos en el navegador:** el seed solo tiene 5 contactos; se probó con 25 en la prueba de componente.
 - **El caso de más de 30 oportunidades** (más de un lote de `stageHistory`) no está en el seed. Se usa la misma partición en lotes de 30 que los avisos.
