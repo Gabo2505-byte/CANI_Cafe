@@ -1,0 +1,80 @@
+[
+  {
+    "paso": "01-avisos-como-estaba.png",
+    "texto": "Avisos abre en \"Avisos pendientes\" con la tabla de siempre (mismas columnas, filas y círculo)",
+    "resultado": "OK",
+    "detalle": "5 avisos; círculo 5"
+  },
+  {
+    "paso": "02-pestana-bitacora.png",
+    "texto": "La pestaña \"Bitácora\" muestra el buscador \"Buscar por nombre, correo o teléfono\"",
+    "resultado": "OK",
+    "detalle": "/avisos?vista=bitacora"
+  },
+  {
+    "paso": "03-buscar-por-nombre.png",
+    "texto": "Buscar \"ANA prueba\" encuentra a Ana Prueba Mora",
+    "resultado": "OK",
+    "detalle": "Ana Prueba Mora | ana.prueba@example.com · +506 0000-0001"
+  },
+  {
+    "paso": "04-linea-de-tiempo-ana.png",
+    "texto": "Ana: 5 eventos del más reciente al más antiguo, con la comunicación del formulario web y sin quién la registró",
+    "resultado": "OK",
+    "detalle": "/avisos?vista=bitacora&contacto=contact-001"
+  },
+  {
+    "paso": "05-buscar-por-telefono.png",
+    "texto": "Buscar \"0000-0002\" encuentra a Bruno Ficticio Solís por su teléfono",
+    "resultado": "OK",
+    "detalle": "Bruno Ficticio Solís | bruno.ficticio@example.com · +506 0000-0002"
+  },
+  {
+    "paso": "06-linea-de-tiempo-bruno.png",
+    "texto": "Bruno: 15 eventos (2 comunicaciones y 13 cambios de etapa, 3 creaciones)",
+    "resultado": "OK",
+    "detalle": "15 eventos"
+  },
+  {
+    "paso": "07-filtro-comunicaciones.png",
+    "texto": "Filtro \"Comunicaciones\": solo las 2 comunicaciones",
+    "resultado": "OK",
+    "detalle": "/avisos?vista=bitacora&contacto=contact-002&tipo=comunicaciones"
+  },
+  {
+    "paso": "08-filtro-cambios-de-etapa.png",
+    "texto": "Filtro \"Cambios de etapa\": solo los 13 cambios de etapa",
+    "resultado": "OK",
+    "detalle": "/avisos?vista=bitacora&contacto=contact-002&tipo=etapas"
+  },
+  {
+    "paso": "09-contacto-sin-eventos.png",
+    "texto": "Diego (sin comunicaciones ni oportunidades): estado vacío",
+    "resultado": "OK",
+    "detalle": "Este contacto no tiene comunicaciones ni cambios de etapa registrados."
+  },
+  {
+    "paso": "—",
+    "texto": "El título de la oportunidad abre su detalle y \"atrás\" vuelve a la bitácora de Ana",
+    "resultado": "OK",
+    "detalle": "/posibles-ventas/sale-004 → /avisos?vista=bitacora&contacto=contact-001"
+  },
+  {
+    "paso": "10-movil-390-bitacora.png",
+    "texto": "A 390 px la bitácora no desborda horizontalmente",
+    "resultado": "OK",
+    "detalle": "documento 375 px / ventana 390 px"
+  },
+  {
+    "paso": "11-movil-390-buscador.png",
+    "texto": "A 390 px el buscador y sus resultados no desbordan",
+    "resultado": "OK",
+    "detalle": "documento 390 px / ventana 390 px"
+  },
+  {
+    "paso": "12-movil-390-avisos-pendientes.png",
+    "texto": "A 390 px la pestaña de avisos no desborda la página (la tabla se desplaza dentro de su recuadro, como antes)",
+    "resultado": "OK",
+    "detalle": "documento 375 px; tabla con desplazamiento propio: true"
+  }
+]
