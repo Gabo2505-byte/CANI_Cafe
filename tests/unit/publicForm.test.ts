@@ -1,5 +1,6 @@
 // HU-403 y HU-501: validación del formulario "Envíenos su consulta" del sitio público (lógica pura).
 import { describe, expect, it } from 'vitest';
+import { CONTACT_MESSAGES } from '../../src/contacts/contactForm';
 import { isValidEmail, normalizeEmail } from '../../src/shared/validation/email';
 import { parseQuantity } from '../../src/shared/validation/quantity';
 import {
@@ -42,9 +43,14 @@ describe('HU-501 mensajes literales', () => {
       sinProductos: 'Seleccione al menos un producto.',
       cantidad: 'Ingrese una cantidad entre 1 y 9999.',
       revisar: 'Revise los campos marcados en rojo.',
+      correoOTelefono: 'Ingrese un correo electrónico o un teléfono.',
       filaVacia: 'Seleccione un producto o elimine la fila.',
       repetido: 'Este producto ya fue agregado.',
     });
+  });
+
+  it('contrato v4: el aviso de "correo o teléfono" es el mismo texto que el del sistema interno', () => {
+    expect(MENSAJES.correoOTelefono).toBe(CONTACT_MESSAGES.emailOrPhoneRequired);
   });
 });
 
@@ -59,27 +65,70 @@ describe('HU-501 criterio 2: datos obligatorios', () => {
     expect(validarFormulario(valido({ nombre: '   ' })).nombre).toBe('Este campo es obligatorio.');
   });
 
-  it('correo vacío: "Este campo es obligatorio."', () => {
-    expect(validarFormulario(valido({ correo: '' })).correo).toBe('Este campo es obligatorio.');
-    expect(validarFormulario(valido({ correo: '  ' })).correo).toBe('Este campo es obligatorio.');
-  });
-
   it('ningún producto marcado: "Seleccione al menos un producto."', () => {
     const errores = validarFormulario(valido({ filas: filasDe({}) }));
     expect(errores.intereses).toBe('Seleccione al menos un producto.');
     expect(hayErrores(errores)).toBe(true);
   });
 
-  it('el teléfono y el mensaje son opcionales', () => {
-    const errores = validarFormulario(valido({ telefono: '', mensaje: '' }));
-    expect(errores.telefono).toBeUndefined();
+  it('el mensaje es opcional', () => {
+    expect(hayErrores(validarFormulario(valido({ mensaje: '' })))).toBe(false);
+  });
+
+  it('un formulario vacío marca nombre, "correo o teléfono" y productos (no el correo ni el teléfono por separado)', () => {
+    const errores = validarFormulario(valoresIniciales());
+    expect(Object.keys(errores).sort()).toEqual(['correoOTelefono', 'filas', 'intereses', 'nombre']);
+    expect(errores.filas).toEqual({});
+  });
+});
+
+describe('contrato v4 (HU-403.3 y HU-501.2): correo o teléfono, al menos uno', () => {
+  it('solo correo: válido', () => {
+    const errores = validarFormulario(valido({ correo: 'ana@example.com', telefono: '' }));
     expect(hayErrores(errores)).toBe(false);
   });
 
-  it('un formulario vacío marca nombre, correo y productos, pero no teléfono', () => {
-    const errores = validarFormulario(valoresIniciales());
-    expect(Object.keys(errores).sort()).toEqual(['correo', 'filas', 'intereses', 'nombre']);
-    expect(errores.filas).toEqual({});
+  it('solo teléfono: válido (el correo vacío ya no es obligatorio)', () => {
+    const errores = validarFormulario(valido({ correo: '', telefono: '8888-1234' }));
+    expect(errores.correo).toBeUndefined();
+    expect(errores.correoOTelefono).toBeUndefined();
+    expect(hayErrores(errores)).toBe(false);
+  });
+
+  it('los dos: válido', () => {
+    expect(hayErrores(validarFormulario(valido({ correo: 'ana@example.com', telefono: '88881234' })))).toBe(false);
+  });
+
+  it.each([
+    ['', ''],
+    ['   ', '  '],
+  ])('ninguno ("%s" y "%s"): "Ingrese un correo electrónico o un teléfono."', (correo, telefono) => {
+    const errores = validarFormulario(valido({ correo, telefono }));
+    expect(errores.correoOTelefono).toBe('Ingrese un correo electrónico o un teléfono.');
+    expect(errores.correo).toBeUndefined();
+    expect(errores.telefono).toBeUndefined();
+    expect(hayErrores(errores)).toBe(true);
+  });
+
+  it('el que se escribe se revisa aunque el otro sea válido', () => {
+    expect(validarFormulario(valido({ correo: 'ana@', telefono: '88881234' })).correo).toBe(
+      'Ingrese un correo electrónico válido.',
+    );
+    expect(validarFormulario(valido({ correo: 'ana@example.com', telefono: '123' })).telefono).toBe(
+      'El teléfono debe tener 8 dígitos.',
+    );
+  });
+
+  it('un correo mal escrito sin teléfono da el error del correo, no el de "ninguno"', () => {
+    const errores = validarFormulario(valido({ correo: 'ana', telefono: '' }));
+    expect(errores.correo).toBe('Ingrese un correo electrónico válido.');
+    expect(errores.correoOTelefono).toBeUndefined();
+  });
+
+  it('un teléfono mal escrito sin correo da el error del teléfono, no el de "ninguno"', () => {
+    const errores = validarFormulario(valido({ correo: '', telefono: 'abc' }));
+    expect(errores.telefono).toBe('El teléfono debe tener 8 dígitos.');
+    expect(errores.correoOTelefono).toBeUndefined();
   });
 });
 

@@ -328,13 +328,14 @@ describe('HU-402 criterio 4: el producto elegido en el catálogo llega como una 
     expect(screen.queryByLabelText('Variedad del producto 2')).toBeNull();
   });
 
-  it('con el producto ya elegido, el formulario no pide otro (solo faltan nombre y correo)', async () => {
+  it('con el producto ya elegido, el formulario no pide otro (solo faltan nombre y correo o teléfono)', async () => {
     const user = userEvent.setup();
     abrir(`/contactenos?producto=${GEISHA_1KG_MOLIDO}`);
     await waitFor(() => expect(presentacion(1).value).toBe(GEISHA_1KG_MOLIDO));
     await user.click(screen.getByRole('button', { name: 'Enviar' }));
     expect(screen.queryByText('Seleccione al menos un producto.')).toBeNull();
-    expect(screen.getAllByText('Este campo es obligatorio.')).toHaveLength(2);
+    expect(screen.getAllByText('Este campo es obligatorio.')).toHaveLength(1);
+    expect(screen.getByText('Ingrese un correo electrónico o un teléfono.')).toBeTruthy();
   });
 
   it('se pueden agregar más productos después del elegido en el catálogo', async () => {

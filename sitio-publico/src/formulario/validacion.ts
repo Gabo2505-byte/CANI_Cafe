@@ -13,6 +13,9 @@ export const MENSAJES = {
   sinProductos: 'Seleccione al menos un producto.',
   cantidad: 'Ingrese una cantidad entre 1 y 9999.',
   revisar: 'Revise los campos marcados en rojo.',
+  // Contrato v4 (HU-403.3 y HU-501.2): correo o teléfono, al menos uno. Mismo texto que el sistema interno
+  // (CONTACT_MESSAGES.emailOrPhoneRequired, HU-201).
+  correoOTelefono: 'Ingrese un correo electrónico o un teléfono.',
   // PROVISIONALES (no están en HU-501): los mismos textos que usa el sistema interno para sus filas de productos.
   filaVacia: 'Seleccione un producto o elimine la fila.',
   repetido: 'Este producto ya fue agregado.',
@@ -49,7 +52,10 @@ export interface ValoresFormulario {
   mensaje: string;
 }
 
-/** Campos que se revisan al salir de ellos. El mensaje no tiene errores: solo su tope de 1000 caracteres. */
+/**
+ * Campos que se revisan al salir de ellos. El mensaje no tiene errores: solo su tope de 1000 caracteres. El aviso
+ * "correo o teléfono" no es un campo: se ve cuando ya se salió de los dos (o al enviar).
+ */
 export type CampoFormulario = 'nombre' | 'correo' | 'telefono' | 'intereses';
 
 export interface ErroresFila {
@@ -62,6 +68,8 @@ export interface ErroresFormulario {
   nombre?: string;
   correo?: string;
   telefono?: string;
+  /** "Ingrese un correo electrónico o un teléfono.": los dos están vacíos (contrato v4). */
+  correoOTelefono?: string;
   /** "Seleccione al menos un producto.": ninguna fila tiene un producto elegido. */
   intereses?: string;
   /** Errores de cada fila, por su clave. */
@@ -82,15 +90,17 @@ export function validarFormulario(valores: ValoresFormulario): ErroresFormulario
 
   if (valores.nombre.trim() === '') errores.nombre = MENSAJES.obligatorio;
 
+  // Contrato v4: correo y teléfono son opcionales cada uno, pero hace falta al menos uno (como el sistema interno).
+  // El que se escriba se revisa: el correo como nombre@dominio.com y el teléfono por la cantidad de dígitos de su país
+  // (aunque lo escrito no sean números).
   const correo = normalizeEmail(valores.correo);
-  if (correo === '') errores.correo = MENSAJES.obligatorio;
-  else if (!isValidEmail(correo)) errores.correo = MENSAJES.correoInvalido;
-
-  // El teléfono es opcional; si se escribe algo (aunque no sean números), se revisa su cantidad de dígitos.
-  if (valores.telefono.trim() !== '') {
+  const hayTelefono = valores.telefono.trim() !== '';
+  if (correo !== '' && !isValidEmail(correo)) errores.correo = MENSAJES.correoInvalido;
+  if (hayTelefono) {
     const error = validatePhoneNumber(valores.paisTelefono, normalizePhoneDigits(valores.telefono));
     if (error) errores.telefono = error;
   }
+  if (correo === '' && !hayTelefono) errores.correoOTelefono = MENSAJES.correoOTelefono;
 
   // Sin ningún producto elegido, el aviso es uno solo para todo el campo (no uno por cada fila vacía).
   const conProducto = valores.filas.filter((f) => f.productoId);
@@ -113,7 +123,7 @@ export function validarFormulario(valores: ValoresFormulario): ErroresFormulario
 
 export function hayErrores(errores: ErroresFormulario): boolean {
   return (
-    Boolean(errores.nombre || errores.correo || errores.telefono || errores.intereses) ||
+    Boolean(errores.nombre || errores.correo || errores.telefono || errores.correoOTelefono || errores.intereses) ||
     Object.keys(errores.filas).length > 0
   );
 }

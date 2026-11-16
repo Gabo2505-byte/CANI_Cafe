@@ -206,6 +206,26 @@ describe('HU-405 en la página Contáctenos (con el guardado simulado)', () => {
     });
   });
 
+  it('contrato v4: con solo teléfono guarda email null y el teléfono con su país', async () => {
+    vi.mocked(nuevoIdSolicitudIn).mockReturnValue('sol-1');
+    vi.mocked(guardarSolicitudIn).mockResolvedValue();
+    const user = userEvent.setup();
+    abrir(`/contactenos?producto=${GEISHA}`);
+    await waitFor(() => expect(presentacion(1).value).toBe(GEISHA));
+    await user.type(nombre(), 'Ana Prueba');
+    await user.type(screen.getByRole('textbox', { name: /^Teléfono/ }), '8888-1234');
+    await user.click(screen.getByRole('button', { name: 'Enviar' }));
+    expect(await screen.findByText(GRACIAS)).toBeTruthy();
+    expect(guardarSolicitudIn).toHaveBeenCalledWith({}, 'sol-1', {
+      fullName: 'Ana Prueba',
+      email: null,
+      phoneCountry: 'CR',
+      phoneNumber: '88881234',
+      interests: [{ productId: GEISHA, quantity: 1 }],
+      message: null,
+    });
+  });
+
   it('sin conexión muestra el error; el reintento usa el mismo id; "Enviar otra consulta" quita el producto de la dirección', async () => {
     vi.mocked(nuevoIdSolicitudIn).mockReturnValueOnce('sol-1').mockReturnValueOnce('sol-2');
     vi.mocked(guardarSolicitudIn)

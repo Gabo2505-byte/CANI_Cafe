@@ -88,6 +88,13 @@ export function ConsultaForm({
   const errorCorreo = visible('correo');
   const errorTelefono = visible('telefono');
   const errorIntereses = visible('intereses');
+  // Contrato v4: "Ingrese un correo electrónico o un teléfono." se ve cuando ya se salió de los dos (si solo se salió
+  // del correo, quizá va a escribir el teléfono) o al intentar enviar. Marca los dos campos en rojo.
+  const errorCorreoOTelefono =
+    (tocados.correo && tocados.telefono) || intentado ? errores.correoOTelefono : undefined;
+  // Lo que describe cada campo: su propio error, si no el del grupo, si no la ayuda "Ingrese al menos uno...".
+  const descripcionContacto = (error: string | undefined, campo: 'correo' | 'telefono') =>
+    error ? errorId(campo) : errorCorreoOTelefono ? errorId('correo-o-telefono') : id('correo-o-telefono-ayuda');
 
   const cambiarFilas = (filas: FilaProducto[]) => {
     setValores((v) => ({ ...v, filas }));
@@ -144,9 +151,12 @@ export function ConsultaForm({
   }
 
   const enviando = envio === 'enviando';
+  // Solo aspecto: "Enviar" se ve apagado mientras falten datos o haya errores. Se puede presionar igual y entonces
+  // marca lo que falta (HU-501).
+  const completo = !hayErrores(errores);
 
   return (
-    <form className="pub-form" noValidate onSubmit={enviar} aria-labelledby={id('titulo')} aria-busy={enviando}>
+    <form className={completo ? 'pub-form' : 'pub-form pub-form-incompleto'} noValidate onSubmit={enviar} aria-labelledby={id('titulo')} aria-busy={enviando}>
       <h2 id={id('titulo')} className="pub-heading">
         {FORMULARIO.titulo}
       </h2>
@@ -157,82 +167,91 @@ export function ConsultaForm({
         </p>
       )}
 
-      {/* Nombre y correo en una fila (en móvil, uno debajo del otro) */}
-      <div className="pub-form-row">
-        <div className="pub-field">
-          <label htmlFor={id('nombre')}>
-            {FORMULARIO.nombre}{' '}
-            <span className="pub-required" aria-hidden="true">
-              *
-            </span>
-          </label>
-          <input
-            id={id('nombre')}
-            type="text"
-            autoComplete="name"
-            maxLength={LIMITES.nombre}
-            value={valores.nombre}
-            onChange={(e) => cambiar({ nombre: e.target.value })}
-            onBlur={() => marcar('nombre')}
-            aria-required="true"
-            aria-invalid={errorNombre ? true : undefined}
-            aria-describedby={errorNombre ? errorId('nombre') : undefined}
-          />
-          {errorNombre && (
-            <p id={errorId('nombre')} className="field-error">
-              {errorNombre}
-            </p>
-          )}
-        </div>
-
-        <div className="pub-field">
-          <label htmlFor={id('correo')}>
-            {FORMULARIO.correo}{' '}
-            <span className="pub-required" aria-hidden="true">
-              *
-            </span>
-          </label>
-          <input
-            id={id('correo')}
-            type="email"
-            autoComplete="email"
-            maxLength={LIMITES.correo}
-            value={valores.correo}
-            onChange={(e) => cambiar({ correo: e.target.value })}
-            onBlur={() => marcar('correo')}
-            aria-required="true"
-            aria-invalid={errorCorreo ? true : undefined}
-            aria-describedby={errorCorreo ? errorId('correo') : undefined}
-          />
-          {errorCorreo && (
-            <p id={errorId('correo')} className="field-error">
-              {errorCorreo}
-            </p>
-          )}
-        </div>
-      </div>
-
       <div className="pub-field">
-        <label htmlFor={id('telefono')}>
-          {FORMULARIO.telefono} <span className="optional">{FORMULARIO.opcional}</span>
+        <label htmlFor={id('nombre')}>
+          {FORMULARIO.nombre}{' '}
+          <span className="pub-required" aria-hidden="true">
+            *
+          </span>
         </label>
-        <div onBlur={salioDelTelefono}>
-          <PhoneField
-            id={id('telefono')}
-            country={valores.paisTelefono}
-            number={valores.telefono}
-            onCountryChange={(paisTelefono) => cambiar({ paisTelefono })}
-            onNumberChange={(telefono) => cambiar({ telefono })}
-            invalid={Boolean(errorTelefono)}
-            describedBy={errorTelefono ? errorId('telefono') : undefined}
-          />
-        </div>
-        {errorTelefono && (
-          <p id={errorId('telefono')} className="field-error">
-            {errorTelefono}
+        <input
+          id={id('nombre')}
+          type="text"
+          autoComplete="name"
+          maxLength={LIMITES.nombre}
+          value={valores.nombre}
+          onChange={(e) => cambiar({ nombre: e.target.value })}
+          onBlur={() => marcar('nombre')}
+          aria-required="true"
+          aria-invalid={errorNombre ? true : undefined}
+          aria-describedby={errorNombre ? errorId('nombre') : undefined}
+        />
+        {errorNombre && (
+          <p id={errorId('nombre')} className="field-error">
+            {errorNombre}
           </p>
         )}
       </div>
+
+      {/* Contrato v4 (HU-403.3 y HU-501.2): correo y teléfono en un grupo obligatorio; basta con uno de los dos. En una
+          fila (en móvil, uno debajo del otro), con la ayuda arriba y el aviso de "ninguno de los dos" abajo. */}
+      <fieldset className="pub-fieldset pub-contacto">
+        <legend>
+          {FORMULARIO.correoOTelefono}{' '}
+          <span className="pub-required" aria-hidden="true">
+            *
+          </span>
+        </legend>
+        <p id={id('correo-o-telefono-ayuda')} className="pub-product-hint pub-contacto-ayuda">
+          {FORMULARIO.ayudaCorreoOTelefono}
+        </p>
+        <div className="pub-form-row">
+          <div className="pub-field">
+            <label htmlFor={id('correo')}>{FORMULARIO.correo}</label>
+            <input
+              id={id('correo')}
+              type="email"
+              autoComplete="email"
+              maxLength={LIMITES.correo}
+              value={valores.correo}
+              onChange={(e) => cambiar({ correo: e.target.value })}
+              onBlur={() => marcar('correo')}
+              aria-invalid={errorCorreo || errorCorreoOTelefono ? true : undefined}
+              aria-describedby={descripcionContacto(errorCorreo, 'correo')}
+            />
+            {errorCorreo && (
+              <p id={errorId('correo')} className="field-error">
+                {errorCorreo}
+              </p>
+            )}
+          </div>
+
+          <div className="pub-field">
+            <label htmlFor={id('telefono')}>{FORMULARIO.telefono}</label>
+            <div onBlur={salioDelTelefono}>
+              <PhoneField
+                id={id('telefono')}
+                country={valores.paisTelefono}
+                number={valores.telefono}
+                onCountryChange={(paisTelefono) => cambiar({ paisTelefono })}
+                onNumberChange={(telefono) => cambiar({ telefono })}
+                invalid={Boolean(errorTelefono || errorCorreoOTelefono)}
+                describedBy={descripcionContacto(errorTelefono, 'telefono')}
+              />
+            </div>
+            {errorTelefono && (
+              <p id={errorId('telefono')} className="field-error">
+                {errorTelefono}
+              </p>
+            )}
+          </div>
+        </div>
+        {errorCorreoOTelefono && (
+          <p id={errorId('correo-o-telefono')} className="field-error">
+            {errorCorreoOTelefono}
+          </p>
+        )}
+      </fieldset>
 
       <fieldset className="pub-fieldset">
         <legend>
@@ -279,16 +298,27 @@ export function ConsultaForm({
           </p>
         )}
         <p className="pub-privacy">{ENVIO.privacidad}</p>
-        <button
-          type="submit"
-          className="pub-button"
-          disabled={enviando}
-          // Al presionar con el mouse no se le quita el foco al campo: si no, los errores que aparecen al salir de él
-          // empujan el botón hacia abajo antes de soltar y el clic se pierde. "Enviar" revisa todo igualmente.
-          onMouseDown={(e) => e.preventDefault()}
-        >
-          {enviando ? ENVIO.enviando : FORMULARIO.enviar}
-        </button>
+        <div className="pub-send">
+          <button
+            type="submit"
+            className="pub-button"
+            disabled={enviando}
+            aria-describedby={completo ? undefined : id('faltan')}
+            // Mismo motivo en un globito al pasar el mouse por encima mientras está bloqueado
+            data-tip={completo ? undefined : FORMULARIO.faltanDatos}
+            // Al presionar con el mouse no se le quita el foco al campo: si no, los errores que aparecen al salir de él
+            // empujan el botón hacia abajo antes de soltar y el clic se pierde. "Enviar" revisa todo igualmente.
+            onMouseDown={(e) => e.preventDefault()}
+          >
+            {enviando ? ENVIO.enviando : FORMULARIO.enviar}
+          </button>
+          {/* Solo aspecto: explica por qué "Enviar" se ve bloqueado. Si se presiona igual, marca lo que falta (HU-501). */}
+          {!completo && (
+            <p id={id('faltan')} className="pub-send-hint">
+              {FORMULARIO.faltanDatos}
+            </p>
+          )}
+        </div>
       </div>
     </form>
   );

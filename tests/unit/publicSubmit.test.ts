@@ -78,6 +78,15 @@ describe('aSolicitud: lo que se guarda', () => {
     expect(datos.message).toBeNull();
   });
 
+  it('contrato v4: sin correo guarda email null (no texto vacío) y el teléfono solo con dígitos', () => {
+    const datos = aSolicitud(
+      valoresIniciales({ nombre: 'Ana', correo: '   ', paisTelefono: 'CR', telefono: '8888 1234', filas: filasDe({ a: '1' }) }),
+    );
+    expect(datos.email).toBeNull();
+    expect(datos.phoneCountry).toBe('CR');
+    expect(datos.phoneNumber).toBe('88881234');
+  });
+
   it('los productos van en el orden del catálogo (variedad, peso, formato), no en el orden en que se marcaron', () => {
     const datos = aSolicitud(
       valoresIniciales({
