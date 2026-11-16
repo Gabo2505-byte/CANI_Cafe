@@ -53,17 +53,27 @@ describe('HU-403 página Contáctenos', () => {
     expect(mensaje()).toBeTruthy();
   });
 
-  it('son obligatorios (con asterisco) nombre, correo y productos; teléfono y mensaje son opcionales', () => {
+  it('son obligatorios (con asterisco) nombre, el grupo "correo o teléfono" y productos; el mensaje es opcional', () => {
     renderForm();
     const conAsterisco = Array.from(document.querySelectorAll('.pub-required')).map((s) => s.closest('label, legend')?.textContent);
-    expect(conAsterisco).toEqual(['Nombre completo *', 'Correo electrónico *', 'Productos de interés *']);
+    expect(conAsterisco).toEqual(['Nombre completo *', 'Correo electrónico o teléfono *', 'Productos de interés *']);
     expect(nombre().getAttribute('aria-required')).toBe('true');
-    expect(correo().getAttribute('aria-required')).toBe('true');
+    // Contrato v4: ninguno de los dos es obligatorio por sí solo.
+    expect(correo().getAttribute('aria-required')).toBeNull();
     expect(telefono().getAttribute('aria-required')).toBeNull();
     expect(Array.from(document.querySelectorAll('.optional')).map((s) => s.closest('label')?.textContent)).toEqual([
-      'Teléfono (opcional)',
       'Mensaje (opcional)',
     ]);
+  });
+
+  it('contrato v4: correo y teléfono van en un grupo con la ayuda "Ingrese al menos uno..."', () => {
+    renderForm();
+    const grupo = screen.getByRole('group', { name: /^Correo electrónico o teléfono/ });
+    expect(within(grupo).getByRole('textbox', { name: 'Correo electrónico' })).toBe(correo());
+    expect(within(grupo).getByRole('textbox', { name: /^Teléfono/ })).toBe(telefono());
+    const ayuda = within(grupo).getByText('Ingrese al menos uno: correo electrónico o teléfono.');
+    expect(correo().getAttribute('aria-describedby')).toBe(ayuda.id);
+    expect(telefono().getAttribute('aria-describedby')).toBe(ayuda.id);
   });
 
   it('el nombre y el correo aceptan como máximo 100 caracteres y el mensaje 1000', async () => {
@@ -142,11 +152,39 @@ describe('HU-501 criterio 1: revisión al salir de cada campo', () => {
     expect(screen.getByText('El teléfono debe tener entre 6 y 14 dígitos.')).toBeTruthy();
   });
 
-  it('el teléfono vacío no da error al salir (es opcional)', async () => {
+  it('el teléfono vacío no da error al salir si ya hay un correo', async () => {
     const user = renderForm();
+    await user.type(correo(), 'ana@example.com');
     await user.click(telefono());
     await user.tab();
     expect(document.querySelectorAll('.field-error')).toHaveLength(0);
+  });
+
+  it('contrato v4: salir del correo vacío todavía no avisa (puede dejar el teléfono)', async () => {
+    const user = renderForm();
+    await user.click(correo());
+    await user.tab();
+    expect(screen.queryByText('Ingrese un correo electrónico o un teléfono.')).toBeNull();
+    expect(correo().getAttribute('aria-invalid')).toBeNull();
+  });
+
+  it('contrato v4: al salir de los dos vacíos aparece un solo aviso y marca los dos; al escribir uno desaparece', async () => {
+    const user = renderForm();
+    await user.click(correo());
+    await user.click(telefono());
+    await user.click(nombre());
+    const aviso = screen.getByText('Ingrese un correo electrónico o un teléfono.');
+    expect(screen.getAllByText('Ingrese un correo electrónico o un teléfono.')).toHaveLength(1);
+    expect(aviso.className).toBe('field-error');
+    expect(correo().getAttribute('aria-invalid')).toBe('true');
+    expect(telefono().getAttribute('aria-invalid')).toBe('true');
+    expect(correo().getAttribute('aria-describedby')).toBe(aviso.id);
+    expect(telefono().getAttribute('aria-describedby')).toBe(aviso.id);
+    // Con solo el teléfono ya está completo.
+    await user.type(telefono(), '88881234');
+    expect(screen.queryByText('Ingrese un correo electrónico o un teléfono.')).toBeNull();
+    expect(correo().getAttribute('aria-invalid')).toBeNull();
+    expect(telefono().getAttribute('aria-invalid')).toBeNull();
   });
 
   it('pasar por el selector de país hacia el número no revisa el teléfono todavía', async () => {
@@ -158,7 +196,7 @@ describe('HU-501 criterio 1: revisión al salir de cada campo', () => {
 });
 
 describe('HU-501 criterios 1, 2 y 5: al dar clic en "Enviar"', () => {
-  it('con todo vacío no envía y muestra el aviso de arriba y los errores de nombre, correo y productos', async () => {
+  it('con todo vacío no envía y muestra el aviso de arriba y los errores de nombre, correo o teléfono y productos', async () => {
     const onValido = vi.fn();
     const user = renderForm({ onValido });
     await user.click(enviar());
@@ -168,11 +206,23 @@ describe('HU-501 criterios 1, 2 y 5: al dar clic en "Enviar"', () => {
     const form = screen.getByRole('form', { name: 'Envíenos su consulta' });
     // El aviso va arriba: antes del primer campo.
     expect(alerta.compareDocumentPosition(nombre()) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(within(form).getAllByText('Este campo es obligatorio.')).toHaveLength(2);
+    expect(within(form).getAllByText('Este campo es obligatorio.')).toHaveLength(1);
+    expect(within(form).getByText('Ingrese un correo electrónico o un teléfono.')).toBeTruthy();
     expect(within(form).getByText('Seleccione al menos un producto.')).toBeTruthy();
     expect(nombre().getAttribute('aria-invalid')).toBe('true');
     expect(correo().getAttribute('aria-invalid')).toBe('true');
-    expect(telefono().getAttribute('aria-invalid')).toBeNull();
+    expect(telefono().getAttribute('aria-invalid')).toBe('true');
+  });
+
+  it('contrato v4: con solo teléfono (sin correo) envía', async () => {
+    const onValido = vi.fn();
+    const user = renderForm({
+      onValido,
+      valoresIniciales: { nombre: 'Ana', correo: '', telefono: '88881234', filas: filasDe({ 'prod-1': '1' }) },
+    });
+    await user.click(enviar());
+    expect(onValido).toHaveBeenCalledTimes(1);
+    expect(onValido.mock.calls[0][0]).toMatchObject({ correo: '', telefono: '88881234' });
   });
 
   it('con una cantidad fuera de 1 a 9999 tampoco envía y avisa arriba', async () => {

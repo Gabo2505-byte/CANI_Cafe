@@ -23,7 +23,8 @@ export function aSolicitud(valores: ValoresFormulario): FormRequestData {
   const mensaje = valores.mensaje.trim();
   return {
     fullName: valores.nombre.trim(),
-    email: normalizeEmail(valores.correo),
+    // Contrato v4: sin correo va null (no texto vacío); el formulario ya exigió correo o teléfono.
+    email: normalizeEmail(valores.correo) || null,
     phoneCountry: telefono ? valores.paisTelefono : null,
     phoneNumber: telefono || null,
     // Las filas ya validadas no tienen productos vacíos ni repetidos; aun así se omiten las que no tengan producto.

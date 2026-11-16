@@ -1,8 +1,52 @@
 /* =====================================================================================================
-   CANI Café: estilos del sitio público (clases pub-*). Los colores, fuentes y espacios salen de
-   src/shared/styles/tokens.css, importado antes de esta hoja (mismo tema oscuro y misma marca que el sistema
-   interno, pero con diseño de página: sin tablas ni tablero). Pensado para escritorio (≥ 1366 × 768).
+   CANI Café: estilos del sitio público (clases pub-*). Siguen el diseño de la web oficial de CANI Café: fondo casi
+   negro, dorado, franja crema con borde de papel rasgado, Cinzel en títulos, Montserrat en el texto y Playfair
+   Display en cursiva. Parte de src/shared/styles/tokens.css (importado antes) y redefine aquí su paleta y sus
+   fuentes; esta hoja solo se carga en el sitio público, así que el sistema interno no cambia.
+   Escritorio (≥ 1366 × 768 de referencia), tabletas (≤ 1024 px) y móvil (corte en 720 px).
    ===================================================================================================== */
+
+/* -----------------------------------------------------------------------------------------------------
+   0. Paleta y fuentes del sitio público
+   Contrastes: crema sobre fondo ≥ 18:1, dorado claro sobre fondo ≥ 9:1, texto secundario ≥ 9:1, texto
+   café sobre crema ≥ 10:1, dorado oscuro sobre crema ≥ 5:1, borde de campos ≥ 3:1.
+   ----------------------------------------------------------------------------------------------------- */
+:root {
+  --color-bg: #0c0806;
+  --color-surface: #1e130c;
+  --color-surface-raised: #1a1008;
+  --color-surface-hover: #2a1c13;
+  --color-border: #2c2118;
+  --color-border-strong: #7d6650;
+  --color-text: #fdfaf7;
+  --color-text-secondary: #cbc4bd;
+  --color-text-muted: #a8a09a;
+  --color-accent: #c5a880;
+  --color-accent-hover: #e5ccaa;
+  --color-on-accent: #0c0806;
+
+  --font-sans: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Cinzel', Georgia, 'Times New Roman', serif;
+  --pub-font-italic: 'Playfair Display', Georgia, serif;
+
+  --pub-gold: #b39265;
+  --pub-espresso: #1e130c;
+  --pub-cream: #e3d3c4;
+  --pub-cream-card: #f2e7dc;
+  --pub-cream-text: #2a1c12;
+  --pub-cream-secondary: #4a3627;
+  --pub-gold-dark: #6b4e2a;
+  --pub-borde-dorado: rgb(197 168 128 / 0.18);
+  --pub-gutter: 6vw;
+  --pub-ancho: 1100px;
+  --pub-sombra: 0 15px 35px rgb(0 0 0 / 0.15);
+  --pub-sombra-suave: 0 8px 24px rgb(42 28 18 / 0.08);
+  --pub-transicion: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  /* Fotos (WebP en sitio-publico/public/fotos) */
+  --pub-foto-portada: url('/fotos/portada.webp');
+  --pub-foto-taza: url('/fotos/taza-cafe.webp');
+}
 
 /* -----------------------------------------------------------------------------------------------------
    1. Base
@@ -10,6 +54,7 @@
 body {
   margin: 0;
   background: var(--color-bg);
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -38,41 +83,34 @@ a:hover {
 
 /* El pie queda al final de la ventana aunque la página sea corta */
 .pub-shell {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* -----------------------------------------------------------------------------------------------------
-   2. Logo (componente compartido src/shared/ui/Logo.tsx, variante "bar": escudo y nombre, enlace a Inicio)
-   ----------------------------------------------------------------------------------------------------- */
-.logo img {
-  display: block;
-  width: auto;
-}
+@keyframes pub-aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 
-.logo-link {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  text-decoration: none;
-  color: var(--color-text);
-}
-
-.logo-bar .logo-escudo {
-  height: 38px;
-}
-
-.logo-bar .logo-nombre {
-  height: 22px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* -----------------------------------------------------------------------------------------------------
-   3. Encabezado y menú
+   2. Encabezado: logo (escudo + nombre con la frase debajo) y menú, sobre la portada con un degradado
    ----------------------------------------------------------------------------------------------------- */
 .pub-header {
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-bg);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100%;
+  background: linear-gradient(to bottom, rgb(12 8 6 / 0.85) 0%, rgb(12 8 6 / 0) 100%);
 }
 
 .pub-header-inner {
@@ -81,84 +119,155 @@ a:hover {
   justify-content: space-between;
   gap: var(--space-5);
   box-sizing: border-box;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0.6rem var(--space-6);
+  padding: 24px var(--pub-gutter);
+}
+
+.pub-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+}
+
+.pub-logo img {
+  display: block;
+  width: auto;
+}
+
+.pub-logo-escudo {
+  height: 62px;
+}
+
+.pub-logo-texto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.pub-logo-nombre {
+  height: 26px;
+}
+
+/* La frase es manuscrita y de trazo fino: necesita más alto que el nombre para leerse */
+.pub-logo-frase {
+  height: 26px;
 }
 
 .pub-menu {
   display: flex;
-  gap: var(--space-6);
+  align-items: center;
+  gap: 2.5vw;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* Subrayado que crece al pasar el mouse; la página actual queda dorada y subrayada */
 .pub-menu-link {
+  position: relative;
   display: block;
-  padding: 0.35rem 0.1rem;
-  font-size: var(--font-size-md);
-  font-weight: 600;
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-text);
+  letter-spacing: 1.5px;
+  color: rgb(253 250 247 / 0.85);
   text-decoration: none;
-  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease;
+}
+
+.pub-menu-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--pub-gold);
+  transition: width 0.2s ease;
 }
 
 .pub-menu-link:hover {
+  color: var(--color-accent-hover);
+}
+
+.pub-menu-link:hover::after {
+  width: 100%;
+}
+
+.pub-menu-link[aria-current='page'] {
   color: var(--color-accent);
 }
 
-/* Página actual: dorada y subrayada */
-.pub-menu-link[aria-current='page'] {
-  color: var(--color-accent);
-  border-bottom-color: var(--color-accent);
+.pub-menu-link[aria-current='page']::after {
+  width: 100%;
+  height: 2px;
+  background: var(--color-accent);
 }
 
 /* -----------------------------------------------------------------------------------------------------
-   4. Contenido de las páginas
+   3. Páginas, títulos y botones
    ----------------------------------------------------------------------------------------------------- */
+/* Catálogo y Contáctenos: fondo oscuro, contenido centrado, con espacio arriba para el encabezado */
 .pub-main {
   flex: 1;
   box-sizing: border-box;
   width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: var(--space-5) var(--space-6) var(--space-6);
+  padding: 130px var(--pub-gutter) 80px;
+  animation: pub-aparecer 0.6s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+.pub-main > * {
+  max-width: var(--pub-ancho);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* Inicio: secciones a todo el ancho */
+.pub-main-full {
+  padding: 0;
+  animation: none;
+}
+
+.pub-main-full > * {
+  max-width: none;
 }
 
 .pub-title {
-  margin: 0 0 var(--space-2);
+  margin: 0;
   font-family: var(--font-serif);
-  font-size: 2.25rem;
-  font-weight: 600;
+  font-size: 2.8rem;
+  font-weight: 500;
   line-height: 1.15;
   text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-caps);
+  letter-spacing: 2px;
+  color: var(--color-text);
   overflow-wrap: anywhere;
 }
 
 .pub-heading {
   margin: 0 0 var(--space-3);
   font-family: var(--font-serif);
-  font-size: var(--font-size-subtitle);
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
   text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-caps);
+  letter-spacing: 1px;
   color: var(--color-accent);
 }
 
 .pub-lead {
-  max-width: 46rem;
-  margin: 0 0 var(--space-4);
-  font-size: var(--font-size-lg);
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
   color: var(--color-text-secondary);
 }
 
 .pub-status {
-  margin: var(--space-5) 0;
-  font-size: var(--font-size-lg);
+  margin: var(--space-6) auto;
+  font-size: 15px;
+  text-align: center;
   color: var(--color-text-secondary);
 }
 
@@ -166,28 +275,76 @@ a:hover {
   color: var(--color-danger);
 }
 
-/* Botones: son enlaces con aspecto de botón (el principal dorado con texto oscuro, el secundario con borde) */
+/* Encabezado de Catálogo y Contáctenos: título centrado y una línea dorada corta debajo */
+.pub-page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+.pub-divider {
+  display: block;
+  width: 80px;
+  height: 1px;
+  margin-top: 5px;
+  background: var(--pub-gold);
+}
+
+/* Subtítulo bajo la línea (el texto de precios del Catálogo): Playfair cursiva, como los subtítulos de la web oficial */
+.pub-page-lead {
+  max-width: 34rem;
+  margin: 6px 0 0;
+  font-family: var(--pub-font-italic);
+  font-size: 1.2rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--color-accent);
+}
+
+/* Botones: enlaces con aspecto de botón, en mayúsculas espaciadas y esquinas casi rectas */
 .pub-button {
   display: inline-block;
   box-sizing: border-box;
-  padding: 0.6rem 1.25rem;
-  font-size: var(--font-size-base);
-  font-weight: 600;
+  padding: 12px 28px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
   line-height: 1.4;
   text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
   text-decoration: none;
   color: var(--color-on-accent);
-  background: var(--color-accent);
-  border: 1px solid var(--color-accent);
-  border-radius: var(--radius);
+  background: var(--pub-gold);
+  border: 1px solid var(--pub-gold);
+  border-radius: 2px;
+  transition: var(--pub-transicion);
 }
 
 .pub-button:hover {
   color: var(--color-on-accent);
   background: var(--color-accent-hover);
   border-color: var(--color-accent-hover);
+  letter-spacing: 2px;
 }
 
+/* Borde claro sobre la portada */
+.pub-button-ghost {
+  color: var(--color-text);
+  background: transparent;
+  border-color: rgb(253 250 247 / 0.5);
+}
+
+.pub-button-ghost:hover {
+  color: var(--color-accent-hover);
+  background: rgb(253 250 247 / 0.06);
+  border-color: var(--color-accent-hover);
+}
+
+/* Botones secundarios del formulario ("X" y "Agregar producto") */
 .pub-button-secondary {
   color: var(--color-text);
   background: transparent;
@@ -198,229 +355,1337 @@ a:hover {
   color: var(--color-accent);
   background: var(--color-surface-hover);
   border-color: var(--color-accent);
+  letter-spacing: 1.5px;
+}
+
+/* Grano de café (SVG): adorno de la portada y de los títulos de la franja crema */
+.pub-grano {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: var(--color-accent);
+}
+
+.pub-grano-surco {
+  fill: none;
+  stroke: var(--color-bg);
+  stroke-width: 1.4;
+  stroke-linecap: round;
 }
 
 /* -----------------------------------------------------------------------------------------------------
-   5. Inicio
+   4. Inicio: portada con foto
    ----------------------------------------------------------------------------------------------------- */
 .pub-hero {
-  padding: var(--space-5) 0 var(--space-5);
-  border-bottom: 1px solid var(--color-border);
+  position: relative;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  /* Ocupa toda la primera pantalla (menos el borde rasgado): así no se asoma cortado el título de la sección
+     siguiente. svh descuenta las barras del navegador en el celular. */
+  min-height: max(calc(100vh - 46px), 560px);
+  min-height: max(calc(100svh - 46px), 560px);
+  padding: 130px var(--pub-gutter) 70px;
+  background:
+    linear-gradient(to right, rgb(12 8 6 / 0.92) 0%, rgb(12 8 6 / 0.75) 50%, rgb(12 8 6 / 0.45) 100%),
+    var(--pub-foto-portada) center right / cover no-repeat,
+    var(--color-bg);
+}
+
+/* Oscurece la parte de abajo para que la foto se funda con el borde rasgado */
+.pub-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(to top, rgb(12 8 6 / 0.95) 0%, rgb(12 8 6 / 0) 100%);
+  pointer-events: none;
+}
+
+.pub-hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 760px;
+  animation: pub-aparecer 0.8s cubic-bezier(0.25, 1, 0.5, 1) both;
 }
 
 .pub-hero .pub-title {
-  max-width: none;
-  font-size: 2.4rem;
+  font-size: 3rem;
+  line-height: 1.1;
+  text-shadow: 0 4px 12px rgb(0 0 0 / 0.4);
 }
 
+/* Subtítulo en Playfair cursiva dorada */
 .pub-hero .pub-lead {
-  max-width: 60rem;
+  max-width: 620px;
+  font-family: var(--pub-font-italic);
+  font-size: 1.45rem;
+  font-style: italic;
+  line-height: 1.35;
+  color: var(--color-accent);
+  text-shadow: 0 4px 10px rgb(0 0 0 / 0.4);
+}
+
+/* Grano dorado y una línea que se desvanece hacia la derecha */
+.pub-hero-line {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  max-width: 620px;
+  margin: 4px 0 8px;
+}
+
+.pub-hero-line::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgb(197 168 128 / 0.5) 0%, rgb(197 168 128 / 0) 100%);
 }
 
 .pub-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
-}
-
-.pub-section {
-  padding: var(--space-5) 0 0;
-}
-
-.pub-prose {
-  max-width: 46rem;
-  font-size: var(--font-size-base);
-  line-height: 1.6;
-}
-
-.pub-prose p {
-  margin: 0 0 var(--space-3);
-}
-
-/* "Quiénes somos" en dos columnas: el párrafo 1 y la cita a la izquierda, los párrafos 2 y 3 a la derecha. Son columnas
-   de texto (no una rejilla), así que el orden de lectura sigue siendo el del documento. */
-.pub-prose-columnas {
-  max-width: none;
-  column-count: 2;
-  column-gap: var(--space-7);
-}
-
-.pub-prose-columnas > :nth-child(3) {
-  break-before: column;
-}
-
-.pub-prose-columnas > * {
-  break-inside: avoid;
-}
-
-.pub-quote {
-  margin: 0 0 var(--space-3);
-  padding: var(--space-1) 0 var(--space-1) var(--space-4);
-  font-family: var(--font-serif);
-  font-size: 1.35rem;
-  font-weight: 600;
-  line-height: 1.35;
-  color: var(--color-accent);
-  border-left: 3px solid var(--color-accent);
+  gap: 14px;
 }
 
 /* -----------------------------------------------------------------------------------------------------
-   6. Catálogo: una tarjeta por variedad (con su selector de presentación), tres por fila
+   5. Inicio: borde rasgado, franja crema, "Quiénes somos" y banner de "¿Cómo comprar?"
    ----------------------------------------------------------------------------------------------------- */
+.pub-torn {
+  position: relative;
+  z-index: 10;
+  margin-top: -2px;
+  line-height: 0;
+  background: var(--color-bg);
+}
+
+.pub-torn svg {
+  display: block;
+  width: 100%;
+  height: 48px;
+  fill: var(--pub-cream);
+}
+
+.pub-cream {
+  padding: 32px var(--pub-gutter) 64px;
+  color: var(--pub-cream-text);
+  background: var(--pub-cream);
+}
+
+.pub-section {
+  max-width: var(--pub-ancho);
+  margin: 0 auto;
+}
+
+.pub-cream .pub-heading {
+  font-size: 2rem;
+  color: var(--pub-espresso);
+}
+
+/* Adorno bajo el título: línea, grano, línea */
+.pub-ornament {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 var(--space-5);
+}
+
+.pub-ornament::before,
+.pub-ornament::after {
+  content: '';
+  width: 20px;
+  height: 1px;
+  background: var(--pub-gold);
+}
+
+.pub-ornament .pub-grano {
+  width: 11px;
+  height: 11px;
+  fill: var(--pub-gold);
+}
+
+.pub-ornament .pub-grano-surco {
+  stroke: var(--pub-cream);
+}
+
+.pub-prose {
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.pub-prose p {
+  margin: 0 0 var(--space-4);
+}
+
+.pub-cream .pub-prose {
+  color: var(--pub-cream-secondary);
+}
+
+/* "Quiénes somos" como un artículo: una sola columna de lectura del mismo ancho para todo (sin bordes desparejos
+   ni huecos), en el orden del documento. Título y cita centrados; el párrafo 1 es la introducción, un poco más
+   grande y oscura que el resto. */
+.pub-nosotros {
+  max-width: 50rem;
+  padding-top: var(--space-6);
+}
+
+.pub-nosotros .pub-heading {
+  text-align: center;
+}
+
+.pub-nosotros .pub-ornament {
+  justify-content: center;
+  margin-bottom: 36px;
+}
+
+/* Párrafos justificados. La separación con guion (la página está en español) evita huecos grandes entre palabras,
+   sobre todo en el celular. */
+.pub-prose-columnas > p {
+  text-align: justify;
+  hyphens: auto;
+}
+
+.pub-prose-columnas > p:first-child {
+  font-size: 17px;
+  line-height: 1.85;
+  color: var(--pub-cream-text);
+}
+
+/* La cita: grande, centrada, con comillas doradas y líneas finas arriba y abajo */
+.pub-nosotros .pub-quote {
+  margin: 36px 0;
+  padding: 30px 0 26px;
+  font-size: 1.65rem;
+  line-height: 1.45;
+  text-align: center;
+  border-top: 1px solid rgb(179 146 101 / 0.45);
+  border-bottom: 1px solid rgb(179 146 101 / 0.45);
+  border-left: 0;
+}
+
+.pub-nosotros .pub-quote::before {
+  content: '“';
+  display: block;
+  height: 0.6em;
+  margin-top: -0.25em;
+  font-family: var(--pub-font-italic);
+  font-size: 3.4rem;
+  line-height: 1;
+  color: var(--pub-gold);
+}
+
+.pub-quote {
+  margin: var(--space-5) 0;
+  padding-left: 20px;
+  font-family: var(--pub-font-italic);
+  font-size: 1.15rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--pub-espresso);
+  border-left: 3px solid var(--pub-gold);
+}
+
+/* "¿Cómo comprar?": tarjeta crema clara con el texto a la izquierda y la taza a la derecha */
+.pub-banner {
+  display: flex;
+  align-items: stretch;
+  margin-top: 48px;
+  overflow: hidden;
+  background: var(--pub-cream-card);
+  border: 1px solid rgb(42 28 18 / 0.08);
+  border-radius: 8px;
+  box-shadow: var(--pub-sombra-suave);
+}
+
+/* A la derecha deja libre la mitad del sello, que sobresale de la foto */
+.pub-banner-text {
+  flex: 1;
+  align-self: center;
+  padding: 36px calc(80px + 32px) 36px 5vw;
+}
+
+.pub-cream .pub-banner .pub-heading {
+  font-size: 1.5rem;
+}
+
+.pub-banner .pub-prose {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.pub-banner .pub-prose p {
+  margin: 0;
+}
+
+.pub-banner-foto {
+  position: relative;
+  width: 40%;
+  min-height: 240px;
+  background: var(--pub-foto-taza) center 42% / cover no-repeat, var(--pub-espresso);
+}
+
+/* Sello "Café fresco · Todos los días" que gira despacio, montado sobre el borde izquierdo de la foto */
+.pub-sello {
+  position: absolute;
+  bottom: 15px;
+  left: -80px;
+  z-index: 15;
+  width: 160px;
+  height: 160px;
+  filter: drop-shadow(0 8px 24px rgb(0 0 0 / 0.5));
+  animation: pub-sello-giro 20s linear infinite;
+}
+
+.pub-sello svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pub-sello-fondo {
+  fill: var(--pub-espresso);
+}
+
+.pub-sello-anillo {
+  fill: none;
+  stroke: var(--pub-gold);
+}
+
+.pub-sello-texto {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  fill: var(--color-accent);
+}
+
+.pub-sello-punto {
+  fill: var(--color-accent);
+}
+
+.pub-sello-hoja {
+  fill: var(--color-accent);
+}
+
+.pub-sello-nervio {
+  fill: none;
+  stroke: var(--pub-espresso);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+@keyframes pub-sello-giro {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* -----------------------------------------------------------------------------------------------------
+   6. Catálogo: aviso de precios y una tarjeta por variedad (foto con la bolsa, datos y selector), tres por fila
+   ----------------------------------------------------------------------------------------------------- */
+/* Dos tarjetas por fila; cada tarjeta es horizontal (foto a la izquierda, datos a la derecha), así la foto usa el alto
+   que ya ocupan el texto y el selector y la página no se hace larga */
 .pub-cards {
+  --pub-cards-gap: 28px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-4);
-  margin: var(--space-4) 0 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--pub-cards-gap);
   padding: 0;
   list-style: none;
 }
 
+/* Con dos por fila y un número impar de variedades, la última quedaría sola a la izquierda con un hueco a la derecha:
+   va centrada en su fila, con el mismo ancho que las demás */
+@media (min-width: 700px) {
+  .pub-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc((100% - var(--pub-cards-gap)) / 2);
+  }
+}
+
 .pub-card {
   display: flex;
-  flex-direction: column;
-  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
-  background: var(--color-surface-raised);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+  flex-direction: row;
+  overflow: hidden;
+  background: rgb(30 19 12 / 0.4);
+  border: 1px solid rgb(197 168 128 / 0.15);
+  border-radius: 8px;
+  transition: var(--pub-transicion);
 }
 
-/* Nombre de la variedad: serif dorado, como los encabezados de sección */
+.pub-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--pub-sombra);
+  transform: translateY(-8px);
+}
+
+/* Foto de la taza oscurecida abajo, con la bolsa al centro */
+.pub-card-foto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Columna izquierda de la tarjeta, de todo el alto de la tarjeta: queda vertical, como las fotos de los productos,
+     así la foto la llena sin cortar el producto */
+  flex: 0 0 42%;
+  align-self: stretch;
+  min-height: 330px;
+  background:
+    linear-gradient(to top, rgb(30 19 12 / 0.9) 0%, rgb(30 19 12 / 0.2) 100%),
+    var(--pub-foto-taza) center / cover no-repeat,
+    var(--pub-espresso);
+}
+
+/* Foto real del producto: llena todo el espacio de la foto (que es vertical, como las fotos de los productos), así se
+   ve el producto completo con su fondo, sin bordes ni recortes. Es un enlace: al tocarla se abre en grande. La lupa
+   lo indica. */
+.pub-card-foto-real {
+  position: relative;
+  overflow: hidden;
+  background: var(--pub-espresso);
+  cursor: zoom-in;
+}
+
+/* La foto llena su espacio pero no decide el alto de la tarjeta (lo decide el texto): así no quedan huecos */
+.pub-card-foto-real img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.pub-card-foto-real:focus-visible {
+  outline-offset: -3px;
+}
+
+/* Al pasar el mouse por la tarjeta, la foto se acerca un poco */
+.pub-card:hover .pub-card-foto-real img {
+  transform: scale(1.04);
+}
+
+.pub-card-lupa {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--color-accent);
+  background: rgb(12 8 6 / 0.75);
+  border: 1px solid rgb(197 168 128 / 0.5);
+  border-radius: 50%;
+  backdrop-filter: blur(4px);
+  transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.pub-card-lupa svg {
+  width: 20px;
+  height: 20px;
+}
+
+.pub-card-foto-real:hover .pub-card-lupa {
+  background: rgb(12 8 6 / 0.9);
+  transform: scale(1.08);
+}
+
+/* Visor de la foto en grande: centrada sobre la página oscurecida, con la X dorada arriba a la derecha */
+.pub-visor {
+  max-width: min(92vw, 620px);
+  max-height: 94vh;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+}
+
+.pub-visor::backdrop {
+  background: rgb(12 8 6 / 0.88);
+  backdrop-filter: blur(4px);
+}
+
+.pub-visor img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 90vh;
+  border: 1px solid rgb(197 168 128 / 0.35);
+  border-radius: 10px;
+  box-shadow: 0 30px 70px rgb(0 0 0 / 0.6);
+}
+
+.pub-visor-cerrar {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--color-on-accent);
+  background: var(--pub-gold);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 0.5);
+}
+
+.pub-visor-cerrar:hover {
+  background: var(--color-accent-hover);
+}
+
+/* En el celular la X va dentro de la foto, para que no se salga de la pantalla */
+@media (max-width: 720px) {
+  .pub-visor-cerrar {
+    top: 8px;
+    right: 8px;
+  }
+}
+
+.pub-card-bolsa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100px;
+  height: 150px;
+  padding: 10px;
+  background: var(--pub-espresso);
+  border: 1px solid var(--pub-gold);
+  border-radius: 4px;
+  box-shadow: 0 10px 20px rgb(0 0 0 / 0.4);
+}
+
+.pub-card-bolsa img {
+  display: block;
+  width: auto;
+  height: 36px;
+}
+
+.pub-card-etiqueta {
+  margin-top: 10px;
+  font-family: var(--font-serif);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text);
+}
+
+.pub-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  padding: 25px;
+}
+
 .pub-card-name {
-  margin: 0 0 var(--space-2);
+  margin: 0;
   font-family: var(--font-serif);
   font-size: 1.4rem;
-  font-weight: 600;
-  line-height: 1.2;
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-caps);
-  color: var(--color-accent);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-text);
 }
 
+/* Justificada, con separación de palabras (la página está en español) para que no queden huecos entre palabras */
 .pub-card-description {
   flex: 1;
-  margin: 0 0 var(--space-3);
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-2);
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: justify;
+  hyphens: auto;
+  color: rgb(253 250 247 / 0.7);
   overflow-wrap: anywhere;
 }
 
-/* Selector de presentación (a todo el ancho, para que la presentación se lea completa) y "Me interesa", al pie */
+/* Al pie, separados por una línea: el selector de presentación a todo el ancho (para que la presentación se lea
+   completa) y "Me interesa" debajo */
 .pub-card-actions {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-3);
+  align-items: stretch;
+  gap: 12px;
+  padding-top: 15px;
+  border-top: 1px solid rgb(253 250 247 / 0.08);
 }
 
 .pub-card-field {
-  align-self: stretch;
+  min-width: 0;
 }
 
 .pub-card-field label {
   display: block;
-  margin-bottom: var(--space-1);
-  font-size: 0.9rem;
+  margin-bottom: 6px;
+  font-size: 10px;
   font-weight: 600;
-  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-accent);
 }
 
 .pub-card-field select {
-  background-color: var(--color-surface);
+  font-size: 13px;
 }
 
 .pub-card-button {
-  flex: none;
-  white-space: nowrap;
+  padding: 11px 18px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border-radius: 4px;
+}
+
+.pub-card-button:hover {
+  color: var(--color-on-accent);
+  background: var(--color-text);
+  border-color: var(--color-text);
+  letter-spacing: 1px;
+  transform: translateY(-2px);
 }
 
 /* -----------------------------------------------------------------------------------------------------
-   7. Pie: teléfono, correo y ubicación
+   7. Íconos dorados de teléfono, correo y ubicación (pie y columna de Contáctenos)
+   ----------------------------------------------------------------------------------------------------- */
+:root {
+  --pub-icono-telefono: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23c5a880' d='M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z'/%3E%3C/svg%3E");
+  --pub-icono-correo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23c5a880' d='M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
+  --pub-icono-ubicacion: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23c5a880' d='M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E");
+}
+
+/* Cada dato es una fila: ícono a la izquierda; nombre y valor a la derecha */
+.pub-footer-inner > div {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 18px;
+  align-items: center;
+}
+
+.pub-footer-inner > div::before {
+  content: '';
+  grid-row: 1 / span 2;
+  width: 32px;
+  height: 32px;
+  background: var(--pub-icono-telefono) center / 26px no-repeat;
+}
+
+.pub-footer-inner > div:nth-child(2)::before {
+  background-image: var(--pub-icono-correo);
+}
+
+.pub-footer-inner > div:nth-child(3)::before {
+  background-image: var(--pub-icono-ubicacion);
+}
+
+/* -----------------------------------------------------------------------------------------------------
+   8. Pie: teléfono, correo y ubicación en tres columnas
    ----------------------------------------------------------------------------------------------------- */
 .pub-footer {
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
+  position: relative;
+  z-index: 5;
+  background: var(--color-bg);
+  border-top: 1px solid rgb(197 168 128 / 0.15);
 }
 
 .pub-footer-inner {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-2) var(--space-6);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px;
   box-sizing: border-box;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0.9rem var(--space-6);
-}
-
-/* Etiqueta y dato en la misma línea */
-.pub-footer-inner > div {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0 var(--space-2);
+  margin: 0;
+  padding: 36px var(--pub-gutter) 32px;
 }
 
 .pub-footer-inner dt {
-  margin: 0;
-  font-size: var(--font-size-sm);
-  font-weight: 600;
+  align-self: end;
+  margin: 0 0 4px;
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-caps);
-  color: var(--color-text-muted);
-}
-
-.pub-footer-inner dd {
-  margin: 0;
+  letter-spacing: 1.5px;
   color: var(--color-text);
 }
 
+.pub-footer-inner dd {
+  align-self: start;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgb(253 250 247 / 0.65);
+}
+
+.pub-footer-inner a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.pub-footer-inner a:hover {
+  color: var(--color-accent);
+}
+
 /* -----------------------------------------------------------------------------------------------------
-   8. Contáctenos: formulario a la izquierda y datos de la empresa a la derecha
+   9. Contáctenos: formulario a la izquierda (panel oscuro redondeado) y datos de contacto a la derecha
    ----------------------------------------------------------------------------------------------------- */
 .pub-contact {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 19rem;
-  gap: var(--space-5);
+  grid-template-columns: minmax(0, 1fr) 24rem;
+  gap: 28px;
   align-items: start;
 }
 
 .pub-panel {
-  padding: var(--space-4) var(--space-5);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+  padding: 32px 36px;
+  background: var(--color-surface-raised);
+  border: 1px solid rgb(197 168 128 / 0.2);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgb(0 0 0 / 0.45);
+}
+
+/* Acompaña al formulario al desplazarse, para que los datos queden siempre a la vista */
+.pub-aside {
+  position: sticky;
+  top: 24px;
+  padding: 32px 24px;
+  background: rgb(255 255 255 / 0.04);
+  border-color: rgb(255 255 255 / 0.08);
+  box-shadow: none;
 }
 
 .pub-aside .pub-heading {
-  font-size: 1.3rem;
+  font-size: 1.15rem;
+  color: var(--color-text);
 }
 
-.pub-contact-list {
+/* Tres opciones que se presionan (WhatsApp, Gmail y Google Maps): ícono de color en círculo, nombre y dato, y una
+   flecha que indica que abre afuera. Se levantan al pasar el mouse, como las tarjetas de la web oficial. */
+.pub-opciones {
   display: grid;
-  gap: var(--space-4);
-  margin: 0;
+  gap: 14px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.pub-contact-list dt {
-  margin-bottom: var(--space-1);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
+.pub-opcion {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  color: var(--color-text);
+  text-decoration: none;
+  background: rgb(255 255 255 / 0.04);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 14px;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.pub-opcion:hover {
+  color: var(--color-text);
+  background: rgb(255 255 255 / 0.08);
+  border-color: rgb(197 168 128 / 0.45);
+  transform: translateY(-3px);
+}
+
+.pub-opcion-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  color: #fff;
+  border-radius: 50%;
+}
+
+.pub-opcion-icono svg {
+  width: 22px;
+  height: 22px;
+}
+
+.pub-opcion-whatsapp .pub-opcion-icono {
+  background: #25d366;
+}
+
+.pub-opcion-correo .pub-opcion-icono {
+  background: #ea4335;
+}
+
+.pub-opcion-mapa .pub-opcion-icono {
+  background: #c5a042;
+}
+
+.pub-opcion-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.pub-opcion-etiqueta {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-caps);
+  letter-spacing: 1.5px;
+  color: var(--color-accent);
+}
+
+/* Solo se corta una palabra si de verdad no cabe (en pantallas muy angostas) */
+.pub-opcion-valor {
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+
+.pub-opcion-flecha {
+  display: flex;
+  color: var(--color-text-muted);
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.pub-opcion-flecha svg {
+  width: 18px;
+  height: 18px;
+}
+
+.pub-opcion:hover .pub-opcion-flecha {
+  color: var(--color-accent);
+  transform: translate(2px, -2px);
+}
+
+/* Formulario: panel oscuro con un brillo cálido arriba y campos de una sola línea (sin cajas) que se vuelven dorados
+   al escribir. Los errores van en terracota (un rojo del tono del café), sin cajas pesadas.
+   Contrastes sobre el panel: texto ≥ 15:1, etiquetas ≥ 7:1, terracota ≥ 6:1, línea de los campos ≥ 3:1. */
+.pub-panel-form {
+  --color-danger: #e5866b;
+  --pub-linea: rgb(253 250 247 / 0.42);
+
+  position: relative;
+  padding: 44px 48px 40px;
+  background:
+    radial-gradient(ellipse 80% 45% at 50% 0%, rgb(197 168 128 / 0.1) 0%, transparent 70%),
+    #120c08;
+  border: 1px solid rgb(197 168 128 / 0.16);
+  border-radius: 18px;
+  box-shadow: 0 30px 70px rgb(0 0 0 / 0.55);
+}
+
+/* Línea dorada corta arriba al centro del panel */
+.pub-panel-form::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  width: 90px;
+  height: 2px;
+  background: var(--pub-gold);
+  transform: translateX(-50%);
+}
+
+.pub-panel-form .pub-form .pub-heading {
+  margin-bottom: 30px;
+  font-size: 1.45rem;
+  color: var(--color-text);
+}
+
+.pub-panel-form .pub-field {
+  margin-bottom: 24px;
+}
+
+.pub-panel-form .pub-form-row {
+  gap: 0 36px;
+}
+
+.pub-panel-form .pub-field label,
+.pub-panel-form .pub-fieldset legend {
+  margin-bottom: 2px;
+  font-size: 10.5px;
+  letter-spacing: 2px;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+
+/* El campo en el que se escribe tiene la etiqueta dorada */
+.pub-panel-form .pub-field:focus-within > label,
+.pub-panel-form .pub-fieldset:focus-within > legend {
+  color: var(--color-accent);
+}
+
+/* Campos como cajas con fondo suave: se distinguen a simple vista de los textos y mensajes. El borde se pone dorado
+   al escribir y terracota si hay un error. */
+.pub-panel-form input:not(.country-picker-search),
+.pub-panel-form select {
+  margin-bottom: 0;
+  padding: 11px 14px;
+  font-size: 15px;
+  background-color: rgb(253 250 247 / 0.05);
+  border: 1px solid var(--pub-linea);
+  border-radius: 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.pub-panel-form select {
+  padding-right: 34px;
+  background-position: right 12px center;
+}
+
+.pub-panel-form input:not(.country-picker-search):hover,
+.pub-panel-form select:hover {
+  border-color: var(--color-text-secondary);
+}
+
+.pub-panel-form input:not(.country-picker-search):focus-visible,
+.pub-panel-form select:focus-visible {
+  outline: none;
+  background-color: rgb(253 250 247 / 0.08);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.pub-panel-form input[aria-invalid='true'],
+.pub-panel-form select[aria-invalid='true'] {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 1px var(--color-danger);
+}
+
+/* Presentación sin variedad: caja punteada y sin fondo (todavía no se puede usar) */
+.pub-panel-form select:disabled {
+  color: var(--color-text-muted);
+  background-color: transparent;
+  border-style: dashed;
+  border-color: rgb(253 250 247 / 0.25);
+}
+
+/* Si una fila de productos tiene un error, se marcan en terracota todos sus campos que siguen vacíos (variedad,
+   presentación y cantidad), no solo el que lleva el error. Solo aspecto: la validación no cambia. */
+.pub-panel-form .pub-product-row:has([aria-invalid='true']) select:has(option:checked[value='']),
+.pub-panel-form .pub-product-row:has([aria-invalid='true']) .pub-stepper:has(input:placeholder-shown) {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 1px var(--color-danger);
+}
+
+/* Teléfono: el país y el número en una misma caja, separados por una línea */
+.pub-panel-form .phone-field {
+  margin-bottom: 0;
+}
+
+.pub-panel-form .country-picker-trigger {
+  min-width: 0;
+  padding: 0 12px 0 14px;
+  font-size: 15px;
+  background: rgb(253 250 247 / 0.08);
+  border: 1px solid var(--pub-linea);
+  border-right: 0;
+  border-radius: 8px 0 0 8px;
+}
+
+.pub-panel-form .phone-field input:not(.country-picker-search) {
+  border-radius: 0 8px 8px 0;
+}
+
+.pub-panel-form .country-picker-trigger:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.pub-panel-form .country-picker-caret {
+  margin-left: 4px;
+  color: var(--color-accent);
+}
+
+/* Errores: texto terracota pequeño bajo el campo, con un "!" en círculo delante para que se lea como aviso; el
+   aviso general, con una barra a la izquierda y sin caja */
+.pub-panel-form .field-error {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 8px 0 0;
+  font-size: 12.5px;
+}
+
+.pub-panel-form .field-error::before {
+  content: '!';
+  content: '!' / '';
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-bg);
+  background: var(--color-danger);
+  border-radius: 50%;
+}
+
+.pub-panel-form .pub-form-error {
+  margin: -6px 0 28px;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-text);
+  background: rgb(229 134 107 / 0.1);
+  border: 0;
+  border-left: 2px solid var(--color-danger);
+  border-radius: 0 8px 8px 0;
+}
+
+/* Productos: filas separadas por una línea fina, sin caja */
+.pub-panel-form .pub-product-rows {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+/* "Seleccione al menos un producto." se ve pegado a la fila marcada (arriba de "Agregar producto"), para que se
+   entienda que se refiere a esos campos. Solo cambia el orden visual; en el documento sigue después del botón. */
+.pub-panel-form .pub-product-rows > .field-error {
+  order: 1;
+  margin: 10px 0 0;
+}
+
+.pub-panel-form .pub-product-rows > .pub-product-add {
+  order: 2;
+}
+
+.pub-panel-form .pub-product-row {
+  margin-bottom: 0;
+  padding: 8px 0 16px;
+  border-bottom: 1px solid rgb(253 250 247 / 0.08);
+}
+
+.pub-panel-form .pub-product-choice {
+  gap: 24px;
+}
+
+.pub-panel-form .pub-product-controls {
+  column-gap: 16px;
+}
+
+/* Etiqueta visible sobre cada control de la fila (Variedad, Presentación, Cantidad), como las demás del formulario */
+.pub-product-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.pub-product-caption {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
   color: var(--color-text-muted);
 }
 
-.pub-contact-list dd {
-  margin: 0;
-  font-size: var(--font-size-base);
-  overflow-wrap: anywhere;
+.pub-product-campo:focus-within > .pub-product-caption,
+.pub-product-quantity:focus-within > .pub-product-caption {
+  color: var(--color-accent);
 }
 
-/* Campos (mismo aspecto que los del sistema interno) */
+/* Cantidad: etiqueta, la caja con "unidades" al lado y la indicación debajo */
+.pub-panel-form .pub-product-quantity {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.pub-product-quantity-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Cantidad con "−" y "+" dentro de la misma caja (sirven igual en celular y en la compu; en la compu también las
+   flechas ↑ ↓ del teclado). El borde dorado o terracota lo lleva la caja completa. */
+.pub-stepper {
+  display: inline-flex;
+  align-items: stretch;
+  background: rgb(253 250 247 / 0.05);
+  border: 1px solid var(--pub-linea);
+  border-radius: 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pub-stepper:hover {
+  border-color: var(--color-text-secondary);
+}
+
+.pub-stepper:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.pub-stepper:has(input[aria-invalid='true']) {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 1px var(--color-danger);
+}
+
+.pub-panel-form .pub-stepper input,
+.pub-panel-form .pub-stepper input:hover,
+.pub-panel-form .pub-stepper input:focus-visible,
+.pub-panel-form .pub-stepper input[aria-invalid='true'] {
+  width: 5.5rem;
+  padding: 11px 4px;
+  text-align: center;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.pub-stepper-boton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--color-accent);
+  background: rgb(253 250 247 / 0.04);
+  border: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  touch-action: manipulation;
+}
+
+.pub-stepper-boton:first-child {
+  border-right: 1px solid rgb(253 250 247 / 0.12);
+  border-radius: 7px 0 0 7px;
+}
+
+.pub-stepper-boton:last-child {
+  border-left: 1px solid rgb(253 250 247 / 0.12);
+  border-radius: 0 7px 7px 0;
+}
+
+.pub-stepper-boton:hover {
+  color: var(--color-accent-hover);
+  background: rgb(197 168 128 / 0.14);
+}
+
+.pub-stepper-boton:active {
+  background: rgb(197 168 128 / 0.24);
+}
+
+/* Bloqueado (en 1 no se puede bajar, en 9999 no se puede subir): apagado y con el cursor de "no se puede" */
+.pub-stepper-boton[aria-disabled='true'],
+.pub-stepper-boton[aria-disabled='true']:hover,
+.pub-stepper-boton[aria-disabled='true']:active {
+  color: rgb(253 250 247 / 0.25);
+  background: transparent;
+  cursor: not-allowed;
+}
+
+/* Globito con el motivo de un botón bloqueado (data-tip): aparece arriba al pasar el mouse, o al tocarlo en el celular */
+[data-tip] {
+  position: relative;
+}
+
+[data-tip]:hover::after,
+[data-tip]:active::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  z-index: 30;
+  width: max-content;
+  max-width: 16rem;
+  padding: 7px 11px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 1.4;
+  text-align: center;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--color-text);
+  background: #2a1d14;
+  border: 1px solid rgb(197 168 128 / 0.4);
+  border-radius: 6px;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.45);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* En "−" (al borde izquierdo del formulario) el globito se alinea a la izquierda, para no salirse */
+.pub-stepper-boton:first-child[data-tip]:hover::after,
+.pub-stepper-boton:first-child[data-tip]:active::after {
+  left: 0;
+  transform: none;
+}
+
+/* En "Enviar" (a la derecha del panel) el globito se alinea a la derecha, para no salirse */
+.pub-send [data-tip]:hover::after,
+.pub-send [data-tip]:active::after {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+
+/* "X": botón cuadrado discreto, de la altura de los campos y alineado con ellos; terracota al pasar el mouse */
+.pub-panel-form button.pub-product-remove {
+  align-self: end;
+  width: 46px;
+  min-width: 0;
+  height: 46px;
+  padding: 0;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  border-color: rgb(253 250 247 / 0.25);
+  border-radius: 8px;
+}
+
+.pub-panel-form button.pub-product-remove:hover {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+/* "Agregar producto": franja punteada a todo el ancho, con un "+" */
+.pub-panel-form button.pub-product-add {
+  width: 100%;
+  margin: 14px 0 0;
+  padding: 13px;
+  color: var(--color-accent);
+  background: transparent;
+  border: 1px dashed rgb(197 168 128 / 0.45);
+  border-radius: 10px;
+}
+
+.pub-panel-form button.pub-product-add::before {
+  content: '+';
+  margin-right: 8px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.pub-panel-form button.pub-product-add:hover {
+  color: var(--color-accent-hover);
+  background: rgb(197 168 128 / 0.06);
+  border-color: var(--color-accent);
+}
+
+/* Mensaje: caja suave (es de varias líneas) */
+.pub-panel-form textarea {
+  height: 7rem;
+  margin-bottom: 0;
+  padding: 12px 14px;
+  font-size: 15px;
+  background: rgb(253 250 247 / 0.03);
+  border: 1px solid var(--pub-linea);
+  border-radius: 10px;
+}
+
+.pub-panel-form textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.pub-panel-form .char-counter {
+  margin: 6px 0 0;
+}
+
+/* Pie del formulario: privacidad a la izquierda y "Enviar" a la derecha */
+.pub-panel-form .pub-form-actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-top: 8px;
+  padding-top: 24px;
+  border-top: 1px solid rgb(253 250 247 / 0.08);
+}
+
+.pub-panel-form .pub-send-error {
+  flex-basis: 100%;
+}
+
+.pub-panel-form .pub-privacy {
+  flex: 1 1 14rem;
+  text-align: left;
+}
+
+.pub-panel-form button[type='submit'] {
+  padding: 15px 44px;
+  font-size: 12px;
+  letter-spacing: 2.5px;
+  border-radius: 4px;
+  box-shadow: 0 10px 26px rgb(179 146 101 / 0.25);
+}
+
+.pub-panel-form button[type='submit']:hover {
+  letter-spacing: 2.5px;
+}
+
+/* "Enviar" y, debajo, el aviso de por qué no se puede todavía */
+.pub-send {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* Mientras falten datos obligatorios, "Enviar" se ve bloqueado: apagado, con un candado y el cursor de "no se puede".
+   (Si se presiona igual, marca lo que falta: HU-501.) */
+.pub-form-incompleto button[type='submit'],
+.pub-form-incompleto button[type='submit']:hover {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgb(253 250 247 / 0.45);
+  background: rgb(253 250 247 / 0.05);
+  border-color: rgb(253 250 247 / 0.12);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.pub-form-incompleto button[type='submit']::before {
+  content: '';
+  width: 12px;
+  height: 14px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 14'%3E%3Cpath d='M3 6V4a3 3 0 0 1 6 0v2' fill='none' stroke='%23a8a09a' stroke-width='1.4'/%3E%3Crect x='1' y='6' width='10' height='7.5' rx='1.5' fill='%23a8a09a'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+.pub-send-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+
+/* Campos */
 button {
   font-family: inherit;
   font-size: 1rem;
@@ -432,13 +1697,13 @@ textarea {
   box-sizing: border-box;
   width: 100%;
   margin-bottom: 0.5rem;
-  padding: 0.55rem 0.65rem;
+  padding: 0.7rem 0.85rem;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 14px;
   color: var(--color-text);
-  background: var(--color-surface-raised);
+  background: var(--color-bg);
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
 }
 
 input:hover,
@@ -475,35 +1740,39 @@ textarea[aria-invalid='true'] {
 
 textarea {
   resize: vertical;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .pub-form .pub-heading {
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-5);
+  font-size: 1.3rem;
+  color: var(--color-text);
 }
 
 .pub-form textarea {
-  height: 5.5rem;
+  height: 6rem;
 }
 
 .pub-field {
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
 /* Nombre y correo lado a lado */
 .pub-form-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 var(--space-4);
+  gap: 0 var(--space-5);
 }
 
 .pub-field label,
 .pub-fieldset legend {
   display: block;
-  margin-bottom: var(--space-1);
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  color: var(--color-accent);
 }
 
 .pub-required {
@@ -512,19 +1781,36 @@ textarea {
 
 .optional {
   color: var(--color-text-muted);
-  font-size: 0.85rem;
-  font-weight: 400;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .pub-fieldset {
   min-width: 0;
-  margin: 0 0 var(--space-3);
+  margin: 0 0 var(--space-4);
   padding: 0;
   border: none;
 }
 
 .pub-fieldset legend {
   padding: 0;
+}
+
+/* Contrato v4: correo y teléfono en un grupo ("al menos uno"). La ayuda va bajo el título del grupo y las etiquetas
+   de cada campo quedan un poco más chicas, para que se lea como un grupo con dos opciones. */
+.pub-contacto-ayuda {
+  margin: 0 0 14px;
+}
+
+.pub-panel-form .pub-contacto .pub-field label {
+  font-size: 10px;
+  letter-spacing: 1.6px;
+}
+
+.pub-contacto > .field-error {
+  margin-top: -0.25rem;
 }
 
 /* Errores en rojo debajo del campo y aviso general arriba del formulario */
@@ -538,12 +1824,13 @@ textarea {
 .pub-form-error {
   margin: 0 0 var(--space-4);
   padding: 0.6rem 0.9rem;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-danger);
-  background: var(--color-surface-raised);
+  background: var(--color-bg);
   border: 1px solid var(--color-danger);
   border-left-width: 4px;
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
 }
 
 /* Contador de caracteres del mensaje: "120/1000" */
@@ -558,15 +1845,10 @@ textarea {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: var(--space-2);
+  gap: var(--space-3);
   margin-top: var(--space-2);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border);
-}
-
-button.pub-button {
-  font-weight: 600;
-  line-height: 1.4;
+  padding-top: var(--space-4);
+  border-top: 1px solid rgb(253 250 247 / 0.08);
 }
 
 /* Teléfono: país y número (lista de países con buscador, componente compartido con el sistema interno) */
@@ -578,7 +1860,7 @@ button.pub-button {
 
 .phone-field input {
   margin-bottom: 0;
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  border-radius: 0 8px 8px 0;
 }
 
 .country-picker {
@@ -592,13 +1874,14 @@ button.pub-button {
   gap: 0.35rem;
   min-width: 6.5rem;
   padding: 0 0.6rem;
+  font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
   color: var(--color-text);
   background: var(--color-surface-hover);
   border: 1px solid var(--color-border-strong);
   border-right: none;
-  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  border-radius: 8px 0 0 8px;
 }
 
 .country-picker-trigger:hover {
@@ -618,7 +1901,7 @@ button.pub-button {
   width: min(20rem, 85vw);
   background: var(--color-surface-raised);
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius);
+  border-radius: 8px;
   box-shadow: var(--shadow-popup);
 }
 
@@ -648,6 +1931,7 @@ button.pub-button {
 
 .country-picker-option {
   padding: 0.35rem 0.75rem;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -667,12 +1951,13 @@ button.pub-button {
 }
 
 /* -----------------------------------------------------------------------------------------------------
-   9. Productos de interés (HU-404): filas con variedad, presentación, cantidad y "X" (mismo funcionamiento que el
-      selector del sistema interno, con los estilos y la paleta del sitio público)
+   10. Productos de interés (HU-404): filas con variedad, presentación, cantidad y "X" (mismo funcionamiento que el
+       selector del sistema interno, con los estilos y la paleta del sitio público)
    ----------------------------------------------------------------------------------------------------- */
 .pub-products-status {
   margin: var(--space-2) 0 var(--space-3);
-  font-size: var(--font-size-md);
+  font-size: 14px;
+  text-align: left;
 }
 
 /* Selects con flecha propia (la nativa no sigue el tema oscuro) */
@@ -680,18 +1965,18 @@ select {
   box-sizing: border-box;
   min-width: 0;
   width: 100%;
-  padding: 0.55rem 2rem 0.55rem 0.65rem;
+  padding: 0.7rem 2rem 0.7rem 0.85rem;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 14px;
   color: var(--color-text);
   text-overflow: ellipsis;
-  background-color: var(--color-surface-raised);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23d4a762' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-color: var(--color-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23c5a880' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0.7rem center;
+  background-position: right 0.8rem center;
   background-size: 0.75rem;
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   appearance: none;
   cursor: pointer;
 }
@@ -709,7 +1994,7 @@ select:focus-visible {
 select:disabled {
   color: var(--color-text-muted);
   background-color: var(--color-surface);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23856f57' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%237d6650' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   border-color: var(--color-border);
   cursor: not-allowed;
 }
@@ -724,74 +2009,106 @@ select option {
 }
 
 .pub-product-rows {
-  padding: var(--space-3) var(--space-3) var(--space-2);
-  background: var(--color-surface-raised);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  background: rgb(253 250 247 / 0.03);
+  border: 1px solid rgb(253 250 247 / 0.08);
+  border-radius: 12px;
 }
 
 .pub-product-row {
-  padding-bottom: var(--space-2);
-  margin-bottom: var(--space-2);
-  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid rgb(253 250 247 / 0.08);
 }
 
-/* Fila en dos líneas: arriba variedad y presentación; abajo la cantidad con "unidades" y la X a la derecha */
-/* Fila en una línea: variedad, presentación, cantidad con "unidades" y la X (en móvil, en dos líneas) */
+/* Fila en dos líneas: arriba variedad y presentación (anchas, para que la presentación se lea completa) con la X al
+   final; abajo la cantidad con "unidades" */
 .pub-product-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--space-2) var(--space-3);
+  gap: 10px var(--space-2);
+}
+
+.pub-product-remove {
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.pub-product-quantity {
+  grid-row: 2;
+  grid-column: 1 / -1;
 }
 
 .pub-product-choice {
   display: grid;
   /* Variedad con el ancho justo para "Seleccione una variedad"; la presentación con el resto */
-  grid-template-columns: minmax(0, 15.5rem) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
   gap: var(--space-2);
 }
 
 .pub-product-rows select {
-  background-color: var(--color-surface);
-}
-
-.pub-product-rows select:disabled {
-  background-color: var(--color-bg);
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
 }
 
 .pub-product-quantity {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
-}
-
-.pub-product-rows select {
-  padding-top: 0.45rem;
-  padding-bottom: 0.45rem;
+  gap: 4px var(--space-2);
 }
 
 .pub-product-quantity input {
-  width: 6rem;
+  width: 6.5rem;
   margin: 0;
-  padding: 0.45rem 0.55rem;
-  text-align: right;
-  background: var(--color-surface);
+  padding: 0.55rem 0.6rem;
+  text-align: center;
 }
 
 .pub-product-unit {
-  font-size: var(--font-size-sm);
+  font-size: 13px;
   color: var(--color-text-secondary);
+}
+
+/* "Solo números enteros, de 1 a 9999.": texto de ayuda bajo la cantidad, con una "i" en círculo (distinto de los
+   errores, que llevan "!" terracota) */
+.pub-product-hint {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.pub-product-hint::before {
+  content: 'i';
+  content: 'i' / '';
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  font-family: var(--pub-font-italic);
+  font-size: 11px;
+  font-style: italic;
+  color: var(--color-text-muted);
+  border: 1px solid currentColor;
+  border-radius: 50%;
 }
 
 /* Botones secundarios del selector ("X" y "Agregar producto"), más bajos que los de acción principal */
 button.pub-button-secondary {
-  padding: 0.4rem 0.9rem;
-  font-size: var(--font-size-md);
+  padding: 8px 16px;
+  font-size: 11px;
 }
 
-.pub-product-remove {
-  min-width: 2.4rem;
+/* "X" cuadrada, de la misma altura que los selects */
+button.pub-product-remove {
+  align-self: stretch;
+  min-width: 2.6rem;
+  padding: 0 0.75rem;
 }
 
 button.pub-product-remove:hover {
@@ -809,11 +2126,12 @@ button.pub-product-remove:hover {
 }
 
 /* -----------------------------------------------------------------------------------------------------
-   10. Envío (HU-405): privacidad sobre el botón, "Enviando...", error de conexión y agradecimiento
+   11. Envío (HU-405): privacidad sobre el botón, "Enviando...", error de conexión y agradecimiento
    ----------------------------------------------------------------------------------------------------- */
 .pub-privacy {
   margin: 0;
-  font-size: var(--font-size-sm);
+  font-size: 13px;
+  font-style: italic;
   color: var(--color-text-secondary);
   text-align: right;
 }
@@ -825,20 +2143,21 @@ button.pub-product-remove:hover {
 
 button.pub-button:disabled {
   color: var(--color-on-accent);
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--pub-gold);
+  border-color: var(--pub-gold);
+  letter-spacing: 1.5px;
   opacity: 0.75;
   cursor: wait;
 }
 
 .pub-form-success {
-  padding: var(--space-5) var(--space-5);
-  font-size: var(--font-size-lg);
+  padding: var(--space-5);
+  font-size: 15px;
   color: var(--color-success-text);
   background: var(--color-success-bg);
   border: 1px solid var(--color-success);
   border-left-width: 4px;
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
 }
 
 .pub-form-success:focus {
@@ -855,121 +2174,297 @@ button.pub-button:disabled {
 }
 
 /* -----------------------------------------------------------------------------------------------------
-   11. Acomodo por ancho de pantalla: escritorio (≥ 1366 × 768 de referencia), tabletas y móvil (corte en 720 px)
+   12. Acomodo por ancho de pantalla: tabletas (≤ 1024 px) y móvil (corte en 720 px)
    ----------------------------------------------------------------------------------------------------- */
-
-/* OPCIONAL: en escritorio el encabezado queda fijo arriba al desplazar. scroll-padding evita que tape el elemento con
-   el foco o el destino de un enlace. */
-@media (min-width: 721px) {
-  html {
-    scroll-padding-top: 4.5rem;
-  }
-
-  .pub-header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
+@media (max-width: 1024px) {
+  .pub-panel {
+    padding: 28px;
   }
 }
 
-/* Catálogo: 2 columnas en pantallas medianas, 1 en las chicas */
-@media (max-width: 959px) {
-  .pub-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 599px) {
-  .pub-cards {
+/* Contáctenos en tabletas y laptops chicas: si el formulario quedara angosto al lado de los datos, va a todo el
+   ancho y las tres opciones de contacto quedan debajo, en una fila (ícono arriba y texto centrado) */
+@media (max-width: 1280px) {
+  .pub-contact {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  .pub-aside {
+    position: static;
+  }
 }
 
-/* Contáctenos: con menos de unos 900 px el selector de productos vuelve a dos líneas por fila */
-@media (max-width: 899px) {
-  .pub-product-controls {
-    grid-template-columns: minmax(0, 1fr) auto;
+@media (min-width: 721px) and (max-width: 1280px) {
+  .pub-opciones {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .pub-product-choice {
-    grid-column: 1 / -1;
+  .pub-opcion {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 10px;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 24px 12px 20px;
+    text-align: center;
+  }
+
+  .pub-opcion-texto {
+    align-items: center;
+  }
+
+  .pub-opcion-valor {
+    font-size: 13px;
+  }
+
+  .pub-opcion-flecha {
+    position: absolute;
+    top: 12px;
+    right: 12px;
   }
 }
 
 @media (max-width: 720px) {
-  /* Encabezado: logo más chico arriba y el menú en una fila completa debajo, sin desbordarse */
+  :root {
+    --pub-gutter: var(--space-4);
+  }
+
+  /* Encabezado normal (no encima de la portada), solo con el logo centrado: el menú baja a una barra fija abajo */
+  .pub-header {
+    position: static;
+    background: var(--color-bg);
+    border-bottom: 1px solid rgb(197 168 128 / 0.15);
+  }
+
   .pub-header-inner {
-    flex-wrap: wrap;
-    gap: var(--space-1);
-    padding: var(--space-2) var(--space-4);
+    justify-content: center;
+    padding: 14px var(--pub-gutter);
   }
 
-  .logo-bar .logo-escudo {
-    height: 30px;
+  /* Deja lugar a la barra de abajo para que no tape el final del pie */
+  .pub-shell {
+    padding-bottom: calc(66px + env(safe-area-inset-bottom));
   }
 
-  .logo-bar .logo-nombre {
-    height: 18px;
+  .pub-logo-escudo {
+    height: 48px;
   }
 
+  .pub-logo-nombre {
+    height: 20px;
+  }
+
+  .pub-logo-frase {
+    height: 20px;
+  }
+
+  /* Menú como barra fija abajo (como en las apps): tres opciones con ícono y nombre; la actual en dorado, con una
+     rayita arriba. Es el mismo menú del encabezado, movido con CSS. */
   .pub-header nav {
-    width: 100%;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 200;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+    background: rgb(12 8 6 / 0.96);
+    border-top: 1px solid rgb(197 168 128 / 0.22);
+    box-shadow: 0 -8px 24px rgb(0 0 0 / 0.35);
+    backdrop-filter: blur(8px);
   }
 
   .pub-menu {
-    justify-content: space-between;
-    gap: var(--space-3);
+    gap: 0;
+  }
+
+  .pub-menu li {
+    flex: 1;
   }
 
   .pub-menu-link {
-    padding: 0.25rem 0;
-    font-size: var(--font-size-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 0 4px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: rgb(253 250 247 / 0.7);
   }
 
-  /* Margen lateral de 16 px */
+  .pub-menu-link::before {
+    content: '';
+    width: 22px;
+    height: 22px;
+    background-color: currentColor;
+    -webkit-mask: var(--pub-icono-menu) center / contain no-repeat;
+    mask: var(--pub-icono-menu) center / contain no-repeat;
+  }
+
+  .pub-menu li:nth-child(1) .pub-menu-link {
+    --pub-icono-menu: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linejoin='round'%3E%3Cpath d='M3.5 10.5 12 3.5l8.5 7V20.5h-5.5v-6h-6v6H3.5z'/%3E%3C/svg%3E");
+  }
+
+  .pub-menu li:nth-child(2) .pub-menu-link {
+    --pub-icono-menu: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 8h12v4.5A5.5 5.5 0 0 1 10.5 18h-1A5.5 5.5 0 0 1 4 12.5V8zM16 9.5h1.5a2.5 2.5 0 0 1 0 5H16M3 21h15M8.5 2.5v2.5M12 2.5v2.5'/%3E%3C/svg%3E");
+  }
+
+  .pub-menu li:nth-child(3) .pub-menu-link {
+    --pub-icono-menu: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linejoin='round'%3E%3Cpath d='M4 5h16v11H10l-6 4.5z'/%3E%3C/svg%3E");
+  }
+
+  /* Rayita dorada arriba de la opción actual (en lugar del subrayado de escritorio) */
+  .pub-menu-link::after {
+    top: -6px;
+    bottom: auto;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    border-radius: 2px;
+    transform: translateX(-50%);
+  }
+
+  .pub-menu-link:hover::after {
+    width: 0;
+  }
+
+  .pub-menu-link[aria-current='page']::after {
+    width: 28px;
+  }
+
   .pub-main {
-    padding: var(--space-4) var(--space-4) var(--space-5);
+    padding: 36px var(--pub-gutter) 56px;
+  }
+
+  .pub-main-full {
+    padding: 0;
   }
 
   .pub-title {
-    font-size: 1.9rem;
+    font-size: 2rem;
   }
 
+  .pub-page-header {
+    margin-bottom: 32px;
+  }
+
+  .pub-page-lead {
+    font-size: 1.05rem;
+  }
+  /* En el celular el encabezado no va encima: la portada llena lo que queda de la pantalla entre él y la barra */
   .pub-hero {
-    padding: var(--space-3) 0 var(--space-4);
+    min-height: calc(100svh - 170px);
+    padding: 44px var(--pub-gutter) 56px;
+    background:
+      linear-gradient(to bottom, rgb(12 8 6 / 0.82) 0%, rgb(12 8 6 / 0.7) 100%),
+      var(--pub-foto-portada) 70% center / cover no-repeat,
+      var(--color-bg);
   }
 
   .pub-hero .pub-title {
     font-size: 2rem;
   }
 
-  .pub-lead {
-    font-size: var(--font-size-base);
+  .pub-hero .pub-lead {
+    font-size: 1.2rem;
   }
 
-  .pub-heading {
-    font-size: 1.4rem;
+  .pub-actions .pub-button {
+    flex: 1 1 10rem;
   }
 
-  .pub-section {
-    padding-top: var(--space-4);
+  .pub-torn svg {
+    height: 28px;
   }
 
-  .pub-prose-columnas {
-    column-count: 1;
+  .pub-cream {
+    padding: 24px var(--pub-gutter) 48px;
   }
 
-  .pub-prose-columnas > :nth-child(3) {
-    break-before: auto;
+  .pub-cream .pub-heading {
+    font-size: 1.6rem;
+  }
+
+  /* "Quiénes somos": introducción y cita más chicas */
+  .pub-prose-columnas > p:first-child {
+    font-size: 15.5px;
+  }
+  .pub-nosotros .pub-quote {
+    margin: 16px 0 28px;
+    padding: 24px 0 20px;
+    font-size: 1.3rem;
+  }
+
+  /* Banner en una columna: la foto queda abajo y el sello dentro de ella, en la esquina de abajo a la derecha */
+  .pub-banner {
+    flex-direction: column;
+    margin-top: 36px;
+  }
+
+  .pub-banner-text {
+    padding: 24px var(--space-5) 28px;
+  }
+
+  .pub-banner-foto {
+    width: 100%;
+    min-height: 13rem;
+  }
+
+  /* Sello más chico, dentro de la foto en la esquina de abajo a la derecha (arriba tapaba el final del texto) */
+  .pub-sello {
+    top: auto;
+    right: var(--space-3);
+    bottom: var(--space-3);
+    left: auto;
+    width: 104px;
+    height: 104px;
+  }
+
+  /* Bolsa dibujada más chica en el celular */
+  .pub-card-bolsa {
+    width: 82px;
+    height: 124px;
+  }
+
+  .pub-card-bolsa img {
+    height: 30px;
+  }
+
+  .pub-card-body {
+    padding: 20px;
+  }
+
+  /* Opciones de contacto más compactas, para que el correo entre en una línea */
+  .pub-opcion {
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .pub-opcion-icono {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pub-opcion-icono svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .pub-opcion-flecha svg {
+    width: 16px;
+    height: 16px;
   }
 
   /* Contáctenos: una sola columna, con los datos de contacto debajo del formulario */
   .pub-contact {
     grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
   }
 
-  .pub-panel {
-    padding: var(--space-4);
+  .pub-panel,
+  .pub-aside {
+    padding: 24px var(--space-4);
   }
 
   .pub-form-row {
@@ -980,10 +2475,255 @@ button.pub-button:disabled {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* Pie: los tres datos en tres líneas cortas */
+  /* Variedad y presentación a todo el ancho, una debajo de la otra */
+  .pub-product-choice {
+    grid-column: 1 / -1;
+  }
+
+  .pub-panel-form .pub-product-choice {
+    gap: 14px;
+  }
+
+  /* "−" y "+" más grandes para el dedo (al menos 44 px) */
+  .pub-panel-form .pub-stepper input,
+  .pub-panel-form .pub-stepper input:focus-visible {
+    padding-top: 13px;
+    padding-bottom: 13px;
+  }
+
+  .pub-stepper-boton {
+    width: 46px;
+  }
+
+  /* La X, a la altura de la caja de cantidad (debajo de su etiqueta) */
+  .pub-panel-form button.pub-product-remove {
+    align-self: start;
+    margin-top: 22px;
+  }
+
+  /* Con los selects uno debajo del otro, la X baja a la línea de la cantidad */
+  button.pub-product-remove {
+    grid-row: 2;
+    align-self: center;
+    padding: 8px 0.75rem;
+  }
+
+  .pub-product-quantity {
+    grid-column: 1;
+  }
+
+  .pub-aside {
+    position: static;
+  }
+
+  .pub-panel-form .pub-form-row {
+    gap: 0;
+  }
+
+  .pub-panel-form button[type='submit'] {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .pub-send {
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .pub-send-hint {
+    text-align: center;
+  }
+
+  /* Pie: los tres datos uno debajo del otro */
   .pub-footer-inner {
-    flex-direction: column;
-    gap: var(--space-1);
-    padding: var(--space-3) var(--space-4);
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 28px var(--pub-gutter);
+  }
+}
+
+/* Pantallas grandes (≥ 1800 px, como 1920 × 1080 y 2560 × 1440): el contenido un poco más ancho y la portada con
+   títulos más grandes, para que no quede un bloque chico perdido en la pantalla */
+@media (min-width: 1800px) {
+  :root {
+    --pub-ancho: 1280px;
+  }
+
+  .pub-logo-escudo {
+    height: 72px;
+  }
+
+  .pub-logo-nombre {
+    height: 30px;
+  }
+
+  .pub-logo-frase {
+    height: 30px;
+  }
+
+  .pub-menu-link {
+    font-size: 15px;
+  }
+
+  .pub-hero-content {
+    max-width: 980px;
+  }
+
+  .pub-hero .pub-title {
+    font-size: 4rem;
+  }
+
+  .pub-hero .pub-lead {
+    max-width: 780px;
+    font-size: 1.8rem;
+  }
+
+  .pub-hero-line {
+    max-width: 780px;
+  }
+
+  .pub-hero .pub-button {
+    padding: 15px 34px;
+    font-size: 13px;
+  }
+
+  .pub-page-header .pub-title {
+    font-size: 3.4rem;
+  }
+
+  .pub-page-lead {
+    max-width: 40rem;
+    font-size: 1.35rem;
+  }
+
+  .pub-nosotros {
+    max-width: 56rem;
+  }
+
+  .pub-prose {
+    font-size: 16px;
+  }
+
+  /* Tarjetas del catálogo más anchas: texto un poco más grande para que llene la tarjeta sin dejar un hueco entre la
+     descripción y el selector */
+  .pub-card-body {
+    gap: 14px;
+    padding: 30px;
+  }
+
+  .pub-card-name {
+    font-size: 1.65rem;
+  }
+
+  .pub-card-description {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .pub-card-field label {
+    font-size: 11px;
+  }
+
+  .pub-card-field select,
+  .pub-card-button {
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 2400px) {
+  .pub-hero .pub-title {
+    font-size: 4.6rem;
+  }
+
+  .pub-hero .pub-lead {
+    font-size: 2rem;
+  }
+}
+
+/* Tabletas y celulares (≤ 1024 px): la tarjeta en versión compacta. La foto a la izquierda junto al nombre y la
+   descripción, y debajo, a todo el ancho, el selector y "Me interesa". Dos por fila en tabletas (≥ 700 px) y una en
+   celulares. La tarjeta queda corta, sin huecos, y la foto sigue llenando su espacio. */
+@media (max-width: 1024px) {
+  .pub-cards {
+    --pub-cards-gap: 24px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pub-card {
+    display: grid;
+    grid-template-columns: 38% minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+  }
+
+  /* Los hijos del cuerpo (nombre, descripción, acciones) pasan a ser celdas de la tarjeta */
+  .pub-card-body {
+    display: contents;
+  }
+
+  .pub-card-foto {
+    grid-row: 1 / 3;
+    grid-column: 1;
+    min-height: 0;
+  }
+
+  .pub-card-name {
+    grid-row: 1;
+    grid-column: 2;
+    padding: 16px 16px 0;
+    font-size: 1.2rem;
+  }
+
+  .pub-card-description {
+    grid-row: 2;
+    grid-column: 2;
+    margin: 8px 0 0;
+    padding: 0 16px 14px;
+    font-size: 12.5px;
+  }
+
+  .pub-card-actions {
+    grid-row: 3;
+    grid-column: 1 / -1;
+    padding: 14px 16px 16px;
+  }
+}
+
+@media (max-width: 699px) {
+  .pub-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Celulares angostos (≤ 400 px): títulos un poco más chicos para que no ocupen media pantalla */
+@media (max-width: 400px) {
+  .pub-hero .pub-title {
+    font-size: 1.75rem;
+  }
+
+  .pub-title,
+  .pub-page-header .pub-title {
+    font-size: 1.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pub-main,
+  .pub-hero-content,
+  .pub-sello {
+    animation: none;
+  }
+
+  .pub-card,
+  .pub-button,
+  .pub-menu-link,
+  .pub-menu-link::after {
+    transition: none;
+  }
+
+  .pub-card:hover,
+  .pub-card-button:hover,
+  .pub-opcion:hover,
+  .pub-opcion:hover .pub-opcion-flecha {
+    transform: none;
   }
 }

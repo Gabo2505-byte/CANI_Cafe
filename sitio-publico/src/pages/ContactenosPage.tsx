@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router';
 import { listPublicProductsIn } from '../../../src/products/publicCatalog';
 import type { Product } from '../../../src/shared/types';
 import { ConsultaForm } from '../components/ConsultaForm';
-import { DatosContacto } from '../components/DatosContacto';
+import { OpcionesContacto } from '../components/OpcionesContacto';
 import type { EstadoProductos } from '../components/ProductosField';
 import { usePageTitle } from '../components/usePageTitle';
 import { CONTACTENOS, TITULOS_PESTANA } from '../contenido';
@@ -37,9 +37,12 @@ export function ContactenosPage() {
 
   return (
     <main className="pub-main">
-      <h1 className="pub-title">{CONTACTENOS.titulo}</h1>
+      <div className="pub-page-header">
+        <h1 className="pub-title">{CONTACTENOS.titulo}</h1>
+        <span className="pub-divider" aria-hidden="true" />
+      </div>
       <div className="pub-contact">
-        <section className="pub-panel">
+        <section className="pub-panel pub-panel-form">
           <ConsultaForm
             productos={productos}
             estadoProductos={estado}
@@ -53,7 +56,7 @@ export function ContactenosPage() {
           <h2 id="pub-datos-titulo" className="pub-heading">
             {CONTACTENOS.datos}
           </h2>
-          <DatosContacto className="pub-contact-list" />
+          <OpcionesContacto />
         </aside>
       </div>
     </main>
