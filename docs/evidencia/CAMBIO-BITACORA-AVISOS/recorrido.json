@@ -82,5 +82,53 @@
     "texto": "A 390 px la pestaña de avisos no desborda la página (como antes)",
     "resultado": "OK",
     "detalle": "documento 375 px"
+  },
+  {
+    "paso": "14-contacto-abierto-antes-de-tocar-la-pestana.png",
+    "texto": "Abrir la bitácora de Ana con el filtro \"Comunicaciones\" desde la URL: no se mueve el foco",
+    "resultado": "OK",
+    "detalle": "foco en <body>; URL /avisos?vista=bitacora&contacto=contact-001&tipo=comunicaciones; scroll 400"
+  },
+  {
+    "paso": "15-pestana-bitacora-vuelve-a-la-lista-con-foco.png",
+    "texto": "Tocar la pestaña \"Bitácora\" con el contacto abierto vuelve a la lista: URL sin contacto ni filtro, buscador vacío y con el foco, página arriba",
+    "resultado": "OK",
+    "detalle": "URL /avisos?vista=bitacora; foco <input type=search> contorno solid 2px sombra \"none\"; valor \"\"; 5 contactos; scroll 400 -> 0"
+  },
+  {
+    "paso": "(sin captura)",
+    "texto": "Tocar la pestaña \"Bitácora\" estando en la lista (con \"bruno\" escrito) no cambia nada",
+    "resultado": "OK",
+    "detalle": "URL /avisos?vista=bitacora; buscador \"bruno\"; filas: Bruno Ficticio Solís"
+  },
+  {
+    "paso": "16-contacto-elegido-con-foco-en-el-titulo.png",
+    "texto": "Elegir un contacto con Enter: el foco pasa al título de su bitácora y la página vuelve arriba",
+    "resultado": "OK",
+    "detalle": "URL /avisos?vista=bitacora&contacto=contact-002; foco <h2 id=timeline-contact-name> \"Bruno Ficticio Solís\" contorno solid 2px; scroll 400 -> 0"
+  },
+  {
+    "paso": "(sin captura)",
+    "texto": "\"Atrás\" del navegador desde el contacto vuelve a la lista",
+    "resultado": "OK",
+    "detalle": "URL /avisos?vista=bitacora; 5 contactos"
+  },
+  {
+    "paso": "(sin captura)",
+    "texto": "\"Adelante\" vuelve al contacto",
+    "resultado": "OK",
+    "detalle": "URL /avisos?vista=bitacora&contacto=contact-002"
+  },
+  {
+    "paso": "(sin captura)",
+    "texto": "Del contacto al detalle de una oportunidad y \"atrás\" vuelve al mismo contacto",
+    "resultado": "OK",
+    "detalle": "/avisos?vista=bitacora&contacto=contact-002 -> /posibles-ventas/sale-003 -> /avisos?vista=bitacora&contacto=contact-002"
+  },
+  {
+    "paso": "17-menu-avisos-desde-la-bitacora.png",
+    "texto": "\"Avisos\" del menú, estando en la bitácora con un contacto, abre la tabla de avisos pendientes (HU-316)",
+    "resultado": "OK",
+    "detalle": "URL /avisos; pestañas Avisos pendientes:true, Bitácora:false; 5 avisos"
   }
 ]

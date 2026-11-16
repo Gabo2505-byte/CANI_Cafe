@@ -246,5 +246,52 @@
     "anchoVentana": 390,
     "anchoDocumento": 375,
     "desbordaHorizontal": false
+  },
+  {
+    "archivo": "15-pestana-bitacora-vuelve-a-la-lista-con-foco.png",
+    "ruta": "/avisos?vista=bitacora",
+    "foco": {
+      "tag": "input",
+      "id": "",
+      "type": "search",
+      "texto": "",
+      "valor": "",
+      "contorno": "solid 2px",
+      "sombra": "none"
+    },
+    "buscador": "",
+    "contactos": [
+      "Ana Prueba Mora",
+      "Bruno Ficticio Solís",
+      "Carla Demo Vargas",
+      "Diego Ejemplo Rojas",
+      "Elena Muestra Castro"
+    ],
+    "scrollAntes": 400,
+    "scrollDespues": 0
+  },
+  {
+    "archivo": "16-contacto-elegido-con-foco-en-el-titulo.png",
+    "ruta": "/avisos?vista=bitacora&contacto=contact-002",
+    "foco": {
+      "tag": "h2",
+      "id": "timeline-contact-name",
+      "type": null,
+      "texto": "Bruno Ficticio Solís",
+      "valor": null,
+      "contorno": "solid 2px",
+      "sombra": "none"
+    },
+    "scrollAntes": 400,
+    "scrollDespues": 0
+  },
+  {
+    "archivo": "17-menu-avisos-desde-la-bitacora.png",
+    "ruta": "/avisos",
+    "pestañas": [
+      "Avisos pendientes:true",
+      "Bitácora:false"
+    ],
+    "filasDeAvisos": 5
   }
 ]

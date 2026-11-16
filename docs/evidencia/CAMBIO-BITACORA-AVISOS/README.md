@@ -41,6 +41,17 @@ Antes la pestaña "Bitácora" solo mostraba el buscador y había que escribir pa
 
 **Archivos de este cambio:** `src/sales/ContactTimeline.tsx`, `src/sales/AlertsPage.tsx` (nueva función para volver a la lista), `src/sales/timeline.ts` (el texto "Cambiar contacto"), `src/styles.css` (foco visible y altura mínima de la fila) y `tests/components/AlertsTimeline.test.tsx`. No se tocó la pestaña "Avisos pendientes", reglas, índices, el cambio de etapa, el tablero, `formRequests`, `sitio-publico/`, `src/contacts`, `src/communications` ni `src/auth`.
 
+## Cambio 3: navegación de la pestaña "Bitácora" (2026-11-15)
+
+- **Tocar la pestaña "Bitácora" con un contacto abierto vuelve a la lista**, igual que "Cambiar contacto": se quitan de la URL el contacto y el filtro (queda `/avisos?vista=bitacora`). Es una entrada nueva en el historial, así que "Atrás" vuelve al contacto. Si ya se está en la lista, no pasa nada (no se borra lo escrito en el buscador).
+- **Foco y scroll.** Al volver a la lista (con la pestaña, con "Cambiar contacto" o con "Atrás"), el buscador queda vacío y con el foco; al elegir un contacto, el foco pasa al título de su bitácora (`h2`, con `tabIndex=-1`, no entra en el orden de Tab). En ambos casos la página vuelve arriba. Al abrir la pantalla con el contacto ya en la URL (enlace guardado o "Atrás" desde un detalle de otra pantalla) no se mueve el foco: solo se actúa cuando cambia el contacto estando en la pantalla.
+- **"Avisos" del menú lateral desde la bitácora** ya abría la tabla de avisos pendientes (HU-316): el enlace va a `/avisos` sin parámetros, que es la pestaña "Avisos pendientes". **No se cambió nada**; solo se agregó la prueba y el recorrido.
+- **"Atrás" del navegador** ya funcionaba entre lista, contacto elegido y detalle de oportunidad; no se cambió, se agregó la prueba y el recorrido.
+
+**Textos nuevos:** ninguno.
+
+**Archivos:** `src/sales/AlertsPage.tsx` (`showTab`: tocar la pestaña activa con contacto abierto llama a `clearContact`), `src/sales/ContactTimeline.tsx` (foco, scroll y reinicio del buscador al cambiar de contacto) y `tests/components/AlertsTimeline.test.tsx`. No se tocó la pestaña "Avisos pendientes", reglas, índices, cambio de etapa, tablero, `formRequests`, `sitio-publico/`, `src/contacts`, `src/communications` ni `src/auth`.
+
 ## Qué cambió
 
 | Archivo | Cambio |
@@ -133,7 +144,7 @@ Con el tope de 100, el máximo por contacto es de 101 comunicaciones, más las o
 
 ## Capturas (datos del seed, usuario `admin`, Microsoft Edge)
 
-Escritorio a 1366 × 768 y móvil a 390 × 844, contra los emuladores después de `npm run seed`. Las capturas se rehicieron con el cambio 2 (las anteriores se reemplazaron). Los datos medidos en el navegador están en [verificacion.json](verificacion.json): encabezados y filas de la tabla, pestañas, contactos de la lista, conteo, texto de cada evento, contorno de foco, altura de las filas, ruta, ancho de la ventana y del documento, y si hay desborde. Los 14 pasos con su resultado están en [recorrido.json](recorrido.json).
+Escritorio a 1366 × 768 y móvil a 390 × 844, contra los emuladores después de `npm run seed`. Las capturas se rehicieron con el cambio 2 (las anteriores se reemplazaron). Los datos medidos en el navegador están en [verificacion.json](verificacion.json): encabezados y filas de la tabla, pestañas, contactos de la lista, conteo, texto de cada evento, contorno de foco, altura de las filas, ruta, ancho de la ventana y del documento, y si hay desborde. Los pasos con su resultado están en [recorrido.json](recorrido.json) (14 del cambio 2 y 8 del cambio 3).
 
 | Captura | Qué se ve |
 |---|---|
@@ -150,6 +161,10 @@ Escritorio a 1366 × 768 y móvil a 390 × 844, contra los emuladores después d
 | [11](11-movil-390-lista-filtrada.png) | 390 px: lista filtrada por "ana" |
 | [12](12-movil-390-contacto-elegido.png) | 390 px: contacto elegido con "Cambiar contacto" |
 | [13](13-movil-390-avisos-pendientes.png) | 390 px: la pestaña de avisos no desborda la página; la tabla se desplaza dentro de su recuadro, como antes |
+| [14](14-contacto-abierto-antes-de-tocar-la-pestana.png) | Cambio 3: bitácora de Ana abierta desde la URL con el filtro "Comunicaciones" (antes de tocar la pestaña) |
+| [15](15-pestana-bitacora-vuelve-a-la-lista-con-foco.png) | Cambio 3: tras tocar la pestaña "Bitácora" se ve la lista, el buscador vacío y con el contorno dorado del foco |
+| [16](16-contacto-elegido-con-foco-en-el-titulo.png) | Cambio 3: tras elegir a Bruno con Enter, el foco (contorno dorado) está en el título de su bitácora |
+| [17](17-menu-avisos-desde-la-bitacora.png) | Cambio 3: "Avisos" del menú desde la bitácora con un contacto abierto: tabla de avisos pendientes |
 
 **Detalle de los datos del seed:** la comunicación de formulario web de Ana (`comm-006`) es anterior a HU-502. Tiene medio "Otro: Formulario del sitio web" y hora 00:00, así que se ve "12/10/2026 12:00 a. m. · Otro: Formulario del sitio web". Las que crea el procesador del formulario tienen medio "Formulario web" y la hora real del envío; ese caso lo cubren las pruebas unitarias y de componente.
 
@@ -173,19 +188,31 @@ Contra emuladores con `npm run seed` y sesión como `admin`. El recorrido no mod
 | 12 | 390 px, lista filtrada | ✅ Sin desborde ([11](11-movil-390-lista-filtrada.png)) |
 | 13 | 390 px, contacto elegido | ✅ Sin desborde ([12](12-movil-390-contacto-elegido.png)) |
 | 14 | 390 px, pestaña "Avisos pendientes" | ✅ La página no desborda; la tabla se desplaza dentro de su recuadro ([13](13-movil-390-avisos-pendientes.png)) |
+| 15 | Cambio 3: abrir `/avisos?vista=bitacora&contacto=contact-001&tipo=comunicaciones`, bajar la página 400 px | ✅ Bitácora de Ana; el foco sigue en `body` ([14](14-contacto-abierto-antes-de-tocar-la-pestana.png)) |
+| 16 | Tocar la pestaña "Bitácora" (ya activa) | ✅ Vuelve la lista de 5 contactos; URL `/avisos?vista=bitacora`; buscador vacío y con el foco (contorno sólido de 2 px); página arriba (scroll 400 → 0) ([15](15-pestana-bitacora-vuelve-a-la-lista-con-foco.png)) |
+| 17 | Escribir "bruno" y tocar otra vez la pestaña (ya en la lista) | ✅ No cambia nada: la URL es la misma, el buscador conserva "bruno" y sigue 1 fila |
+| 18 | Bajar la página, enfocar la fila y Enter | ✅ Abre la bitácora de Bruno; el foco está en su título (contorno de 2 px); scroll 400 → 0 ([16](16-contacto-elegido-con-foco-en-el-titulo.png)) |
+| 19 | "Atrás" del navegador | ✅ Vuelve a la lista (`/avisos?vista=bitacora`, 5 contactos) |
+| 20 | "Adelante" | ✅ Vuelve al contacto (`...&contacto=contact-002`) |
+| 21 | Clic en una oportunidad del contacto y "atrás" | ✅ Abre `/posibles-ventas/sale-003`; "atrás" vuelve al mismo contacto |
+| 22 | "Avisos" del menú lateral con un contacto abierto | ✅ Abre `/avisos` en "Avisos pendientes" con la tabla de 5 avisos ([17](17-menu-avisos-desde-la-bitacora.png)). Ya funcionaba; no se cambió |
+
+Nota del cambio 3: para que hubiera algo que desplazar, el script agrega `min-height: 2000px` al `body` antes de bajar la página (las pantallas del seed caben en 768 px). El scroll de los pasos 16 y 18 es el de esa página alargada.
 
 ## Pruebas
 
 - `npm run typecheck`: sin errores.
-- `npm test`: 1111/1111 (1071 anteriores + 40 nuevas: 32 de la bitácora y 8 del cambio 2). `tests/components/Alerts.test.tsx` y `tests/unit/alerts.test.ts` pasan **sin cambios**.
-- `npm run test:emulators`: 313/313 (303 anteriores + 10 nuevas). `tests/sales/alerts.emulator.test.ts` pasa sin cambios.
-- `npm run build:todo`: correcto. El JS y el CSS del sitio público tienen el mismo SHA-256 que los de `main` compilado en ese momento (`index-CSHMWcP8.js` e `index-DjGTDoei.css`).
-- Recorrido en el navegador: 14/14 pasos correctos.
+- `npm test`: 1119/1119 (1111 anteriores + 8 nuevas del cambio 3, en `tests/components/AlertsTimeline.test.tsx`: 30 pruebas en ese archivo). `tests/components/Alerts.test.tsx` y `tests/unit/alerts.test.ts` pasan **sin cambios**.
+- `npm run test:emulators`: en verde (sin pruebas nuevas en este cambio; las 10 de la bitácora siguen pasando). `tests/sales/alerts.emulator.test.ts` pasa sin cambios.
+- `npm run build:todo`: correcto. El JS y el CSS del sitio público tienen el mismo SHA-256 que los de `main` compilado en ese momento (`index-CSHMWcP8.js` e `index-DjGTDoei.css`); se comprobó de nuevo en el cambio 3.
+- Recorrido en el navegador: 22/22 pasos correctos (14 + 8 del cambio 3).
 
 | Archivo | Pruebas | Qué prueba |
 |---|---|---|
 | `tests/unit/timeline.test.ts` (nuevo) | 18 | Orden combinado; comunicación del mismo día frente a un cambio de etapa (hora de registro); comunicación registrada días después (día indicado); hora exacta del formulario web; empates y que el resultado no depende del orden de entrada; la entrada inicial como creación; motivo de pérdida, también vacío ("Sin motivo registrado"); oportunidad desconocida ("—"); comunicación con oportunidad, para todas o sin ninguna; medio "Otro: …"; origen del formulario web con hora; que no aparece el usuario; tope y aviso de que hay más; sin datos; filtro; filtro leído de la URL. |
 | `tests/components/AlertsTimeline.test.tsx` (nuevo) | 22 | Al abrir se ve "Avisos pendientes" y no se cargan contactos; cambiar de pestaña con clic y con flechas; URL. **Cambio 2:** la lista de contactos (activos e inactivos, con correo y teléfono) al abrir, etiqueta del formulario primero, paginación de 20 en 20, lista vacía, tocar una fila, Enter y Espacio, "Cambiar contacto" y abrir con la URL guardada. Buscar por nombre sin tildes, por correo y por teléfono con guion; sin coincidencias y volver a la lista al borrar; error al cargar contactos; elegir un contacto y ver su línea de tiempo en orden, sin "Registrado por"; enlaces al detalle y a la ficha; filtro con sus tres opciones y la URL; contacto sin eventos; filtro sin resultados; aviso de tope; error al cargar la bitácora. |
+**Cambio 3 (8 pruebas nuevas en `AlertsTimeline.test.tsx`):** tocar la pestaña con contacto abierto vuelve a la lista y quita contacto y filtro; tocarla en la lista no cambia nada (conserva el texto buscado); al volver, el buscador queda vacío, con el foco y con `scrollTo(0, 0)`; "Cambiar contacto" hace lo mismo; al elegir un contacto el foco pasa al título y se sube la página; con el contacto ya en la URL no se mueve el foco; "Avisos" del menú desde la bitácora abre la tabla; "Atrás" recorre lista, contacto y detalle de oportunidad.
+
 | `tests/sales/timeline.emulator.test.ts` (nuevo) | 10 | Con los datos del seed y las reglas del repo: contactos para el buscador, la línea de tiempo exacta de Ana (formulario web, pérdida con motivo, creación), Bruno con tres oportunidades, Carla, Elena, Diego sin eventos, un id que no existe, el tope, que sin sesión las reglas niegan la lectura, y que los dos índices compuestos que usan las consultas están en `firestore.indexes.json`. |
 
 ## Lo que no se probó
