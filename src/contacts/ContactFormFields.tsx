@@ -51,7 +51,7 @@ interface ContactFormFieldsProps {
   duplicates: ContactDuplicates;
 }
 
-/** Nombre, correo, teléfono con país y dirección, con sus contadores y mensajes. */
+/** Nombre, teléfono con país, correo y dirección, con sus contadores y mensajes. */
 export function ContactFormFields({ values, onChange, errors, duplicates }: ContactFormFieldsProps) {
   const set = (field: keyof ContactFormValues) => (event: { target: { value: string } }) =>
     onChange((prev) => ({ ...prev, [field]: event.target.value }));
@@ -74,9 +74,22 @@ export function ContactFormFields({ values, onChange, errors, duplicates }: Cont
       <CharCounter id="fullName-count" length={values.fullName.length} max={CONTACT_LIMITS.fullName} />
       <FieldError id="fullName-error" message={errors.fullName} />
 
+      {/* El cliente trabaja sobre todo con teléfonos: el teléfono va antes del correo (CAMBIO-TELEFONO-PRIMERO). */}
       <p className="form-hint" id="contact-method-hint">
         Ingrese al menos uno: correo electrónico o teléfono.
       </p>
+      <label htmlFor="phone">Teléfono</label>
+      <PhoneField
+        id="phone"
+        country={values.phoneCountry}
+        number={values.phone}
+        onCountryChange={(phoneCountry) => onChange((prev) => ({ ...prev, phoneCountry }))}
+        onNumberChange={(phone) => onChange((prev) => ({ ...prev, phone }))}
+        invalid={Boolean(errors.emailOrPhone || errors.phone)}
+        describedBy={errors.phone ? 'phone-error' : 'contact-method-hint'}
+      />
+      <FieldError id="phone-error" message={errors.phone} duplicateOf={duplicates.phone} />
+
       <label htmlFor="email">Correo electrónico</label>
       <input
         id="email"
@@ -91,18 +104,6 @@ export function ContactFormFields({ values, onChange, errors, duplicates }: Cont
       />
       <CharCounter id="email-count" length={values.email.length} max={CONTACT_LIMITS.email} />
       <FieldError id="email-error" message={errors.email} duplicateOf={duplicates.email} />
-
-      <label htmlFor="phone">Teléfono</label>
-      <PhoneField
-        id="phone"
-        country={values.phoneCountry}
-        number={values.phone}
-        onCountryChange={(phoneCountry) => onChange((prev) => ({ ...prev, phoneCountry }))}
-        onNumberChange={(phone) => onChange((prev) => ({ ...prev, phone }))}
-        invalid={Boolean(errors.emailOrPhone || errors.phone)}
-        describedBy={errors.phone ? 'phone-error' : 'contact-method-hint'}
-      />
-      <FieldError id="phone-error" message={errors.phone} duplicateOf={duplicates.phone} />
       <FieldError id="emailOrPhone-error" message={errors.emailOrPhone} />
 
       <label htmlFor="address">

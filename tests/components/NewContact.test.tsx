@@ -102,6 +102,23 @@ describe('HU-201 Registrar un nuevo contacto', () => {
     expect(field('Dirección')).toBeTruthy();
   });
 
+  it('CAMBIO-TELEFONO-PRIMERO: el aviso "correo o teléfono" va justo encima del teléfono, y el teléfono antes del correo', () => {
+    renderAt('/contactos/nuevo');
+    const form = document.querySelector('form')!;
+    const hint = screen.getByText('Ingrese al menos uno: correo electrónico o teléfono.');
+    const country = screen.getByRole('button', { name: /^País del teléfono/ });
+    const follows = (a: Node, b: Node) => Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+    // Nombre → aviso → país → número → correo → dirección.
+    expect(follows(field('Nombre completo'), hint)).toBe(true);
+    expect(follows(hint, country)).toBe(true);
+    expect(follows(country, field('Teléfono'))).toBe(true);
+    expect(follows(field('Teléfono'), field('Correo electrónico'))).toBe(true);
+    expect(within(form).getAllByRole('textbox').map((el) => el.id)).toEqual(['fullName', 'phone', 'email', 'address']);
+    // Entre el aviso y el teléfono no hay otro campo: lo siguiente al aviso es la etiqueta "Teléfono".
+    expect(hint.nextElementSibling?.textContent).toBe('Teléfono');
+    expect(hint.nextElementSibling?.getAttribute('for')).toBe('phone');
+  });
+
   it('el nombre completo es obligatorio', async () => {
     const user = userEvent.setup();
     renderAt('/contactos/nuevo');

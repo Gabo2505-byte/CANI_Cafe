@@ -107,8 +107,25 @@ describe('HU-210 Editar un contacto', () => {
     expect(within(form).queryByLabelText(/Clasificación/)).toBeNull();
     expect(within(form).queryByLabelText(/Origen/)).toBeNull();
     expect(within(form).queryByLabelText(/Fecha de registro/)).toBeNull();
-    // Solo nombre, correo, teléfono y dirección (más el botón del país del teléfono).
-    expect(within(form).getAllByRole('textbox').map((el) => el.id)).toEqual(['fullName', 'email', 'phone', 'address']);
+    // Solo nombre, teléfono, correo y dirección (más el botón del país del teléfono).
+    expect(within(form).getAllByRole('textbox').map((el) => el.id)).toEqual(['fullName', 'phone', 'email', 'address']);
+  });
+
+  it('CAMBIO-TELEFONO-PRIMERO: el aviso "correo o teléfono" va justo encima del teléfono, y el teléfono antes del correo', async () => {
+    await openEditFromDetail(userEvent.setup());
+    const form = document.querySelector('form')!;
+    const hint = screen.getByText('Ingrese al menos uno: correo electrónico o teléfono.');
+    const country = screen.getByRole('button', { name: /^País del teléfono/ });
+    const follows = (a: Node, b: Node) => Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+    // Nombre → aviso → país → número → correo → dirección.
+    expect(follows(field('Nombre completo'), hint)).toBe(true);
+    expect(follows(hint, country)).toBe(true);
+    expect(follows(country, field('Teléfono'))).toBe(true);
+    expect(follows(field('Teléfono'), field('Correo electrónico'))).toBe(true);
+    expect(within(form).getAllByRole('textbox').map((el) => el.id)).toEqual(['fullName', 'phone', 'email', 'address']);
+    // Entre el aviso y el teléfono no hay otro campo: lo siguiente al aviso es la etiqueta "Teléfono".
+    expect(hint.nextElementSibling?.textContent).toBe('Teléfono');
+    expect(hint.nextElementSibling?.getAttribute('for')).toBe('phone');
   });
 
   it('criterio 2 y 5: se cambian nombre, correo, teléfono con su país y dirección; al guardar vuelve a la ficha con el mensaje', async () => {

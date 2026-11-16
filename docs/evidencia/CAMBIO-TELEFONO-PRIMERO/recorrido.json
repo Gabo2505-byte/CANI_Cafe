@@ -1,0 +1,174 @@
+[
+  {
+    "paso": 1,
+    "texto": "Ingreso con el usuario admin",
+    "resultado": "OK",
+    "detalle": "/contactos"
+  },
+  {
+    "paso": 2,
+    "texto": "Nuevo contacto: nombre, aviso, Teléfono, Correo electrónico y Dirección, en ese orden",
+    "resultado": "OK",
+    "detalle": "etiqueta: Nombre completo * | aviso: Ingrese al menos uno: correo electrónico o teléfono. | etiqueta: Teléfono | etiqueta: Correo electrónico | etiqueta: Dirección (opcional)"
+  },
+  {
+    "paso": 3,
+    "texto": "Nuevo contacto: el aviso está arriba del teléfono y el teléfono arriba del correo (posición en pantalla)",
+    "resultado": "OK",
+    "detalle": {
+      "aviso": 274.96875,
+      "pais": 332.15625,
+      "telefono": 332.15625,
+      "correo": 412.546875,
+      "direccion": 518.515625
+    }
+  },
+  {
+    "paso": 4,
+    "texto": "Nuevo contacto: el selector de país viene en Costa Rica (+506), junto al teléfono",
+    "resultado": "OK",
+    "detalle": "CR (+506)▾"
+  },
+  {
+    "paso": 5,
+    "texto": "Nuevo contacto sin correo ni teléfono: mismo mensaje de siempre, debajo del bloque de teléfono y correo",
+    "resultado": "OK",
+    "detalle": "Ingrese un correo electrónico o un teléfono. | etiqueta: Nombre completo * | aviso: Ingrese al menos uno: correo electrónico o teléfono. | etiqueta: Teléfono | etiqueta: Correo electrónico | error: Ingrese un correo electrónico o un teléfono. | etiqueta: Dirección (opcional)"
+  },
+  {
+    "paso": 6,
+    "texto": "Nuevo contacto sin correo ni teléfono: se queda en el formulario",
+    "resultado": "OK",
+    "detalle": "/contactos/nuevo"
+  },
+  {
+    "paso": 7,
+    "texto": "Editar contacto: el mismo orden (aviso, Teléfono, Correo electrónico)",
+    "resultado": "OK",
+    "detalle": "etiqueta: Nombre completo * | aviso: Ingrese al menos uno: correo electrónico o teléfono. | etiqueta: Teléfono | etiqueta: Correo electrónico | etiqueta: Dirección (opcional)"
+  },
+  {
+    "paso": 8,
+    "texto": "Editar contacto: carga los datos actuales de Bruno",
+    "resultado": "OK",
+    "detalle": {
+      "nombre": "Bruno Ficticio Solís",
+      "telefono": "00000002",
+      "correo": "bruno.ficticio@example.com"
+    }
+  },
+  {
+    "paso": 9,
+    "texto": "Nueva oportunidad: texto de ayuda nuevo del campo Contacto",
+    "resultado": "OK",
+    "detalle": "Escriba al menos 2 caracteres del nombre, correo o teléfono"
+  },
+  {
+    "paso": 10,
+    "texto": "Buscar por nombre \"ca\": Carla (solo correo) muestra solo el correo y Elena (solo teléfono) solo el teléfono",
+    "resultado": "OK",
+    "detalle": [
+      {
+        "nombre": "Carla Demo Vargas",
+        "lineaSecundaria": "carla.demo@example.com"
+      },
+      {
+        "nombre": "Elena Muestra Castro",
+        "lineaSecundaria": "+506 0000-0005"
+      }
+    ]
+  },
+  {
+    "paso": 11,
+    "texto": "Buscar por nombre \"bruno\": con los dos datos, primero el teléfono y después el correo",
+    "resultado": "OK",
+    "detalle": [
+      {
+        "nombre": "Bruno Ficticio Solís",
+        "lineaSecundaria": "+506 0000-0002 · bruno.ficticio@example.com"
+      }
+    ]
+  },
+  {
+    "paso": 12,
+    "texto": "Buscar por teléfono \"0000-0005\": aparece solo Elena (sin correo) con su teléfono",
+    "resultado": "OK",
+    "detalle": [
+      {
+        "nombre": "Elena Muestra Castro",
+        "lineaSecundaria": "+506 0000-0005"
+      }
+    ]
+  },
+  {
+    "paso": 13,
+    "texto": "Buscar con el código del país \"+506 0000-0001\": aparece solo Ana",
+    "resultado": "OK",
+    "detalle": [
+      {
+        "nombre": "Ana Prueba Mora",
+        "lineaSecundaria": "+506 0000-0001 · ana.prueba@example.com"
+      }
+    ]
+  },
+  {
+    "paso": 14,
+    "texto": "Buscar \"+1 305\" (teléfono de Diego, contacto INACTIVO): no se ofrece, \"No se encontraron contactos.\"",
+    "resultado": "OK",
+    "detalle": {
+      "opciones": [],
+      "mensaje": "No se encontraron contactos."
+    }
+  },
+  {
+    "paso": 15,
+    "texto": "Buscar un número de nadie \"7777\": \"No se encontraron contactos.\"",
+    "resultado": "OK",
+    "detalle": "No se encontraron contactos."
+  },
+  {
+    "paso": 16,
+    "texto": "Buscar \"00000005\" y elegir con Enter: el campo queda con \"Elena Muestra Castro\"",
+    "resultado": "OK",
+    "detalle": "Elena Muestra Castro"
+  },
+  {
+    "paso": 17,
+    "texto": "390 px, Nuevo contacto: mismo orden y sin desborde horizontal",
+    "resultado": "OK",
+    "detalle": {
+      "orden": [
+        "etiqueta: Nombre completo *",
+        "aviso: Ingrese al menos uno: correo electrónico o teléfono.",
+        "etiqueta: Teléfono",
+        "etiqueta: Correo electrónico",
+        "etiqueta: Dirección (opcional)"
+      ],
+      "desborda": false
+    }
+  },
+  {
+    "paso": 18,
+    "texto": "390 px, Nueva oportunidad buscando \"0000\": la lista y las líneas de teléfono y correo caben, sin desborde",
+    "resultado": "OK",
+    "detalle": {
+      "opciones": [
+        {
+          "nombre": "Ana Prueba Mora",
+          "lineaSecundaria": "+506 0000-0001 · ana.prueba@example.com"
+        },
+        {
+          "nombre": "Bruno Ficticio Solís",
+          "lineaSecundaria": "+506 0000-0002 · bruno.ficticio@example.com"
+        },
+        {
+          "nombre": "Elena Muestra Castro",
+          "lineaSecundaria": "+506 0000-0005"
+        }
+      ],
+      "listaCabe": true,
+      "lineasCaben": true,
+      "desborda": false
+    }
+  }
+]

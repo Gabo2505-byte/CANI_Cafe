@@ -1,0 +1,173 @@
+[
+  {
+    "archivo": "01-nuevo-contacto.png",
+    "ruta": "/contactos/nuevo",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "pantalla": "nuevo-contacto",
+    "orden": [
+      "etiqueta: Nombre completo *",
+      "aviso: Ingrese al menos uno: correo electrónico o teléfono.",
+      "etiqueta: Teléfono",
+      "etiqueta: Correo electrónico",
+      "etiqueta: Dirección (opcional)"
+    ],
+    "posiciones": {
+      "aviso": 274.96875,
+      "pais": 332.15625,
+      "telefono": 332.15625,
+      "correo": 412.546875,
+      "direccion": 518.515625
+    },
+    "pais": "CR (+506)▾"
+  },
+  {
+    "archivo": "02-nuevo-contacto-error-correo-o-telefono.png",
+    "ruta": "/contactos/nuevo",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "pantalla": "nuevo-contacto-error",
+    "error": "Ingrese un correo electrónico o un teléfono.",
+    "orden": [
+      "etiqueta: Nombre completo *",
+      "aviso: Ingrese al menos uno: correo electrónico o teléfono.",
+      "etiqueta: Teléfono",
+      "etiqueta: Correo electrónico",
+      "error: Ingrese un correo electrónico o un teléfono.",
+      "etiqueta: Dirección (opcional)"
+    ]
+  },
+  {
+    "archivo": "03-editar-contacto.png",
+    "ruta": "/contactos/contact-002/editar",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "pantalla": "editar-contacto",
+    "orden": [
+      "etiqueta: Nombre completo *",
+      "aviso: Ingrese al menos uno: correo electrónico o teléfono.",
+      "etiqueta: Teléfono",
+      "etiqueta: Correo electrónico",
+      "etiqueta: Dirección (opcional)"
+    ],
+    "posiciones": {
+      "aviso": 274.96875,
+      "pais": 332.15625,
+      "telefono": 332.15625,
+      "correo": 412.546875,
+      "direccion": 518.515625
+    },
+    "valores": {
+      "nombre": "Bruno Ficticio Solís",
+      "telefono": "00000002",
+      "correo": "bruno.ficticio@example.com"
+    }
+  },
+  {
+    "archivo": "04-nueva-oportunidad-buscar-nombre.png",
+    "ruta": "/posibles-ventas/nueva",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "pantalla": "nueva-oportunidad",
+    "busqueda": "ca",
+    "placeholder": "Escriba al menos 2 caracteres del nombre, correo o teléfono",
+    "opciones": [
+      {
+        "nombre": "Carla Demo Vargas",
+        "lineaSecundaria": "carla.demo@example.com"
+      },
+      {
+        "nombre": "Elena Muestra Castro",
+        "lineaSecundaria": "+506 0000-0005"
+      }
+    ]
+  },
+  {
+    "archivo": null,
+    "pantalla": "nueva-oportunidad",
+    "busqueda": "bruno",
+    "opciones": [
+      {
+        "nombre": "Bruno Ficticio Solís",
+        "lineaSecundaria": "+506 0000-0002 · bruno.ficticio@example.com"
+      }
+    ]
+  },
+  {
+    "archivo": "05-nueva-oportunidad-buscar-telefono.png",
+    "ruta": "/posibles-ventas/nueva",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "pantalla": "nueva-oportunidad",
+    "busqueda": "0000-0005",
+    "opciones": [
+      {
+        "nombre": "Elena Muestra Castro",
+        "lineaSecundaria": "+506 0000-0005"
+      }
+    ]
+  },
+  {
+    "archivo": null,
+    "pantalla": "nueva-oportunidad",
+    "busqueda": "+506 0000-0001",
+    "opciones": [
+      {
+        "nombre": "Ana Prueba Mora",
+        "lineaSecundaria": "+506 0000-0001 · ana.prueba@example.com"
+      }
+    ]
+  },
+  {
+    "archivo": null,
+    "pantalla": "nueva-oportunidad",
+    "busqueda": "+1 305",
+    "opciones": [],
+    "mensaje": "No se encontraron contactos."
+  },
+  {
+    "archivo": "06-movil-390-nuevo-contacto.png",
+    "ruta": "/contactos/nuevo",
+    "anchoVentana": 390,
+    "desbordaHorizontal": false,
+    "pantalla": "nuevo-contacto",
+    "orden": [
+      "etiqueta: Nombre completo *",
+      "aviso: Ingrese al menos uno: correo electrónico o teléfono.",
+      "etiqueta: Teléfono",
+      "etiqueta: Correo electrónico",
+      "etiqueta: Dirección (opcional)"
+    ],
+    "posiciones": {
+      "aviso": 509.71875,
+      "pais": 587.296875,
+      "telefono": 587.296875,
+      "correo": 667.6875,
+      "direccion": 773.65625
+    }
+  },
+  {
+    "archivo": "07-movil-390-nueva-oportunidad-telefono.png",
+    "ruta": "/posibles-ventas/nueva",
+    "anchoVentana": 390,
+    "desbordaHorizontal": false,
+    "pantalla": "nueva-oportunidad",
+    "busqueda": "0000",
+    "opciones": [
+      {
+        "nombre": "Ana Prueba Mora",
+        "lineaSecundaria": "+506 0000-0001 · ana.prueba@example.com"
+      },
+      {
+        "nombre": "Bruno Ficticio Solís",
+        "lineaSecundaria": "+506 0000-0002 · bruno.ficticio@example.com"
+      },
+      {
+        "nombre": "Elena Muestra Castro",
+        "lineaSecundaria": "+506 0000-0005"
+      }
+    ],
+    "listaCabe": true,
+    "lineasCaben": true
+  }
+]
