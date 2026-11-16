@@ -28,3 +28,11 @@ CLAUDE.md
 
 # Contactos reales de la carga inicial (RT-02): nunca se versionan
 *.csv
+
+# Respaldos de la base de datos real (RT-06): contienen datos de clientes, nunca se versionan
+respaldos/
+**/respaldos/
+cani-cafe-[0-9]*/
+respaldo-colecciones/
+respaldo-manifiesto.json
+respaldo-authentication.json

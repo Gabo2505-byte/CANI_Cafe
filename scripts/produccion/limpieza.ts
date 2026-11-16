@@ -53,8 +53,17 @@ export interface ArgumentosLimpieza {
 const OPCIONES = ['project', 'env'] as const;
 const BANDERAS = ['borrar', 'emulador'] as const;
 
-/** Igual que analizarArgumentos de comun.ts, pero sin --email (no hay inicio de sesión) y con --borrar. */
-export function analizarArgumentosLimpieza(argv: readonly string[]): ArgumentosLimpieza {
+export interface EspecOpciones {
+  /** Opciones con valor. */
+  conValor: readonly string[];
+  /** Opciones sin valor. */
+  banderas: readonly string[];
+  /** Opciones que este script no acepta, con el mensaje que se muestra. */
+  rechazadas?: Readonly<Record<string, string>>;
+}
+
+/** Lectura común de los argumentos de los scripts con Admin SDK: sin "=", sin repetidas, sin desconocidas. */
+export function leerOpciones(argv: readonly string[], espec: EspecOpciones): { valores: Map<string, string>; vistas: Set<string> } {
   const valores = new Map<string, string>();
   const vistas = new Set<string>();
   for (let i = 0; i < argv.length; i++) {
@@ -66,12 +75,10 @@ export function analizarArgumentosLimpieza(argv: readonly string[]): ArgumentosL
     }
     if (vistas.has(nombre)) throw new AbortoError(`La opción --${nombre} está repetida.`);
     vistas.add(nombre);
-    if ((BANDERAS as readonly string[]).includes(nombre)) continue;
-    if (nombre === 'email') {
-      throw new AbortoError('Este script no usa --email: trabaja con las credenciales de gcloud (gcloud auth application-default login).');
-    }
-    if (nombre === 'escribir') throw new AbortoError('Este script usa --borrar, no --escribir.');
-    if (!(OPCIONES as readonly string[]).includes(nombre)) throw new AbortoError(`Opción desconocida: --${nombre}.`);
+    if (espec.banderas.includes(nombre)) continue;
+    const rechazo = espec.rechazadas?.[nombre];
+    if (rechazo) throw new AbortoError(rechazo);
+    if (!espec.conValor.includes(nombre)) throw new AbortoError(`Opción desconocida: --${nombre}.`);
     const valor = argv[i + 1];
     if (valor === undefined || valor.startsWith('--') || valor.trim() === '') {
       throw new AbortoError(`Falta el valor de --${nombre}.`);
@@ -79,6 +86,19 @@ export function analizarArgumentosLimpieza(argv: readonly string[]): ArgumentosL
     valores.set(nombre, valor.trim());
     i++;
   }
+  return { valores, vistas };
+}
+
+/** Igual que analizarArgumentos de comun.ts, pero sin --email (no hay inicio de sesión) y con --borrar. */
+export function analizarArgumentosLimpieza(argv: readonly string[]): ArgumentosLimpieza {
+  const { valores, vistas } = leerOpciones(argv, {
+    conValor: OPCIONES,
+    banderas: BANDERAS,
+    rechazadas: {
+      email: 'Este script no usa --email: trabaja con las credenciales de gcloud (gcloud auth application-default login).',
+      escribir: 'Este script usa --borrar, no --escribir.',
+    },
+  });
   for (const nombre of OPCIONES) {
     if (!valores.has(nombre)) throw new AbortoError(`Falta la opción obligatoria --${nombre}.`);
   }
@@ -134,11 +154,18 @@ export function comprobarSeleccion(seleccion: readonly ContactoLeido[]): void {
  * Contra un proyecto real: --project debe ser cani-cafe y el projectId de las credenciales de gcloud también.
  * (Que el archivo --env sea del mismo proyecto ya lo revisa leerConfigWeb.) En los emuladores no hay credenciales.
  */
-export function comprobarCredenciales(proyectoCredenciales: string | null, args: ArgumentosLimpieza): void {
+export function comprobarCredenciales(
+  proyectoDeLasCredenciales: string | null,
+  args: Pick<ArgumentosLimpieza, 'project' | 'emulador'>,
+  opciones: { accion?: string; entorno?: Record<string, string | undefined> } = {},
+): void {
   if (args.emulador) return;
   if (args.project !== PROYECTO_PRODUCCION) {
-    throw new AbortoError(`Este script solo borra en "${PROYECTO_PRODUCCION}" y se pidió --project "${args.project}".`);
+    throw new AbortoError(`Este script solo ${opciones.accion ?? 'borra'} en "${PROYECTO_PRODUCCION}" y se pidió --project "${args.project}".`);
   }
+  // Si las credenciales no traen el projectId se acepta GOOGLE_CLOUD_PROJECT, pero solo cuando es igual a --project.
+  const proyectoCredenciales =
+    proyectoDeLasCredenciales ?? (opciones.entorno?.GOOGLE_CLOUD_PROJECT === args.project ? args.project : null);
   if (!proyectoCredenciales) {
     throw new AbortoError(
       'No se pudo saber el projectId de las credenciales de gcloud. Ejecute "gcloud auth application-default login" y ' +
@@ -378,17 +405,26 @@ export async function verificar(db: Firestore, contactIds: readonly string[], sa
 let contadorApps = 0;
 
 /** Contra un proyecto real usa las credenciales de gcloud; con --emulador, el emulador de Firestore (sin credenciales). */
-function crearAppAdmin(config: ConfigWeb, args: ArgumentosLimpieza, entorno: Record<string, string | undefined>) {
-  const nombre = `limpieza-${Date.now()}-${++contadorApps}`;
+export function crearAppAdmin(
+  config: ConfigWeb,
+  args: { emulador: boolean },
+  entorno: Record<string, string | undefined>,
+  opciones: { prefijo?: string; useBigInt?: boolean } = {},
+) {
+  const nombre = `${opciones.prefijo ?? 'limpieza'}-${Date.now()}-${++contadorApps}`;
+  // useBigInt: los enteros de Firestore llegan como bigint y los decimales como number (el respaldo los distingue).
+  const extra = opciones.useBigInt ? { useBigInt: true } : {};
   if (!args.emulador) {
     const app = initializeApp({ credential: applicationDefault(), projectId: config.projectId }, nombre);
-    return { app, db: getFirestore(app) };
+    const db = getFirestore(app);
+    if (opciones.useBigInt) db.settings(extra);
+    return { app, db };
   }
   const app = initializeApp({ projectId: config.projectId }, nombre);
   const db = getFirestore(app);
   const host = entorno.FIRESTORE_EMULATOR_HOST || config.hostFirestoreEmulador || '127.0.0.1:8080';
   // ssl: false hace que el Admin SDK se presente como administrador del emulador.
-  db.settings({ host, ssl: false });
+  db.settings({ host, ssl: false, ...extra });
   return { app, db };
 }
 
