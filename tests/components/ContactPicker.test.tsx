@@ -142,3 +142,56 @@ describe('HU-302 Elegir el contacto', () => {
     expect((await screen.findByRole('alert')).textContent).toBe('No se pudieron cargar los contactos. Intente de nuevo.');
   });
 });
+
+describe('CAMBIO-TELEFONO-PRIMERO: teléfono en el selector de contacto', () => {
+  const withPhone = (c: Contact, phoneCountry: string, phoneNumber: string): Contact => ({ ...c, phoneCountry, phoneNumber });
+  const ROSA = withPhone(contact('c3', 'Rosa Solo Teléfono', null), 'CR', '88123456');
+  const TOMAS = withPhone(contact('c4', 'Tomás Ambos Datos', 'tomas@example.com'), 'CR', '87654321');
+  const detail = (option: HTMLElement) => option.querySelector('.contact-picker-detail')?.textContent ?? null;
+
+  beforeEach(() => {
+    vi.mocked(listActiveContacts).mockResolvedValue([ANA, BRUNO, ROSA, TOMAS, ...MARIOS]);
+  });
+
+  it('el texto de ayuda dice "Escriba al menos 2 caracteres del nombre, correo o teléfono"', async () => {
+    const { input } = await setup();
+    expect(input.placeholder).toBe('Escriba al menos 2 caracteres del nombre, correo o teléfono');
+  });
+
+  it('busca por teléfono (con o sin guion) y muestra el teléfono del contacto sin correo', async () => {
+    const onChange = vi.fn();
+    const { user, input } = await setup({ onChange });
+    await user.type(input, '8812-34');
+    const option = await screen.findByRole('option', { name: /Rosa Solo Teléfono/ });
+    expect(screen.getAllByRole('option')).toHaveLength(1);
+    expect(detail(option)).toBe('+506 8812-3456');
+    await user.click(option);
+    expect(onChange).toHaveBeenCalledWith(ROSA);
+  });
+
+  it('con teléfono y correo: primero el teléfono y después el correo', async () => {
+    const { user, input } = await setup();
+    await user.type(input, 'tomas');
+    expect(detail(await screen.findByRole('option', { name: /Tomás Ambos Datos/ }))).toBe('+506 8765-4321 · tomas@example.com');
+  });
+
+  it('solo con correo: solo el correo, sin separadores', async () => {
+    const { user, input } = await setup();
+    await user.type(input, 'ana');
+    expect(detail(await screen.findByRole('option', { name: /Ana Prueba Mora/ }))).toBe('ana.prueba@example.com');
+  });
+
+  it('sin correo ni teléfono: solo el nombre', async () => {
+    const { user, input } = await setup();
+    await user.type(input, 'mario relleno 00');
+    const option = await screen.findByRole('option', { name: /Mario Relleno 00/ });
+    expect(detail(option)).toBeNull();
+    expect(option.textContent).toBe('Mario Relleno 00');
+  });
+
+  it('un número que no es de nadie: No se encontraron contactos.', async () => {
+    const { user, input } = await setup();
+    await user.type(input, '7777');
+    expect(await screen.findByText('No se encontraron contactos.')).toBeTruthy();
+  });
+});

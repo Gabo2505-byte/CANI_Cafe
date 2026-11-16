@@ -1055,7 +1055,8 @@ textarea[aria-invalid='true'] {
   box-shadow: inset 3px 0 0 var(--color-accent);
 }
 
-.contact-picker-email {
+/* Teléfono y correo debajo del nombre (primero el teléfono). */
+.contact-picker-detail {
   font-size: 0.85rem;
   color: var(--color-text-secondary);
 }

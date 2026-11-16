@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type KeyboardEvent } from 'react';
 import type { Contact } from '../shared/types';
-import { canSearchContacts, CONTACT_SEARCH_MESSAGES, searchContacts } from './contactSearch';
+import { canSearchContacts, CONTACT_SEARCH_MESSAGES, contactSecondaryLine, searchContacts } from './contactSearch';
 import { listActiveContacts } from './contactSearchApi';
 
 interface ContactPickerProps {
@@ -15,8 +15,9 @@ interface ContactPickerProps {
 }
 
 /**
- * HU-302: elegir el contacto de una posible venta. Se escriben al menos 2 letras del nombre o del
- * correo y aparece una lista con hasta 10 contactos activos que coinciden.
+ * HU-302: elegir el contacto de una posible venta. Se escriben al menos 2 caracteres del nombre, el correo o el
+ * teléfono y aparece una lista con hasta 10 contactos activos que coinciden. Debajo del nombre de cada opción se ve
+ * el teléfono y el correo (primero el teléfono; solo el que tenga).
  */
 export function ContactPicker({ id, selected, onSelect, fixedContact, error }: ContactPickerProps) {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -109,7 +110,7 @@ export function ContactPicker({ id, selected, onSelect, fixedContact, error }: C
         onBlur={() => setOpen(false)}
         onKeyDown={handleKeyDown}
         autoComplete="off"
-        placeholder="Escriba al menos 2 letras del nombre o del correo"
+        placeholder={CONTACT_SEARCH_MESSAGES.placeholder}
       />
       {showList && (
         <ul id={listId} role="listbox" className="contact-picker-list">
@@ -127,7 +128,7 @@ export function ContactPicker({ id, selected, onSelect, fixedContact, error }: C
               }}
             >
               <span>{contact.fullName}</span>
-              {contact.email && <span className="contact-picker-email">{contact.email}</span>}
+              <ContactDetailLine contact={contact} />
             </li>
           ))}
           {results.length === 0 && loaded && (
@@ -147,4 +148,10 @@ export function ContactPicker({ id, selected, onSelect, fixedContact, error }: C
       )}
     </div>
   );
+}
+
+/** Teléfono y correo debajo del nombre, primero el teléfono; nada si no tiene ninguno. */
+function ContactDetailLine({ contact }: { contact: Contact }) {
+  const detail = contactSecondaryLine(contact);
+  return detail ? <span className="contact-picker-detail">{detail}</span> : null;
 }
