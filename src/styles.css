@@ -1963,3 +1963,21 @@ textarea[aria-invalid='true'] {
 .timeline-loss {
   color: var(--color-lost);
 }
+
+/* Bitácora: lista de contactos al abrir la pestaña (filas fáciles de tocar, con foco visible) y volver a la lista. */
+.timeline-result {
+  min-height: 3rem;
+}
+
+.timeline-result:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.timeline-result-name {
+  overflow-wrap: anywhere;
+}
+
+.timeline-change {
+  margin-bottom: 0.25rem;
+}

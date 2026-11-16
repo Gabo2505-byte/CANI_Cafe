@@ -47,7 +47,7 @@ const contact = (id: string, fullName: string, email: string | null, phoneNumber
 });
 const ana = contact('contact-001', 'Ana Prueba Mora', 'ana.prueba@example.com', '88123456');
 const bruno = contact('contact-002', 'Bruno Ficticio Solís', 'bruno@example.com', '70001111');
-const diego = contact('contact-004', 'Diego Ejemplo Rojas', 'diego@example.com', null);
+const diego = { ...contact('contact-004', 'Diego Ejemplo Rojas', 'diego@example.com', null), status: 'inactivo' as const };
 
 const anaTimeline: Timeline = buildTimeline({
   communications: [
@@ -152,7 +152,7 @@ describe('pestañas de la pantalla "Avisos"', () => {
     expect(listTimelineContacts).not.toHaveBeenCalled();
   });
 
-  it('la pestaña "Bitácora" muestra el buscador y la de avisos vuelve a la tabla', async () => {
+  it('la pestaña "Bitácora" muestra el buscador y la lista de contactos, y la de avisos vuelve a la tabla', async () => {
     const user = userEvent.setup();
     renderAlerts();
     await user.click(screen.getByRole('tab', { name: 'Bitácora' }));
@@ -171,6 +171,91 @@ describe('pestañas de la pantalla "Avisos"', () => {
     await user.keyboard('{ArrowRight}');
     expect(screen.getByRole('tab', { name: 'Bitácora' }).getAttribute('aria-selected')).toBe('true');
     expect(document.activeElement).toBe(screen.getByRole('tab', { name: 'Bitácora' }));
+  });
+});
+
+const listButtons = async () => within(await screen.findByRole('list', { name: 'Contactos encontrados' })).getAllByRole('button');
+
+describe('lista de contactos al abrir la pestaña', () => {
+  it('sin escribir nada muestra todos los contactos, activos e inactivos, con correo y teléfono', async () => {
+    renderAlerts('/avisos?vista=bitacora');
+    const rows = await listButtons();
+    expect(rows.map((b) => b.querySelector('.timeline-result-name')?.textContent)).toEqual([
+      'Ana Prueba Mora',
+      'Bruno Ficticio Solís',
+      'Diego Ejemplo Rojas',
+    ]);
+    expect(rows[0].textContent).toContain('ana.prueba@example.com · +506 8812-3456');
+    expect(screen.getByRole('status').textContent).toBe('Se encontraron 3 contactos.');
+    expect(listTimelineContacts).toHaveBeenCalledTimes(1);
+  });
+
+  it('pone primero a los de etiqueta del formulario, como la lista de contactos', async () => {
+    vi.mocked(listTimelineContacts).mockResolvedValue([ana, bruno, { ...diego, formBadge: 'Nuevo' }]);
+    renderAlerts('/avisos?vista=bitacora');
+    const rows = await listButtons();
+    expect(rows[0].textContent).toContain('Diego Ejemplo Rojas');
+    expect(rows[0].textContent).toContain('Nuevo');
+  });
+
+  it('se pagina de 20 en 20 con "Anterior" y "Siguiente"', async () => {
+    const many = Array.from({ length: 25 }, (_, i) => contact(`c-${i}`, `Persona ${String(i).padStart(2, '0')}`, `p${i}@example.com`, null));
+    vi.mocked(listTimelineContacts).mockResolvedValue(many);
+    const user = userEvent.setup();
+    renderAlerts('/avisos?vista=bitacora');
+    expect(await listButtons()).toHaveLength(20);
+    expect(screen.getByText('Página 1 de 2')).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Siguiente' }));
+    expect(await listButtons()).toHaveLength(5);
+    expect(screen.getByText('Página 2 de 2')).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Anterior' }));
+    expect(await listButtons()).toHaveLength(20);
+  });
+
+  it('con la lista de contactos vacía dice "Aún no hay contactos registrados."', async () => {
+    vi.mocked(listTimelineContacts).mockResolvedValue([]);
+    renderAlerts('/avisos?vista=bitacora');
+    expect(await screen.findByText('Aún no hay contactos registrados.')).toBeTruthy();
+  });
+
+  it('tocar una fila abre la bitácora de ese contacto y deja el contacto en la URL', async () => {
+    const user = userEvent.setup();
+    renderAlerts('/avisos?vista=bitacora');
+    await user.click((await listButtons())[0]);
+    await screen.findByRole('heading', { level: 2, name: 'Ana Prueba Mora' });
+    expect(loadContactTimeline).toHaveBeenCalledWith('contact-001');
+    expect(currentLocation).toBe('/avisos?vista=bitacora&contacto=contact-001');
+    expect(screen.queryByRole('list', { name: 'Contactos encontrados' })).toBeNull();
+  });
+
+  it('con teclado: Tab llega a una fila y Enter o Espacio la elige', async () => {
+    const user = userEvent.setup();
+    renderAlerts('/avisos?vista=bitacora');
+    const rows = await listButtons();
+    rows[1].focus();
+    await user.keyboard('{Enter}');
+    await screen.findByRole('heading', { level: 2, name: 'Bruno Ficticio Solís' });
+    await user.click(screen.getByRole('button', { name: 'Cambiar contacto' }));
+    const again = await listButtons();
+    again[0].focus();
+    await user.keyboard(' ');
+    await screen.findByRole('heading', { level: 2, name: 'Ana Prueba Mora' });
+  });
+
+  it('"Cambiar contacto" vuelve a la lista (sin contacto ni filtro en la URL)', async () => {
+    const user = userEvent.setup();
+    renderAlerts('/avisos?vista=bitacora&contacto=contact-001&tipo=etapas');
+    await screen.findByRole('heading', { level: 2, name: 'Ana Prueba Mora' });
+    await user.click(screen.getByRole('button', { name: 'Cambiar contacto' }));
+    expect(await listButtons()).toHaveLength(3);
+    expect(currentLocation).toBe('/avisos?vista=bitacora');
+  });
+
+  it('abrir el contacto desde una URL guardada muestra su bitácora directamente (así vuelve "atrás" desde un detalle)', async () => {
+    renderAlerts('/avisos?vista=bitacora&contacto=contact-001&tipo=comunicaciones');
+    await screen.findByRole('heading', { level: 2, name: 'Ana Prueba Mora' });
+    expect((screen.getByRole('combobox', { name: 'Tipo de evento' }) as HTMLSelectElement).value).toBe('comunicaciones');
+    expect(screen.queryByRole('list', { name: 'Contactos encontrados' })).toBeNull();
   });
 });
 
@@ -199,7 +284,10 @@ describe('buscar un contacto', () => {
     const user = userEvent.setup();
     renderAlerts('/avisos?vista=bitacora');
     await user.type(await search(), 'zzz');
-    expect(screen.getByText('No se encontraron contactos.')).toBeTruthy();
+    expect(screen.getAllByText('No se encontraron contactos.').length).toBeGreaterThan(0);
+    expect(screen.queryByRole('list', { name: 'Contactos encontrados' })).toBeNull();
+    await user.clear(await search());
+    expect(await listButtons()).toHaveLength(3);
   });
 
   it('si no se pueden cargar los contactos lo avisa', async () => {

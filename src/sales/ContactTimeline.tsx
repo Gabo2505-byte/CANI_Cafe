@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { contactPath, saleDetailPath } from '../app/routes';
-import { CONTACT_SEARCH_LABEL, matchesContactSearch } from '../contacts/contactSearch';
+import { badgedFirst, CONTACT_SEARCH_LABEL, filterContacts, foundContactsMessage } from '../contacts/contactSearch';
+import { CONTACTS_LIST_MESSAGES } from '../contacts/ContactsPage';
+import { CONTACTS_PAGE_SIZE } from '../contacts/contactsRepository';
 import { formatPhone } from '../shared/phone/phone';
 import { SALE_STAGE_LABELS, type Contact } from '../shared/types';
 import {
@@ -17,9 +19,6 @@ import {
 } from './timeline';
 import { listTimelineContacts, loadContactTimeline } from './timelineApi';
 
-/** Cuántos contactos se ofrecen mientras se escribe. */
-const MAX_RESULTS = 10;
-
 type ContactsState = { status: 'loading' } | { status: 'error' } | { status: 'ready'; contacts: Contact[] };
 type TimelineState = { status: 'loading' } | { status: 'error' } | { status: 'ready'; timeline: Timeline };
 
@@ -28,6 +27,7 @@ interface ContactTimelineProps {
   contactId: string | null;
   filter: TimelineFilter;
   onSelectContact: (contactId: string) => void;
+  onClearContact: () => void;
   onFilterChange: (filter: TimelineFilter) => void;
 }
 
@@ -37,13 +37,16 @@ function contactSummary(contact: Contact): string {
 }
 
 /**
- * Bitácora del contacto (pestaña de la pantalla "Avisos"): buscador por nombre, correo o teléfono (la misma búsqueda
- * de la lista de contactos, HU-205) y, al elegir uno, su línea de tiempo del evento más reciente al más antiguo.
- * Solo lectura; no se muestra quién hizo cada acción.
+ * Bitácora del contacto (pestaña de la pantalla "Avisos"). Sin contacto elegido muestra la lista de contactos con
+ * los mismos datos y orden de la lista de contactos (HU-204, HU-205 y HU-504: todos, activos e inactivos, en orden
+ * alfabético y con etiqueta primero, de 20 en 20) y un buscador por nombre, correo o teléfono (la misma búsqueda de
+ * HU-205). Al elegir uno se ve su línea de tiempo, del evento más reciente al más antiguo, con "Cambiar contacto"
+ * para volver a la lista. Solo lectura; no se muestra quién hizo cada acción.
  */
-export function ContactTimeline({ contactId, filter, onSelectContact, onFilterChange }: ContactTimelineProps) {
+export function ContactTimeline({ contactId, filter, onSelectContact, onClearContact, onFilterChange }: ContactTimelineProps) {
   const [contacts, setContacts] = useState<ContactsState>({ status: 'loading' });
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -55,17 +58,31 @@ export function ContactTimeline({ contactId, filter, onSelectContact, onFilterCh
     };
   }, []);
 
-  const results = useMemo(() => {
-    if (contacts.status !== 'ready' || search.trim() === '') return null;
-    return contacts.contacts.filter((c) => matchesContactSearch(c, search)).slice(0, MAX_RESULTS);
-  }, [contacts, search]);
+  const found = useMemo(
+    () => (contacts.status === 'ready' ? badgedFirst(filterContacts(contacts.contacts, search, 'todos')) : []),
+    [contacts, search],
+  );
 
   const selected = contacts.status === 'ready' && contactId ? contacts.contacts.find((c) => c.id === contactId) : undefined;
+  if (selected) {
+    return (
+      <div className="timeline">
+        <ContactEvents
+          key={selected.id}
+          contact={selected}
+          filter={filter}
+          onFilterChange={onFilterChange}
+          onClearContact={onClearContact}
+        />
+      </div>
+    );
+  }
 
-  const choose = (id: string) => {
-    setSearch('');
-    onSelectContact(id);
-  };
+  const ready = contacts.status === 'ready';
+  const isEmpty = ready && contacts.contacts.length === 0;
+  const totalPages = Math.max(1, Math.ceil(found.length / CONTACTS_PAGE_SIZE));
+  const shownPage = Math.min(page, totalPages - 1);
+  const pageContacts = found.slice(shownPage * CONTACTS_PAGE_SIZE, (shownPage + 1) * CONTACTS_PAGE_SIZE);
 
   return (
     <div className="timeline">
@@ -77,32 +94,57 @@ export function ContactTimeline({ contactId, filter, onSelectContact, onFilterCh
           aria-label={CONTACT_SEARCH_LABEL}
           placeholder={CONTACT_SEARCH_LABEL}
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(0);
+          }}
           autoComplete="off"
-          disabled={contacts.status !== 'ready'}
+          disabled={!ready}
         />
       </div>
+      <p className="list-count" role="status">
+        {ready && !isEmpty ? foundContactsMessage(found.length) : ''}
+      </p>
       {contacts.status === 'loading' && <p>{MSG.contactsLoading}</p>}
       {contacts.status === 'error' && (
         <p className="field-error" role="alert">
           {MSG.contactsError}
         </p>
       )}
-      {results && results.length === 0 && <p className="empty-state">{MSG.noContacts}</p>}
-      {results && results.length > 0 && (
-        <ul className="timeline-results" aria-label={MSG.resultsLabel}>
-          {results.map((contact) => (
-            <li key={contact.id}>
-              <button type="button" className="timeline-result" onClick={() => choose(contact.id)}>
-                <span className="timeline-result-name">{contact.fullName}</span>
-                <span className="timeline-result-data">{contactSummary(contact)}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-      {selected && !results && (
-        <ContactEvents key={selected.id} contact={selected} filter={filter} onFilterChange={onFilterChange} />
+      {isEmpty && <p className="empty-state">{CONTACTS_LIST_MESSAGES.empty}</p>}
+      {ready && !isEmpty && found.length === 0 && <p className="empty-state">{MSG.noContacts}</p>}
+      {found.length > 0 && (
+        <>
+          <ul className="timeline-results" aria-label={MSG.resultsLabel}>
+            {pageContacts.map((contact) => (
+              <li key={contact.id}>
+                <button type="button" className="timeline-result" onClick={() => onSelectContact(contact.id)}>
+                  <span className="timeline-result-name">
+                    {contact.fullName}
+                    {contact.formBadge && <span className="form-badge">{contact.formBadge}</span>}
+                  </span>
+                  <span className="timeline-result-data">{contactSummary(contact)}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+          <nav className="pagination" aria-label="Paginación de contactos">
+            <button type="button" className="button-secondary" onClick={() => setPage(shownPage - 1)} disabled={shownPage === 0}>
+              Anterior
+            </button>
+            <span aria-live="polite">
+              Página {shownPage + 1} de {totalPages}
+            </span>
+            <button
+              type="button"
+              className="button-secondary"
+              onClick={() => setPage(shownPage + 1)}
+              disabled={shownPage >= totalPages - 1}
+            >
+              Siguiente
+            </button>
+          </nav>
+        </>
       )}
     </div>
   );
@@ -112,10 +154,12 @@ function ContactEvents({
   contact,
   filter,
   onFilterChange,
+  onClearContact,
 }: {
   contact: Contact;
   filter: TimelineFilter;
   onFilterChange: (filter: TimelineFilter) => void;
+  onClearContact: () => void;
 }) {
   const [state, setState] = useState<TimelineState>({ status: 'loading' });
 
@@ -133,6 +177,9 @@ function ContactEvents({
 
   return (
     <section className="timeline-contact" aria-labelledby="timeline-contact-name">
+      <button type="button" className="button-secondary timeline-change" onClick={onClearContact}>
+        {MSG.changeContact}
+      </button>
       <div className="timeline-contact-header">
         <h2 id="timeline-contact-name">{contact.fullName}</h2>
         <Link to={contactPath(contact.id)}>{MSG.openContact}</Link>

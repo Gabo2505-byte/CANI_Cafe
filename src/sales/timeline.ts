@@ -21,6 +21,7 @@ export const TIMELINE_MESSAGES = {
   noContacts: CONTACT_SEARCH_MESSAGES.noResults,
   resultsLabel: 'Contactos encontrados',
   openContact: 'Ver ficha del contacto',
+  changeContact: 'Cambiar contacto',
   loading: 'Cargando bitácora…',
   loadError: 'No se pudo cargar la bitácora. Intente de nuevo.',
   empty: 'Este contacto no tiene comunicaciones ni cambios de etapa registrados.',

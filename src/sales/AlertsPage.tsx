@@ -80,6 +80,13 @@ export function AlertsPage() {
     setParams(next);
   };
 
+  const clearContact = () => {
+    const next = new URLSearchParams(params);
+    next.delete(PARAMS.contact);
+    next.delete(PARAMS.filter);
+    setParams(next);
+  };
+
   const changeFilter = (value: TimelineFilter) => {
     const next = new URLSearchParams(params);
     if (value === 'todos') next.delete(PARAMS.filter);
@@ -152,7 +159,7 @@ export function AlertsPage() {
           </>
         )}
         {active === 'bitacora' && (
-          <ContactTimeline contactId={contactId} filter={filter} onSelectContact={selectContact} onFilterChange={changeFilter} />
+          <ContactTimeline contactId={contactId} filter={filter} onSelectContact={selectContact} onClearContact={clearContact} onFilterChange={changeFilter} />
         )}
       </div>
     </main>
