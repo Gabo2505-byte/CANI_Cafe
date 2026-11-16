@@ -21,6 +21,7 @@
     "contactos:cargar": "tsx scripts/produccion/cargarContactos.ts",
     "cuenta:nombre-visible": "tsx scripts/produccion/cuentaNombreVisible.ts",
     "pruebas:limpiar": "tsx scripts/produccion/limpiarPruebas.ts",
+    "bd:respaldar": "tsx scripts/produccion/respaldarBd.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:emulators": "firebase emulators:exec --only auth,firestore --project demo-cani-crm-test \"vitest run --config vitest.emulators.config.ts\""

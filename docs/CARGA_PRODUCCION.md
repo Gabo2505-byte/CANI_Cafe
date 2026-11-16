@@ -8,8 +8,9 @@ Guía para la publicación real (tickets E5-040.1 y E5-050.2). Usa tres scripts 
 | `cuenta:nombre-visible` | Pone el nombre visible (`displayName`) de la cuenta del administrador igual a su usuario, para que el correo de recuperación diga "Hola, admin:" (HU-107). Revisa `users` y `usernames`. | `scripts/produccion/cuentaNombreVisible.ts` |
 | `contactos:cargar` | Carga única de los contactos iniciales de CANI Café desde un archivo CSV (RT-02). Ver la sección 9. | `scripts/produccion/cargarContactos.ts` |
 | `pruebas:limpiar` | Limpieza única de los datos de prueba (RT-01): contactos "PRUEBA..." y todo lo que cuelga de ellos. Ver la sección 10. | `scripts/produccion/limpiarPruebas.ts` |
+| `bd:respaldar` | Copia de solo lectura de la base de datos de producción a archivos JSON (RT-06): todas las colecciones y subcolecciones, más las cuentas de Authentication (sin contraseñas). Ver la sección 11. | `scripts/produccion/respaldarBd.ts` |
 
-Los tres primeros usan el SDK de cliente de Firebase e inician sesión con el correo y la contraseña del administrador. Todo pasa por las reglas desplegadas, igual que desde el sistema interno. No usan Admin SDK ni claves de cuenta de servicio. La limpieza (sección 10) es la excepción: usa el Admin SDK con las credenciales de gcloud.
+Los tres primeros usan el SDK de cliente de Firebase e inician sesión con el correo y la contraseña del administrador. Todo pasa por las reglas desplegadas, igual que desde el sistema interno. No usan Admin SDK ni claves de cuenta de servicio. La limpieza (sección 10) y el respaldo (sección 11) son la excepción: usan el Admin SDK con las credenciales de gcloud.
 
 **Los tres primeros no borran nada.** Por defecto corren en **modo prueba**: leen y muestran lo que harían, sin escribir. Solo escriben con `--escribir` y después de que usted teclee el projectId exacto.
 
@@ -366,3 +367,129 @@ El script pide teclear `cani-cafe`. Primero borra lo que cuelga de los contactos
 Para ensayar contra los emuladores (no necesita gcloud), use `--project demo-cani-crm --env .env.development --emulador` con `npm run emulators` encendido y `FIRESTORE_EMULATOR_HOST` definido, o use el host del archivo.
 
 **El borrado no se puede deshacer.** Si quiere un respaldo previo, exporte Firestore desde la consola de Google Cloud (*Firestore > Importar/Exportar*) antes de correr `--borrar`.
+
+---
+
+## 11. Respaldo de la base de datos (RT-06)
+
+Exporta, **de solo lectura**, una copia de la base de datos de producción a archivos JSON para entregarla a CANI Café. Nunca escribe en Firestore ni en Authentication.
+
+> **El respaldo contiene datos reales de clientes** (nombres, correos, teléfonos, ventas y comunicaciones). Se guarda fuera del repositorio y se entrega **solo por un canal privado** (unidad compartida con acceso restringido, nunca por un chat o un correo abierto). No se sube a GitHub, no se pega en documentos y no se comparte en capturas.
+
+### 11.1 Qué exporta
+
+- **Todas** las colecciones y subcolecciones que existan en el momento, descubiertas con `listCollections` (no hay una lista fija: una colección nueva entra sola).
+- Un archivo JSON por colección, más un manifiesto con el proyecto, la fecha y hora, y el conteo de documentos y el checksum de cada archivo.
+- Las cuentas de Authentication: `uid`, correo, nombre visible, si está deshabilitada y fecha de creación. **Nunca** contraseñas ni hashes.
+
+No incluye las reglas ni los índices de Firestore (viven en este repo: `firestore.rules` y `firestore.indexes.json`) ni los archivos de Storage (el sistema no usa Storage).
+
+### 11.2 Requisitos
+
+Los mismos de la sección 10.2: gcloud con `gcloud auth application-default login`, el `.env.production.local` de la sección 1 y la terminal sin variables de emulador (sección 2).
+
+Salvaguardas, iguales a las de la limpieza (sección 10.1): se aborta si `--project`, el `VITE_FIREBASE_PROJECT_ID` del archivo `--env` o las credenciales de gcloud no son `cani-cafe`, y si hay variables de emulador definidas. Si las credenciales **no traen el projectId**, el script acepta la variable de entorno `GOOGLE_CLOUD_PROJECT`, pero solo cuando es igual a `--project`:
+
+```powershell
+$env:GOOGLE_CLOUD_PROJECT = "cani-cafe"   # solo si el script dice que no pudo saber el projectId
+```
+
+### 11.3 Exportar
+
+```powershell
+npm run bd:respaldar -- --project cani-cafe --env .env.production.local
+```
+
+Escribe en `..\respaldos\cani-cafe-AAAAMMDD-HHMM` (al lado de la carpeta del repo, hora de Costa Rica). Con `--salida <carpeta>` se elige otra carpeta, pero el script se niega a usar una **dentro del repositorio** o una que ya tenga archivos.
+
+Al terminar imprime los documentos por colección y el comando para verificar.
+
+### 11.4 Verificar
+
+```powershell
+npm run bd:respaldar -- --project cani-cafe --env .env.production.local --verificar "..\respaldos\cani-cafe-AAAAMMDD-HHMM"
+```
+
+Relee los archivos y los compara con la base viva: comprueba que cada archivo está íntegro (checksum del archivo y de cada documento), los conteos por colección, el checksum de cada documento y las cuentas de Authentication. Cada línea sale como `[OK]` o `[FALLA]` y el script termina con **código 1** si algo no coincide (en PowerShell, `$LASTEXITCODE`).
+
+Haga la verificación justo después de exportar y sin que nadie use el sistema: si alguien guarda un cambio entre las dos lecturas, la verificación lo reporta como diferencia (es correcto: el respaldo ya no es igual a la base).
+
+### 11.5 Formato
+
+```
+cani-cafe-AAAAMMDD-HHMM/
+  respaldo-manifiesto.json
+  respaldo-authentication.json
+  respaldo-colecciones/
+    contacts.json
+    sales.json
+    sales__<id>__notas.json        (subcolección sales/<id>/notas)
+    ...
+```
+
+**Manifiesto** (`respaldo-manifiesto.json`): `formato` (`cani-firestore-respaldo/1`), `proyecto`, `generadoEn` (UTC), `generadoEnLocal`, `totalDocumentos`, `colecciones` (cada una con `ruta`, `archivo`, `documentos`, `sinCampos` y `sha256` del archivo) y `authentication` (`archivo`, `cuentas`, `sha256`). La **ruta real** de cada colección está en el manifiesto y dentro del archivo (`coleccion`): el nombre del archivo solo es una versión segura para Windows (`/` se escribe `__`).
+
+**Archivo de colección**:
+
+```json
+{
+  "formato": "cani-firestore-respaldo/1",
+  "coleccion": "contacts",
+  "documentos": [
+    { "id": "abc", "ruta": "contacts/abc", "datos": { "...": "..." }, "sha256": "..." }
+  ],
+  "documentosSinCampos": []
+}
+```
+
+`sha256` es el SHA-256 del JSON de `datos` con las claves ordenadas. `documentosSinCampos` lista los ids que no tienen campos pero sí subcolecciones (Firestore los llama documentos inexistentes); se exportan sus subcolecciones y no hace falta recrearlos.
+
+**Tipos.** Lo que JSON ya representa sin ambigüedad se guarda tal cual: `null`, texto, booleanos, arreglos, mapas anidados y números (entero si no tiene punto, decimal si lo tiene). Todo lo demás es un objeto con la clave `__tipo`:
+
+| Tipo de Firestore | Se guarda como |
+|---|---|
+| Timestamp | `{ "__tipo": "timestamp", "segundos": 1700000000, "nanosegundos": 123456000, "iso": "2023-11-14T22:13:20.123Z" }` (`iso` es solo informativo) |
+| GeoPoint | `{ "__tipo": "geopoint", "latitud": 10.5, "longitud": -84.25 }` |
+| Referencia | `{ "__tipo": "referencia", "ruta": "contacts/abc" }` |
+| Bytes | `{ "__tipo": "bytes", "base64": "AAEC+v8=" }` |
+| Vector | `{ "__tipo": "vector", "valor": [1, 2.5] }` |
+| Entero mayor que 2^53 | `{ "__tipo": "entero", "valor": "9007199254740993" }` |
+| Decimal con valor entero, `NaN`, `Infinity`, `-0` | `{ "__tipo": "decimal", "valor": "2" }` |
+| Mapa que tiene una clave llamada `__tipo` | `{ "__tipo": "mapa", "valor": { ... } }` |
+
+`null` y los arreglos y mapas vacíos se conservan (un campo con `null` sigue existiendo).
+
+**Authentication** (`respaldo-authentication.json`): `{ "formato", "proyecto", "cuentas": [ { "uid", "email", "displayName", "disabled", "createdAt" } ] }`, ordenado por `uid`.
+
+### 11.6 Restaurar a mano
+
+La restauración no es un script de producción a propósito (restaurar sobre una base con datos los sobrescribe). Está probada con una función de prueba, `tests/helpers/restaurarRespaldo.ts`, que restaura en un emulador vacío y compara documento por documento (`tests/produccion/respaldo.emulator.test.ts`). Para restaurar en un proyecto **vacío**:
+
+1. Cree el proyecto o la base de destino y despliegue las reglas e índices (sección 1, punto 2).
+2. Por cada archivo de `respaldo-colecciones/`, recorra `documentos` y escriba `datos` en la ruta `ruta`, convirtiendo cada valor con `decodificar(valor, db)` de `scripts/produccion/respaldoFormato.ts` (es la inversa exacta de la exportación):
+
+   ```ts
+   import { readFileSync } from 'node:fs';
+   import { applicationDefault, initializeApp } from 'firebase-admin/app';
+   import { getFirestore } from 'firebase-admin/firestore';
+   import { decodificar } from './scripts/produccion/respaldoFormato';
+
+   const app = initializeApp({ credential: applicationDefault(), projectId: '<proyecto-destino>' });
+   const db = getFirestore(app);
+   const manifiesto = JSON.parse(readFileSync(`${carpeta}/respaldo-manifiesto.json`, 'utf8'));
+   for (const c of manifiesto.colecciones) {
+     const { documentos } = JSON.parse(readFileSync(`${carpeta}/${c.archivo}`, 'utf8'));
+     for (const d of documentos) await db.doc(d.ruta).set(decodificar(d.datos, db) as Record<string, unknown>);
+   }
+   ```
+
+   (Para muchos documentos use `db.batch()` de hasta 400 escrituras, como la función de prueba.)
+3. Compruebe con `--verificar` apuntando al proyecto restaurado.
+4. **Cuentas**: el respaldo no trae contraseñas. Cree cada cuenta con el mismo `uid` (`auth.createUser({ uid, email, displayName, disabled })`) y pida a cada persona que use "¿Olvidó su contraseña?" (HU-107). Los documentos `users/{uid}` y `usernames/{usuario}` ya vienen en las colecciones.
+
+### 11.7 Límites conocidos
+
+- Firestore guarda los Timestamp con precisión de microsegundos: es lo máximo que puede traer el respaldo.
+- El Admin SDK no puede escribir un decimal con valor entero (por ejemplo `2.0`): al restaurar queda como entero `2`. Para Firestore es el mismo número y el sistema guarda los montos como enteros.
+- La lectura no es una foto instantánea: las colecciones se leen una tras otra. Por eso se verifica sin uso del sistema (11.4).
+- El script lee todo en memoria antes de escribir los archivos; con el tamaño actual de la base no es un problema.
