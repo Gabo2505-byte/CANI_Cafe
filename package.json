@@ -17,6 +17,8 @@
     "typecheck": "tsc --noEmit",
     "emulators": "firebase emulators:start --only auth,firestore --project demo-cani-crm",
     "seed": "tsx --env-file=.env.development scripts/seed.ts",
+    "catalogo:cargar": "tsx scripts/produccion/cargarCatalogo.ts",
+    "cuenta:nombre-visible": "tsx scripts/produccion/cuentaNombreVisible.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:emulators": "firebase emulators:exec --only auth,firestore --project demo-cani-crm-test \"vitest run --config vitest.emulators.config.ts\""
