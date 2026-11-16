@@ -1,0 +1,256 @@
+[
+  {
+    "paso": 1,
+    "texto": "Inicio de sesión con usuario inexistente: mensaje \"El usuario ingresado no existe.\" como alerta",
+    "resultado": "OK",
+    "detalle": {
+      "texto": "El usuario ingresado no existe.",
+      "role": "alert"
+    }
+  },
+  {
+    "paso": 2,
+    "texto": "Inicio de sesión fallido: el foco vuelve al campo de usuario",
+    "resultado": "OK",
+    "detalle": {
+      "id": "username",
+      "tag": "input",
+      "enVista": true
+    }
+  },
+  {
+    "paso": 3,
+    "texto": "Usuario vacío: \"Ingrese su usuario.\" y el foco va al usuario",
+    "resultado": "OK",
+    "detalle": {
+      "id": "username",
+      "tag": "input",
+      "enVista": true
+    }
+  },
+  {
+    "paso": 4,
+    "texto": "Ingreso con admin",
+    "resultado": "OK",
+    "detalle": "/contactos"
+  },
+  {
+    "paso": 5,
+    "texto": "Teléfono repetido: \"Ver contacto\" con target _blank y rel noopener noreferrer",
+    "resultado": "OK",
+    "detalle": {
+      "texto": "Ver contacto",
+      "href": "/contactos/contact-002",
+      "target": "_blank",
+      "rel": "noopener noreferrer"
+    }
+  },
+  {
+    "paso": 6,
+    "texto": "Teléfono repetido: el foco va al teléfono",
+    "resultado": "OK",
+    "detalle": {
+      "id": "phone",
+      "tag": "input",
+      "enVista": true
+    }
+  },
+  {
+    "paso": 7,
+    "texto": "Clic en \"Ver contacto\": se abre una pestaña nueva con la ficha de Bruno",
+    "resultado": "OK",
+    "detalle": "http://localhost:5173/contactos/contact-002"
+  },
+  {
+    "paso": 8,
+    "texto": "La pestaña del formulario conserva lo escrito",
+    "resultado": "OK",
+    "detalle": {
+      "ruta": "/contactos/nuevo",
+      "nombre": "Persona Repetida",
+      "telefono": "00000002"
+    }
+  },
+  {
+    "paso": 9,
+    "texto": "390 px, Nuevo contacto sin correo ni teléfono: el foco va al teléfono y está a la vista",
+    "resultado": "OK",
+    "detalle": {
+      "id": "phone",
+      "tag": "input",
+      "enVista": true
+    }
+  },
+  {
+    "paso": 10,
+    "texto": "390 px, Nueva oportunidad vacía y desplazada al final: el foco sube al campo Contacto y queda a la vista",
+    "resultado": "OK",
+    "detalle": {
+      "id": "sale-contact",
+      "tag": "input",
+      "enVista": true
+    }
+  },
+  {
+    "paso": 11,
+    "texto": "390 px, con contacto y sin título: el foco va al Título y queda a la vista",
+    "resultado": "OK",
+    "detalle": {
+      "id": "sale-title",
+      "tag": "input",
+      "enVista": true
+    }
+  },
+  {
+    "paso": 12,
+    "texto": "Registrar comunicación sin medio ni nota: el foco va al Medio",
+    "resultado": "OK",
+    "detalle": {
+      "id": "communication-medium",
+      "tag": "select",
+      "enVista": true
+    }
+  },
+  {
+    "paso": 13,
+    "texto": "Selector: la ayuda se ve debajo del campo con el texto actual",
+    "resultado": "OK",
+    "detalle": "Escriba al menos 2 caracteres del nombre, correo o teléfono"
+  },
+  {
+    "paso": 14,
+    "texto": "Selector: la ayuda sigue visible al escribir",
+    "resultado": "OK",
+    "detalle": "Escriba al menos 2 caracteres del nombre, correo o teléfono"
+  },
+  {
+    "paso": 15,
+    "texto": "Selector: elegido Bruno, debajo se ve \"teléfono · correo\"",
+    "resultado": "OK",
+    "detalle": {
+      "campo": "Bruno Ficticio Solís",
+      "linea": "+506 0000-0002 · bruno.ficticio@example.com"
+    }
+  },
+  {
+    "paso": 16,
+    "texto": "Selector: Elena (solo teléfono) muestra solo \"+506 0000-0005\"",
+    "resultado": "OK",
+    "detalle": "+506 0000-0005"
+  },
+  {
+    "paso": 17,
+    "texto": "Nueva oportunidad desde la ficha: el contacto viene elegido y fijo",
+    "resultado": "OK",
+    "detalle": {
+      "valor": "Bruno Ficticio Solís",
+      "soloLectura": true
+    }
+  },
+  {
+    "paso": 18,
+    "texto": "\"Cancelar\" desde la ficha vuelve a la ficha de Bruno, y \"Volver a contactos\" conserva la búsqueda",
+    "resultado": "OK",
+    "detalle": {
+      "ruta": "/contactos/contact-002",
+      "titulo": "Bruno Ficticio Solís",
+      "volver": "/contactos?buscar=bruno"
+    }
+  },
+  {
+    "paso": 19,
+    "texto": "\"Cancelar\" desde el tablero vuelve al tablero",
+    "resultado": "OK",
+    "detalle": "/posibles-ventas"
+  },
+  {
+    "paso": 20,
+    "texto": "Ficha de Bruno: el teléfono es un enlace tel:+50600000002 con el mismo texto y el mismo orden",
+    "resultado": "OK",
+    "detalle": {
+      "texto": "+506 0000-0002",
+      "href": "tel:+50600000002",
+      "orden": [
+        "Correo electrónico",
+        "Teléfono",
+        "Dirección",
+        "Fecha de registro",
+        "Origen"
+      ]
+    }
+  },
+  {
+    "paso": 21,
+    "texto": "Búsqueda \"zzz\": \"No se encontraron contactos.\", botón \"Limpiar búsqueda\" y sin tabla",
+    "resultado": "OK",
+    "detalle": {
+      "estado": "No se encontraron contactos.",
+      "boton": true,
+      "tabla": false
+    }
+  },
+  {
+    "paso": 22,
+    "texto": "\"Limpiar búsqueda\": buscador vacío, con el foco, lista completa y URL sin búsqueda",
+    "resultado": "OK",
+    "detalle": {
+      "valor": "",
+      "foco": "search",
+      "filas": 5,
+      "url": ""
+    }
+  },
+  {
+    "paso": 23,
+    "texto": "Columnas de la lista de contactos sin cambios (HU-204.1)",
+    "resultado": "OK",
+    "detalle": [
+      "Nombre completo",
+      "Correo electrónico",
+      "Teléfono",
+      "Clasificación",
+      "Fecha de registro"
+    ]
+  },
+  {
+    "paso": 24,
+    "texto": "Bitácora: Bruno \"teléfono · correo\", Carla solo correo, Elena solo teléfono",
+    "resultado": "OK",
+    "detalle": [
+      {
+        "nombre": "Ana Prueba Mora",
+        "datos": "+506 0000-0001 · ana.prueba@example.com"
+      },
+      {
+        "nombre": "Bruno Ficticio Solís",
+        "datos": "+506 0000-0002 · bruno.ficticio@example.com"
+      },
+      {
+        "nombre": "Carla Demo Vargas",
+        "datos": "carla.demo@example.com"
+      },
+      {
+        "nombre": "Diego Ejemplo Rojas",
+        "datos": "+1 3055550104 · diego.ejemplo@example.com"
+      },
+      {
+        "nombre": "Elena Muestra Castro",
+        "datos": "+506 0000-0005"
+      }
+    ]
+  },
+  {
+    "paso": 25,
+    "texto": "Bitácora: el contacto elegido muestra también primero el teléfono",
+    "resultado": "OK",
+    "detalle": "+506 0000-0002 · bruno.ficticio@example.com"
+  },
+  {
+    "paso": 26,
+    "texto": "390 px, Bitácora: la lista cabe sin desborde",
+    "resultado": "OK",
+    "detalle": {
+      "desborda": false
+    }
+  }
+]

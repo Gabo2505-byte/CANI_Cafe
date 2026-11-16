@@ -195,3 +195,47 @@ describe('CAMBIO-TELEFONO-PRIMERO: teléfono en el selector de contacto', () => 
     expect(await screen.findByText('No se encontraron contactos.')).toBeTruthy();
   });
 });
+
+describe('CAMBIO-UX-DETALLES: ayuda visible y contacto elegido', () => {
+  const HELP = 'Escriba al menos 2 caracteres del nombre, correo o teléfono';
+  const TOMAS = { ...contact('c9', 'Tomás Ambos Datos', 'tomas@example.com'), phoneCountry: 'CR', phoneNumber: '87654321' };
+  const ROSA = { ...contact('c8', 'Rosa Solo Teléfono', null), phoneCountry: 'CR', phoneNumber: '88123456' };
+
+  beforeEach(() => {
+    vi.mocked(listActiveContacts).mockResolvedValue([ANA, TOMAS, ROSA]);
+  });
+
+  it('la ayuda se ve debajo del campo, con el mismo texto, y no desaparece al escribir', async () => {
+    const { user, input } = await setup();
+    const help = screen.getByText(HELP, { selector: 'p' });
+    expect(help).toBeTruthy();
+    expect(input.getAttribute('aria-describedby')).toContain(help.id);
+    await user.type(input, 'tomas');
+    expect(screen.getByText(HELP, { selector: 'p' })).toBeTruthy();
+  });
+
+  it('ya elegido, debajo del nombre se ve "teléfono · correo"', async () => {
+    const { user, input } = await setup();
+    await user.type(input, 'tomas');
+    await user.click(await screen.findByRole('option', { name: /Tomás Ambos Datos/ }));
+    expect(input.value).toBe('Tomás Ambos Datos');
+    const selected = document.querySelector('.contact-picker-selected');
+    expect(selected?.textContent).toBe('+506 8765-4321 · tomas@example.com');
+    expect(input.getAttribute('aria-describedby')).toContain(selected!.id);
+  });
+
+  it('con un solo dato, solo ese; al escribir de nuevo deja de mostrarse', async () => {
+    const { user, input } = await setup();
+    await user.type(input, 'rosa');
+    await user.click(await screen.findByRole('option', { name: /Rosa Solo Teléfono/ }));
+    expect(document.querySelector('.contact-picker-selected')?.textContent).toBe('+506 8812-3456');
+    await user.type(input, 'x');
+    expect(document.querySelector('.contact-picker-selected')).toBeNull();
+  });
+
+  it('con el contacto fijo (desde la ficha) también se ve su teléfono y correo', async () => {
+    render(<Harness fixed={TOMAS} />);
+    expect(document.querySelector('.contact-picker-selected')?.textContent).toBe('+506 8765-4321 · tomas@example.com');
+    expect(screen.queryByText(HELP, { selector: 'p' })).toBeNull();
+  });
+});

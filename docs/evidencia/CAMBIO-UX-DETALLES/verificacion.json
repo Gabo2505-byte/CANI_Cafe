@@ -1,0 +1,215 @@
+[
+  {
+    "archivo": "15-login-foco-usuario.png",
+    "ruta": "/ingreso",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "punto": 15,
+    "foco": {
+      "id": "username",
+      "tag": "input",
+      "enVista": true
+    },
+    "mensaje": {
+      "texto": "El usuario ingresado no existe.",
+      "role": "alert"
+    }
+  },
+  {
+    "archivo": "02-ver-contacto-repetido.png",
+    "ruta": "/contactos/nuevo",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "punto": 2,
+    "enlace": {
+      "texto": "Ver contacto",
+      "href": "/contactos/contact-002",
+      "target": "_blank",
+      "rel": "noopener noreferrer"
+    },
+    "foco": {
+      "id": "phone",
+      "tag": "input",
+      "enVista": true
+    }
+  },
+  {
+    "archivo": "02b-pestana-nueva-ficha.png",
+    "punto": 2,
+    "ruta": "/contactos/contact-002",
+    "titulo": "Bruno Ficticio Solís"
+  },
+  {
+    "archivo": "04a-movil-390-contacto-foco-telefono.png",
+    "ruta": "/contactos/nuevo",
+    "anchoVentana": 390,
+    "desbordaHorizontal": false,
+    "punto": 4,
+    "foco": {
+      "id": "phone",
+      "tag": "input",
+      "enVista": true
+    }
+  },
+  {
+    "archivo": "04b-movil-390-oportunidad-foco-contacto.png",
+    "ruta": "/posibles-ventas/nueva",
+    "anchoVentana": 390,
+    "desbordaHorizontal": false,
+    "punto": 4,
+    "foco": {
+      "id": "sale-contact",
+      "tag": "input",
+      "enVista": true
+    }
+  },
+  {
+    "archivo": "04c-movil-390-oportunidad-foco-titulo.png",
+    "ruta": "/posibles-ventas/nueva",
+    "anchoVentana": 390,
+    "desbordaHorizontal": false,
+    "punto": 4,
+    "foco": {
+      "id": "sale-title",
+      "tag": "input",
+      "enVista": true
+    }
+  },
+  {
+    "archivo": "04d-comunicacion-foco-medio.png",
+    "ruta": "/contactos/contact-002",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "punto": 4,
+    "foco": {
+      "id": "communication-medium",
+      "tag": "select",
+      "enVista": true
+    }
+  },
+  {
+    "archivo": "10-selector-ayuda-visible-al-escribir.png",
+    "ruta": "/posibles-ventas/nueva",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "punto": 10,
+    "ayuda": "Escriba al menos 2 caracteres del nombre, correo o teléfono"
+  },
+  {
+    "archivo": "05-selector-contacto-elegido.png",
+    "ruta": "/posibles-ventas/nueva",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "punto": 5,
+    "campo": "Bruno Ficticio Solís",
+    "linea": "+506 0000-0002 · bruno.ficticio@example.com"
+  },
+  {
+    "archivo": "05b-selector-contacto-elegido-un-dato.png",
+    "ruta": "/posibles-ventas/nueva",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "punto": 5,
+    "linea": "+506 0000-0005"
+  },
+  {
+    "archivo": "03a-nueva-oportunidad-desde-ficha.png",
+    "ruta": "/posibles-ventas/nueva?contactId=contact-002",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "punto": 3,
+    "valor": "Bruno Ficticio Solís",
+    "soloLectura": true,
+    "lineaContacto": "+506 0000-0002 · bruno.ficticio@example.com"
+  },
+  {
+    "archivo": "03b-cancelar-vuelve-a-la-ficha.png",
+    "ruta": "/contactos/contact-002",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "punto": 3,
+    "titulo": "Bruno Ficticio Solís",
+    "volver": "/contactos?buscar=bruno"
+  },
+  {
+    "archivo": "07-ficha-telefono-enlace.png",
+    "ruta": "/contactos/contact-002",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "punto": 7,
+    "texto": "+506 0000-0002",
+    "href": "tel:+50600000002",
+    "orden": [
+      "Correo electrónico",
+      "Teléfono",
+      "Dirección",
+      "Fecha de registro",
+      "Origen"
+    ]
+  },
+  {
+    "archivo": "11a-sin-resultados-limpiar-busqueda.png",
+    "ruta": "/contactos?buscar=zzz",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "punto": 11,
+    "estado": "No se encontraron contactos.",
+    "boton": true,
+    "tabla": false
+  },
+  {
+    "archivo": "11b-tras-limpiar-busqueda.png",
+    "ruta": "/contactos",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "punto": 11,
+    "valor": "",
+    "foco": "search",
+    "filas": 5,
+    "url": ""
+  },
+  {
+    "archivo": "16a-bitacora-lista-telefono-primero.png",
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "punto": 16,
+    "filas": [
+      {
+        "nombre": "Ana Prueba Mora",
+        "datos": "+506 0000-0001 · ana.prueba@example.com"
+      },
+      {
+        "nombre": "Bruno Ficticio Solís",
+        "datos": "+506 0000-0002 · bruno.ficticio@example.com"
+      },
+      {
+        "nombre": "Carla Demo Vargas",
+        "datos": "carla.demo@example.com"
+      },
+      {
+        "nombre": "Diego Ejemplo Rojas",
+        "datos": "+1 3055550104 · diego.ejemplo@example.com"
+      },
+      {
+        "nombre": "Elena Muestra Castro",
+        "datos": "+506 0000-0005"
+      }
+    ]
+  },
+  {
+    "archivo": "16b-bitacora-contacto-elegido.png",
+    "ruta": "/avisos?vista=bitacora&contacto=contact-002",
+    "anchoVentana": 1366,
+    "desbordaHorizontal": false,
+    "punto": 16,
+    "resumen": "+506 0000-0002 · bruno.ficticio@example.com"
+  },
+  {
+    "archivo": "16c-movil-390-bitacora-lista.png",
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 390,
+    "desbordaHorizontal": false,
+    "punto": 16
+  }
+]

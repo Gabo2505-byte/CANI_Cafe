@@ -18,6 +18,8 @@ import { CONTACTS_PAGE_SIZE } from './contactsRepository';
 
 export const CONTACTS_LIST_MESSAGES = {
   empty: 'Aún no hay contactos registrados.',
+  /** Texto nuevo (CAMBIO-UX-DETALLES): botón cuando la búsqueda no encuentra a nadie. */
+  clearSearch: 'Limpiar búsqueda',
   loading: 'Cargando contactos…',
   error: 'No se pudieron cargar los contactos. Intente de nuevo.',
 } as const;
@@ -47,6 +49,7 @@ export function ContactsPage() {
   // su valor de la URL, al escribir rápido se perderían letras ("8812" quedaba "82").
   const [search, setSearch] = useState(urlSearch);
   const searchRef = useRef(urlSearch);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [contacts, setContacts] = useState<Contact[] | 'loading' | 'error'>('loading');
 
   useEffect(() => {
@@ -110,6 +113,12 @@ export function ContactsPage() {
     writeFilters(value, classification);
   };
 
+  /** Sin resultados: vacía el buscador y le devuelve el foco. */
+  const clearSearch = () => {
+    onSearchChange('');
+    searchInputRef.current?.focus();
+  };
+
   // Usa searchRef: la URL puede ir atrasada respecto de lo último que se escribió.
   const onClassificationChange = (value: string) => writeFilters(searchRef.current, value);
 
@@ -143,6 +152,7 @@ export function ContactsPage() {
 
       <div className="list-toolbar">
         <input
+          ref={searchInputRef}
           type="search"
           className="list-search"
           aria-label={CONTACT_SEARCH_LABEL}
@@ -171,6 +181,14 @@ export function ContactsPage() {
       <p className="list-count" role="status">
         {ready && !isEmpty ? foundContactsMessage(found.length) : ''}
       </p>
+
+      {ready && !isEmpty && found.length === 0 && search.trim() !== '' && (
+        <p>
+          <button type="button" className="button-secondary" onClick={clearSearch}>
+            {CONTACTS_LIST_MESSAGES.clearSearch}
+          </button>
+        </p>
+      )}
 
       {contacts === 'loading' && <p>{CONTACTS_LIST_MESSAGES.loading}</p>}
       {contacts === 'error' && (

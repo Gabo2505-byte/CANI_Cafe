@@ -12,6 +12,8 @@ import { AuthContext } from '../../src/auth/AuthContext';
 import type { AuthState } from '../../src/auth/useAuthUser';
 import { SessionProvider } from '../../src/auth/SessionContext';
 import { listActiveProducts } from '../../src/products/productsApi';
+import { loadContactRecords } from '../../src/contacts/contactDetailApi';
+import { getContact } from '../../src/contacts/contactsApi';
 import { getContactForSale, getContactNames, listActiveContacts } from '../../src/sales/contactSearchApi';
 import { createSale, listBoardSales, listOpenSaleTitles } from '../../src/sales/salesApi';
 import { TimedNotice } from '../../src/sales/TimedNotice';
@@ -26,6 +28,14 @@ vi.mock('../../src/sales/contactSearchApi', () => ({
   getContactNames: vi.fn(),
 }));
 vi.mock('../../src/products/productsApi', () => ({ listActiveProducts: vi.fn(), listProducts: vi.fn() }));
+// La ficha del contacto, a la que vuelve "Cancelar" cuando se abrió desde ella.
+vi.mock('../../src/contacts/contactDetailApi', () => ({ loadContactRecords: vi.fn() }));
+vi.mock('../../src/contacts/contactsApi', () => ({
+  createContact: vi.fn(),
+  getContact: vi.fn(),
+  findDuplicateContacts: vi.fn(),
+  listAllContacts: vi.fn(),
+}));
 
 const active: AuthState = {
   status: 'active',
@@ -59,11 +69,11 @@ function LocationProbe() {
   return null;
 }
 
-function renderAt(path: string) {
+function renderAt(path: string, state?: unknown) {
   return render(
     <AuthContext.Provider value={active}>
       <SessionProvider>
-        <MemoryRouter initialEntries={[path]}>
+        <MemoryRouter initialEntries={[{ pathname: path.split('?')[0], search: path.includes('?') ? `?${path.split('?')[1]}` : '', state }]}>
           <AppRoutes />
           <LocationProbe />
         </MemoryRouter>
@@ -81,6 +91,8 @@ beforeEach(() => {
   // El tablero al que se vuelve (HU-305).
   vi.mocked(listBoardSales).mockResolvedValue([]);
   vi.mocked(getContactNames).mockResolvedValue(new Map());
+  vi.mocked(getContact).mockResolvedValue(ANA);
+  vi.mocked(loadContactRecords).mockResolvedValue({ communications: [], sales: [], products: [] });
 });
 afterEach(() => {
   cleanup();
@@ -269,5 +281,63 @@ describe('confirmación en franja verde', () => {
       vi.advanceTimersByTime(200);
     });
     expect(screen.queryByRole('status')).toBeNull();
+  });
+});
+
+describe('CAMBIO-UX-DETALLES: Nueva oportunidad', () => {
+  it('desde la ficha de un contacto, "Cancelar" vuelve a esa ficha (con la lista de la que venía)', async () => {
+    const user = userEvent.setup();
+    renderAt(newSalePath('contact-001'), { from: '/contactos?buscar=ana' });
+    await screen.findByDisplayValue('Ana Prueba Mora');
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+
+    expect(currentLocation.pathname).toBe('/contactos/contact-001');
+    expect(createSale).not.toHaveBeenCalled();
+    const back = await screen.findByRole('link', { name: /Volver a contactos/ });
+    expect(back.getAttribute('href')).toBe('/contactos?buscar=ana');
+  });
+
+  it('desde la ficha y sin lista de origen, "Cancelar" también vuelve a la ficha', async () => {
+    const user = userEvent.setup();
+    renderAt(newSalePath('contact-001'));
+    await screen.findByDisplayValue('Ana Prueba Mora');
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(currentLocation.pathname).toBe('/contactos/contact-001');
+    expect((await screen.findByRole('link', { name: /Volver a contactos/ })).getAttribute('href')).toBe('/contactos');
+  });
+
+  it('abierta desde el tablero, "Cancelar" sigue yendo al tablero', async () => {
+    const user = userEvent.setup();
+    renderAt('/posibles-ventas/nueva');
+    await waitFor(() => expect(listActiveContacts).toHaveBeenCalled());
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(currentLocation.pathname).toBe('/posibles-ventas');
+  });
+
+  it('abierta desde la ficha, al guardar sigue yendo al tablero', async () => {
+    const user = userEvent.setup();
+    renderAt(newSalePath('contact-001'), { from: '/contactos' });
+    await screen.findByDisplayValue('Ana Prueba Mora');
+    await fillRequired(user);
+    await user.click(screen.getByRole('button', { name: 'Guardar' }));
+    await waitFor(() => expect(createSale).toHaveBeenCalledOnce());
+    await waitFor(() => expect(currentLocation.pathname).toBe('/posibles-ventas'));
+  });
+
+  it('al guardar con errores, el foco va al primer campo con error', async () => {
+    const user = userEvent.setup();
+    renderAt('/posibles-ventas/nueva');
+    await waitFor(() => expect(listActiveContacts).toHaveBeenCalled());
+    await user.click(screen.getByRole('button', { name: 'Guardar' }));
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByLabelText(/^Contacto/)));
+
+    await user.type(screen.getByLabelText(/^Contacto/), 'ana');
+    await user.click(await screen.findByRole('option', { name: /Ana Prueba Mora/ }));
+    await user.click(screen.getByRole('button', { name: 'Guardar' }));
+    await waitFor(() => expect(document.activeElement).toBe(title()));
+
+    await user.type(title(), 'Café en grano para su cafetería');
+    await user.click(screen.getByRole('button', { name: 'Guardar' }));
+    await waitFor(() => expect(document.activeElement).toBe(amount()));
   });
 });

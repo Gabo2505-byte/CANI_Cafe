@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 // HU-203: Revisar los datos de un contacto antes de guardarlo
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { User as FirebaseUser } from 'firebase/auth';
 import { MemoryRouter, useLocation } from 'react-router';
@@ -152,8 +152,44 @@ describe('HU-203 Revisar los datos antes de guardar', () => {
     const message = await screen.findByText(/Ya existe un contacto con este correo electrónico\./);
     expect(createContact).not.toHaveBeenCalled();
     const link = within(message).getByRole('link', { name: 'Ver contacto' });
+    expect(link.getAttribute('href')).toBe('/contactos/contact-001');
+    // CAMBIO-UX-DETALLES: la ficha se abre en otra pestaña, así no se pierde lo escrito.
+    expect(link.getAttribute('target')).toBe('_blank');
+    expect(link.getAttribute('rel')).toBe('noopener noreferrer');
     await user.click(link);
-    expect(currentLocation.pathname).toBe('/contactos/contact-001');
+    expect(currentLocation.pathname).toBe('/contactos/nuevo');
+    expect(nameInput().value).toBe('Ana Otra');
+    expect(emailInput().value).toBe('ana.prueba@example.com');
+  });
+
+  it('CAMBIO-UX-DETALLES: al guardar con errores, el foco va al primer campo con error', async () => {
+    const user = userEvent.setup();
+    renderForm();
+    // Sin nada: el primer error es el nombre.
+    await save(user);
+    await waitFor(() => expect(document.activeElement).toBe(nameInput()));
+
+    // Con nombre y sin correo ni teléfono: el primer campo marcado, en el orden de la pantalla, es el teléfono.
+    await user.type(nameInput(), 'Ana Otra');
+    await save(user);
+    await waitFor(() => expect(document.activeElement).toBe(phoneInput()));
+
+    // Correo mal escrito y teléfono bien: el foco va al correo.
+    await user.type(phoneInput(), '88888888');
+    await user.type(emailInput(), 'no-es-correo');
+    await save(user);
+    await waitFor(() => expect(document.activeElement).toBe(emailInput()));
+  });
+
+  it('CAMBIO-UX-DETALLES: con un dato repetido, el foco va al campo repetido', async () => {
+    const user = userEvent.setup();
+    vi.mocked(findDuplicateContacts).mockResolvedValue({ phone: 'contact-002' });
+    renderForm();
+    await user.type(nameInput(), 'Bruno Otro');
+    await user.type(phoneInput(), '00000002');
+    await save(user);
+    await screen.findByText(/Ya existe un contacto con este teléfono\./);
+    await waitFor(() => expect(document.activeElement).toBe(phoneInput()));
   });
 
   it('teléfono repetido (mismo país y número) → mensaje + "Ver contacto"; no se guarda', async () => {

@@ -249,3 +249,31 @@ describe('HU-205 Buscar y filtrar contactos', () => {
     expect(screen.queryByRole('table')).toBeNull();
   });
 });
+
+describe('CAMBIO-UX-DETALLES: Limpiar búsqueda', () => {
+  it('sin resultados aparece "Limpiar búsqueda"; vacía el buscador, vuelve la lista y el foco queda en el buscador', async () => {
+    const user = userEvent.setup();
+    renderAt();
+    await screen.findByRole('table');
+    expect(screen.queryByRole('button', { name: 'Limpiar búsqueda' })).toBeNull();
+
+    await user.type(searchBox(), 'zzz');
+    await screen.findByText('No se encontraron contactos.');
+    await user.click(screen.getByRole('button', { name: 'Limpiar búsqueda' }));
+
+    expect((searchBox() as HTMLInputElement).value).toBe('');
+    await screen.findByRole('table');
+    expect(document.activeElement).toBe(searchBox());
+    expect(screen.queryByRole('button', { name: 'Limpiar búsqueda' })).toBeNull();
+    expect(currentLocation.search).toBe('');
+  });
+
+  it('con resultados no aparece', async () => {
+    const user = userEvent.setup();
+    renderAt();
+    await screen.findByRole('table');
+    await user.type(searchBox(), 'mar');
+    await screen.findByRole('table');
+    expect(screen.queryByRole('button', { name: 'Limpiar búsqueda' })).toBeNull();
+  });
+});

@@ -24,6 +24,7 @@ import {
   CONTACT_SALES_COLUMNS,
   CONTACT_TABS,
   contactDataRows,
+  contactPhoneHref,
   contactSaleCells,
   INTEREST_PRODUCTS_COLUMNS,
   interestsUpdatedLabel,
@@ -122,6 +123,7 @@ export function ContactDetailPage() {
           <ContactData contact={state.contact} />
           <ContactTabs
             contactId={state.contact.id}
+            backTo={backTo}
             records={records}
             savedCount={showSaved ? savedCount : 0}
             onTabChange={() => setShowSaved(false)}
@@ -159,6 +161,8 @@ function ContactHeader({ contact, onEdit }: { contact: Contact; onEdit: () => vo
 }
 
 function ContactData({ contact }: { contact: Contact }) {
+  // El teléfono es un enlace para llamar; el texto visible y el orden de los datos no cambian.
+  const phoneHref = contactPhoneHref(contact);
   return (
     <section className="contact-data" aria-labelledby="contact-data-title">
       <h2 id="contact-data-title">{MSG.dataTitle}</h2>
@@ -166,7 +170,9 @@ function ContactData({ contact }: { contact: Contact }) {
         {contactDataRows(contact).map(([label, value]) => (
           <div key={label}>
             <dt>{label}</dt>
-            <dd className={value === MSG.missing ? 'value-missing' : undefined}>{value}</dd>
+            <dd className={value === MSG.missing ? 'value-missing' : undefined}>
+              {label === 'Teléfono' && phoneHref ? <a href={phoneHref}>{value}</a> : value}
+            </dd>
           </div>
         ))}
       </dl>
@@ -176,6 +182,8 @@ function ContactData({ contact }: { contact: Contact }) {
 
 interface ContactTabsProps {
   contactId: string;
+  /** La lista de la que se llegó a la ficha: "Cancelar" de Nueva oportunidad vuelve a la ficha con ella. */
+  backTo: string;
   records: RecordsState;
   /** HU-211: cuántas comunicaciones se han guardado (cada una vuelve a mostrar la confirmación). */
   savedCount: number;
@@ -184,7 +192,7 @@ interface ContactTabsProps {
   onRegisterCommunication: () => void;
 }
 
-function ContactTabs({ contactId, records, savedCount, onTabChange, onRegisterCommunication }: ContactTabsProps) {
+function ContactTabs({ contactId, backTo, records, savedCount, onTabChange, onRegisterCommunication }: ContactTabsProps) {
   const navigate = useNavigate();
   const [active, setActiveTab] = useState<ContactTabId>('comunicaciones');
   const setActive = (id: ContactTabId) => {
@@ -253,7 +261,7 @@ function ContactTabs({ contactId, records, savedCount, onTabChange, onRegisterCo
         {/* HU-301: botón "+ Nueva oportunidad" para crear una venta de este contacto (el formulario lo trae ya elegido). */}
         {active === 'ventas' && (
           <div className="tab-panel-actions">
-            <button type="button" onClick={() => navigate(newSalePath(contactId))}>
+            <button type="button" onClick={() => navigate(newSalePath(contactId), { state: { from: backTo } satisfies FromListState })}>
               <AddButtonLabel>{SALES_LABELS.newOpportunity}</AddButtonLabel>
             </button>
           </div>

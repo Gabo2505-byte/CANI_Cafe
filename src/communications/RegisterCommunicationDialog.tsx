@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { useAuth } from '../auth/AuthContext';
+import { useFocusFirstError } from '../shared/hooks/useFocusFirstError';
 import { toCostaRicaDateKey } from '../shared/utils/dates';
 import {
   COMMUNICATION_LIMITS,
@@ -59,6 +60,8 @@ export function RegisterCommunicationDialog({ contactId, openSales, onSaved, onC
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
+  const { formRef, focusFirstError } = useFocusFirstError();
+
   const set = (patch: Partial<CommunicationFormValues>) => setValues((prev) => ({ ...prev, ...patch }));
 
   useEffect(() => {
@@ -82,7 +85,10 @@ export function RegisterCommunicationDialog({ contactId, openSales, onSaved, onC
     );
     setErrors(formErrors);
     setSaveError(null);
-    if (Object.keys(formErrors).length > 0) return;
+    if (Object.keys(formErrors).length > 0) {
+      focusFirstError();
+      return;
+    }
     const userId = auth.status === 'active' ? auth.firebaseUser.uid : null;
     if (!userId) {
       setSaveError(MSG.saveError);
@@ -93,8 +99,10 @@ export function RegisterCommunicationDialog({ contactId, openSales, onSaved, onC
       await createCommunication(toNewCommunication(contactId, values), userId);
       onSaved();
     } catch (error) {
-      if (error instanceof SaleNotOpenError) setErrors({ sale: MSG.saleNotOpen });
-      else setSaveError(MSG.saveError);
+      if (error instanceof SaleNotOpenError) {
+        setErrors({ sale: MSG.saleNotOpen });
+        focusFirstError();
+      } else setSaveError(MSG.saveError);
       setSaving(false);
     }
   }
@@ -107,7 +115,7 @@ export function RegisterCommunicationDialog({ contactId, openSales, onSaved, onC
         <h2 id={titleId} className="dialog-title">
           {MSG.title}
         </h2>
-        <form className="form" onSubmit={handleSubmit} noValidate>
+        <form ref={formRef} className="form" onSubmit={handleSubmit} noValidate>
           <label htmlFor="communication-date">Fecha</label>
           <input
             ref={dateRef}

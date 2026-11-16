@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router';
 import { contactPath, ROUTES } from '../app/routes';
 import type { NoticeState } from '../shared/hooks/useLocationNotice';
+import { useFocusFirstError } from '../shared/hooks/useFocusFirstError';
 import { ConfirmDialog } from '../shared/ui/ConfirmDialog';
 import { CONTACT_DETAIL_MESSAGES, type FromListState } from './contactDetail';
 import { ContactFormFields } from './ContactFormFields';
@@ -87,6 +88,7 @@ function EditContactForm({ contactId, initial, onDone }: EditContactFormProps) {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [confirmLeave, setConfirmLeave] = useState(false);
+  const { formRef, focusFirstError } = useFocusFirstError();
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -94,7 +96,10 @@ function EditContactForm({ contactId, initial, onDone }: EditContactFormProps) {
     setErrors(formErrors);
     setDuplicates({});
     setSaveError(null);
-    if (Object.keys(formErrors).length > 0) return;
+    if (Object.keys(formErrors).length > 0) {
+      focusFirstError();
+      return;
+    }
 
     setSaving(true);
     try {
@@ -105,6 +110,7 @@ function EditContactForm({ contactId, initial, onDone }: EditContactFormProps) {
         setDuplicates(found);
         setErrors(duplicateErrors(found));
         setSaving(false);
+        focusFirstError();
         return;
       }
       await updateContact(contactId, input);
@@ -122,7 +128,7 @@ function EditContactForm({ contactId, initial, onDone }: EditContactFormProps) {
 
   return (
     <>
-      <form className="form" onSubmit={handleSubmit} noValidate>
+      <form ref={formRef} className="form" onSubmit={handleSubmit} noValidate>
         <ContactFormFields values={values} onChange={setValues} errors={errors} duplicates={duplicates} />
 
         {saveError && (

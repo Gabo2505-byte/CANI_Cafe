@@ -224,6 +224,18 @@ describe('HU-309 Editar una oportunidad de venta', () => {
     expect(updateSale).not.toHaveBeenCalled();
   });
 
+  it('CAMBIO-UX-DETALLES: al guardar con errores, el foco va al primer campo con error', async () => {
+    const user = await openEditor();
+    await user.clear(amount());
+    await user.type(amount(), '1000000000');
+    await user.click(screen.getByRole('button', { name: 'Guardar' }));
+    await waitFor(() => expect(document.activeElement).toBe(amount()));
+
+    await user.clear(title());
+    await user.click(screen.getByRole('button', { name: 'Guardar' }));
+    await waitFor(() => expect(document.activeElement).toBe(title()));
+  });
+
   it('un título igual al de otra oportunidad de venta abierta del contacto no se guarda', async () => {
     vi.mocked(listOpenSaleTitles).mockResolvedValue(['Pedido de temporada']);
     const user = await openEditor();

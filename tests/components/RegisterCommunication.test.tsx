@@ -138,6 +138,23 @@ describe('HU-211 Registrar una comunicación', () => {
     expect(createCommunication).not.toHaveBeenCalled();
   });
 
+  it('CAMBIO-UX-DETALLES: al guardar con errores, el foco va al primer campo con error', async () => {
+    const user = await openDialog();
+    // Todo vacío menos la fecha: el primer campo con error es el medio.
+    await user.click(within(dialog()).getByRole('button', { name: 'Guardar' }));
+    await waitFor(() => expect(document.activeElement).toBe(field('Medio')));
+
+    // Con el medio elegido, el primero con error es la nota.
+    await user.selectOptions(field('Medio'), 'WhatsApp');
+    await user.click(within(dialog()).getByRole('button', { name: 'Guardar' }));
+    await waitFor(() => expect(document.activeElement).toBe(field('Nota')));
+
+    // Una fecha vacía va antes que todo lo demás.
+    fireEvent.change(field('Fecha'), { target: { value: '' } });
+    await user.click(within(dialog()).getByRole('button', { name: 'Guardar' }));
+    await waitFor(() => expect(document.activeElement).toBe(field('Fecha')));
+  });
+
   it('criterio 2: la fecha viene con el día de hoy y no deja elegir días futuros', async () => {
     await openDialog();
     expect(field('Fecha').value).toBe(TODAY);
