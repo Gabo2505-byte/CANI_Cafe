@@ -1857,3 +1857,127 @@ textarea[aria-invalid='true'] {
 .alerts-table td:last-child {
   white-space: nowrap;
 }
+
+/* Bitácora del contacto (pestaña de "Avisos"): buscador, resultados y línea de tiempo. Usa las tarjetas del
+   historial de comunicaciones (HU-213) y la barra de filtros de la lista de contactos (HU-205). */
+.alerts-tabs {
+  margin-top: var(--space-3);
+}
+
+.timeline {
+  max-width: var(--content-width);
+}
+
+.timeline-intro,
+.timeline-contact-data {
+  margin: 0 0 0.75rem;
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.timeline-results {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0.5rem 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.timeline-result {
+  display: grid;
+  gap: 0.1rem;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  text-align: left;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.timeline-result:hover {
+  background: var(--color-surface-hover);
+}
+
+.timeline-result-name {
+  font-weight: 600;
+}
+
+.timeline-result-data {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.timeline-contact {
+  margin-top: var(--space-3);
+}
+
+.timeline-contact-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+}
+
+.timeline-contact-header h2 {
+  margin-bottom: 0.25rem;
+  overflow-wrap: anywhere;
+}
+
+.timeline-list {
+  margin-top: 0.5rem;
+}
+
+.timeline-event {
+  border-left: 3px solid var(--color-border-strong);
+  overflow-wrap: anywhere;
+}
+
+.timeline-event-stage {
+  border-left-color: var(--color-accent);
+}
+
+.timeline-kind {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.timeline-origin {
+  display: inline-block;
+  padding: 0 0.5rem;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+}
+
+.timeline-origin-form {
+  color: var(--color-info);
+  border-color: var(--color-info);
+}
+
+.timeline-loss {
+  color: var(--color-lost);
+}
+
+/* Bitácora: lista de contactos al abrir la pestaña (filas fáciles de tocar, con foco visible) y volver a la lista. */
+.timeline-result {
+  min-height: 3rem;
+}
+
+.timeline-result:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.timeline-result-name {
+  overflow-wrap: anywhere;
+}
+
+.timeline-change {
+  margin-bottom: 0.25rem;
+}

@@ -1,0 +1,297 @@
+[
+  {
+    "archivo": "01-avisos-como-estaba.png",
+    "h1": "Avisos",
+    "pestañas": [
+      {
+        "texto": "Avisos pendientes",
+        "seleccionada": true
+      },
+      {
+        "texto": "Bitácora",
+        "seleccionada": false
+      }
+    ],
+    "encabezados": [
+      "Tipo",
+      "Contacto",
+      "Oportunidad de venta",
+      "Etapa",
+      "Detalle",
+      "Fecha del aviso"
+    ],
+    "filas": [
+      [
+        "Seguimiento vencido",
+        "Carla Demo Vargas",
+        "Distribución mensual de café molido (mock)",
+        "Precio o cotización enviada",
+        "Seguimiento vencido desde el 09/10/2026 con Carla Demo Vargas – Distribución mensual de café molido (mock).",
+        "09/10/2026"
+      ],
+      [
+        "Seguimiento vencido",
+        "Bruno Ficticio Solís",
+        "Café en grano para cafetería (mock)",
+        "En negociación",
+        "Seguimiento vencido desde el 12/10/2026 con Bruno Ficticio Solís – Café en grano para cafetería (mock).",
+        "12/10/2026"
+      ],
+      [
+        "Sin comunicación",
+        "Bruno Ficticio Solís",
+        "Café en grano para cafetería (mock)",
+        "En negociación",
+        "Bruno Ficticio Solís – Café en grano para cafetería (mock) no tiene comunicaciones desde hace 44 días.",
+        "13/10/2026"
+      ],
+      [
+        "Sin comunicación",
+        "Carla Demo Vargas",
+        "Distribución mensual de café molido (mock)",
+        "Precio o cotización enviada",
+        "Carla Demo Vargas – Distribución mensual de café molido (mock) no tiene comunicaciones desde hace 43 días.",
+        "14/10/2026"
+      ],
+      [
+        "Sin comunicación",
+        "Elena Muestra Castro",
+        "Primer contacto con Elena (mock)",
+        "Nuevo interesado",
+        "Elena Muestra Castro – Primer contacto con Elena (mock) no tiene comunicaciones desde hace 36 días.",
+        "21/10/2026"
+      ]
+    ],
+    "circulo": "5",
+    "ruta": "/avisos",
+    "anchoVentana": 1366,
+    "anchoDocumento": 1366,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "02-pestana-bitacora-lista.png",
+    "pestañas": [
+      {
+        "texto": "Avisos pendientes",
+        "seleccionada": false
+      },
+      {
+        "texto": "Bitácora",
+        "seleccionada": true
+      }
+    ],
+    "buscador": "Buscar por nombre, correo o teléfono",
+    "contactos": [
+      "Ana Prueba Mora",
+      "Bruno Ficticio Solís",
+      "Carla Demo Vargas",
+      "Diego Ejemplo Rojas",
+      "Elena Muestra Castro"
+    ],
+    "conteo": "Se encontraron 5 contactos.",
+    "filas": [
+      "Ana Prueba Mora | ana.prueba@example.com · +506 0000-0001",
+      "Bruno Ficticio Solís | bruno.ficticio@example.com · +506 0000-0002",
+      "Carla Demo Vargas | carla.demo@example.com",
+      "Diego Ejemplo Rojas | diego.ejemplo@example.com · +1 3055550104",
+      "Elena Muestra Castro | +506 0000-0005"
+    ],
+    "alturaMinimaFila": 59,
+    "paginacion": "Página 1 de 1",
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 1366,
+    "anchoDocumento": 1366,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "03-lista-filtrada-por-nombre.png",
+    "busqueda": "ANA prueba",
+    "contactos": [
+      "Ana Prueba Mora"
+    ],
+    "conteo": "Se encontró 1 contacto.",
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 1366,
+    "anchoDocumento": 1366,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "04-lista-filtrada-por-telefono.png",
+    "busqueda": "0000-0002",
+    "contactos": [
+      "Bruno Ficticio Solís"
+    ],
+    "conteo": "Se encontró 1 contacto.",
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 1366,
+    "anchoDocumento": 1366,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "05-lista-sin-resultados.png",
+    "busqueda": "zzzz",
+    "mensaje": "No se encontraron contactos.",
+    "filas": 0,
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 1366,
+    "anchoDocumento": 1366,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "06-contacto-elegido-ana.png",
+    "contacto": "contact-001",
+    "eventos": [
+      {
+        "clase": "communication-card timeline-event timeline-event-communication",
+        "texto": "12/10/2026 12:00 a. m. · Comunicación · Otro: Formulario del sitio web Origen: formulario web |  | Oportunidad de venta: Todas sus oportunidades de venta |  | Mensaje desde el sitio: quiere saber si hacen entregas en Alajuela."
+      },
+      {
+        "clase": "communication-card timeline-event timeline-event-stage",
+        "texto": "08/10/2026 · Cambio de etapa |  | Oportunidad de venta: Muestras para eventos (mock) |  | Etapa: Contactado → Venta perdida |  | Motivo de pérdida: El cliente eligió otro proveedor."
+      },
+      {
+        "clase": "communication-card timeline-event timeline-event-communication",
+        "texto": "28/09/2026 · Comunicación · Llamada telefónica Origen: registro manual |  | Oportunidad de venta: Todas sus oportunidades de venta |  | Primer contacto, interesada en conocer los productos."
+      },
+      {
+        "clase": "communication-card timeline-event timeline-event-stage",
+        "texto": "16/09/2026 · Cambio de etapa |  | Oportunidad de venta: Muestras para eventos (mock) |  | Etapa: Nuevo interesado → Contactado"
+      },
+      {
+        "clase": "communication-card timeline-event timeline-event-stage timeline-event-creation",
+        "texto": "10/09/2026 · Oportunidad creada |  | Oportunidad de venta: Muestras para eventos (mock) |  | Etapa inicial: Nuevo interesado"
+      }
+    ],
+    "cambiarContacto": "Cambiar contacto",
+    "listaVisible": false,
+    "ruta": "/avisos?vista=bitacora&contacto=contact-001",
+    "anchoVentana": 1366,
+    "anchoDocumento": 1351,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "07-filtro-comunicaciones.png",
+    "eventos": [
+      {
+        "clase": "communication-card timeline-event timeline-event-communication",
+        "texto": "12/10/2026 12:00 a. m. · Comunicación · Otro: Formulario del sitio web Origen: formulario web |  | Oportunidad de venta: Todas sus oportunidades de venta |  | Mensaje desde el sitio: quiere saber si hacen entregas en Alajuela."
+      },
+      {
+        "clase": "communication-card timeline-event timeline-event-communication",
+        "texto": "28/09/2026 · Comunicación · Llamada telefónica Origen: registro manual |  | Oportunidad de venta: Todas sus oportunidades de venta |  | Primer contacto, interesada en conocer los productos."
+      }
+    ],
+    "ruta": "/avisos?vista=bitacora&contacto=contact-001&tipo=comunicaciones",
+    "anchoVentana": 1366,
+    "anchoDocumento": 1366,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "08-volver-a-la-lista.png",
+    "contactos": [
+      "Ana Prueba Mora",
+      "Bruno Ficticio Solís",
+      "Carla Demo Vargas",
+      "Diego Ejemplo Rojas",
+      "Elena Muestra Castro"
+    ],
+    "conteo": "Se encontraron 5 contactos.",
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 1366,
+    "anchoDocumento": 1366,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "09-foco-visible-en-una-fila.png",
+    "foco": {
+      "elemento": "Diego Ejemplo Rojas",
+      "outline": "solid 2px",
+      "color": "rgb(212, 167, 98)"
+    },
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 1366,
+    "anchoDocumento": 1366,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "10-movil-390-lista.png",
+    "contactos": 5,
+    "alturaMinimaFila": 75,
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 390,
+    "anchoDocumento": 375,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "11-movil-390-lista-filtrada.png",
+    "contactos": [
+      "Ana Prueba Mora"
+    ],
+    "ruta": "/avisos?vista=bitacora",
+    "anchoVentana": 390,
+    "anchoDocumento": 390,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "12-movil-390-contacto-elegido.png",
+    "eventos": 5,
+    "ruta": "/avisos?vista=bitacora&contacto=contact-001",
+    "anchoVentana": 390,
+    "anchoDocumento": 375,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "13-movil-390-avisos-pendientes.png",
+    "ruta": "/avisos",
+    "anchoVentana": 390,
+    "anchoDocumento": 375,
+    "desbordaHorizontal": false
+  },
+  {
+    "archivo": "15-pestana-bitacora-vuelve-a-la-lista-con-foco.png",
+    "ruta": "/avisos?vista=bitacora",
+    "foco": {
+      "tag": "input",
+      "id": "",
+      "type": "search",
+      "texto": "",
+      "valor": "",
+      "contorno": "solid 2px",
+      "sombra": "none"
+    },
+    "buscador": "",
+    "contactos": [
+      "Ana Prueba Mora",
+      "Bruno Ficticio Solís",
+      "Carla Demo Vargas",
+      "Diego Ejemplo Rojas",
+      "Elena Muestra Castro"
+    ],
+    "scrollAntes": 400,
+    "scrollDespues": 0
+  },
+  {
+    "archivo": "16-contacto-elegido-con-foco-en-el-titulo.png",
+    "ruta": "/avisos?vista=bitacora&contacto=contact-002",
+    "foco": {
+      "tag": "h2",
+      "id": "timeline-contact-name",
+      "type": null,
+      "texto": "Bruno Ficticio Solís",
+      "valor": null,
+      "contorno": "solid 2px",
+      "sombra": "none"
+    },
+    "scrollAntes": 400,
+    "scrollDespues": 0
+  },
+  {
+    "archivo": "17-menu-avisos-desde-la-bitacora.png",
+    "ruta": "/avisos",
+    "pestañas": [
+      "Avisos pendientes:true",
+      "Bitácora:false"
+    ],
+    "filasDeAvisos": 5
+  }
+]
