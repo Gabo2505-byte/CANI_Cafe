@@ -18,6 +18,7 @@
     "emulators": "firebase emulators:start --only auth,firestore --project demo-cani-crm",
     "seed": "tsx --env-file=.env.development scripts/seed.ts",
     "catalogo:cargar": "tsx scripts/produccion/cargarCatalogo.ts",
+    "contactos:cargar": "tsx scripts/produccion/cargarContactos.ts",
     "cuenta:nombre-visible": "tsx scripts/produccion/cuentaNombreVisible.ts",
     "test": "vitest run",
     "test:watch": "vitest",
