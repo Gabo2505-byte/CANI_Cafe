@@ -58,6 +58,11 @@ export function AlertsPage() {
   }, []);
 
   const showTab = (id: AlertsTabId) => {
+    // Tocar "Bitácora" estando ya en ella con un contacto abierto vuelve a la lista, como "Cambiar contacto".
+    if (id === 'bitacora' && active === 'bitacora') {
+      if (contactId) clearContact();
+      return;
+    }
     const next = new URLSearchParams(params);
     if (id === 'bitacora') next.set(PARAMS.tab, 'bitacora');
     else next.delete(PARAMS.tab);

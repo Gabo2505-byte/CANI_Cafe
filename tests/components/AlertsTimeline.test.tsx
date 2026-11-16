@@ -4,7 +4,7 @@ import { cleanup, render, screen, waitFor, within } from '@testing-library/react
 import userEvent from '@testing-library/user-event';
 import type { User as FirebaseUser } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
-import { MemoryRouter, useLocation } from 'react-router';
+import { MemoryRouter, useLocation, useNavigate } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppRoutes } from '../../src/app/AppRoutes';
 import { AuthContext } from '../../src/auth/AuthContext';
@@ -105,6 +105,11 @@ function LocationProbe() {
   return null;
 }
 
+function BackButton() {
+  const navigate = useNavigate();
+  return <button onClick={() => navigate(-1)}>Atrás del navegador</button>;
+}
+
 function renderAlerts(path = '/avisos') {
   return render(
     <AuthContext.Provider value={active}>
@@ -112,13 +117,16 @@ function renderAlerts(path = '/avisos') {
         <MemoryRouter initialEntries={[path]}>
           <AppRoutes />
           <LocationProbe />
+          <BackButton />
         </MemoryRouter>
       </SessionProvider>
     </AuthContext.Provider>,
   );
 }
 
+const scrollTo = vi.fn();
 beforeEach(() => {
+  window.scrollTo = scrollTo as unknown as typeof window.scrollTo;
   vi.mocked(listAlerts).mockResolvedValue([]);
   vi.mocked(listTimelineContacts).mockResolvedValue([ana, bruno, diego]);
   vi.mocked(loadContactTimeline).mockImplementation(async (id) =>
@@ -392,5 +400,96 @@ describe('línea de tiempo del contacto', () => {
     vi.mocked(loadContactTimeline).mockRejectedValue(new Error('offline'));
     renderAlerts('/avisos?vista=bitacora&contacto=contact-001');
     await waitFor(() => expect(screen.getByRole('alert').textContent).toBe('No se pudo cargar la bitácora. Intente de nuevo.'));
+  });
+});
+
+describe('navegación de la pestaña "Bitácora"', () => {
+  const bitacoraTab = () => screen.getByRole('tab', { name: 'Bitácora' });
+
+  it('tocar la pestaña con un contacto abierto vuelve a la lista y quita contacto y filtro de la URL', async () => {
+    const user = userEvent.setup();
+    renderAlerts('/avisos?vista=bitacora&contacto=contact-001&tipo=etapas');
+    await screen.findByRole('heading', { level: 2, name: 'Ana Prueba Mora' });
+    await user.click(bitacoraTab());
+    expect(await listButtons()).toHaveLength(3);
+    expect(currentLocation).toBe('/avisos?vista=bitacora');
+    expect(bitacoraTab().getAttribute('aria-selected')).toBe('true');
+  });
+
+  it('tocar la pestaña estando ya en la lista no cambia nada', async () => {
+    const user = userEvent.setup();
+    renderAlerts('/avisos?vista=bitacora');
+    await listButtons();
+    await user.type(await search(), 'bruno');
+    await user.click(bitacoraTab());
+    expect(currentLocation).toBe('/avisos?vista=bitacora');
+    expect((await search() as HTMLInputElement).value).toBe('bruno');
+    expect(await listButtons()).toHaveLength(1);
+  });
+
+  it('al volver a la lista el buscador queda vacío y con el foco, y la página vuelve arriba', async () => {
+    const user = userEvent.setup();
+    renderAlerts('/avisos?vista=bitacora');
+    await user.type(await search(), 'ana');
+    await user.click((await listButtons())[0]);
+    await screen.findByRole('heading', { level: 2, name: 'Ana Prueba Mora' });
+    scrollTo.mockClear();
+    await user.click(bitacoraTab());
+    const box = (await search()) as HTMLInputElement;
+    expect(box.value).toBe('');
+    expect(document.activeElement).toBe(box);
+    expect(scrollTo).toHaveBeenCalledWith(0, 0);
+    expect(await listButtons()).toHaveLength(3);
+  });
+
+  it('"Cambiar contacto" también deja el buscador vacío y con el foco', async () => {
+    const user = userEvent.setup();
+    renderAlerts('/avisos?vista=bitacora&contacto=contact-001');
+    await screen.findByRole('heading', { level: 2, name: 'Ana Prueba Mora' });
+    await user.click(screen.getByRole('button', { name: 'Cambiar contacto' }));
+    expect(document.activeElement).toBe(await search());
+  });
+
+  it('al elegir un contacto el foco pasa al título de su bitácora y la página vuelve arriba', async () => {
+    const user = userEvent.setup();
+    renderAlerts('/avisos?vista=bitacora');
+    const rows = await listButtons();
+    scrollTo.mockClear();
+    await user.click(rows[0]);
+    const title = await screen.findByRole('heading', { level: 2, name: 'Ana Prueba Mora' });
+    expect(document.activeElement).toBe(title);
+    expect(scrollTo).toHaveBeenCalledWith(0, 0);
+  });
+
+  it('al abrir la pantalla con el contacto ya en la URL no se mueve el foco', async () => {
+    renderAlerts('/avisos?vista=bitacora&contacto=contact-001');
+    const title = await screen.findByRole('heading', { level: 2, name: 'Ana Prueba Mora' });
+    expect(document.activeElement).not.toBe(title);
+  });
+
+  it('"Avisos" del menú, estando en la bitácora con un contacto, abre la tabla de avisos', async () => {
+    const user = userEvent.setup();
+    renderAlerts('/avisos?vista=bitacora&contacto=contact-001&tipo=etapas');
+    await screen.findByRole('heading', { level: 2, name: 'Ana Prueba Mora' });
+    await user.click(within(screen.getByRole('navigation', { name: 'Principal' })).getByRole('link', { name: /^Avisos/ }));
+    expect(await screen.findByText('No hay avisos pendientes.')).toBeTruthy();
+    expect(currentLocation).toBe('/avisos');
+    expect(screen.getByRole('tab', { name: 'Avisos pendientes' }).getAttribute('aria-selected')).toBe('true');
+  });
+
+  it('"Atrás" recorre lista, contacto elegido y detalle de la oportunidad', async () => {
+    const user = userEvent.setup();
+    renderAlerts('/avisos?vista=bitacora');
+    await user.click((await listButtons())[0]);
+    await screen.findByRole('heading', { level: 2, name: 'Ana Prueba Mora' });
+    await user.click(screen.getAllByRole('link', { name: 'Muestras Geisha' })[0]);
+    expect(currentLocation).toBe('/posibles-ventas/sale-004');
+    const back = () => user.click(screen.getByRole('button', { name: 'Atrás del navegador' }));
+    await back();
+    await screen.findByRole('heading', { level: 2, name: 'Ana Prueba Mora' });
+    expect(currentLocation).toBe('/avisos?vista=bitacora&contacto=contact-001');
+    await back();
+    expect(await listButtons()).toHaveLength(3);
+    expect(currentLocation).toBe('/avisos?vista=bitacora');
   });
 });

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { contactPath, saleDetailPath } from '../app/routes';
 import { badgedFirst, CONTACT_SEARCH_LABEL, filterContacts, foundContactsMessage } from '../contacts/contactSearch';
@@ -47,6 +47,24 @@ export function ContactTimeline({ contactId, filter, onSelectContact, onClearCon
   const [contacts, setContacts] = useState<ContactsState>({ status: 'loading' });
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const shownContactId = useRef<string | null | undefined>(undefined);
+
+  // Foco y scroll al cambiar de contacto (no al abrir la pestaña): al elegir uno, el foco va al título de su
+  // bitácora; al volver a la lista, el buscador queda vacío y con el foco.
+  useEffect(() => {
+    const previous = shownContactId.current;
+    shownContactId.current = contactId;
+    if (previous === undefined || previous === contactId) return;
+    window.scrollTo(0, 0);
+    if (contactId) {
+      document.getElementById('timeline-contact-name')?.focus({ preventScroll: true });
+    } else {
+      setSearch('');
+      setPage(0);
+      searchRef.current?.focus({ preventScroll: true });
+    }
+  }, [contactId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -89,6 +107,7 @@ export function ContactTimeline({ contactId, filter, onSelectContact, onClearCon
       <p className="timeline-intro">{MSG.intro}</p>
       <div className="list-toolbar">
         <input
+          ref={searchRef}
           type="search"
           className="list-search"
           aria-label={CONTACT_SEARCH_LABEL}
@@ -181,7 +200,7 @@ function ContactEvents({
         {MSG.changeContact}
       </button>
       <div className="timeline-contact-header">
-        <h2 id="timeline-contact-name">{contact.fullName}</h2>
+        <h2 id="timeline-contact-name" tabIndex={-1}>{contact.fullName}</h2>
         <Link to={contactPath(contact.id)}>{MSG.openContact}</Link>
       </div>
       <p className="timeline-contact-data">{contactSummary(contact)}</p>
