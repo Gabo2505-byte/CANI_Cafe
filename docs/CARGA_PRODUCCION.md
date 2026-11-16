@@ -7,10 +7,11 @@ Guía para la publicación real (tickets E5-040.1 y E5-050.2). Usa tres scripts 
 | `catalogo:cargar` | Carga o actualiza los 72 productos del catálogo oficial (9 variedades × 8 presentaciones) en `products`. | `scripts/produccion/cargarCatalogo.ts` |
 | `cuenta:nombre-visible` | Pone el nombre visible (`displayName`) de la cuenta del administrador igual a su usuario, para que el correo de recuperación diga "Hola, admin:" (HU-107). Revisa `users` y `usernames`. | `scripts/produccion/cuentaNombreVisible.ts` |
 | `contactos:cargar` | Carga única de los contactos iniciales de CANI Café desde un archivo CSV (RT-02). Ver la sección 9. | `scripts/produccion/cargarContactos.ts` |
+| `pruebas:limpiar` | Limpieza única de los datos de prueba (RT-01): contactos "PRUEBA..." y todo lo que cuelga de ellos. Ver la sección 10. | `scripts/produccion/limpiarPruebas.ts` |
 
-Los tres usan el SDK de cliente de Firebase e inician sesión con el correo y la contraseña del administrador. Todo pasa por las reglas desplegadas, igual que desde el sistema interno. No usan Admin SDK ni claves de cuenta de servicio.
+Los tres primeros usan el SDK de cliente de Firebase e inician sesión con el correo y la contraseña del administrador. Todo pasa por las reglas desplegadas, igual que desde el sistema interno. No usan Admin SDK ni claves de cuenta de servicio. La limpieza (sección 10) es la excepción: usa el Admin SDK con las credenciales de gcloud.
 
-**Ninguno borra nada.** Por defecto corren en **modo prueba**: leen y muestran lo que harían, sin escribir. Solo escriben con `--escribir` y después de que usted teclee el projectId exacto.
+**Los tres primeros no borran nada.** Por defecto corren en **modo prueba**: leen y muestran lo que harían, sin escribir. Solo escriben con `--escribir` y después de que usted teclee el projectId exacto.
 
 ---
 
@@ -295,3 +296,73 @@ Agregue `--escribir` al mismo comando. El script pide teclear el projectId exact
 **Volver a correrlo no duplica nada**: los contactos ya cargados se omiten como "Ya existe un contacto con este correo/teléfono". Si el script se corta a la mitad, repita el mismo comando. Una fila que se corrige en el CSV después de haber sido omitida se carga en la siguiente corrida.
 
 Para deshacer una carga hay que borrar los contactos a mano en la consola de Firebase (filtre `origin == carga_inicial`); el script nunca borra.
+
+## 10. Limpieza de los datos de prueba (RT-01)
+
+Borra, **una sola vez**, los contactos cuyo nombre empieza por "PRUEBA" (sin distinguir mayúsculas) y todo lo que cuelga de ellos. Nunca toca los contactos de la carga inicial ni ningún otro.
+
+| Colección | Qué se borra |
+|---|---|
+| `contacts` | Los contactos cuyo nombre empieza por "PRUEBA". |
+| `sales` | Sus oportunidades de venta (`contactId`). |
+| `saleProducts`, `stageHistory` | Los productos y el historial de etapas de esas oportunidades (`saleId`). |
+| `communications` | Sus comunicaciones (`contactId`) y las ligadas a esas oportunidades (`saleId`). |
+| `formRequests` | Las solicitudes de esos contactos (`contactId`) y las que tienen un nombre que empieza por "PRUEBA", aunque no tengan contacto. |
+| Bitácora y avisos | No se guardan: se calculan al consultar. El modo prueba muestra cuántos avisos tiene hoy cada contacto, y estos desaparecen al borrar sus oportunidades. |
+
+No hay subcolecciones en el sistema.
+
+### 10.1 Por qué usa el Admin SDK
+
+Las reglas desplegadas no permiten borrar `communications` (HU-211) ni `formRequests`, y no se cambian para esto. El Admin SDK **ignora las reglas**, así que el script trae sus propias protecciones:
+
+- Usa las credenciales de gcloud (*Application Default Credentials*). Nunca usa archivos de clave ni guarda credenciales en el repo.
+- Solo corre contra `cani-cafe`: `--project`, el `VITE_FIREBASE_PROJECT_ID` del archivo `--env` y el proyecto de las credenciales de gcloud deben ser `cani-cafe`. Si no, aborta antes de leer nada.
+- Aborta sin borrar nada si algún contacto seleccionado no empieza por "PRUEBA", si alguno tiene origen `carga_inicial`, si se seleccionan más de 10 contactos o si no hay exactamente 18 contactos con origen `carga_inicial`.
+- Por defecto corre en modo prueba. Con `--borrar` hay que teclear `cani-cafe`.
+- Al final verifica que quedan 18 contactos con origen `carga_inicial`, que no queda ninguno con nombre "PRUEBA" y que nada apunta a un contacto o a una oportunidad borrados.
+
+### 10.2 Requisitos
+
+1. [Google Cloud CLI](https://cloud.google.com/sdk/docs/install) instalado y una cuenta con acceso de propietario o editor al proyecto `cani-cafe`.
+2. Credenciales y proyecto (una vez por equipo; se guardan en el perfil del usuario, fuera del repo):
+   ```powershell
+   gcloud auth application-default login
+   gcloud config set project cani-cafe
+   gcloud auth application-default set-quota-project cani-cafe
+   ```
+3. El mismo `.env.production.local` de la sección 1 y la terminal sin variables de emulador (sección 2). Si definió `GOOGLE_CLOUD_PROJECT` o `GOOGLE_APPLICATION_CREDENTIALS` en esa terminal, el script usa esos valores. Quítelos si no apuntan a `cani-cafe`.
+
+### 10.3 Modo prueba (no borra)
+
+```powershell
+npm run pruebas:limpiar -- --project cani-cafe --env .env.production.local
+```
+
+Imprime cada contacto que se borraría con sus conteos, por ejemplo:
+
+```
+Contactos con origen "carga_inicial": 18 (se esperan 18; no se tocan)
+Se borrarían: 2 contactos con nombre PRUEBA
+  PRUEBA Uno (abc123)
+    sales 2 | saleProducts 3 | stageHistory 3 | communications 2 | formRequests 1 | avisos 2 (calculados, no se guardan)
+  ...
+Se borrarían además: 1 formRequest con nombre PRUEBA sin contacto seleccionado
+Total: contacts 2 | sales 2 | saleProducts 3 | stageHistory 3 | communications 3 | formRequests 2
+
+Modo prueba: no se borró nada. Para borrar 15 documentos, repita con --borrar.
+```
+
+Revise la lista antes de seguir.
+
+### 10.4 Borrado
+
+```powershell
+npm run pruebas:limpiar -- --project cani-cafe --env .env.production.local --borrar
+```
+
+El script pide teclear `cani-cafe`. Primero borra lo que cuelga de los contactos, después las oportunidades y al final los contactos. Luego imprime la verificación (`[OK]` o `[FALLA]` en cada línea). Si se corta a la mitad, repita el mismo comando: lo que quedó se vuelve a encontrar.
+
+Para ensayar contra los emuladores (no necesita gcloud), use `--project demo-cani-crm --env .env.development --emulador` con `npm run emulators` encendido y `FIRESTORE_EMULATOR_HOST` definido, o use el host del archivo.
+
+**El borrado no se puede deshacer.** Si quiere un respaldo previo, exporte Firestore desde la consola de Google Cloud (*Firestore > Importar/Exportar*) antes de correr `--borrar`.
