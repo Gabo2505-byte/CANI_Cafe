@@ -1,13 +1,14 @@
-# Carga de datos en producción: catálogo y nombre visible del administrador
+# Carga de datos en producción: catálogo, nombre visible del administrador y contactos iniciales
 
-Guía para la publicación real (tickets E5-040.1 y E5-050.2). Usa dos scripts de `scripts/produccion/`:
+Guía para la publicación real (tickets E5-040.1 y E5-050.2). Usa tres scripts de `scripts/produccion/`:
 
 | Script npm | Qué hace | Archivo |
 |---|---|---|
 | `catalogo:cargar` | Carga o actualiza los 72 productos del catálogo oficial (9 variedades × 8 presentaciones) en `products`. | `scripts/produccion/cargarCatalogo.ts` |
 | `cuenta:nombre-visible` | Pone el nombre visible (`displayName`) de la cuenta del administrador igual a su usuario, para que el correo de recuperación diga "Hola, admin:" (HU-107). Revisa `users` y `usernames`. | `scripts/produccion/cuentaNombreVisible.ts` |
+| `contactos:cargar` | Carga única de los contactos iniciales de CANI Café desde un archivo CSV (RT-02). Ver la sección 9. | `scripts/produccion/cargarContactos.ts` |
 
-Los dos usan el SDK de cliente de Firebase e inician sesión con el correo y la contraseña del administrador. Todo pasa por las reglas desplegadas, igual que desde el sistema interno. No usan Admin SDK ni claves de cuenta de servicio.
+Los tres usan el SDK de cliente de Firebase e inician sesión con el correo y la contraseña del administrador. Todo pasa por las reglas desplegadas, igual que desde el sistema interno. No usan Admin SDK ni claves de cuenta de servicio.
 
 **Ninguno borra nada.** Por defecto corren en **modo prueba**: leen y muestran lo que harían, sin escribir. Solo escriben con `--escribir` y después de que usted teclee el projectId exacto.
 
@@ -219,3 +220,78 @@ Los scripts **no borran** documentos ni cuentas, así que no hay nada que restau
 - **Nombre visible**: es solo el texto del saludo del correo. No da ni quita acceso. Para cambiarlo, vuelva a correr el script con otro `--usuario`.
 
 Nunca versione `.env.production.local` ni pegue contraseñas en documentos, comandos o chats.
+
+## 9. Carga inicial de contactos (RT-02)
+
+Script de **una sola vez** para cargar los contactos que CANI Café ya tiene (hoja de cálculo, libreta) en el sistema. No es una función de la aplicación. Corre en modo prueba por defecto y no borra nada.
+
+### 9.1 El archivo CSV
+
+- Se guarda desde Excel como **"CSV UTF-8 (delimitado por comas)"**. El separador puede ser coma o punto y coma (se detecta solo). Si el archivo no está en UTF-8 el script se detiene y lo dice.
+- **El archivo con los contactos reales no se guarda en el repositorio.** Déjelo fuera de la carpeta del proyecto (por ejemplo en `C:\Users\<usuario>\Documents\`). El script solo lo lee: no hace copias. Además `.gitignore` ignora todo `*.csv` por si se deja dentro por error.
+- La primera fila es el encabezado, con estas columnas (en cualquier orden; solo `nombre_completo` debe existir, y no se aceptan otras columnas):
+
+| Columna | Qué lleva | Si está vacía |
+|---|---|---|
+| `nombre_completo` | Nombre completo (hasta 100 caracteres). | **No se carga la fila.** |
+| `correo` | Correo con formato `nombre@dominio.com` (hasta 100). Se guarda en minúsculas. | Sin correo. |
+| `telefono` | Número sin el código de país; se aceptan espacios y guiones (`8888-1111`). | Sin teléfono. |
+| `codigo_pais` | Solo dígitos del código de llamada, por ejemplo `506` (se acepta `+506`). | `506` (Costa Rica). |
+| `direccion` | Dirección (hasta 250). | Sin dirección. |
+| `clasificacion` | `Persona interesada` o `Cliente`, sin distinguir mayúsculas ni tildes. | `Persona interesada`. |
+
+Ejemplo (datos ficticios):
+
+```csv
+nombre_completo,correo,telefono,codigo_pais,direccion,clasificacion
+Ana Prueba,ANA@ejemplo.com,8888-1111,506,"Calle 1, Naranjo",Cliente
+Luis Ejemplo,,88882222,,,
+Marta Muestra,marta@ejemplo.com,3055551234,1,,Persona interesada
+Sin Datos,,,,,
+```
+
+### 9.2 Qué se carga y qué no
+
+Cada contacto queda **activo**, con origen **"Carga inicial"**, la clasificación indicada y el mismo formato de documento que crea la pantalla "Nuevo contacto" (nombre para ordenar, correo en minúsculas, teléfono con país y solo dígitos, fecha de registro).
+
+**No se carga** (y se informa con su número de fila, el nombre y el motivo, para avisar a CANI Café):
+
+| Motivo | Detalle |
+|---|---|
+| Sin nombre completo | La celda está vacía. |
+| Sin correo ni teléfono | Debe tener al menos uno. |
+| Correo no válido | Aunque la fila traiga un teléfono válido: se informa para que CANI Café lo corrija. |
+| Teléfono de largo inválido | 8 dígitos en Costa Rica; entre 6 y 14 en otros países. Aplica aunque el correo sea válido. |
+| Código de país no válido | No son solo dígitos, o ningún país usa ese código. |
+| Clasificación no reconocida | Solo `Persona interesada` o `Cliente`. |
+| Repetido en el archivo | Un correo o un teléfono (mismo país y número) que ya aparece en una fila anterior que sí se carga: se carga solo la primera. |
+| Ya existe en el sistema | Un contacto con ese correo o teléfono, **activo o inactivo**. |
+
+El número de fila es el de la hoja de cálculo: el encabezado es la fila 1 y el primer contacto la fila 2. Con el código `1` el teléfono se guarda con país `US` (el código de llamada es el mismo para Estados Unidos, Canadá y el Caribe, y los repetidos se comparan por código y número).
+
+### 9.3 Modo prueba (no escribe)
+
+```powershell
+npm run contactos:cargar -- --project <projectId> --email <correo-admin> --env .env.production.local --archivo "C:\ruta\fuera-del-repo\contactos.csv"
+```
+
+Pide la contraseña del administrador (sin mostrarla) e imprime:
+
+```
+Filas con datos en el archivo: 4
+Se cargarían: 3
+NO se cargan: 1
+  fila 5 | Sin Datos | No tiene un correo ni un teléfono.
+
+Modo prueba: no se escribió nada. Para cargar 3 contactos, repita con --escribir.
+```
+
+Envíe a CANI Café la lista de "NO se cargan" para que corrijan o completen esas filas.
+
+### 9.4 Escritura
+
+Agregue `--escribir` al mismo comando. El script pide teclear el projectId exacto y crea los contactos uno por uno (`[n/total] cargada la fila N`). Para ensayar contra los emuladores, use `--project demo-cani-crm --env .env.development --emulador` (ver la sección 3).
+
+**Volver a correrlo no duplica nada**: los contactos ya cargados se omiten como "Ya existe un contacto con este correo/teléfono". Si el script se corta a la mitad, repita el mismo comando. Una fila que se corrige en el CSV después de haber sido omitida se carga en la siguiente corrida.
+
+Para deshacer una carga hay que borrar los contactos a mano en la consola de Firebase (filtre `origin == carga_inicial`); el script nunca borra.
