@@ -147,8 +147,8 @@ describe('HU-201 Registrar un nuevo contacto', () => {
     await user.click(screen.getByRole('button', { name: 'Guardar' }));
 
     expect(await screen.findByText('Contacto registrado correctamente.')).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 1, name: 'Ana Prueba Mora' })).toBeTruthy();
-    expect(screen.getByText('Persona interesada')).toBeTruthy();
+    expect(await screen.findByRole('heading', { level: 1, name: 'Ana Prueba Mora' })).toBeTruthy();
+    expect(await screen.findByText('Persona interesada')).toBeTruthy();
     expect(currentLocation.pathname).toBe('/contactos/nuevo-123');
     // El aviso se borra del historial (no reaparece al recargar); puede ocurrir un instante después.
     await waitFor(() => expect(currentLocation.state).toBeNull());
